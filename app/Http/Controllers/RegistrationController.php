@@ -23,7 +23,7 @@ class RegistrationController extends Controller
                  //try{
                     // $url = "http://10.154.3.99/awasallot/grasapi";
                      //$url = "http://10.154.3.108:8090/awasallot/grasapi";
-                     $url = "https://10.154.3.153:8080/awasallot/grasapi";
+                     $url = "http://10.154.3.153:8080/awasallot/grasapi";
                      $client = new \SoapClient("https://staging5.gujarat.gov.in/ssotest/adminservice/JSSOService.asmx?WSDL");
 
                      $resp =  $client->IsValidTokan(array('GId' => $gid,'AppURL' =>  $url));

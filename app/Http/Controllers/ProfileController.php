@@ -282,4 +282,9 @@ class ProfileController extends Controller
             return response('No salary slab details found.', 404);
         }
     }
+    public function updateDDODetails(Request $request)
+    {
+        
+       echo "hello";
+    }
 }

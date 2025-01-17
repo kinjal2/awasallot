@@ -24,4 +24,6 @@ return array(
     'quartertypeadministration'=>'Quarter Type Administration',
     'quartertypeadministration'=>'Quarter Type Administration',
     'quarterchangerequest'=>'Quarter Change Request',
+    'emp_list'=>'Employee List',
+    'DDO Details' => 'DDO Details',
 );

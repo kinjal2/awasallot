@@ -244,4 +244,8 @@ Route::post('get-quarter-total/', [DashboardController::class, 'getQuarterTotalL
 
 
 //16-01-2025
-Route::get('profile', [ 'as' => 'user.profile', 'uses' => 'ProfileController@index'])->middleware('verifiedphone', 'verified');
+Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);
+
+//17-01-2025
+Route::get('emp-list',[DDOUserController::class,'getEmpList'])->name('ddo.emp-list')->middleware('auth:ddo_users');
+Route::post('show-emp-list',[DDOUserController::class,'showEmpList'])->name('ddo-show-emp-list')->middleware('auth:ddo_users');

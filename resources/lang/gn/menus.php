@@ -23,4 +23,5 @@ return array(
     'Police Staff'=>'Police Staff Document Verification',
     'quartertypeadministration'=>'Quarter Type Administration',
     'quarterchangerequest'=>'Quarter Change Request',
+    'emp_list'=>'Employee List'
 );

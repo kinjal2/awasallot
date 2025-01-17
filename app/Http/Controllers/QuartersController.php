@@ -1987,7 +1987,7 @@ class QuartersController extends Controller
     
         // Step 3: Get the user data from the User model
         $userdata = User::where('id', $uid)->first();
-    
+   // dd($userdata);
         // Step 4: Check if user exists
         if (!$userdata) {
             return redirect('profile')->with('message', "User not found.");

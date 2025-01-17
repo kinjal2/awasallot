@@ -29,7 +29,7 @@
               <span class="info-box-icon bg-info elevation-1"><i class="fa fa-spinner fa-spin"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Waiting List
+                <span class="info-box-text">Total Request for Approval
             </span>
                 <span class="info-box-number">
 
@@ -46,7 +46,7 @@
               <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up  faa-pulse animated"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Quarter Allotment
+                <span class="info-box-text">Request Approved
             </span>
 
               </div>
@@ -60,7 +60,7 @@
               <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users faa-pulse animated"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">Vacant Quarter List</span>
+                <span class="info-box-text">Request Pending</span>
 
               </div>
               <!-- /.info-box-content -->

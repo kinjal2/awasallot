@@ -298,6 +298,7 @@ return [
 
             ]
         ],
+       
         'Quarter Allotment' => [
             'title' => 'menus.Quarter Allotment ',
             'icon' => 'fa fa-thumbs-up ',
@@ -328,6 +329,16 @@ return [
                 'ddodashboard'
             ],
             'link' => 'ddo.dashboard',
+            'submenu' => []
+        ],
+        'Employees List' => [
+            'title' => 'Employees List',
+            'icon' => 'nav-icon fas fa-tachometer-alt',
+            'permission_route' => 'ddo.emplist',
+            'route' => [
+                'emp-list'
+            ],
+            'link' => 'ddo.emp-list',
             'submenu' => []
         ],
        'Quarters' => [
@@ -363,6 +374,7 @@ return [
 
 			]
         ],
+        
 		 'Reports' => [
             'title' => 'menus.Reports',
             'icon' => 'icon-home',
