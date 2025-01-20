@@ -285,6 +285,6 @@ class ProfileController extends Controller
     public function updateDDODetails(Request $request)
     {
         
-       echo "hello";
+       echo "hello";    
     }
 }
