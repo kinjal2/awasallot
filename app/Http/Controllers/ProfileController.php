@@ -74,6 +74,8 @@ class ProfileController extends Controller
             'current_address'=>'required',
             'office_phone'=>'required',
             'office_address'=>'required',
+            'is_police_staff'=>'required',
+            'is_fix_pay_staff'=>'required',
 			'dis_per'=>'nullable|numeric|max:100|regex:/^\d+(\.\d{1,3})?$/'
         ];
 		 $messages = [
@@ -94,6 +96,8 @@ class ProfileController extends Controller
             'current_address.required' => 'The current address field is required.',
             'office_phone.required' => 'The office phone number is required.',
             'office_address.required' => 'The office address is required.',
+            'is_police_staff.required' => 'The Police Staff  is required.',
+            'is_fix_pay_staff.required' => 'The Fix Pay Staff   is required.',
             'dis_per.numeric' => 'The disability percentage must be a numeric value.',
             'dis_per.regex' => 'The disability percentage must be a valid number (up to three decimal places).',
         ];

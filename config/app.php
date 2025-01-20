@@ -54,12 +54,16 @@ return [
     */
 
     //'url' => env('APP_URL', 'http://10.154.3.99/awasallot/'),
-    // 'url' => env('APP_URL', 'http://10.154.3.108:8090/awasallot/'),
-    'url' => env('APP_URL', 'http://10.154.3.153:8080/awasallot/'),
-
-    //'asset_url' => env('ASSET_URL', 'http://10.154.3.99/awasallot/public'),
-    //'asset_url' => env('ASSET_URL', 'http://10.154.3.108:8090/awasallot/public'),
-    'asset_url' => env('ASSET_URL', 'http://10.154.3.153:8080/awasallot/public'),
+    // 'url' => env('APP_URL', 'http://10.154.3.159:8080/awasallot'),
+    //'asset_url' => env('ASSET_URL', 'http://10.154.3.159:8080/awasallot/public'),
+    'url' => env('APP_URL', 'http://10.154.3.99/awasallot/'),
+    'asset_url' => env('ASSET_URL', 'http://10.154.3.99/awasallot/'),
+  // 'url' => env('APP_URL', 'http://10.154.3.159:8080/awasallot/'),
+   //'asset_url' => env('ASSET_URL', 'http://10.154.3.159:8080/awasallot/'),
+ 'soap_service_url' => env('SOAP_SERVICE_URL', 'https://staging5.gujarat.gov.in/ssotest/adminservice/JSSOService.asmx?WSDL'),
+   //'sso_url' => env('SSO_URL',"https://staging5.gujarat.gov.in/SSOtest/SSO.aspx?Rurl=http://10.154.3.153:8080/awasallot/departmentlogin"),
+   'sso_url' => env('SSO_URL',"https://staging5.gujarat.gov.in/SSOtest/SSO.aspx?Rurl=http://10.154.3.99/awasallot/departmentlogin"),
+   // 'sso_url' => env('SSO_URL',"https://sso.gujarat.gov.in/SSO.aspx?Rurl==https://patnagarseva.gujarat.gov.in/departmentlogin"), add on live 6-12-2024 comment above
 
     /*
     |--------------------------------------------------------------------------

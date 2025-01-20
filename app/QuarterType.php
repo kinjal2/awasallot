@@ -56,7 +56,7 @@ public function requestsB()
 {
     return $this->hasMany(TQuarterRequestB::class, 'quartertype', 'quartertype');
 }
-public function calculateDgWno($dg_quartertype)
+public function calculateDgWno($dg_quartertype,$officecode)
 {
     // Fetch the last Wno for each type of request and prioritize them
     $dg_last_wno = self::with(['requestsA' => function ($query) {
@@ -65,6 +65,7 @@ public function calculateDgWno($dg_quartertype)
         $query->whereNotNull('wno')->where('IsPriority', 'N')->orderByDesc('wno')->take(1);
     }])
         ->where('quartertype', $dg_quartertype)
+        ->where('officecode', '=', $officecode)
         ->first();
 
     // Check if $dg_last_wno is null
@@ -84,24 +85,27 @@ public function calculateDgWno($dg_quartertype)
 
     return $dg_last_wno_value + 1;
 }
-public  function getNextWno($quartertype)
+public  function getNextWno($quartertype,$officecode)
     {
         $lastWnoA = TQuarterRequestA::where('quartertype', $quartertype)
             ->where('is_priority', 'N')
+            ->where('officecode', '=', $officecode)
             ->whereNotNull('wno')
             ->max('wno');
 
         $lastWnoB = TQuarterRequestB::where('quartertype', $quartertype)
             ->where('is_priority', 'N')
+            ->where('officecode', '=', $officecode)
             ->whereNotNull('wno')
             ->max('wno');
 
         return max($lastWnoA ?? 0, $lastWnoB ?? 0) + 1;
     }
-public function getNextRWno($q)
+public function getNextRWno($q,$officecode)
 {
     $maxObj = TQuarterRequestA::where('quartertype', $q)
     ->where('is_priority', 'N')
+    ->where('officecode', '=', $officecode)
     ->whereNotNull('wno')
     ->whereNotNull('r_wno')
     ->orderByDesc('r_wno')
@@ -110,6 +114,7 @@ public function getNextRWno($q)
 
 $maxObj1 = TQuarterRequestB::where('quartertype', $q)
     ->where('is_priority', 'N')
+    ->where('officecode', '=', $officecode)
     ->whereNotNull('wno')
     ->whereNotNull('r_wno')
     ->orderByDesc('r_wno')

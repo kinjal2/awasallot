@@ -159,12 +159,14 @@
                         <label for="is_police_staff"> {{ __('profile.is_police') }} <span class="error">*</span></label>
                         {{ Form::select('is_police_staff',['' => 'Select An Option'] + getYesNo(),($users->is_police_staff)?$users->is_police_staff:'',['id'=>'is_police_staff','class'=>'form-control select2']) }}
                      </div>
+                     <label id="is_police_staff-error" class="error" for="is_police_staff"></label>
                   </div>
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="is_fix_pay_staff"> {{ __('profile.is_fix_pay') }} <span class="error">*</span></label>
-                        {{ Form::select('is_fix_pay_staff',['' => 'Select An Option'] +getYesNo(),($users->is_fix_pay_staff)?$users->is_fix_pay_staff:'',['id'=>'is_transferable','class'=>'form-control select2']) }}
+                        {{ Form::select('is_fix_pay_staff',['' => 'Select An Option'] +getYesNo(),($users->is_fix_pay_staff)?$users->is_fix_pay_staff:'',['id'=>'is_fix_pay_staff','class'=>'form-control select2']) }}
                      </div>
+                     <label id="is_fix_pay_staff-error" class="error" for="is_fix_pay_staff"></label>
                   </div>
 
                   <div class="col-md-3">
@@ -410,6 +412,13 @@
          "office_email_id": {
             "required": true,
             "email": true
+         },
+         is_police_staff: {
+            "required": true,
+           
+         },
+         is_fix_pay_staff:{
+         "required": true,
          },
          "appointment_date": {
             "required": true,
