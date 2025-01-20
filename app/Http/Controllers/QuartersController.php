@@ -992,18 +992,21 @@ class QuartersController extends Controller
     }
     public function saveapplication(request $request)
     {
-        //dd( $request);
+        
+        $officecode = Session::get('officecode');
         $status = $request->status;
         $requestid = $request->requestid;
         $dg_allotment = $request->dg_allotment;
         $rv = $request->rv;
-        $dg_request_id = TQuarterRequestA::orderBy('requestid', 'DESC')->value('requestid');
+        $dg_request_id = TQuarterRequestA::where('officecode', '=', $officecode)->orderBy('requestid', 'DESC')->value('requestid');
+        //dd($dg_request_id );
         $dg_request_id += 1;
         //get data using request and revision id
         $result = Tquarterrequesta::where('requestid', $requestid)
             ->where('rivision_id', $rv)
+            ->where('officecode', '=', $officecode)
             ->first();
-        //  print_r( $result);
+       //  dd( $result);
         //dd($status);
       //  dd($request->submit_issue);
         //if ($status != 0) {
@@ -1011,12 +1014,12 @@ class QuartersController extends Controller
             try {
 
                 $quarterTypeInstance = new QuarterType();
-                $wno = $quarterTypeInstance->getNextWno($result->quartertype);
+                $wno = $quarterTypeInstance->getNextWno($result->quartertype,$officecode);
                 // echo $wno; exit;
 
                 // Retrieve r_wno value
-                $rWnoA = TQuarterRequestA::getMaxRwno($result->quartertype);
-                $rWnoB = TQuarterRequestB::getMaxRwno($result->quartertype);
+                $rWnoA = TQuarterRequestA::getMaxRwno($result->quartertype,$officecode);
+                $rWnoB = TQuarterRequestB::getMaxRwno($result->quartertype,$officecode);
                 $rWno = max($rWnoA, $rWnoB) + 1;
                 // Update the TQuarterRequestA record
                 TQuarterRequestA::where('requestid', $requestid)
@@ -1061,7 +1064,7 @@ class QuartersController extends Controller
                         ->first();
 
                     $quarterTypeInstance = new QuarterType();
-                    $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype);
+                    $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype,$officecode);
 
                     // Create and save a new TQuarterRequestA instance
                     $requestModel = TQuarterRequestA::create([

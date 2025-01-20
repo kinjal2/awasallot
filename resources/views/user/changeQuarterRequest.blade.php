@@ -47,7 +47,6 @@
                         <li class="flexlist-item"><span>{{ __('Designation') }} </span> : {{ $designation }}</li>
                         <li class="flexlist-item"><span>{{ __('Department/Office Name') }} </span> : {{ $officename }}</li>
                         <li class="flexlist-item"><span>{{ __('Is Department Head?') }} </span> : {{ Form::select('is_dept_head', getYesNo(), $users->is_dept_head ?? '', ['id' => 'is_dept_head', 'class' => ' ', 'disabled' => 'disabled']) }} </span></li>   
-                        <li class="flexlist-item"><span>{{ __('Is Department Head?') }} </span> : {{  $is_dept_head, getYesNo(), $users->is_dept_head ?? ''  }} </span></li>   
                         <li class="flexlist-item"><span>{{ __('Original Appointment Date in Government') }} </span> : {{ $appointment_date }}</li>
                         <li class="flexlist-item"><span>{{ __('Native Address') }} </span> : {{ $address }}</li>
                         <li class="flexlist-item"><span>{{ __('Retirement Date') }} </span> : {{ $retirement_date }}</li>
