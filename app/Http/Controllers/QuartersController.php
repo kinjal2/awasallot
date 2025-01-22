@@ -57,17 +57,27 @@ class QuartersController extends Controller
         $basic_pay = Session::get('basic_pay');  //dd($basic_pay);
         $q_officecode = Session::get('q_officecode');
         //dd($basic_pay,$q_officecode);
+        // session(['officecode' => $data->officecode]);
+        $officecode = session('officecode');
+        //session(['cardex_no' => $data->cardex_no]);
+        $cardex_no = session('cardex_no');
+        //session(['ddo_code' => $data->ddo_code]);
+        $ddo_code = session('ddo_code');
+        //dd($officecode,$cardex_no,$ddo_code,$basic_pay,$q_officecode);
         if ($basic_pay == null) {
             return redirect('profile')->with('message', "Please complete your profile.");
+        } else if ($basic_pay != null && $cardex_no == null && $ddo_code == null && $officecode == null) //21-01-2025
+        {
+
+            $this->_viewContent['page_title'] = "DDO Details";
+            return view('user/user_ddo_detail', $this->_viewContent);
         }
         //4/1/2025
-        else if ($basic_pay != null && $q_officecode==null)
-        {
+        else if ($basic_pay != null && $q_officecode == null) {
             $this->_viewContent['page_title'] = "Quarter Request";
-            $this->_viewContent['quartertype']='J';
+            $this->_viewContent['quartertype'] = 'J';
             return view('user/newQuarterRequest', $this->_viewContent);
-        }
-        else{
+        } else {
             //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
             $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
             $quarterrequesta = Tquarterrequesta::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->get();
@@ -76,7 +86,7 @@ class QuartersController extends Controller
                 return redirect('userdashboard')->with('message', "You have been registered for a new quarter request.");
             } else {
                 $this->_viewContent['page_title'] = "Quarter Request";
-                $this->_viewContent['quartertype']=$quarterselect[0]->quartertype;
+                $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                 return view('user/newQuarterRequest', $this->_viewContent);
             }
         }
@@ -86,15 +96,25 @@ class QuartersController extends Controller
         $uid = Session::get('Uid');
         $basic_pay = Session::get('basic_pay');
         $q_officecode = Session::get('q_officecode');
+        // session(['officecode' => $data->officecode]);
+        $officecode = session('officecode');
+        //session(['cardex_no' => $data->cardex_no]);
+        $cardex_no = session('cardex_no');
+        //session(['ddo_code' => $data->ddo_code]);
+        $ddo_code = session('ddo_code');
+        //dd($officecode,$cardex_no,$ddo_code);
         if ($basic_pay == null) {
             return redirect('profile')->with('failed', "Please complete your profile.");
-        }else if ($basic_pay != null && $q_officecode==null)
+        } else if ($basic_pay != null && $cardex_no == null && $ddo_code == null && $officecode == null) //21-01-2025
         {
+
+            $this->_viewContent['page_title'] = "DDO Details";
+            return view('user/user_ddo_detail', $this->_viewContent);
+        } else if ($basic_pay != null && $q_officecode == null) {
             $this->_viewContent['page_title'] = "Higher Category";
-            $this->_viewContent['quartertype']='j';
+            $this->_viewContent['quartertype'] = 'j';
             return view('user/higherCategoryQuarterRequest', $this->_viewContent);
-        }
-        else{
+        } else {
             //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
             $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
             $quarterrequesta = Tquarterrequestb::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->get();
@@ -104,7 +124,7 @@ class QuartersController extends Controller
                 return redirect('userdashboard')->with('message', "You have been registered for a higher category quarter request.");
             } else {
                 $this->_viewContent['page_title'] = "Higher Category";
-                $this->_viewContent['quartertype']=$quarterselect[0]->quartertype;
+                $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                 return view('user/higherCategoryQuarterRequest', $this->_viewContent);
             }
         }
@@ -127,8 +147,8 @@ class QuartersController extends Controller
             'hc_allotment_details'=>'required',*/
             'agree_rules' => 'required',
             //4/1/2025            
-            'cardex_no'=>'required',
-            'ddo_code'=>'required'
+            'cardex_no' => 'required',
+            'ddo_code' => 'required'
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -165,8 +185,8 @@ class QuartersController extends Controller
                 //$Tquarterrequestb->is_accepted = empty($request->get('agree_rules')) ? 0 : 1;
                 $Tquarterrequestb->request_date = date('Y-m-d');
                 //3/1/2025
-                $Tquarterrequestb->cardex_no=$request->get('cardex_no');
-                $Tquarterrequestb->ddo_code=$request->get('ddo_code');
+                $Tquarterrequestb->cardex_no = $request->get('cardex_no');
+                $Tquarterrequestb->ddo_code = $request->get('ddo_code');
                 $Tquarterrequestb->save();
                 session()->forget(['cardex_no', 'ddo_code']);
                 return redirect()->back()->withErrors('message', 'IT WORKS!');
@@ -213,7 +233,7 @@ class QuartersController extends Controller
                 ->withErrors($validator);
         } else {
             $data = $request->input();
-             // dd($data);
+            // dd($data);
             $officecode = Session::get('officecode');
             //dd($officecode);
             $deputation_date = Carbon::createFromFormat('d-m-Y', $request->get('deputation_date'));
@@ -249,12 +269,12 @@ class QuartersController extends Controller
                 $Tquarterrequesta->is_priority = 'N';
                 $Tquarterrequesta->uid = $uid;
                 $Tquarterrequesta->officecode = $officecode;
-                $Tquarterrequesta->choice1=$request->get('choice1');
-                $Tquarterrequesta->choice2=$request->get('choice2');
-                $Tquarterrequesta->choice3=$request->get('choice3');
+                $Tquarterrequesta->choice1 = $request->get('choice1');
+                $Tquarterrequesta->choice2 = $request->get('choice2');
+                $Tquarterrequesta->choice3 = $request->get('choice3');
                 //3/1/2025
-                $Tquarterrequesta->cardex_no=$request->get('cardex_no');
-                $Tquarterrequesta->ddo_code=$request->get('ddo_code');
+                $Tquarterrequesta->cardex_no = $request->get('cardex_no');
+                $Tquarterrequesta->ddo_code = $request->get('ddo_code');
                 $Tquarterrequesta->save();
                 session()->forget(['cardex_no', 'ddo_code']);
                 return redirect('quartersuser')->with('Success', "Data Saved Successfully");
@@ -407,8 +427,8 @@ class QuartersController extends Controller
     </a>' . "&nbsp;";
 
                 // Conditional check for the upload button
-              //  if ($row->inward_no == '' &&  $row->is_ddo_varified==2) { // Replace with your own condition
-              if (($row->inward_no == '' &&  $row->is_ddo_varified==0)|| ($row->inward_no != '' &&  $row->is_ddo_varified==2) ) {   
+                //  if ($row->inward_no == '' &&  $row->is_ddo_varified==2) { // Replace with your own condition
+                if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2)) {
                     $btn1 .= '<a href="' . \URL::action('QuartersController@uploaddocument') .
                         "?r=" . base64_encode($row->requestid) .
                         "&type=" . base64_encode($row->type) .
@@ -486,7 +506,7 @@ class QuartersController extends Controller
         }
     }
     public function uploaddocument()
-    {   
+    {
 
         $request_id = base64_decode($_REQUEST['r']);
         $type = base64_decode($_REQUEST['type']);
@@ -513,7 +533,7 @@ class QuartersController extends Controller
         //     ->pluck('document_name', 'document_type');
 
 
-        
+
         // $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
         //     //->whereNotIn('document_type', [2, 6, 9, 10, 3, 7]) // Exclude certain document types
         //     ->whereNotIn('document_type', [6, 9, 10]) // Exclude certain document types
@@ -536,46 +556,47 @@ class QuartersController extends Controller
 
         // Fetch user-specific details (only once)
         $user = User::find(Session::get('Uid'));
-        
+
         $excludedDocumentTypes = [6,  10];
 
         //19-11-2024 to show polics staff ceriticate if user is police staff
         $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-        ->whereNotIn('document_type', [6,10]) // Exclude certain document types
-        ->whereNotIn('document_type', function ($query) {
-            $query->select('document_id')  // Select the correct column (document_id)
-                ->from('master.file_list')         // Correct table name (assuming it's 'filelists')
-                ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
-        })
-        // Conditionally add the exclusion for document type 8 based on the user's role
-        ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
-            // Only apply this whereNotIn condition if the user is not a police staff
-            return $query->whereNotIn('document_type', [8]);  // Exclude document type 8
-        })
-        // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
-        ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
-            // Only apply this whereNotIn condition if the user is not a police staff
-            return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
-        })
-        ->when(
-            // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
-            (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' && 
-            User::where('id', Session::get('Uid'))->value('dis_per') <= 60) || 
-            User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
-            function ($query) {
-                // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
-                return $query->whereNotIn('document_type', [9]);
+            ->whereNotIn('document_type', [6, 10]) // Exclude certain document types
+            ->whereNotIn('document_type', function ($query) {
+                $query->select('document_id')  // Select the correct column (document_id)
+                    ->from('master.file_list')         // Correct table name (assuming it's 'filelists')
+                    ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
             })
-        ->pluck('document_name', 'document_type');
+            // Conditionally add the exclusion for document type 8 based on the user's role
+            ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                // Only apply this whereNotIn condition if the user is not a police staff
+                return $query->whereNotIn('document_type', [8]);  // Exclude document type 8
+            })
+            // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+            ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
+                // Only apply this whereNotIn condition if the user is not a police staff
+                return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+            })
+            ->when(
+                // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                    User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                    User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                function ($query) {
+                    // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                    return $query->whereNotIn('document_type', [9]);
+                }
+            )
+            ->pluck('document_name', 'document_type');
 
-       // $lastQuery = DB::getQueryLog();
-       //     print_r($lastQuery);
-            // Get the last query executed
+        // $lastQuery = DB::getQueryLog();
+        //     print_r($lastQuery);
+        // Get the last query executed
         //  $query = end($lastQuery);
 
         // Print the SQL query and bindings for debugging
         //dd($query['query'], $query['bindings']);
-          //  dd($document_list);
+        //  dd($document_list);
         $attacheddocument = DB::table('master.file_list')
             ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
             ->WHERE('uid', Session::get('Uid'))
@@ -992,7 +1013,7 @@ class QuartersController extends Controller
     }
     public function saveapplication(request $request)
     {
-        
+
         $officecode = Session::get('officecode');
         $status = $request->status;
         $requestid = $request->requestid;
@@ -1006,20 +1027,20 @@ class QuartersController extends Controller
             ->where('rivision_id', $rv)
             ->where('officecode', '=', $officecode)
             ->first();
-       //  dd( $result);
+        //  dd( $result);
         //dd($status);
-      //  dd($request->submit_issue);
+        //  dd($request->submit_issue);
         //if ($status != 0) {
-         if ($request->submit_issue == null) {
+        if ($request->submit_issue == null) {
             try {
 
                 $quarterTypeInstance = new QuarterType();
-                $wno = $quarterTypeInstance->getNextWno($result->quartertype,$officecode);
+                $wno = $quarterTypeInstance->getNextWno($result->quartertype, $officecode);
                 // echo $wno; exit;
 
                 // Retrieve r_wno value
-                $rWnoA = TQuarterRequestA::getMaxRwno($result->quartertype,$officecode);
-                $rWnoB = TQuarterRequestB::getMaxRwno($result->quartertype,$officecode);
+                $rWnoA = TQuarterRequestA::getMaxRwno($result->quartertype, $officecode);
+                $rWnoB = TQuarterRequestB::getMaxRwno($result->quartertype, $officecode);
                 $rWno = max($rWnoA, $rWnoB) + 1;
                 // Update the TQuarterRequestA record
                 TQuarterRequestA::where('requestid', $requestid)
@@ -1064,7 +1085,7 @@ class QuartersController extends Controller
                         ->first();
 
                     $quarterTypeInstance = new QuarterType();
-                    $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype,$officecode);
+                    $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype, $officecode);
 
                     // Create and save a new TQuarterRequestA instance
                     $requestModel = TQuarterRequestA::create([
@@ -1353,69 +1374,71 @@ class QuartersController extends Controller
 
             $quartertype = $result->quartertype;
 
-           // Get user data for is_police_staff
-           $isPoliceStaff = User::where('id', Session::get('Uid'))->value('is_police_staff');
-           $isFixPayStaff = User::where('id', Session::get('Uid'))->value('is_fix_pay_staff');
-           //dd($isPoliceStaff);
-           //dd($isFixPayStaff);
-           // Count documents where 'performa' contains 'a'
-           //$doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')->whereNotIn('document_type', [2, 6, 9, 10,3,7])->count();
-           
+            // Get user data for is_police_staff
+            $isPoliceStaff = User::where('id', Session::get('Uid'))->value('is_police_staff');
+            $isFixPayStaff = User::where('id', Session::get('Uid'))->value('is_fix_pay_staff');
+            //dd($isPoliceStaff);
+            //dd($isFixPayStaff);
+            // Count documents where 'performa' contains 'a'
+            //$doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')->whereNotIn('document_type', [2, 6, 9, 10,3,7])->count();
+
             // Count documents where 'performa' contains 'a' and exclude certain document types --19-11-2024
-           $doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')
-           //->whereNotIn('document_type', [2, 6, 9, 10, 3, 7])  // Exclude document types
-           ->whereNotIn('document_type', [ 6,  10])  // Exclude document types
-           ->when($isPoliceStaff == 'N', function ($query) {
-               // If user is not a police staff, exclude document_type = 8
-               return $query->whereNotIn('document_type', [8]);
-           })
-           // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
-           ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
-               // Only apply this whereNotIn condition if the user is not a police staff
-               return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
-           })
-           ->when(
-            // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
-            (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' && 
-            User::where('id', Session::get('Uid'))->value('dis_per') <= 60) || 
-           User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
-           function ($query) {
-               // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
-               return $query->whereNotIn('document_type', [9]);
-           })
-           ->count();
-   //dd($doc_tobe_submit);
-           // Count submitted documents filtered by request ID and 'performa'
-          /* $doc_submitted = Filelist::where('request_id', $requestid)->whereNotIn('document_id', [2, 6, 9, 10,3,7])
+            $doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')
+                //->whereNotIn('document_type', [2, 6, 9, 10, 3, 7])  // Exclude document types
+                ->whereNotIn('document_type', [6,  10])  // Exclude document types
+                ->when($isPoliceStaff == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_type', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_type', [9]);
+                    }
+                )
+                ->count();
+            //dd($doc_tobe_submit);
+            // Count submitted documents filtered by request ID and 'performa'
+            /* $doc_submitted = Filelist::where('request_id', $requestid)->whereNotIn('document_id', [2, 6, 9, 10,3,7])
                ->where('performa', 'a')
                ->count();*/
-               
-           // Count submitted documents filtered by request ID, 'performa' and exclude certain document types --19-11-2024
-           $doc_submitted = Filelist::where('request_id', $requestid)
-           //->whereNotIn('document_id', [2, 6, 9, 10, 3, 7])  // Exclude document types
-           ->whereNotIn('document_id', [ 6,  10])
-           ->where('performa', 'a')
-           ->when($isPoliceStaff == 'N', function ($query) {
-               // If user is not a police staff, exclude document_type = 8
-               return $query->whereNotIn('document_id', [8]);
-           })
-           // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
-           ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
-               // Only apply this whereNotIn condition if the user is not a police staff
-               return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
-           })
-           ->when(
-            // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
-            (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' && 
-            User::where('id', Session::get('Uid'))->value('dis_per') <= 60) || 
-           User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
-           function ($query) {
-               // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
-               return $query->whereNotIn('document_id', [9]);
-           })
-           ->count();
-           
-           // dd($doc_tobe_submit,'hii<br>',$doc_submitted);
+
+            // Count submitted documents filtered by request ID, 'performa' and exclude certain document types --19-11-2024
+            $doc_submitted = Filelist::where('request_id', $requestid)
+                //->whereNotIn('document_id', [2, 6, 9, 10, 3, 7])  // Exclude document types
+                ->whereNotIn('document_id', [6,  10])
+                ->where('performa', 'a')
+                ->when($isPoliceStaff == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_id', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_id', [9]);
+                    }
+                )
+                ->count();
+
+            // dd($doc_tobe_submit,'hii<br>',$doc_submitted);
             if ($doc_tobe_submit != $doc_submitted) { //dd("test");
 
 
@@ -1977,25 +2000,34 @@ class QuartersController extends Controller
             ->rawColumns(['delete', 'action'])
             ->make(true);
     }
-	public function requestchange(Request $request)
+    public function requestchange(Request $request)
     {
         // Step 1: Retrieve user ID from the session
         $uid = Session::get('Uid');
         $basic_pay = Session::get('basic_pay');
-    
+        $officecode = session('officecode');
+        $cardex_no = session('cardex_no');
+        $ddo_code = session('ddo_code');
+        //dd($officecode,$cardex_no,$ddo_code,$basic_pay,$q_officecode);
         // Step 2: Check if the user profile is complete
         if ($basic_pay == null) {
             return redirect('profile')->with('message', "Please complete your profile.");
         }
-    
+
         // Step 3: Get the user data from the User model
         $userdata = User::where('id', $uid)->first();
-   // dd($userdata);
+        // dd($userdata);
         // Step 4: Check if user exists
         if (!$userdata) {
             return redirect('profile')->with('message', "User not found.");
         }
-    
+        else if($basic_pay != null && $cardex_no==null && $ddo_code==null && $officecode==null) //21-01-2025
+        {    
+           
+            $this->_viewContent['page_title'] = "DDO Details";
+            $this->_viewContent['page']='request_change';
+            return view('user/user_ddo_detail', $this->_viewContent);
+        }
         // Step 5: Prepare the data array for the view
         $data = [
             'name' => $userdata->name,
@@ -2018,10 +2050,10 @@ class QuartersController extends Controller
             'office_address' => $userdata->office_address,
             'office_phone' => $userdata->office_phone,
         ];
-    
+
         // Step 6: Compute total pay
         $data['totalpay'] = $data['basicpay'] + $data['personalpay'] + $data['specialpay'] + $data['deputationpay'];
-    
+
         // Step 7: Fetch Current Quarter
         $currentQuarter = QuarterAllotment::where('uid', $uid)
             ->where('isoccupied', 'Y')
@@ -2030,18 +2062,18 @@ class QuartersController extends Controller
 
         $currentReadonly = '';
         $allottedReadonly = '';
-        $wo_unitno=$wo_blockno = $wo_qaid= $cur_qaid = $cur_quartertype = $cur_areacode = $cur_block_no = $cur_unitno = $possesiondate = $wo_areacode = null;
-        
+        $wo_unitno = $wo_blockno = $wo_qaid = $cur_qaid = $cur_quartertype = $cur_areacode = $cur_block_no = $cur_unitno = $possesiondate = $wo_areacode = null;
+
         // Initialize the variable for the allotted quarter type (wo_quartertype)
         $wo_quartertype = null;
-    
+
         if (!$currentQuarter) {
             // Fetch Allotted Quarter
             $allottedQuarter = QuarterAllotment::where('uid', $uid)
                 ->where('isoccupied', 'N')
                 ->orderBy('allotment_date', 'desc')
                 ->first();
-         
+
             if ($allottedQuarter) {
                 $wo_qaid = $allottedQuarter->qaid;
                 $wo_quartertype = $allottedQuarter->quartertype;  // This should be set correctly when allotted quarter exists
@@ -2050,7 +2082,7 @@ class QuartersController extends Controller
                 $wo_unitno = $allottedQuarter->unitno;
                 $allottedReadonly = "disabled";
             }
-        } else { 
+        } else {
             // Set current quarter data
             $cur_qaid = $currentQuarter->qaid;
             $cur_quartertype = $currentQuarter->quartertype;
@@ -2060,59 +2092,59 @@ class QuartersController extends Controller
             $possesiondate = $currentQuarter->occupancy_date;
             $currentReadonly = "disabled";
         }
-    
+
         // Step 8: Fetch the quarter type based on basic pay
         $quartertype = QuarterType::where('bpay_from', '<=', $basic_pay)
             ->where('bpay_to', '>=', $basic_pay)
             ->orderBy('bpay_from')
             ->first();
-    
+
         // Prepare quarter type select options
         $quartertypeopt = "<option value=''>-- Select --</option>";
         if ($quartertype) {
             $quartertypeopt .= "<option value='" . $quartertype->quartertype . "'>" . $quartertype->quartertype_g . "</option>";
         }
-    
+
         // Step 9: Fetch all quarter types, ordered by 'BpayFrom' in descending order
         $quartertypes = QuarterType::orderBy('bpay_from', 'desc')->get();
         $oldqtypeopt = "<option value=''>-- Select --</option>";
         $woqtypeopt = "<option value=''>-- Select --</option>";
-    
+
         foreach ($quartertypes as $qt) {
             $selectedoq = ($qt->quartertype == $cur_quartertype) ? 'selected' : '';
             $oldqtypeopt .= "<option value='" . $qt->quartertype . "' $selectedoq>" . $qt->quartertype_g . "</option>";
-    
+
             $selectedwo = ($qt->quartertype == $wo_quartertype) ? 'selected' : '';
             $woqtypeopt .= "<option value='" . $qt->quartertype . "' $selectedwo>" . $qt->quartertype_g . "</option>";
         }
-    
+
         // Step 10: Fetch the sectors (areas) based on quarter type
         $sectors = DB::table('master.m_quarters as mq')
-        ->distinct()
-        ->select('mq.areacode', 'ma.areaname')
-        ->join('master.m_area as ma', 'ma.areacode', '=', 'mq.areacode')  // Proper aliasing of the tables
-        ->where('mq.quartertype', $quartertype->quartertype)
-        ->orderBy('ma.areaname', 'desc')  // Proper column aliasing
-        ->get();
-    
+            ->distinct()
+            ->select('mq.areacode', 'ma.areaname')
+            ->join('master.m_area as ma', 'ma.areacode', '=', 'mq.areacode')  // Proper aliasing of the tables
+            ->where('mq.quartertype', $quartertype->quartertype)
+            ->orderBy('ma.areaname', 'desc')  // Proper column aliasing
+            ->get();
+
         $areaopt = "<option value=''>-- Select --</option>";
         $woareaopt = "<option value=''>-- Select --</option>";
-    
+
         foreach ($sectors as $area) {
             $selected = ($area->areacode == $cur_areacode) ? 'selected' : '';
             $areaopt .= "<option value='" . $area->areacode . "' $selected>" . $area->areaname . "</option>";
-    
+
             $selected = ($area->areacode == $wo_areacode) ? 'selected' : '';
             $woareaopt .= "<option value='" . $area->areacode . "' $selected>" . $area->areaname . "</option>";
         }
-    
+
         // Step 11: Fetch all available areas for the open selection
         $openareaopt = "<option value=''>-- Select --</option>";
         $areas = Area::orderBy('areacode')->get();
         foreach ($areas as $area) {
             $openareaopt .= "<option value='" . $area->areacode . "'>" . $area->areaname . "</option>";
         }
-    
+
         // Step 12: Prepare marital status options
         $mrg = ['M' => 'Married', 'U' => 'Unmarried'];
         $maratialstatusopt = "<option value=''>-- Select --</option>";
@@ -2120,7 +2152,7 @@ class QuartersController extends Controller
             $selected = ($key == $userdata->maratial_status) ? 'selected' : '';
             $maratialstatusopt .= "<option value='$key' $selected>$value</option>";
         }
-    
+
         // Step 13: Merge all view data
         $imageData = generateImage($uid);
         // Assign the image data to the data array to be passed to the view
@@ -2141,13 +2173,13 @@ class QuartersController extends Controller
         $this->_viewContent['wo_qaid'] = $wo_qaid;
         $this->_viewContent['wo_blockno'] = $wo_blockno;
         $this->_viewContent['wo_unitno'] = $wo_unitno;
-        
+
         $this->_viewContent['page_title'] = "Change Request";
-    //dd($this->_viewContent['areaopt']);
+        //dd($this->_viewContent['areaopt']);
         // Step 14: Return the view with the data
         return view('user.changeQuarterRequest', array_merge($this->_viewContent, $data));
     }
-    
+
     public function updateFileStatusAdmin(Request $request)
     {
         // Validate the incoming request
@@ -2158,12 +2190,12 @@ class QuartersController extends Controller
         //dd("hello");
         // Get the document ID and checked status
         $docId = $request->input('doc_id');
-    //dd($docId);
+        //dd($docId);
         $isVerified = $request->input('is_file_admin_verified'); // 1 for checked, 2 for unchecked
 
         // Update the file status
         FileList::where('doc_id', $docId)
-                ->update(['is_file_admin_verified' => $isVerified]);
+            ->update(['is_file_admin_verified' => $isVerified]);
 
         // Return a success response
         return response()->json(['success' => true]);
@@ -2181,20 +2213,23 @@ class QuartersController extends Controller
         $data = DDOCode::where('cardex_no', '=', $cardexNo)->get(['ddo_code', 'ddo_office']); // Adjust fields as necessary
 
         return response()->json($data);
-    } 
+    }
     //3/1/2025
     public function saveOfficeCode(Request $request)
     {
         $rules = [
             'cardex_no' => 'required',
-            'ddo_code'=>'required',
+            'ddo_code' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return redirect('quartersuser')->withInput()->withErrors($validator);
         }
         try {
-            $data = DDOCode::select('officecode','cardex_no','ddo_code')->where('cardex_no', '=', $request->input('cardex_no'))->where('ddo_code', '=', $request->input('ddo_code'))->first();
+            $uid=Session::get('Uid');
+            dd($uid);
+            $data = DDOCode::select('officecode', 'cardex_no', 'ddo_code')->where('cardex_no', '=', $request->input('cardex_no'))->where('ddo_code', '=', $request->input('ddo_code'))->first();
+            
             //dd($data);
             if (!$data) {
                 // If no data is found, redirect back with an error message
@@ -2204,14 +2239,16 @@ class QuartersController extends Controller
             session(['officecode' => $data->officecode]);
             session(['cardex_no' => $data->cardex_no]);
             session(['ddo_code' => $data->ddo_code]);
-            if($request->page =='new_request'){
+            if ($request->page == 'new_request') {
                 return redirect('quartersuser');
             }
-            else{
+            else if($request->page == 'higher_request')
+            {
                 return redirect('quartershigher');
+            } 
+            else {
+                return redirect('quarterschange');
             }
-
-
         } catch (Exception $e) {
             dd($e->getMessage());
             return redirect('session save')->with('failed', "operation failed");

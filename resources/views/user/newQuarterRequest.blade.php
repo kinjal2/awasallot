@@ -10,7 +10,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item">
-                            <a href="#">{{ __('common.home') }} <p>{{ session('cardex_no') }}</p></a>
+                            <a href="#">{{ __('common.home') }}</a>
                         </li>
                         <li class="breadcrumb-item active">{{ __('request.new_request') }} </li>
                     </ol>
