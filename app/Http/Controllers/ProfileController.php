@@ -288,7 +288,7 @@ class ProfileController extends Controller
     }
     public function updateDDODetails(Request $request)
     {
-        
-       echo "hello";
+        $this->_viewContent['page_title']='DDO Details';
+        return view('user/user_ddo_detail',$this->_viewContent);
     }
 }
