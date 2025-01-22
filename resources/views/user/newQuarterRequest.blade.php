@@ -24,7 +24,7 @@
     <!-- /.content-header -->
     <div class="row">
         <div class="col-12 col-md-12">
-            <div class="card  card-tabs">
+            <!-- <div class="card  card-tabs">
                 <div class="card-header p-0 pt-1">
                     <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                         <li class="nav-item">
@@ -35,10 +35,10 @@
                                 href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">{{ __('request.request_details') }}</a>
                         </li>
                     </ul>
-                </div>
+                </div> -->
                 <div class="card-body">
-                  <div class="tab-content" id="custom-tabs-one-tabContent">
-                    <div class="tab-pane fade @if(empty(session('cardex_no'))) active show @endif" id="custom-tabs-one-home" role="tabpanel"
+                  <!-- <div class="tab-content" id="custom-tabs-one-tabContent"> -->
+                    <!-- <div class="tab-pane fade @if(empty(session('cardex_no'))) active show @endif" id="custom-tabs-one-home" role="tabpanel"
                         aria-labelledby="custom-tabs-one-home-tab">
                         <form method="POST" id="cardexForm" name="cardexForm" action="{{ url('saveOfficeCode') }}">
                             <input type="hidden" id="page" name="page" value="new_request" />
@@ -63,9 +63,9 @@
 
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
-                    </div>
-                    <div class="tab-pane fade @if(!empty(session('cardex_no'))) active show @endif" id="custom-tabs-one-profile" role="tabpanel"
-                        aria-labelledby="custom-tabs-one-profile-tab">
+                    </div> -->
+                    <!-- <div class="tab-pane fade @if(!empty(session('cardex_no'))) active show @endif" id="custom-tabs-one-profile" role="tabpanel"
+                        aria-labelledby="custom-tabs-one-profile-tab"> -->
                         @include(Config::get('app.theme').'.template.severside_message')
                         @include(Config::get('app.theme').'.template.validation_errors')
                         <form method="POST" name="front_annexurea" id="front_annexurea" action="{{ url('savenewrequest') }}" enctype="multipart/form-data">
@@ -398,8 +398,8 @@
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </form>
-                    </div>
-                  </div>
+                    <!-- </div> -->
+                  <!-- </div> -->
                 </div>
                 <!-- /.card -->
             </div>
