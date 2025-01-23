@@ -22,7 +22,9 @@ class RegistrationController extends Controller
                $gid = $request->get('gid');
                  //try{
                     $url = config('app.url');
+                    //dd($url);
                     $soap_service_url = config('app.soap_service_url');
+                    //dd($soap_service_url);
                     $client = new \SoapClient($soap_service_url);
 
                      $resp =  $client->IsValidTokan(array('GId' => $gid,'AppURL' =>  $url));

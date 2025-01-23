@@ -70,6 +70,7 @@ class QuartersController extends Controller
         {
 
             $this->_viewContent['page_title'] = "DDO Details";
+            $this->_viewContent['page']="new_request";
             return view('user/user_ddo_detail', $this->_viewContent);
         }
         //4/1/2025
@@ -109,6 +110,7 @@ class QuartersController extends Controller
         {
 
             $this->_viewContent['page_title'] = "DDO Details";
+            $this->_viewContent['page']="higher_request";
             return view('user/user_ddo_detail', $this->_viewContent);
         } else if ($basic_pay != null && $q_officecode == null) {
             $this->_viewContent['page_title'] = "Higher Category";
@@ -147,8 +149,8 @@ class QuartersController extends Controller
             'hc_allotment_details'=>'required',*/
             'agree_rules' => 'required',
             //4/1/2025            
-            'cardex_no' => 'required',
-            'ddo_code' => 'required'
+           // 'cardex_no' => 'required',
+            //'ddo_code' => 'required'
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -165,6 +167,7 @@ class QuartersController extends Controller
             $request_id += 1;
             try {
                 $uid = Session::get('Uid');
+                $officecode = Session::get('officecode');
                 $Tquarterrequestb = new Tquarterrequestb;
                 $Tquarterrequestb->requestid = $request_id;
                 $Tquarterrequestb->rivision_id = 0;
@@ -185,10 +188,11 @@ class QuartersController extends Controller
                 //$Tquarterrequestb->is_accepted = empty($request->get('agree_rules')) ? 0 : 1;
                 $Tquarterrequestb->request_date = date('Y-m-d');
                 //3/1/2025
-                $Tquarterrequestb->cardex_no = $request->get('cardex_no');
-                $Tquarterrequestb->ddo_code = $request->get('ddo_code');
+                $Tquarterrequestb->cardex_no = session('cardex_no');
+                $Tquarterrequestb->ddo_code = session('ddo_code');
+                $Tquarterrequestb->officecode = $officecode;
                 $Tquarterrequestb->save();
-                session()->forget(['cardex_no', 'ddo_code']);
+                //session()->forget(['cardex_no', 'ddo_code']);
                 return redirect()->back()->withErrors('message', 'IT WORKS!');
             } catch (Exception $e) {
                 return redirect('insert')->with('failed', "operation failed");
@@ -273,10 +277,10 @@ class QuartersController extends Controller
                 $Tquarterrequesta->choice2 = $request->get('choice2');
                 $Tquarterrequesta->choice3 = $request->get('choice3');
                 //3/1/2025
-                $Tquarterrequesta->cardex_no = $request->get('cardex_no');
-                $Tquarterrequesta->ddo_code = $request->get('ddo_code');
+                $Tquarterrequesta->cardex_no = session('cardex_no');
+                $Tquarterrequesta->ddo_code = session('ddo_code');
                 $Tquarterrequesta->save();
-                session()->forget(['cardex_no', 'ddo_code']);
+                //session()->forget(['cardex_no', 'ddo_code']);
                 return redirect('quartersuser')->with('Success', "Data Saved Successfully");
             } catch (Exception $e) {
                 return redirect('insert')->with('failed', "operation failed");
@@ -1016,6 +1020,7 @@ class QuartersController extends Controller
 
         $officecode = Session::get('officecode');
         $status = $request->status;
+        //dd($status);
         $requestid = $request->requestid;
         $dg_allotment = $request->dg_allotment;
         $rv = $request->rv;
@@ -2227,9 +2232,11 @@ class QuartersController extends Controller
         }
         try {
             $uid=Session::get('Uid');
-            dd($uid);
+            //  dd($uid);
+           // dd($request->page);
             $data = DDOCode::select('officecode', 'cardex_no', 'ddo_code')->where('cardex_no', '=', $request->input('cardex_no'))->where('ddo_code', '=', $request->input('ddo_code'))->first();
-            
+            $updatedata=User::where('id', $uid)
+             ->update(['cardex_no' => $request->input('cardex_no'), 'ddo_code' =>$request->input('ddo_code')]);
             //dd($data);
             if (!$data) {
                 // If no data is found, redirect back with an error message

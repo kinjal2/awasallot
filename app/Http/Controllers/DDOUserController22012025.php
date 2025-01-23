@@ -914,16 +914,12 @@ class DDOUserController extends Controller
         'u.cardex_no'
     ])
     ->join('userschema.users as u', 'u.id', '=', 'a.uid')
-    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'a.ddo_code') // Join the ddo table
-    ->where('a.ddo_code', $ddoCode) // Filter by ddo_code
-    ->where('a.cardex_no',$cardexNo)
-    ->where('d.officecode', $officeCode)// Filter by office_code
+    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'u.ddo_code') // Join the ddo table
+    ->where('u.ddo_code', $ddoCode) // Filter by ddo_code
+    ->where('u.cardex_no',$cardexNo)
+    ->where('a.officecode', $officeCode)// Filter by office_code
     ->where('is_accepted', '=', 1)
     ->whereIn('is_ddo_varified',[0,2]); //12-12-2024   //filter by is_accepted
-
-
-   
-
 
     $second = DB::table('master.t_quarter_request_c AS c')
     ->select([
@@ -951,10 +947,10 @@ class DDOUserController extends Controller
         'u.cardex_no'
     ])
     ->join('userschema.users as u', 'u.id', '=', 'c.uid')
-    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'c.ddo_code') // Join the ddo table
-    ->where('c.ddo_code', $ddoCode) // Filter by ddo_code
-    ->where('c.cardex_no',$cardexNo)
-    ->where('d.officecode', $officeCode)// Filter by office_code
+    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'u.ddo_code') // Join the ddo table
+    ->where('u.ddo_code', $ddoCode) // Filter by ddo_code
+    ->where('u.cardex_no',$cardexNo)
+    ->where('c.officecode', $officeCode)// Filter by office_code
     ->where('is_accepted', '=', 1)//filter by is_accepted
     ->whereIn('is_ddo_varified',[0,2]);   //12-12-2024
 
@@ -984,10 +980,10 @@ $union = DB::table('master.t_quarter_request_b AS b')
         'u.cardex_no'
     ])
     ->join('userschema.users as u', 'u.id', '=', 'b.uid')
-    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'b.ddo_code') // Join the ddo table
-    ->where('b.ddo_code', $ddoCode) // Filter by ddo_code
-    ->where('b.cardex_no',$cardexNo)
-    ->where('d.officecode', $officeCode) // Filter by office_code
+    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'u.ddo_code') // Join the ddo table
+    ->where('u.ddo_code', $ddoCode) // Filter by ddo_code
+    ->where('u.cardex_no',$cardexNo)
+    ->where('b.officecode', $officeCode) // Filter by office_code
     ->where('is_accepted', '=', 1)  //filter by is_accepted
     ->whereIn('is_ddo_varified',[0,2]) //12-12-2024
     ->union($first)

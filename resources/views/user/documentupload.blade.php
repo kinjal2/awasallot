@@ -52,7 +52,7 @@
                                     <label for="exampleInputFile">Upload Photo</label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="image" name="image">
+                                            <input type="file" class="custom-file-input" id="image" name="image" onchange="updateFileName()">
                                             <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                         </div>
                                     </div>
@@ -281,5 +281,11 @@
             },
 
         });
+        function updateFileName() {
+        var fileInput = document.getElementById('image');
+        var fileName = fileInput.files[0].name;
+        var fileLabel = fileInput.nextElementSibling;
+        fileLabel.innerText = fileName;
+    }
     </script>
 @endpush

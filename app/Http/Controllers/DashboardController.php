@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Validator, Redirect, Response;
-use Session;
+
 use App\User;
 use App\Quarter;
 use App\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\DDOCode;
 use App\District;
 
@@ -211,17 +212,30 @@ class DashboardController extends Controller
         // Assuming the user has a 'cardex_no' attribute
         if ($usermaster) {
             // dd("hello");
-            /*$officecode = DDOCode::where('cardex_no', $usermaster->cardex_no)
-                ->where('ddo_code', $usermaster->ddo_code)
-                ->pluck('officecode')
-                ->first(); // Access the related ddocode*/
+             // Access the related ddocode*/
             if($usermaster->dcode != 6){
                 Session::put('q_officecode', 28084);
             }
             else{
                 Session::put('q_officecode', 28083);
             }
+            if($usermaster->cardex_no !=0 )
+            {
+                Session::put('cardex_no',$usermaster->cardex_no);
 
+            }
+            if($usermaster->ddo_code != 0)
+            {
+                Session::put('ddo_code',$usermaster->ddo_code);
+            }
+            if($usermaster->cardex_no !=0 && $usermaster->ddo_code !=0)
+            {
+                $officecode = DDOCode::where('cardex_no', $usermaster->cardex_no)
+                ->where('ddo_code', $usermaster->ddo_code)
+                ->pluck('officecode')
+                ->first();
+                Session::put('officecode', $officecode);
+            }
             /*if ($officecode) {
                 Session::put('officecode', $officecode);
                 if ($officecode != 28083) {

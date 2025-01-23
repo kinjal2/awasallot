@@ -19,49 +19,13 @@
         </div>
     </div>
 	<div class="row px-3">
-        <div class="col-12 col-md-12">
-            <div class="card  card-tabs">
-                <div class="card-header p-0 pt-1">
-                    <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link @if(session::get('cardex_no')=='') active @endif" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">{{ __('request.ddo_details') }}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @if(session('cardex_no')) active @endif" id="custom-tabs-one-profile-tab" data-toggle="pill"
-                                href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">User Details</a>
-                        </li>
-                    </ul>
+        <div class="col-md-12">
+            <div class="card  card-head">
+                <div class="card-header">
+                  <h3 class="card-title">{{ __('menus.Higher Category Quarter') }}</h3>
                 </div>
                 <div class="card-body">
-                    <div class="tab-content" id="custom-tabs-one-tabContent">
-                        <div class="tab-pane fade @if(session::get('cardex_no') =='') active show @endif" id="custom-tabs-one-home" role="tabpanel"
-                            aria-labelledby="custom-tabs-one-home-tab">
-                            <form method="POST" id="cardexForm" name="cardexForm" action="{{ url('saveOfficeCode') }}">
-                                <input type="hidden" id="page" name="page" value="higher_request" />
-                                @csrf
-                                <div class="form-group">
-                                    <label for="cardex_no">{{ __('Cardex No') }}</label>
-                                    <input type="text" class="form-control @error('cardex_no') is-invalid @enderror" name="cardex_no" id="cardex_no" value="{{ old('cardex_no') }}" required autofocus>
-                                    @error('cardex_no')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="ddo_code">{{ __('DDO Code') }}</label>
-                                    {{ Form::select('ddo_code',[null=>__('common.select')] ,"",['id'=>'ddo_code','class'=>' custon-control form-control  select2']) }}
-
-
-                                    @error('ddo_code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        </div>
-                        <div class="tab-pane fade @if(session('cardex_no') !='') active show @endif" id="custom-tabs-one-profile" role="tabpanel"
-                            aria-labelledby="custom-tabs-one-profile-tab">
+                 
                             @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <ul>
@@ -75,6 +39,7 @@
                                 @csrf
                                 <input type="hidden" id="cardex_no" name="cardex_no" value="{{session('cardex_no')}}" />
                                 <input type="hidden" id="ddo_code" name="ddo_code" value="{{session('ddo_code')}}" />
+                                <input type="hidden" id="page" name="page" value="higher_request" />
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -233,8 +198,6 @@
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
                 </div>
                 <!-- /.card -->
             </div>
