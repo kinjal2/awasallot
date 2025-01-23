@@ -246,14 +246,14 @@ ul.nav.nav-treeview li a i{
 @media(min-width: 480px){
   .flexlist-item{
     width: 50%;
-  } 
+  }
 }
 
 @media(min-width: 768px){
   .flexlist-item{
     width: 49%;
-    
-  } 
+
+  }
 }
 .quater_head {
   background: #57595c;
@@ -271,3 +271,5 @@ ul#custom-tabs-one-tab li a {
     background: #787878;
     color: #fff;
 }
+
+

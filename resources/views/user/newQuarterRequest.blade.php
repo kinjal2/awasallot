@@ -26,10 +26,10 @@
         <div class=" col-md-12">
             <div class="card  card-head">
                 <div class="card-header">
-                    <h3 class="card-title"> {{ __('request.request_details') }}</h3>    
+                    <h3 class="card-title"> {{ __('request.request_details') }}</h3>
                 </div>
                 <div class="card-body">
-                
+
                         @include(Config::get('app.theme').'.template.severside_message')
                         @include(Config::get('app.theme').'.template.validation_errors')
                         <form method="POST" name="front_annexurea" id="front_annexurea" action="{{ url('savenewrequest') }}" enctype="multipart/form-data">
@@ -312,19 +312,19 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="mb-4 pb-2">Choice 1</label>
-                                                    {{ Form::select('choice1',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice1','class'=>'form-control']) }}
+                                                    {{ Form::select('choice1',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice1','class'=>'form-control', 'onchange' => 'updateChoiceOptions()'])  }}
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="mb-4 pb-2">Choice 2</label>
-                                                    {{ Form::select('choice2',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice2','class'=>'form-control']) }}
+                                                    {{ Form::select('choice2',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice2','class'=>'form-control' , 'onchange' => 'updateChoiceOptions()']) }}
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="mb-4 pb-2">Choice 3</label>
-                                                    {{ Form::select('choice3',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice3','class'=>'form-control']) }}
+                                                    {{ Form::select('choice3',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice3','class'=>'form-control' , 'onchange' => 'updateChoiceOptions()']) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -383,7 +383,7 @@
         });
     });
     $(document).ready(function() {
-
+        updateChoiceOptions();
         $('.transfer').hide();
         $('.place').hide();
         $('.house').hide();
@@ -529,4 +529,44 @@ $('#cardex_no').on('blur', function() {
         // $('#ddo_code').hide(); // Hide dropdown if input is empty
     }
 });
+function updateChoiceOptions() {
+        // Get the selected values for Choice 1 and Choice 2
+        var choice1Value = $('#choice1').val();
+        var choice2Value = $('#choice2').val();
+        var choice3Value = $('#choice3').val();
+
+        // Get all options for Choice 2 and Choice 3
+        var choice1Options = $('#choice1 option');
+        var choice2Options = $('#choice2 option');
+        var choice3Options = $('#choice3 option');
+
+        // Enable all options initially for both Choice 2 and Choice 3
+        choice1Options.prop('disabled', false);
+        choice2Options.prop('disabled', false);
+        choice3Options.prop('disabled', false);
+
+        choice1Options.each(function() {
+            var optionValue = $(this).val();
+            if (optionValue === choice2Value || optionValue === choice3Value) {
+                $(this).prop('disabled', true); // Disable this option
+            }
+        });
+        // Disable the option in Choice 2 that matches the selected value in Choice 1
+        choice2Options.each(function() {
+            var optionValue = $(this).val();
+            if (optionValue === choice1Value || optionValue === choice3Value) {
+                $(this).prop('disabled', true); // Disable this option
+            }
+        });
+
+        // Disable the options in Choice 3 that match the selected values in Choice 1 or Choice 2
+        choice3Options.each(function() {
+            var optionValue = $(this).val();
+            if (optionValue === choice1Value || optionValue === choice2Value) {
+                $(this).prop('disabled', true); // Disable this option
+            }
+        });
+    }
+
+
 </script> @endpush

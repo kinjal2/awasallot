@@ -148,7 +148,7 @@ class QuartersController extends Controller
             'hc_unitno'=>'required',
             'hc_allotment_details'=>'required',*/
             'agree_rules' => 'required',
-            //4/1/2025            
+            //4/1/2025
            // 'cardex_no' => 'required',
             //'ddo_code' => 'required'
         ];
@@ -191,6 +191,10 @@ class QuartersController extends Controller
                 $Tquarterrequestb->cardex_no = session('cardex_no');
                 $Tquarterrequestb->ddo_code = session('ddo_code');
                 $Tquarterrequestb->officecode = $officecode;
+                //23-1-2025
+                $Tquarterrequestb->choice1 = empty($request->get('choice1')) ? NULL : $request->get('choice1');
+                $Tquarterrequestb->choice2 = empty($request->get('choice2')) ? NULL : $request->get('choice2');
+                $Tquarterrequestb->choice3 = empty($request->get('choice3')) ? NULL : $request->get('choice3');
                 $Tquarterrequestb->save();
                 //session()->forget(['cardex_no', 'ddo_code']);
                 return redirect()->back()->withErrors('message', 'IT WORKS!');
@@ -2027,8 +2031,8 @@ class QuartersController extends Controller
             return redirect('profile')->with('message', "User not found.");
         }
         else if($basic_pay != null && $cardex_no==null && $ddo_code==null && $officecode==null) //21-01-2025
-        {    
-           
+        {
+
             $this->_viewContent['page_title'] = "DDO Details";
             $this->_viewContent['page']='request_change';
             return view('user/user_ddo_detail', $this->_viewContent);
@@ -2252,7 +2256,7 @@ class QuartersController extends Controller
             else if($request->page == 'higher_request')
             {
                 return redirect('quartershigher');
-            } 
+            }
             else {
                 return redirect('quarterschange');
             }

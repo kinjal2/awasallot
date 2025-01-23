@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+<style>
+
+</style>
 @include(Config::get('app.theme').'.template.header_front_page')
 <div class="container">
     <div class="row justify-content-center padd-y-50">
@@ -49,8 +52,14 @@
                         <div class="form-group row relative my-4">
                             <label for="captcha" class="col-md-4 col-form-label text-md-right">Enter Captcha Here</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control custon-control" id="captcha" name="captcha" placeholder="Enter Captcha" required>
+                                <input type="text" class="form-control custon-control  @error('captcha') is-invalid @enderror" id="captcha" name="captcha" placeholder="Enter Captcha" required>
+                                @error('captcha')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                             </div>
+
                         </div>
 
                         <div class="d-flex justify-content-between mb-2">
@@ -66,7 +75,7 @@
     </div>
 </div>
 @include(Config::get('app.theme').'.template.footer_front_page')
-
+@push('page-ready-script') @endpush @push('footer-script')
 <script>
     $(document).ready(function() {
         $('#LoginForm').validate({

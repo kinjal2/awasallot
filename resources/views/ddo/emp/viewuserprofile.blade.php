@@ -56,38 +56,38 @@
                                 <th></th>
                                 <th>ક્વાર્ટર કેટેગરી </th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['quartertype'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['quartertype'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>યુઝર નંબર </th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['uid'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['uid'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>1</th>
                                 <th>નામ(પુરેપુરૂ)</th>
-                                <td colspan="4"> {{ isset($quarterrequest) ? $quarterrequest['name'] : 'N/A' }} </td>
+                                <td colspan="4"> {{ isset($userDetail) ? $userDetail['name'] : 'N/A' }} </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>( અ ) હોદ્દો</th>
-                                <td colspan="4">{{ isset($quarterrequest) ? $quarterrequest['designation'] : 'N/A' }}
+                                <td colspan="4">{{ isset($userDetail) ? $userDetail['designation'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>(બ ) પોતે કચેરી/વિભાગ ના વડા છે કે કેમ?</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['is_dept_head'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['is_dept_head'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>2</th>
                                 <th>( અ ) જે વિભાગ/કચેરીમાં કામ કરતા હોય તેનુ નામ</th>
-                                <td colspan="4">{{ isset($quarterrequest) ? $quarterrequest['officename'] : 'N/A' }}
+                                <td colspan="4">{{ isset($userDetail) ? $userDetail['officename'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
@@ -95,21 +95,21 @@
                                 <th>( બ ) જ્યાંથી બદલી થઈ ને આવ્યા હોય /પ્રતિનિયુક્તિ ઉપર આવ્યા હોય ત્યાંનો હોદ્દો અને
                                     કચેરી નું નામ</th>
                                 <td><strong>હોદ્દો</strong></td>
-                                <td>{{ isset($quarterrequest) ? $quarterrequest['old_desg'] : 'N/A' }} </td>
+                                <td>{{ isset($userDetail) ? $userDetail['old_desg'] : 'N/A' }} </td>
                                 <td><strong>કચેરી નું નામ</strong></td>
-                                <td>{{ isset($quarterrequest) ? $quarterrequest['old_office'] : 'N/A' }}</td>
+                                <td>{{ isset($userDetail) ? $userDetail['old_office'] : 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>( ક ) ગાંધીનગર ખાતે હાજર થયા તારીખ</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['deputation_date'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['deputation_date'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>( ડ ) વતન નું સરનામું</th>
-                                <td colspan="4">{{ isset($quarterrequest) ? $quarterrequest['address'] : 'N/A' }}
+                                <td colspan="4">{{ isset($userDetail) ? $userDetail['address'] : 'N/A' }}
 
                                 </td>
                             </tr>
@@ -117,7 +117,7 @@
                                 <th></th>
                                 <th> (ઇ) જન્મ તારીખ</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['date_of_birth'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['date_of_birth'] : 'N/A' }}
 
                                 </td>
                             </tr>
@@ -126,7 +126,7 @@
                                 <th></th>
                                 <th>( ઈ ) નિવ્રૂત્તિ ની તારીખ</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['date_of_retirement'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['date_of_retirement'] : 'N/A' }}
 
                                 </td>
                             </tr>
@@ -134,14 +134,14 @@
                                 <th></th>
                                 <th>( ફ ) જી.પી.એફ. ખાતા નંબર</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['gpfnumber'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['gpfnumber'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>3</th>
                                 <th>સરકારી નોકરીમાં મૂળ નિમણુંક તારીખ્ </th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['appointment_date'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['appointment_date'] : 'N/A' }}
 
                                 </td>
                             </tr>
@@ -150,21 +150,21 @@
                                 <th>4</th>
                                 <th>( અ ) પગાર નો સ્કેલ (વિગતવાર આપવો) </th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['salary_slab'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['salary_slab'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>( બ ) ખરેખર મળતો પગાર</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['actual_salary'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['actual_salary'] : 'N/A' }}
 
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>( ૧ ) મૂળ પગાર</th>
-                                <td colspan="4">{{ isset($quarterrequest) ? $quarterrequest['basic_pay'] : 'N/A' }}
+                                <td colspan="4">{{ isset($userDetail) ? $userDetail['basic_pay'] : 'N/A' }}
 
                                 </td>
                             </tr>
@@ -172,21 +172,21 @@
                                 <th></th>
                                 <th>( ૨ ) પર્સનલ પગાર</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['personal_salary'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['personal_salary'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>( ૩ ) સ્પેશ્યલ પગાર</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['special_salary'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['special_salary'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th>( ૪ ) પ્રતિનિયુક્તિ ભથ્થું</th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['deputation_allowance'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['deputation_allowance'] : 'N/A' }}
 
                                 </td>
                             </tr>
@@ -201,7 +201,7 @@
                                 <th>5</th>
                                 <th>( અ ) પરણિત/અપરણિત </th>
                                 <td colspan="4">
-                                    {{ isset($quarterrequest) ? $quarterrequest['maratial_status'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['maratial_status'] : 'N/A' }}
                                 </td>
                             </tr>
 
@@ -214,18 +214,18 @@
                                 <th></th>
                                 <th></th>
                                 <td><strong>( અ ) કોલોની નું નામ/રીક્વીઝીશન કરેલ મકાન ની વિગત</strong></td>
-                                <td> {{ isset($quarterrequest) ? $quarterrequest['prv_area_name'] : 'N/A' }}
+                                <td> {{ isset($userDetail) ? $userDetail['prv_area_name'] : 'N/A' }}
                                 </td>
                                 <td><strong>( બ ) વસવાટ નો ક્વાર્ટર નંબર</strong></td>
-                                <td>{{ isset($quarterrequest) ? $quarterrequest['prv_building_no'] : 'N/A' }} </td>
+                                <td>{{ isset($userDetail) ? $userDetail['prv_building_no'] : 'N/A' }} </td>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th></th>
                                 <td><strong>( ક-૧ )વસવાટ ની કેટેગરી</strong></td>
-                                <td> {{ isset($quarterrequest) ? $quarterrequest['prv_quarter_type'] : 'N/A' }}</td>
+                                <td> {{ isset($userDetail) ? $userDetail['prv_quarter_type'] : 'N/A' }}</td>
                                 <td><strong>(ક-૨) માસીક ભાડું</strong></td>
-                                <td> {{ isset($quarterrequest) ? $quarterrequest['prv_rent'] : 'N/A' }}</td>
+                                <td> {{ isset($userDetail) ? $userDetail['prv_rent'] : 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <th></th>
@@ -233,20 +233,20 @@
                                 <td><strong>( ડ ) મકાન મળતાં ઉપર દર્શાવેલ મકાન સરકારને તુરત પાછું આપવામાં આવશે કે
                                         કેમ્?</strong></td>
                                 <td colspan="3">
-                                    {{ isset($quarterrequest) ? $quarterrequest['prv_handover'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['prv_handover'] : 'N/A' }}
 
                                 </td>
                             </tr>
                             <Tr>
                                 <th>7</th>
                                 <th>અગાઉ ગાંધીનગર માં મકાન મેળવવા અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ છે?</th>
-                                <td> {{ isset($quarterrequest) ? $quarterrequest['have_old_quarter'] : 'N/A' }}
+                                <td> {{ isset($userDetail) ? $userDetail['have_old_quarter'] : 'N/A' }}
 
 
                                 </td>
                                 <td><strong>તારીખ, નંબર, બ્લોક વિગેરે વિગત </strong></td>
                                 <td colspan="2">
-                                    {{ isset($quarterrequest) ? $quarterrequest['old_quarter_details'] : 'N/A' }}
+                                    {{ isset($userDetail) ? $userDetail['old_quarter_details'] : 'N/A' }}
 
                                 </td>
                             </Tr>
@@ -254,31 +254,31 @@
                                 <th>8</th>
                                 <th>શિડ્યુલ કાસ્ટ અથવા શિડ્યુલ ટ્રાઈબ ના કર્મચારી હોય તો તેમણે વિગત આપવી તથા કચેરીનાં
                                     વડાનું પ્રમાણપત્ર સામેલ કરવું</th>
-                                <td>{{ isset($quarterrequest['is_scst']) ? $quarterrequest['is_scst'] : 'N/A' }}</td>
+                                <td>{{ isset($userDetail['is_scst']) ? $userDetail['is_scst'] : 'N/A' }}</td>
                                 <td><strong>વિગત </strong></td>
                                 <td colspan="2">
-                                    {{ isset($quarterrequest['is_scst']) ? $quarterrequest['is_scst'] : 'N/A' }}
+                                    {{ isset($userDetail['is_scst']) ? $userDetail['is_scst'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>9</th>
                                 <th>ગાંધીનગર ખાતે જો રહેતા હોય તો કોની સાથે, તેમની સાથે નો સંબંધ અને મકાન ની વિગત</th>
-                                <td>{{ isset($quarterrequest['is_relative']) ? $quarterrequest['is_relative'] : 'N/A' }}
+                                <td>{{ isset($userDetail['is_relative']) ? $userDetail['is_relative'] : 'N/A' }}
                                 </td>
                                 <td><strong>વિગત </strong></td>
                                 <td colspan="2">
-                                    {{ isset($quarterrequest['relative_details']) ? $quarterrequest['relative_details'] : 'N/A' }}
+                                    {{ isset($userDetail['relative_details']) ? $userDetail['relative_details'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
                                 <th>10</th>
                                 <th>ગાંધીનગર ખાતે માતા/પિતા. પતિ/પત્ની વગેરે લોહી ની સગાઈ જેવા સંબંધીને મકાન ફાળવેલ છે?
                                 </th>
-                                <td>{{ isset($quarterrequest['is_relative_householder']) ? $quarterrequest['is_relative_householder'] : 'N/A' }}
+                                <td>{{ isset($userDetail['is_relative_householder']) ? $userDetail['is_relative_householder'] : 'N/A' }}
                                 </td>
                                 <td><strong>વિગત </strong></td>
                                 <td colspan="2">
-                                    {{ isset($quarterrequest['relative_house_details']) ? $quarterrequest['relative_house_details'] : 'N/A' }}
+                                    {{ isset($userDetail['relative_house_details']) ? $userDetail['relative_house_details'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
@@ -286,11 +286,11 @@
                                 <th>ગાંધીનગર શહેર ની હદ માં અથવા સચિવાલય થી ૧૦ કિલોમીટર ની હદ માં અથવા ગાંધીનગર ની હદ
                                     માં આવતા ગમડાં માં તેમના પિતા/પતિ/પત્ની કે કુટુંબ ના કોઈપણ સભ્યને નામે રહેણાંકનું
                                     મકાન છે?</th>
-                                <td>{{ isset($quarterrequest['have_house_nearby']) ? $quarterrequest['have_house_nearby'] : 'N/A' }}
+                                <td>{{ isset($userDetail['have_house_nearby']) ? $userDetail['have_house_nearby'] : 'N/A' }}
                                 </td>
                                 <td><strong>વિગત </strong></td>
                                 <td colspan="2">
-                                    {{ isset($quarterrequest['nearby_house_details']) ? $quarterrequest['nearby_house_details'] : 'N/A' }}
+                                    {{ isset($userDetail['nearby_house_details']) ? $userDetail['nearby_house_details'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
@@ -298,7 +298,7 @@
                                 <th colspan="3">જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને
                                     પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે?</th>
                                 <td colspan="2">
-                                    {{ isset($quarterrequest['downgrade_allotment']) ? $quarterrequest['downgrade_allotment'] : 'N/A' }}
+                                    {{ isset($userDetail['downgrade_allotment']) ? $userDetail['downgrade_allotment'] : 'N/A' }}
                                 </td>
                             </tr>
                             <tr>
@@ -340,36 +340,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($file_uploaded as $file)
-                                    <tr>
-                                        <td>{{ $file->document_name }}</td>
-                                        <td>
-                                            <a href="{{ url('/download_file/' . $file->doc_id) }}" target="_blank">
-                                                <img src="{{ URL::asset('images/pdf.png') }}" class="export-icon" />
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" class="file-checkbox"  data-doc-id="{{ $file->doc_id }}" {{ $file->is_file_ddo_verified == 1 ? 'checked' : '' }} />
-                                        </td>
-                                    </tr>
-                                    @endforeach
+
                                 </tbody>
                             </table>
                             <div class="col-12 mt-20 pt-4">
                                 <div class="form-group">
-                                    <form action="" method="post" name="doc_form" id="doc_form">
-                                        @csrf
-                                        <input type="hidden" name="reqid" id="reqid"
-                                            value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
-                                        <input type="hidden" name="rvid" id="rvid"
-                                            value="{{ isset($quarterrequest['rivision_id']) ? base64_encode($quarterrequest['rivision_id']) : '' }}" />
-                                        <input type="hidden" name="uid" id="uid"
-                                            value="{{ base64_encode($quarterrequest['uid']) }}">
-                                        <input type="hidden" name="qttype" id="qttype"
-                                            value="{{ isset($quarterrequest['quartertype']) ? base64_encode($quarterrequest['quartertype']) : '' }}" />
 
-                                        <!-- <button type="submit" class="btn btn-primary" id="submit_doc" name="submit_doc">Submit Documents</button> -->
-                                    </form>
                                 </div>
                                 <div id="message-container_submitdoc" style="margin-top: 10px;"></div>
                             </div>
@@ -429,11 +405,11 @@
                                                 <input type="hidden" name="reqid" id="reqid"
                                                     value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
                                                 <input type="hidden" name="rvid" id="rvid"
-                                                    value="{{ isset($quarterrequest['rivision_id']) ? base64_encode($quarterrequest['rivision_id']) : '' }}" />
+                                                    value="{{ isset($userDetail['rivision_id']) ? base64_encode($userDetail['rivision_id']) : '' }}" />
                                                 <input type="hidden" name="uid" id="uid"
-                                                    value="{{ base64_encode($quarterrequest['uid']) }}">
+                                                    value="{{ base64_encode($userDetail['uid']) }}">
                                                 <input type="hidden" name="qttype" id="qttype"
-                                                    value="{{ isset($quarterrequest['quartertype']) ? base64_encode($quarterrequest['quartertype']) : '' }}" />
+                                                    value="{{ isset($userDetail['quartertype']) ? base64_encode($userDetail['quartertype']) : '' }}" />
 
 
                                                 <!-- <button type="submit" class="btn btn-primary" id="submit_doc"

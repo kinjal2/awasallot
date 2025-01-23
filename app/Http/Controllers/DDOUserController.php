@@ -825,18 +825,19 @@ class DDOUserController extends Controller
     }
     public function showEmpList(Request $request)
     {
-        
+
         $cardexNo = session('cardex_no');
         $ddoCode = session('ddo_code');
         $users = User::select(['name',  'email', 'contact_no','office','designation','appointment_date','date_of_retirement','id'])->where('cardex_no',$cardexNo)->where('ddo_code',$ddoCode)->get();
 
-    
+
 
         return Datatables::of($users)
             ->addIndexColumn()
 
             ->addColumn('action', function($row){
-                return '<a href="#"  data-toggle="modal" class="change_birthdate" data-uid='.$row->id.'>View Profile</a>';
+                return '<a href="'.\route('ddo.viewuserprofile', ['uid' => base64_encode($row->id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -856,7 +857,7 @@ class DDOUserController extends Controller
 
         $this->_viewContent['quarterrequest1'] = Tquarterrequesta::select(['request_date','requestid','quartertype','inward_no','inward_date','rivision_id','remarks',
         'is_accepted','is_allotted','is_varified','uid'])
-		
+
         ->where('requestid','=',$requestid)
         ->where('uid','=',$quarterrequest['uid'])
         ->get();
@@ -869,10 +870,16 @@ class DDOUserController extends Controller
             ->WHERE('request_id', $requestid)->WHERE('performa', $type)
             ->pluck('document_id'))
         ->pluck('document_name', 'document_type');
-        
+
        // $query = DB::getQueryLog();
         //dd($query);
            // $this->_viewContent['document_list']=$document_list;
+           //23-1-2025
+           $officecode = Session::get('officecode');
+           $officecode = getOfficeByCode($officecode);
+           //dd($officecode);
+           $this->_viewContent['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
+
         $this->_viewContent['requestid']=$requestid;
         $this->_viewContent['quarterrequest']=(isset($quarterrequest) && isset($quarterrequest))?$quarterrequest:'';
         $this->_viewContent['page_title'] = "Quarter Edit Details";
@@ -882,12 +889,12 @@ class DDOUserController extends Controller
     {
         $cardexNo = session('cardex_no');
         $ddoCode = session('ddo_code');
-        
+
      //   \DB::enableQueryLog(); // Enable query log
-        
+
         $officeCode = session('officecode'); // Get the office code from session
        // dd($cardexNo,$ddoCode,$officeCode);
-        
+
         $first = DB::table('master.t_quarter_request_a AS a')
         ->select([
         'request_date',
@@ -922,7 +929,7 @@ class DDOUserController extends Controller
     ->whereIn('is_ddo_varified',[0,2]); //12-12-2024   //filter by is_accepted
 
 
-   
+
 
 
     $second = DB::table('master.t_quarter_request_c AS c')
@@ -1039,5 +1046,27 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
      ->rawColumns(['delete','action'])
     ->make(true);
     }
+    public function getuserprofile($uid)
+    {
 
+        $uid=\base64_decode($uid);
+        $officecode = Session::get('officecode');
+        $officecode = getOfficeByCode($officecode);
+        $data['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
+        //dd($data);
+
+           //23-1-2025
+           $officecode = Session::get('officecode');
+           $officecode = getOfficeByCode($officecode);
+           //dd($officecode);
+           $this->_viewContent['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
+
+           $usermaster = User::find($uid);
+          // dd($usermaster);
+           $this->_viewContent['userDetail']=$usermaster;
+           $this->_viewContent['imageData'] = generateImage($uid);
+        //dd($this->_viewContent['imageData'] );
+        $this->_viewContent['page_title'] = "Employee Details";
+        return view('ddo.emp.viewuserprofile',$this->_viewContent);
+    }
 }

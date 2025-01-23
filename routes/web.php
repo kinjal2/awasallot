@@ -142,7 +142,7 @@ Route::post('getList1','QuarterTypeController@getList');
 Route::get('/editQuarterType/{officecode}/{quartertype}/edit',[QuarterTypeController::class,'editQuarterType'])->name('masterquartertype.editQuarterType');
 Route::post('/editQuarterType',[QuarterTypeController::class,'store'])->name('masterquartertype.store');
 Route::get('/addQuarterType',[QuarterTypeController::class,'addQuarterType'])->name('masterquartertype.addQuarterType');
-Route::post('/addQuarterType',[QuarterTypeController::class,'storenew'])->name('masterquartertype.storenew');																																						   
+Route::post('/addQuarterType',[QuarterTypeController::class,'storenew'])->name('masterquartertype.storenew');
 Route::resource('masterquartertype', 'QuarterTypeController');
 
 
@@ -206,11 +206,11 @@ Route::post('/ddo-editquarter_a_submitdocument', [DDOUserController::class, 'sub
 
 Route::get('/ddo/reload-captcha', 'Auth\RegisterController@reloadCaptcha')->name('ddo.reload-captcha');
 Route::get('/government_resolution', function () {
-    
+
     return view('government_resolution'); // or any other logic
 });
 Route::get('/government_document', function () {
-    
+
     return view('government_document'); // or any other logic
 });
 
@@ -249,3 +249,6 @@ Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileContro
 //17-01-2025
 Route::get('emp-list',[DDOUserController::class,'getEmpList'])->name('ddo.emp-list')->middleware('auth:ddo_users');
 Route::post('show-emp-list',[DDOUserController::class,'showEmpList'])->name('ddo-show-emp-list')->middleware('auth:ddo_users');
+
+//23-1-2025
+Route::get('/ddo-viewprofile/{uid}', [DDOUserController::class, 'getuserprofile'])->name('ddo.viewuserprofile')->middleware('auth:ddo_users');
