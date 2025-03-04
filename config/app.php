@@ -53,6 +53,9 @@ return [
     |
     */
 
+    'url' => env('APP_URL', 'http://10.154.3.99/awasallot/'),
+    // 'url' => env('APP_URL', 'http://10.154.3.108:8090/awasallot'),
+    //'asset_url' => env('ASSET_URL', 'http://10.154.3.108:8090/awasallot/public'),
     //'url' => env('APP_URL', 'http://10.154.3.99/awasallot/'),
     // 'url' => env('APP_URL', 'http://10.154.3.108:8090/awasallot'),
     //'asset_url' => env('ASSET_URL', 'http://10.154.3.108:8090/awasallot/public'),

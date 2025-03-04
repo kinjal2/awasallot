@@ -253,3 +253,6 @@ Route::post('show-emp-list',[DDOUserController::class,'showEmpList'])->name('ddo
 //23-1-2025
 Route::get('/ddo-viewprofile/{uid}', [DDOUserController::class, 'getuserprofile'])->name('ddo.viewuserprofile')->middleware('auth:ddo_users');
 Route::post('/user_quarter_application',[DDOUserController::class,'getUserQuarterApplication'])->name('ddo.getUserQuarterApplication')->middleware('auth:ddo_users');
+
+//24-1-2025
+Route::post('change-quarter-request', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);

@@ -369,7 +369,7 @@
                     <!-- for review 22-11-2024 -->
                     <div class="card card-success">
                         <div class="card-header">
-                            <h3 class="card-title">Review</h3>
+                            <h3 class="card-title">Update DDO</h3>
                         </div>
                         <div class="card-body">
                             <form method="POST" name="ddo_submit_document_a" id="ddo_submit_document_a" action="{{route('ddo.editquarter.a.submitdocument')}}">

@@ -10902,15 +10902,7 @@ a.text-dark:focus {
     border-color: #dee2e6;
   }
 
-   /* 23-1-2025*/
-
- .error-message {
-    color: red;
-}
-.error-field {
-    border-color: red;
-    box-shadow: 0 0 5px red;
-}
+   
 
 }
 

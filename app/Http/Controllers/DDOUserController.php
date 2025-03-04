@@ -1062,6 +1062,9 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
            $this->_viewContent['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
 
            $usermaster = User::find($uid);
+           $newquarterrequest=Tquarterrequesta::find($uid);
+           $newhigherquarterrequest=Tquarterrequestb::find($uid);
+        dd($newquarterrequest);
           // dd($usermaster);
            $this->_viewContent['userDetail']=$usermaster;
            $this->_viewContent['imageData'] = generateImage($uid);

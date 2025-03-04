@@ -1038,3 +1038,12 @@ thead.cf th {
 
  }
 
+/* 23-1-2025*/
+
+.error-message {
+  color: red;
+}
+.error-field {
+  border-color: red;
+  box-shadow: 0 0 5px red;
+}
