@@ -46,7 +46,7 @@
                             <tr>
                                 <th colspan="6" style="text-align: center;">{{ $officesname }}ગાંધીનગર માં સરકારી વસવાટ મેળવવા માટે
                                     સરકારી કર્મચારી કે અધિકારી એ કરવા ની અરજી</th>
-                                    <!-- 23-1-2025 -->
+                                <!-- 23-1-2025 -->
                             </tr>
                             <!-- <tr>
                                 <th colspan="6" style="text-align: center;">ગાંધીનગર માં સરકારી વસવાટ મેળવવા માટે
@@ -329,14 +329,22 @@
                     <!-- /.card -->
                     <div class="card card-success">
                         <div class="card-header">
-                            <h3 class="card-title">Request Application</h3>
+                            <h3 class="card-title">Applied For</h3>
                         </div>
                         <div class="card-body p-0">
-                            <table class="table table-hover table-striped">
+                            <table class="table table-hover table-striped" id="quarter_application">
                                 <thead>
                                     <tr>
-                                        <th>Document Name</th>
-                                        <th>Action</th>
+                                    <th>Request Type</th>
+                                    <th>Quarter <br/>Type</th>
+                                    <th>Inward No</th>
+                                    <th>Inward Date</th>
+                                    <th>Name</th>
+                                    <th>Office</th>
+                                    <th>Contact No.</th>
+                                    <th>Email ID</th>
+                                    <th>Request Date</th>
+                                    <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -428,194 +436,58 @@
                         <!-- /.card-body -->
                     </div>
                 </div>
-
-
-
                 @endsection
                 @push('page-ready-script')
                 @endpush
                 @push('footer-script')
                 <script type="text/javascript">
-                    $('#status').change(function() {
-                        if (this.value == 1) {
-
-                            $('.yesno_status').hide();
-                        } else if (this.value == 2) {
-                            $('.yesno_status').show();
-                        }
-                    });
-                    $("#ddo_submit_document_a").validate({
-                        rules: {
-                            status: "required",
-
-                        }
-                    });
-                </script>
-                <!-- <script>
-                    document.getElementById('submit').addEventListener('click', function(event) {
-                        const selectElement = document.getElementById('getpayslip_certificate');
-                        const selectedValue = selectElement.value;
-                        const fileInput = document.getElementById('image');
-                        const file = fileInput.files[0]; // Get the first selected file
-
-                        // Check if a document is selected
-                        if (!selectedValue) {
-                            event.preventDefault(); // Prevent form submission
-                            alert('Please select a document to upload.'); // Show an alert
-                            selectElement.focus(); // Set focus back to the select element
-                            return; // Exit the function
-                        }
-
-                        // Check if a file is selected
-                        if (!file) {
-                            event.preventDefault(); // Prevent form submission
-                            alert('Please upload a file.'); // Show an alert
-                            fileInput.focus(); // Set focus back to the file input
-                            return; // Exit the function
-                        }
-
-                        // Additional file type and size validation can be added here if needed
-                    });
-                </script> -->
+                    var csrfToken = $('meta[name="csrf-token"]').attr('content');  // This assumes you have the CSRF token in the meta tag
+                    var uid = "{{ $userDetail['id'] }}"; // Inject PHP variable into JS
+                    var table = $('#quarter_application').DataTable({
+                        processing: true,
+                        serverSide: true,
+                        data: {
+                        uid: uid,
+                        _token: csrfToken // Include CSRF token here
+                    },
+                        ajax: {
+                            url: "{{ route('ddo.getUserQuarterApplication') }}",
+                            'type': 'POST',
+                        },
 
 
-
-                <script>
-                    // Listen for change events on the select element
-                    //      $('#getpayslip_certificate').on('change', function() {
-
-                    //     var selectedOption = $(this).find('option:selected');
-                    //     var selectedValue = selectedOption.val();
-
-
-                    //     // Remove the selected option from the dropdown
-                    //     if (selectedValue) {
-                    //         selectedOption.remove();
-                    //     }
-                    // });
-
-
-                    $('#submit').on('click', function(event) {
-                        event.preventDefault(); // Prevent default form submission
-
-                        const selectElement = $('#getpayslip_certificate');
-                        const selectedValue = selectElement.val();
-                        const fileInput = $('#image');
-                        const file = fileInput[0].files[0]; // Get the first selected file
-
-                        // Clear previous messages
-                        $('#message-container').text('').removeClass('alert alert-danger alert-success');
-
-
-                        // Validation checks
-                        if (!selectedValue) {
-                            //alert('Please select a document to upload.');
-                            $('#message-container').addClass('alert alert-danger').text('Please select a document to upload.');
-                            selectElement.focus();
-                            return; // Exit the function
-                        }
-
-                        if (!file) {
-                            //alert('Please upload a file.');
-                            $('#message-container').addClass('alert alert-danger').text('Please select file to upload.');
-                            fileInput.focus();
-                            return; // Exit the function
-                        }
-
-                        // Prepare FormData for AJAX
-                        const formData = new FormData();
-                        formData.append('getpayslip_certificate', selectedValue);
-                        formData.append('image', file);
-                        formData.append('request_id', $('#request_id').val());
-                        formData.append('uid', $('#uid').val());
-                        formData.append('_token', '{{ csrf_token() }}'); // Include CSRF token
-
-                        // AJAX request
-                        $.ajax({
-                            url: "{{ route('ddo.editquarter.a.savedocument') }}", // Update with your route name
-                            type: 'POST',
-                            data: formData,
-                            contentType: false,
-                            processData: false,
-                            success: function(response) {
-                                setTimeout(function() {
-                                    window.location.reload();
-                                }, 2000);
-                                $('#message-container').addClass('alert alert-success').text(
-                                    'File uploaded successfully!');
-
-                                // Optionally, you can redirect or reset the form here
+                        columns: [{
+                                data: 'requesttype'
                             },
-                            error: function(xhr) {
-                                // Handle error response
-                                if (xhr.status === 422) {
-                                    const errors = xhr.responseJSON.errors;
-                                    let errorMessages = '';
-                                    $.each(errors, function(key, value) {
-                                        errorMessages += value[0] + '\n'; // Concatenate error messages
-                                    });
-                                    $('#message-container').addClass('alert alert-danger').text(
-                                        errorMessages); // Show error messages
-                                } else {
-                                    $('#message-container').addClass('alert alert-danger').text(
-                                        'An error occurred. Please try again.');
-                                }
-                            }
-                        });
+                            {
+                                data: 'quartertype'
+                            },
+                            {
+                                data: 'inward_no'
+                            },
+                            {
+                                data: 'inward_date'
+                            },
+                            {
+                                data: 'name'
+                            },
+                            {
+                                data: 'office'
+                            },
+                            {
+                                data: 'contact_no'
+                            },
+                            {
+                                data: 'email'
+                            },
+                            {
+                                data: 'request_date'
+                            },
+                            {
+                                data: 'action'
+                            },
+                            //  {data: 'delete'},
+                        ]
                     });
-                </script>
-                <script>
-                    document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
-                        checkbox.addEventListener('change', function() {
-                            let docId = checkbox.getAttribute('data-doc-id');
-                            let isChecked = checkbox.checked ? 1 : 2; // 1 if checked, 2 if unchecked
-
-                            // AJAX request to update file status
-                            fetch("{{ route('updateFileStatus') }}", {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    },
-                                    body: JSON.stringify({
-                                        doc_id: docId,
-                                        is_file_ddo_verified: isChecked
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log(data.success);
-                                    if (data.success) {
-                                        console.log('File status updated');
-                                    } else {
-                                        console.log('Failed to update status');
-                                    }
-                                });
-                                 // Call the toggleSubmitButton function to update button visibility
-                                toggleSubmitButton();
-                        });
-                    });
-
-
-                    function toggleSubmitButton() {
-                        // Get all checkboxes
-                        const checkboxes = document.querySelectorAll('.file-checkbox');
-
-                        // Check if all checkboxes are checked
-                        const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
-
-                        // Find the submit button
-                        const submitButton = document.getElementById('submit_doc');
-                        var remakrs = document.getElementById('remarks');
-
-                        // Show the submit button if all checkboxes are checked
-                        if (allChecked) {
-                            submitButton.style.display = 'inline'; // Show button
-                            remakrs.style.display = 'none';
-                        } else {
-                            submitButton.style.display = 'none'; // Hide button
-                            remakrs.style.display = 'inline';
-                        }
-                    }
                 </script>
                 @endpush

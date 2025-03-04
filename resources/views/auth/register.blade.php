@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 @include(Config::get('app.theme').'.template.header_front_page')
+
 <div class="container">
     <div class="row justify-content-center padd-y-50">
         <div class="col-md-8 mx-auto">
@@ -346,7 +347,7 @@
                 //dd(data);
                 talukaSelect = $('#taluka');
                 talukaSelect.empty(); // Clear previous taluka options
-                talukaSelect.append('<option value="">{{ __('common.select') }}</option>'); // Add the default "select" option
+                talukaSelect.append('<option value="">{{ __("common.select") }}</option>'); // Add the default "select" option
                 
                 if (data.length > 0) {
                     data.forEach(function(item) {

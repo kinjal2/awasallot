@@ -35,9 +35,9 @@
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/home') }}" class="logindata">Home</a></li>
                   @else
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('login') }}" class="logindata">Login</a></li>
-                  @if (Route::has('register'))
+                  <!-- @if (Route::has('register'))
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('register') }}" class="logindata">Register</a></li>
-                  @endif
+                  @endif -->
                   @if (Route::has('ddo.login'))
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('ddo.login.form') }}" class="logindata"> DDO Login</a></li>
                   @endif
