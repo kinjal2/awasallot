@@ -2251,6 +2251,7 @@ class QuartersController extends Controller
             session(['officecode' => $data->officecode]);
             session(['cardex_no' => $data->cardex_no]);
             session(['ddo_code' => $data->ddo_code]);
+            dd($request->page);
             if ($request->page == 'new_request') {
                 return redirect('quartersuser');
             }
