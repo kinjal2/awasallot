@@ -15,7 +15,7 @@
                     <form method="POST" action="{{ route('ddo.saveEmailPwd') }}" id="LoginForm" name="LoginForm">
                         @csrf
                         <div class="col-12 form-group relative mb-3">
-                            <label for="ddo_office_email" class="form-label">DDO Official E-mail Address</label>
+                            <label for="ddo_office_email" class="form-label">DDO Official E-mail Address&nbsp;<span class="text-danger">*</span></label>
                             <input id="ddo_office_email" type="email" class="custon-control form-control @error('ddo_office_email') is-invalid @enderror" placeholder="Enter your DDO Official E-mail Address" name="ddo_office_email" value="{{ old('ddo_office_email') }}" required autocomplete="off" autofocus>
                             <i class="bi bi-envelope form-icon"></i>
                             @error('ddo_office_email')
@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="col-12 form-group relative my-3">
-                            <label for="password" class="form-label">{{ __('Password') }}</label>
+                            <label for="password" class="form-label">{{ __('Password') }}&nbsp;<span class="text-danger">*</span></label>
                             <input id="password" type="password" class="custon-control form-control @error('password') is-invalid @enderror" placeholder="Enter your Password" name="password" required autocomplete="current-password">
                             <i class="bi bi-lock form-icon"></i>
                             @error('password')
@@ -36,7 +36,7 @@
                             @enderror
                         </div>
                         <div class="col-12 form-group relative my-3">
-                            <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}</label>
+                            <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}&nbsp;<span class="text-danger">*</span></label>
                             <input id="password_confirmation" type="password" class="custon-control form-control @error('password_confirmation') is-invalid @enderror" placeholder="Confirm your Password" name="password_confirmation" required autocomplete="new-password">
                             <i class="bi bi-lock form-icon"></i>
                             @error('password_confirmation')
@@ -58,17 +58,19 @@
                         </div>
 
                         <div class="form-group row relative my-4">
-                            <label for="captcha" class="col-md-4 col-form-label text-md-right">Enter Captcha Here</label>
+                            <label for="captcha" class="col-md-4 col-form-label text-md-right">Enter Captcha Here&nbsp;<span class="text-danger">*</span></label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control custon-control" id="captcha" name="captcha" placeholder="Enter Captcha" required>
                             </div>
                         </div>
-
+                        <div class="form-group row relative my-4">
+                                <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
+                        </div>
                         <div class="d-flex justify-content-between mb-2">
                             <button class="btn-new btn btn-primary btn-md" type="submit">Submit</button>
-                            @if (Route::has('password.request'))
+                            <!-- @if (Route::has('password.request'))
                             <a class="btn btn-link float-right" href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
-                            @endif
+                            @endif -->
                         </div>
                     </form>
                 </div>
@@ -79,6 +81,10 @@
 @include(Config::get('app.theme').'.template.footer_front_page')
 
 <script>
+     $.validator.addMethod("validEmail", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/.test(value);
+    }, "Invalid email. Email must end with @gujarat.gov.in.");
+
     $(document).ready(function() {
         $('#LoginForm').validate({
             errorClass: "error-message",
@@ -97,7 +103,7 @@
             rules: {
                 ddo_office_email: {
                     required: true,
-                    email: true,
+                    validEmail: true,
                 },
                 password: {
                     required: true
@@ -113,7 +119,7 @@
             messages: {
                 ddo_office_email: {
                     required: "Please enter your email address",
-                    email: "Please enter a valid email address (e.g., example@domain.com)"
+                    email: "Please enter a valid email address (e.g., example@gujarat.gov.in)"
                 },
                 password: {
                     required: "Please enter your password"

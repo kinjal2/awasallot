@@ -255,4 +255,4 @@ Route::get('/ddo-viewprofile/{uid}', [DDOUserController::class, 'getuserprofile'
 Route::post('/user_quarter_application',[DDOUserController::class,'getUserQuarterApplication'])->name('ddo.getUserQuarterApplication')->middleware('auth:ddo_users');
 
 //24-1-2025
-Route::post('change-quarter-request', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
+Route::get('change-quarter-request', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);

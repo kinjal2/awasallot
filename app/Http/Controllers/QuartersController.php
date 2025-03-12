@@ -65,7 +65,8 @@ class QuartersController extends Controller
         $ddo_code = session('ddo_code');
         //dd($officecode,$cardex_no,$ddo_code,$basic_pay,$q_officecode);
         if ($basic_pay == null) {
-            return redirect('profile')->with('message', "Please complete your profile.");
+            return redirect('profile')->with('failed', "Please complete your profile.");
+            
         } else if ($basic_pay != null && $cardex_no == null && $ddo_code == null && $officecode == null) //21-01-2025
         {
 
@@ -1455,7 +1456,7 @@ class QuartersController extends Controller
                     'r' => base64_encode($requestid),
                     'type' => base64_encode($request->type),
                     'rev' => base64_encode($rev)
-                ]);
+                ])->with('failed', 'Upload All Documents');
             }
             try {
                 $inward_no = '';
@@ -2020,7 +2021,7 @@ class QuartersController extends Controller
         //dd($officecode,$cardex_no,$ddo_code,$basic_pay,$q_officecode);
         // Step 2: Check if the user profile is complete
         if ($basic_pay == null) {
-            return redirect('profile')->with('message', "Please complete your profile.");
+            return redirect('profile')->with('failed', "Please complete your profile.");
         }
 
         // Step 3: Get the user data from the User model

@@ -59,10 +59,12 @@ class ProfileController extends Controller
     }
     public function updateprofiledetails(Request $request)
     {
+       // dd($request->all());
         $rules = [
 			'name' => 'required|string',
 			'office' => 'required|string',
-			'office_email_id' => 'required|email',
+			/*'office_email_id' => 'required|email',*/
+            'office_email_id' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
             'is_dept_head' => 'required',
             'is_transferable' => 'required',
             'appointment_date' => 'required',
@@ -113,6 +115,7 @@ class ProfileController extends Controller
             try
             {
                $uid=Session::get('Uid');
+               //dd($uid);
                 if ($request->hasFile('image'))
                 {
                    /* $destination = public_path() . '/uploads';
@@ -130,6 +133,8 @@ class ProfileController extends Controller
                 }
                     $appointment_date = Carbon::createFromFormat('d-m-Y',$request->get('appointment_date'));
                     $date_of_retirement = Carbon::createFromFormat('d-m-Y',$request->get('date_of_retirement'));
+                    // Enable query logging
+                   // DB::enableQueryLog();
                     \DB::table('userschema.users')
                         ->where('id',$uid)
                         ->update([
@@ -162,7 +167,12 @@ class ProfileController extends Controller
                    'is_phy_dis' => empty($request->get('is_phy_dis')) ? NULL :  $request->get('is_phy_dis'),
                    'dis_per' => ($request->get('is_phy_dis') == 'N') ? 0 : (empty($request->get('dis_per')) ? 0 : $request->get('dis_per')),
                     ]);
+                    
+                    // Get the executed queries
+                    //$queries = DB::getQueryLog();
 
+                    // Print the queries
+                    //dd($queries);
                     if(!empty($request->get('basic_pay')))
                     {
                        Session::put('basic_pay',$request->get('basic_pay'));
@@ -184,6 +194,7 @@ class ProfileController extends Controller
                 return redirect('profile')->with('success',"Details Updated successfully");
 			}
 			catch(Exception $e){
+                dd($e->getMessage());
 				return redirect('profile')->with('failed',"operation failed");
 			}
         }
@@ -288,9 +299,25 @@ class ProfileController extends Controller
     }
     public function updateDDODetails(Request $request)
     {
-       
-        $this->_viewContent['page_title']='DDO Details';
-       // $this->_viewContent['page']="ddo_detail";
-        return view('user/user_ddo_detail',$this->_viewContent);
+        
+        $basic_pay = Session::get('basic_pay');  //dd($basic_pay);
+        
+        if ($basic_pay == null) {
+            return redirect('profile')->with('failed', "Please complete your profile.");
+        } 
+        else
+        {
+            $this->_viewContent['page_title']='DDO Details';
+            // $this->_viewContent['page']="ddo_detail";
+            $uid=Session::get('Uid');
+            //dd($uid);
+            $ddo_data=User::select('cardex_no','ddo_code')->where('id',$uid)->first();
+            if($ddo_data != null)
+            {
+                $this->_viewContent['cardex_no']=$ddo_data['cardex_no'];
+                $this->_viewContent['ddo_code']=$ddo_data['ddo_code'];
+            }
+            return view('user/user_ddo_detail',$this->_viewContent);
+        }
     }
 }

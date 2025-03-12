@@ -313,6 +313,9 @@
                <div class="mt-4">
                   <button type="submit" class="btn btn-primary"> {{ __('common.submit') }}</button>
                </div>
+               <div class="mt-4">
+                  <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
+               </div>
             </div>
          </form>
       </div>
@@ -382,6 +385,9 @@
          return ret;
       }
    }, "File name should not contain special characters or more than one dots.");
+   $.validator.addMethod("validEmail", function(value, element) {
+    return this.optional(element) || /^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/.test(value);
+}, "Invalid email. Email must end with @gujarat.gov.in.");
 
    // Add custom validation method for salary range - 8-1-2025
    $.validator.addMethod("salaryRange", function(value, element, params) {
@@ -411,7 +417,7 @@
          "is_transferable": "required",
          "office_email_id": {
             "required": true,
-            "email": true
+            "validEmail": true,
          },
          is_police_staff: {
             "required": true,
@@ -523,7 +529,7 @@
       }
    });
 
- /*  $('#dis_per').change(function() {
+   $('#dis_per').change(function() {
       var value = $(this).val();
       var div = document.getElementById('dis_per_certi_yes');
       if (value >= 60) {
@@ -532,7 +538,7 @@
          div.style.display = 'none';
       }
    });
-   */
+   
 
 
    //code for physical disablity certificate 9-11-2024

@@ -20,7 +20,7 @@
                         @csrf
 <div class="row">
                         <div class="col-12 form-group relative mb-3">
-                        <label for="first_name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                        <label for="first_name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}&nbsp;<span class="text-danger">*</span></label>
                         <div class="row">
                             <div class="col-md-2">
                                 <input id="surname" type="text" class="custon-control  custon-control form-control @error('surname') is-invalid @enderror" name="surname" value="{{ old('surname') }}" required autocomplete="surname" placeholder="Surname">
@@ -50,7 +50,7 @@
                         </div>
 
                         <div class="col-6 form-group relative mb-3">
-                        <label for="birthdate" class="col-md-4 col-form-label text-md-right">{{ __('Birth Date') }}</label>
+                        <label for="birthdate" class="col-md-4 col-form-label text-md-right">{{ __('Birth Date') }}&nbsp;<span class="text-danger">*</span></label>
                         <input id="birthdate" type="text" class=" custon-control form-control dateformat  @error('birthdate') is-invalid @enderror" name="birthdate" value="{{ old('birthdate') }}" required  autofocus>
                         <i class="bi bi-cake2 form-icon"></i>
                         @error('birthdate')
@@ -61,7 +61,7 @@
                         </div>
 
                         <div class="col-6 form-group relative mb-3">
-                        <label for="designation" class="col-md-4 col-form-label text-md-right">{{ __('Designation') }}</label>
+                        <label for="designation" class="col-md-4 col-form-label text-md-right">{{ __('Designation') }}&nbsp;<span class="text-danger">*</span></label>
                         <input id="designation" type="text" class=" custon-control form-control @error('designation') is-invalid @enderror" name="designation" value="{{ old('designation') }}" required  autofocus>
                         <i class="bi bi-person-gear form-icon"></i>
                         @error('designation')
@@ -72,7 +72,7 @@
                         </div>
 
                         <div class="col-6 form-group relative mb-3">
-                        <label for="officename" class="col-md-4 col-form-label text-md-right">{{ __('Full Office Name') }}</label>
+                        <label for="officename" class="col-md-4 col-form-label text-md-right" style="width:50%;" >{{ __('Full Office Name') }}&nbsp;<span class="text-danger">*</span></label>
                         <input id="officename" type="text" class=" custon-control form-control @error('officename') is-invalid @enderror" name="officename" value="{{ old('officename') }}" required  autofocus>
                                 @error('officename')
                                     <span class="invalid-feedback" role="alert">
@@ -82,7 +82,7 @@
                         </div>
 
                         <div class="col-6 form-group relative mb-3">
-                        <label for="contact_no" class="col-md-4 col-form-label text-md-right">{{ __('Mobile No') }}</label>
+                        <label for="contact_no" class="col-md-4 col-form-label text-md-right" style="width:50%;">{{ __('Personal Mobile No') }}&nbsp;<span class="text-danger">*</span></label>
                         <input id="contact_no" type="text" class=" custon-control form-control @error('contact_no') is-invalid @enderror" name="contact_no" value="{{ old('contact_no') }}" required minlength='10'
                     maxlength='10'  autofocus>
                     <i class="bi bi-phone form-icon"></i>
@@ -95,7 +95,7 @@
 
 
                         <div class="col-6 form-group relative mb-3">
-                        <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                        <label for="email" class="col-md-4 col-form-label text-md-right" style="width:50%;">{{ __('Personal E-Mail Address') }}&nbsp;<span class="text-danger">*</span></label>
                         <input id="email" type="email" class=" custon-control form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
                         <i class="bi bi-envelope form-icon"></i>
                         @error('email')
@@ -116,7 +116,7 @@
                                 @enderror
                         </div> -->
                           <div class="col-6 form-group relative mb-3">
-                                <label for="district" class="col-md-4 col-form-label text-md-right">District</label>
+                                <label for="district" class="col-md-4 col-form-label text-md-right">District&nbsp;<span class="text-danger">*</span></label>
                                 {{ Form::select('district',[null=>__('common.select')] + getDistricts(),"",['id'=>'district','class'=>' custon-control form-control  select2']) }}
 
                               
@@ -129,7 +129,7 @@
                             </div>
                         
                             <div class="col-6 form-group relative mb-3">
-                                <label for="taluka" class="col-md-4 col-form-label text-md-right">Taluka</label>
+                                <label for="taluka" class="col-md-4 col-form-label text-md-right">Taluka&nbsp;<span class="text-danger">*</span></label>
                                 {{ Form::select('taluka',[null=>__('common.select')] + getTaluka(),"",['id'=>'taluka','class'=>' custon-control form-control  select2']) }}
 
                                 
@@ -181,7 +181,7 @@
 
 
                         <div class="col-md-6 form-group relative my-3">
-                        <label for="captcha" class="col-form-label text-md-right">Enter Captcha Here</label>
+                        <label for="captcha" class="col-form-label text-md-right">Enter Captcha Here&nbsp;<span class="text-danger">*</span></label>
 
                         <input type="text" class=" custon-control form-control" id="captcha" name="captcha" placeholder="Enter Captcha" required>
 
@@ -191,7 +191,8 @@
 
                                 <button type="submit" class=" btn btn-primary">
                                     {{ __('Register') }}
-                                </button>
+                                </button><br><br>
+                                <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
                                 <input id="name" type="hidden" class="custon-control  custon-control form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" placeholder="Name">
 
                         </div>

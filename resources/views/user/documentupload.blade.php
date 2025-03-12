@@ -34,6 +34,8 @@
                         </div><br />
                     @endif
                 </div>
+                @include(Config::get('app.theme').'.template.severside_message')
+                @include(Config::get('app.theme').'.template.validation_errors')
                 <!-- /.card-header -->
                 <!-- form start -->
                 <form method="POST" action="{{ url('saveuploaddocument') }}" enctype="multipart/form-data"
@@ -43,13 +45,13 @@
                         <div class="row">
                             <div class="col-4">
                                 <div class="form-group">
-                                    <label for="maratial_status">Document Type</label>
+                                    <label for="maratial_status">Document Type&nbsp;<span class="text-danger">*</span></label>
                                     {{ Form::select('document_type', $document_list, null, ['id' => 'document_type', 'class' => 'form-control select2']) }}
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="form-group">
-                                    <label for="exampleInputFile">Upload Photo</label>
+                                    <label for="exampleInputFile">Upload Photo&nbsp;<span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input" id="image" name="image" onchange="updateFileName()">
@@ -63,7 +65,8 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary" name="submitBtn" id="submitBtn">Submit</button>&nbsp;
+                            <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
                             <input type="hidden" class="form-control" id="request_id" name="request_id"
                                 value="{{ base64_encode($request_id) }}">
                             <input type="hidden" class="form-control" id="perfoma" name="perfoma"
@@ -129,7 +132,7 @@
 
                                 <table width="100%">
                                     <tr>
-                                        <td> <button type="submit" class="btn btn-primary">Submit</button></td>
+                                        <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit</button></td>
                                     </tr>
                                 </table>
                             </form>
@@ -248,6 +251,7 @@
                 }
             });
         });
+        $(document).ready(function() {
         $('#documentupload').validate({
             errorClass: "error-message",
             errorElement: "span",
@@ -263,29 +267,37 @@
                 $(element).closest('.form-control').removeClass('error-field');
             },
             rules: {
-                document_type: {
-                    required: true
-                },
                 image: {
                     required: true,
                     extension: "pdf"
-                },
-                messages: {
-                    file: {
-                        required: "This field is required.",
-                        extension: "Only PDF files are allowed."
-                    }
                 }
-
-                // Add rules for other fields here
             },
-
+            messages: {
+                image: {
+                    required: "Select File to Upload.",
+                    extension: "Only PDF files are allowed."
+                }
+            },
+            submitHandler: function(form) {
+                form.submit(); // Submit the form when validation is successful
+            }
         });
+
+        // Optional: You can remove the submitBtn click handler if you want to let the form submit automatically when valid
+        $('#submitBtn').click(function(e) {
+           // e.preventDefault(); // Prevent the default form submission
+            if ($('#documentupload').valid()) {
+                $('#documentupload').submit();
+            }
+        });
+    });
+
+        
         function updateFileName() {
-        var fileInput = document.getElementById('image');
-        var fileName = fileInput.files[0].name;
-        var fileLabel = fileInput.nextElementSibling;
-        fileLabel.innerText = fileName;
-    }
+            var fileInput = document.getElementById('image');
+            var fileName = fileInput.files[0].name;
+            var fileLabel = fileInput.nextElementSibling;
+            fileLabel.innerText = fileName;
+        }
     </script>
 @endpush

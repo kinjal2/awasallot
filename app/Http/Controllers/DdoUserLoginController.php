@@ -81,7 +81,7 @@ class DdoUserLoginController extends Controller {
         $user = Auth::guard( 'ddo_users' )->user();
         // Validate the incoming request
         $request->validate( [
-            'ddo_office_email' => 'required|email| unique:App\DDOCode,ddo_office_email_id,' . $user->id, // Email validation and ensuring uniqueness excluding the current user's email
+            'ddo_office_email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/|unique:App\DDOCode,ddo_office_email_id,' . $user->id, // Email validation and ensuring uniqueness excluding the current user's email
             // 'ddo_office_email' => [
             //     'required',
             //     'email',
@@ -89,7 +89,7 @@ class DdoUserLoginController extends Controller {
             //     Rule::unique( ( new DDOCode )->getTable(), 'ddo_office_email_id' )->ignore( $user->id ),
             // ],
             'password' => 'required|min:8|confirmed', // Password must be at least 8 characters and must match the 'password_confirmation' field
-        ] );
+        ] ,['ddo_office_email.regex' => 'Invalid email. Email must end with @gujarat.gov.in.']);
 
         try {
 

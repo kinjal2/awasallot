@@ -33,15 +33,16 @@
          @include(Config::get('app.theme').'.template.validation_errors')
          <!-- /.card-header -->
          <!-- form start -->
+         
          <form method="POST" id="cardexForm" name="cardexForm" action="{{ url('saveOfficeCode') }}"> 
             @csrf
-            <input type="hidden" id="page" name="page" value="{{ $page }}" />
+            <input type="hidden" id="page" name="page" value="{{ (   !empty($page)) ? $page : '' }}" />
             <div class="card-body">
             <div class="row">
                <div class="col-md-4">
                   <div class="form-group">
                      <label for="cardex_no">{{ __('Cardex No') }}</label>
-                     <input type="text" class="form-control @error('cardex_no') is-invalid @enderror" name="cardex_no" id="cardex_no" value="{{ session('cardex_no') }}" required autofocus>
+                     <input type="text" class="form-control @error('cardex_no') is-invalid @enderror" name="cardex_no" id="cardex_no" value="{{ session('cardex_no') }}" @if(!empty($cardex_no)) readonly @endif required autofocus>
                      @error('cardex_no')
                      <div class="invalid-feedback">{{ $message }}</div>
                      @enderror
@@ -50,16 +51,23 @@
                <div class="col-md-4">
                   <div class="form-group">
                      <label for="ddo_code">{{ __('DDO Code') }}</label>
-                     {{ Form::select('ddo_code',[null=>__('common.select')] ,"", ['id'=>'ddo_code','class'=>' custon-control form-control  select2']) }}
-                     @error('ddo_code')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
+                     @if(empty($ddo_code))
+                        {{ Form::select('ddo_code',[null=>__('common.select')] ,"", ['id'=>'ddo_code','class'=>' custon-control form-control  select2']) }}
+                        @error('ddo_code')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                     @else
+                        <input type="text" class="form-control" value="{{ getDDO_OfficeByCode($cardex_no,$ddo_code) }}" readonly>
+                     @endif
                   </div>
                </div>
+               @if(empty($cardex_no) && empty($ddo_code))
                <div class="mt-4">
                   <button type="submit" class="btn btn-primary">Submit</button>
                </div>
+               @endif
          </form>
+       
       </div>
    </div>
    </div>

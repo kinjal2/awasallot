@@ -9,6 +9,7 @@ use App\Couchdb\Couchdb;
 use App\PayScale;
 use App\District;
 use App\Taluka;
+use App\DDOCode;
 function printLastQuery() {
     ini_set('xdebug.var_display_max_depth', 5);
     ini_set('xdebug.var_display_max_children', 256);
@@ -674,4 +675,16 @@ if ( !function_exists( 'getDistrictsWithOfficeCodes' ) ) {
            ];
            return $districts;
        }
-   }    
+   }
+   if (!function_exists('getDDO_OfficeByCode')) {
+    function getDDO_OfficeByCode($cardex_no,$ddo_code)
+    {
+        //dd($cardex_no,$ddo_code);
+        $officeName = DDOCode::select('ddo_office')
+                        ->where('ddo_code', $ddo_code)
+                        ->where('cardex_no',$cardex_no)
+                        ->first();
+        
+        return $officeName['ddo_office'];
+    }
+}    
