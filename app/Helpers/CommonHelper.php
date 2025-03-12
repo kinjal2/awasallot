@@ -221,14 +221,12 @@ if (getActiveRole() == 'ddouser') {
 }
     return $activeMenu;
 }
-function getActiveRole($active_role = null) {
+/*function getActiveRole($active_role = null) {
     $superadmin_role_id ='true';
     $admin_role_id ='false';
     $active_role = \Auth::user()->is_admin;
     $sessionRole = session('role');
     // Check for role in session
-    $sessionRole = session('role');
-
     // Determine role name based on session or user properties
     if ($sessionRole === 'ddouser') {
         return 'ddouser'; // Return session role if it's ddo_user
@@ -243,7 +241,26 @@ function getActiveRole($active_role = null) {
     }
 
     return $role_name;
+}*/
+function getActiveRole($active_role = null) {
+    
+    $superadmin_role_id = true;  // Assuming is_admin is true for superadmins
+    $sessionRole = session('role');
+    if ($sessionRole === 'ddouser') {
+        return 'ddouser';  // If the session contains 'ddouser', return that role
+    }
+
+    // If session doesn't have 'ddouser', check the role from the database
+    $active_role = \Auth::user()->is_admin;  // Assuming 'is_admin' is the indicator of the role in the database
+
+    // Determine role name based on is_admin field value
+    if ($active_role === $superadmin_role_id) {
+        return 'admin';  // Superadmin role
+    }
+
+    return 'user';  // Default to 'user' if the role is not superadmin
 }
+
 function checkRequestIs($request_array) {
     $is = '';
     if (empty($request_array) === false) {

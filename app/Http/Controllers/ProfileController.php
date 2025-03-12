@@ -290,7 +290,7 @@ class ProfileController extends Controller
     {
        
         $this->_viewContent['page_title']='DDO Details';
-       // $this->_viewContent['page']="ddo_detail";
+        $this->_viewContent['page']="ddo_detail";
         return view('user/user_ddo_detail',$this->_viewContent);
     }
 }

@@ -12,6 +12,11 @@
                   <h4 class="m-0"><b>E-state Managment System</b></h4>
                   <p class="sub-title-form">Goverment of Gujarat</p>
                 </div>
+                @if (session('error'))
+                <div class="alert alert-danger">
+                {{ session('error') }}
+                </div>
+                @endif
 
                 <div class="card-body bg-lightwhite p-4">
                     <form method="POST" action="{{ route('login') }}" id="LoginForm" name='LoginForm'>
