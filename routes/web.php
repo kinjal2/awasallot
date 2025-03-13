@@ -80,6 +80,9 @@ Route::prefix('quarters')->group(function () {
     Route::post('saveapplication', ['as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
     Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
     Route::post('savehighercategory', ['as' => 'quarter.list.savehighercategory', 'uses' => 'QuartersController@saveHigherCategoryReq']);
+
+
+    
 });
 
 // Reports Routes
@@ -105,12 +108,30 @@ Route::prefix('ddo')->group(function () {
     Route::post('login', [DdoUserLoginController::class, 'login'])->name('ddo.login');
     Route::post('logout', [DdoUserLoginController::class, 'logout']);
     
+    Route::get('/setofficeemailpwd', [ 'as' => 'ddo.set_office_email_pwd', 'uses' => 'DdoUserLoginController@showOfficeEmailPwdForm']);
+
+    Route::post('/ddo/saveEmailPwd', [DdoUserLoginController::class, 'saveEmailPwd'])->name('ddo.saveEmailPwd');
+
+    Route::post('/update_file_status', [DDOUserController::class, 'updateFileStatus'])->name('updateFileStatus');; //12-12-2024
+    Route::post('/update_file_status_admin', [QuartersController::class, 'updateFileStatusAdmin'])->name('updateFileStatusAdmin');; //13-12-2024
+
+    
+
     // DDO User Dashboard
     Route::middleware('auth:ddo_users')->group(function () {
         Route::get('dashboard', [DDOUserController::class, 'dashboard'])->name('ddo.dashboard');
         Route::get('quarters-normal', [DDOUserController::class, 'quartersNormal'])->name('ddo.quarters.normal');
         Route::post('quarters-normal-list', [DDOUserController::class, 'getNormalquarterList'])->name('ddo-normalquarter-list');
         Route::get('edit-quarter/{r}/{rv}', [DDOUserController::class, 'geteditquarter_a'])->name('ddo.editquarter.a.list');
+        Route::post('/ddo-editquarter_a', [DDOUserController::class, 'savedocument_a'])->name('ddo.editquarter.a.savedocument')->middleware('auth:ddo_users');
+        Route::post('/generateCertificate', [DDOUserController::class, 'generatecertificate_a'])->name('ddo.editquarter.a.generatecertificate')->middleware('auth:ddo_users');
+        Route::get('/ddo-editquarter_b/{r}/{rv}', [DDOUserController::class, 'geteditquarter_b'])->name('ddo.editquarter.b.list')->middleware('auth:ddo_users');
+        Route::post('/ddo-editquarter_a_submitdocument', [DDOUserController::class, 'submitdocument_a'])->name('ddo.editquarter.a.submitdocument')->middleware('auth:ddo_users');
+        Route::get('/ddo-viewprofile/{uid}', [DDOUserController::class, 'getuserprofile'])->name('ddo.viewuserprofile')->middleware('auth:ddo_users');
+Route::post('/user_quarter_application',[DDOUserController::class,'getUserQuarterApplication'])->name('ddo.getUserQuarterApplication')->middleware('auth:ddo_users');
+
+      
+        
     });
 });
 
@@ -132,6 +153,14 @@ Route::prefix('user')->group(function () {
     Route::post('saveHigherCategoryReq', ['uses' => 'QuartersController@saveHigherCategoryReq']);
     Route::get('quarterschange', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
 
+    Route::get('quarters', [ 'as' => 'quarters', 'uses' => 'QuartersController@index']);
+    
+    Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
+    Route::post('getList2','QuartersPriorityController@getList');
+    Route::resource('quarterlistpriority', 'QuartersPriorityController');
+        
+    
+
 });
 
 // Quarter Type Routes
@@ -143,6 +172,7 @@ Route::prefix('masterquartertype')->group(function () {
     Route::get('add', [QuarterTypeController::class, 'addQuarterType'])->name('masterquartertype.addQuarterType');
     Route::post('add', [QuarterTypeController::class, 'storenew'])->name('masterquartertype.storenew');
     Route::resource('masterquartertype', 'QuarterTypeController');
+    
 });
 
 // Area Routes
@@ -181,3 +211,18 @@ return view('government_resolution');
 Route::get('/government_document', function () {
  return view('government_document'); 
 });
+
+Route::post('/gettalukabydistrict', [RegisterController::class, 'getTalukaByDistrict'])->name('getTalukaByDistrict');
+Route::get('reload-captcha','Auth\RegisterController@reloadCaptcha')->name('reload-captcha');
+Route::get('/ddo/reload-captcha', 'Auth\RegisterController@reloadCaptcha')->name('ddo.reload-captcha');
+
+Route::post('request-history', ['uses' => 'QuartersController@requestHistory']);
+Route::get('/logout', 'Auth\LoginController@logout');
+
+Route::get('/ddo-quarters-normal', [DDOUserController::class, 'quartersNormal'])->name('ddo.quarters.normal')->middleware('auth:ddo_users');
+
+
+
+
+
+ 
