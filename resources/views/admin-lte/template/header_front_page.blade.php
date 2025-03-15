@@ -42,13 +42,17 @@
                   <!-- @if (Route::has('register'))
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('register') }}" class="logindata">Register</a></li>
                   @endif -->
-                  @if (Route::has('/ddo/login'))
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('/ddo/login') }}" class="logindata"> DDO Login</a></li>
+                  @if (Route::has('ddo.login'))
+                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('ddo.login.form') }}" class="logindata"> DDO Login</a></li>
                   @endif
                   @if (Route::has('register'))
                   <li class="nav-item d-none d-sm-inline-block"><a href="https://staging5.gujarat.gov.in/SSOtest/SSO.aspx?Rurl={{ route('grasapi') }}" class="logindata"> Department User Login</a></li>
                   @endif
                 @endauth
+                   <!-- @if (Route::has('ddo/login')) -->
+                   <!-- <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('/ddo/login') }}" class="logindata"> DDO Login</a></li> -->
+                  <!-- @endif -->
+               
                    <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata">Government Resolution</a></li>
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata">Download</a></li>
                    <li class="nav-item d-none d-sm-inline-block round_btn"><a href="{{  route('vacant.quarter.form')}}" class="logindata">Check Vacant</a></li>
