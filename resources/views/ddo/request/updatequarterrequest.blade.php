@@ -325,7 +325,8 @@
             <div class="col-md-5">
                 <!-- Form Element sizes -->
                 <div class="card card-success">
-
+                <form method="POST" name="ddo_submit_document_a" id="ddo_submit_document_a" action="{{route('ddo.editquarter.a.submitdocument')}}">
+                @csrf
                     <!-- /.card -->
                     <div class="card card-success">
                         <div class="card-header">
@@ -349,7 +350,7 @@
                                             </a>
                                         </td>
                                         <td>
-                                            <input type="checkbox" class="file-checkbox"  data-doc-id="{{ $file->doc_id }}" {{ $file->is_file_ddo_verified == 1 ? 'checked' : '' }} />
+                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"  {{ $file->is_file_ddo_verified == 1 ? 'checked' : '' }}  />
                                         </td>
                                     </tr>
                                     @endforeach
@@ -357,7 +358,7 @@
                             </table>
                             <div class="col-12 mt-20 pt-4">
                                 <div class="form-group">
-                                    <form action="" method="post" name="doc_form" id="doc_form">
+                                    <!-- <form action="" method="post" name="doc_form" id="doc_form">
                                         @csrf
                                         <input type="hidden" name="reqid" id="reqid"
                                             value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
@@ -366,10 +367,10 @@
                                         <input type="hidden" name="uid" id="uid"
                                             value="{{ base64_encode($quarterrequest['uid']) }}">
                                         <input type="hidden" name="qttype" id="qttype"
-                                            value="{{ isset($quarterrequest['quartertype']) ? base64_encode($quarterrequest['quartertype']) : '' }}" />
+                                            value="{{ isset($quarterrequest['quartertype']) ? base64_encode($quarterrequest['quartertype']) : '' }}" /> -->
 
                                         <!-- <button type="submit" class="btn btn-primary" id="submit_doc" name="submit_doc">Submit Documents</button> -->
-                                    </form>
+                                    <!-- </form> -->
                                 </div>
                                 <div id="message-container_submitdoc" style="margin-top: 10px;"></div>
                             </div>
@@ -388,10 +389,10 @@
                             <h3 class="card-title">Review</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST" name="ddo_submit_document_a" id="ddo_submit_document_a" action="{{route('ddo.editquarter.a.submitdocument')}}">
-                                @csrf
+                          
                                 <div class="row">
                                     <div class="col-12">
+                                  
                                         <!-- <div class="form-group">
                                             <label for="Name">Status</label>
                                             {{ Form::select('status', [null => __('common.select')] + getddoupdatestatus(), '', ['id' => 'status', 'class' => 'form-control select2']) }}
@@ -591,7 +592,7 @@
                 <script>
                     document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
-                            let docId = checkbox.getAttribute('data-doc-id');
+                         /*   let docId = checkbox.getAttribute('data-doc-id');
                             let isChecked = checkbox.checked ? 1 : 2; // 1 if checked, 2 if unchecked
 
                             // AJAX request to update file status
@@ -614,7 +615,7 @@
                                     } else {
                                         console.log('Failed to update status');
                                     }
-                                });
+                                });*/
                                  // Call the toggleSubmitButton function to update button visibility
                                 toggleSubmitButton();
                         });

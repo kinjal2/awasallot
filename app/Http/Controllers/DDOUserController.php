@@ -397,6 +397,8 @@ class DDOUserController extends Controller
     }
     public function submitdocument_a(Request $request)
     {
+        $files= $request->input('files');
+      //dd($request->all());
         //dd($request->submit_issue);
         // dd($request->reqid);
         //Find the record based on the composite primary key
@@ -415,6 +417,27 @@ class DDOUserController extends Controller
         // dd($requestid,$rivision_id,$uid,$qttype,$ddo_remarks,$request->submit_issue,$is_ddo_varified);
         if ($is_ddo_varified != 2) {
             $ddo_remarks = null;
+        }
+
+        $filetable = Filelist::where('uid', $uid)->get(); // Get all files for the user
+        $files = $request->input('files'); // Get files from the form (array of doc_id => 'on' or 'off')
+
+        foreach ($filetable as $file) {
+            // Check if the doc_id exists in the $files array
+            if (isset($files[$file->doc_id])) {
+                // If the checkbox for this file was checked
+                if ($files[$file->doc_id] === 'on') {
+                    // Update the file to 'checked'
+                    Filelist::where('doc_id', $files[$file->doc_id])
+                    ->update(['is_file_ddo_verified' => 1]); // Update 
+                } else {
+                    // Update the file to 'unchecked'
+                    Filelist::where('doc_id', $files[$file->doc_id])
+                ->update(['is_file_ddo_verified' => 2]); // Update directly
+                }
+            } 
+
+           
         }
 
         //dd($is_ddo_varified,$ddo_remarks);
@@ -484,6 +507,7 @@ class DDOUserController extends Controller
                 return redirect('/ddo-quarters-normal')->back()->with(['message' => 'Something went wrong. Please try again']);
             }
         } catch (\Exception $e) {
+            dd($e->getMessage());
             \Log::error('Error updating record: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while updating the record'], 500);
         }
