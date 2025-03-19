@@ -399,7 +399,7 @@ class DDOUserController extends Controller
     {
         $files= $request->input('files');
       //dd($request->all());
-        //dd($request->submit_issue);
+      //  dd($request->submit_issue);
         // dd($request->reqid);
         //Find the record based on the composite primary key
         $requestid = base64_decode($request->reqid);
@@ -421,21 +421,27 @@ class DDOUserController extends Controller
 
         $filetable = Filelist::where('uid', $uid)->get(); // Get all files for the user
         $files = $request->input('files'); // Get files from the form (array of doc_id => 'on' or 'off')
-
+        //dd($files);
+       // dd($filetable);
         foreach ($filetable as $file) {
+            //dd($file->doc_id);
             // Check if the doc_id exists in the $files array
             if (isset($files[$file->doc_id])) {
+                //dd("hello");
                 // If the checkbox for this file was checked
                 if ($files[$file->doc_id] === 'on') {
+                  //  dd("on");
                     // Update the file to 'checked'
-                    Filelist::where('doc_id', $files[$file->doc_id])
-                    ->update(['is_file_ddo_verified' => 1]); // Update 
-                } else {
-                    // Update the file to 'unchecked'
-                    Filelist::where('doc_id', $files[$file->doc_id])
+                 Filelist::where('doc_id', $file->doc_id)
+                    ->update(['is_file_ddo_verified' => 1]); // Update      
+                } 
+            }
+            else
+            {
+                
+                Filelist::where('doc_id', $file->doc_id)
                 ->update(['is_file_ddo_verified' => 2]); // Update directly
-                }
-            } 
+            }
 
            
         }
@@ -1073,23 +1079,25 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     public function getuserprofile($uid)
     {
 
-        $uid=\base64_decode($uid);
-        $officecode = Session::get('officecode');
+        $uid=base64_decode($uid);
+        //dd($uid);
+        $officecode = \Session::get('officecode');
         $officecode = getOfficeByCode($officecode);
+        //dd($officecode);
         $data['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
         //dd($data);
 
            //23-1-2025
-           $officecode = Session::get('officecode');
+           $officecode = \Session::get('officecode');
            $officecode = getOfficeByCode($officecode);
            //dd($officecode);
            $this->_viewContent['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
 
            $usermaster = User::find($uid);
-           $newquarterrequest=Tquarterrequesta::find($uid);
-           $newhigherquarterrequest=Tquarterrequestb::find($uid);
-        dd($newquarterrequest);
-          // dd($usermaster);
+          // $newquarterrequest=Tquarterrequesta::find($uid);
+           //$newhigherquarterrequest=Tquarterrequestb::find($uid);
+       // dd($newquarterrequest);
+         // dd($usermaster);
            $this->_viewContent['userDetail']=$usermaster;
            $this->_viewContent['imageData'] = generateImage($uid);
         //dd($this->_viewContent['imageData'] );

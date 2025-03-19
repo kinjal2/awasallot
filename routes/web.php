@@ -158,6 +158,10 @@ Route::prefix('user')->group(function () {
     Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
     Route::post('getList2','QuartersPriorityController@getList');
     Route::resource('quarterlistpriority', 'QuartersPriorityController');
+
+    Route::get('uploaddocument/:any', ['uses' => 'QuartersController@uploaddocument']);
+    Route::post('saveuploaddocument', ['uses' => 'QuartersController@saveuploaddocument']);
+    Route::post('deletedoc', ['uses' => 'QuartersController@deletedoc']);
         
     
 

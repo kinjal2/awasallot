@@ -38,6 +38,7 @@
                 @include(Config::get('app.theme').'.template.validation_errors')
                 <!-- /.card-header -->
                 <!-- form start -->
+               
                 <form method="POST" action="{{ url('saveuploaddocument') }}" enctype="multipart/form-data"
                     name="documentupload" id="documentupload">
                     @csrf
@@ -78,7 +79,15 @@
                 </form>
             </div>
             <!-- /.card -->
-
+            @if(isset($ddo_remarks_status))
+                    @if($ddo_remarks_status['is_ddo_varified']==2)
+                        
+                        <div class="alert alert-warning">
+                             <button type="button" class="close" data-dismiss="alert">×</button>
+                              DDO Remarks : {{$ddo_remarks_status['ddo_remarks']}}
+                    </div>
+                    @endif
+            @endif
         </div>
         <div class="col-md-12">
             <!-- general form elements -->

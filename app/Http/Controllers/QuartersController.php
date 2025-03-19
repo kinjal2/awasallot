@@ -520,7 +520,7 @@ class QuartersController extends Controller
         $request_id = base64_decode($_REQUEST['r']);
         $type = base64_decode($_REQUEST['type']);
         $rev = base64_decode($_REQUEST['rev']);
-
+        //dd($request_id);
         // DB::enableQueryLog();
 
         //dd('hello');
@@ -573,7 +573,8 @@ class QuartersController extends Controller
             ->whereNotIn('document_type', [6, 10]) // Exclude certain document types
             ->whereNotIn('document_type', function ($query) {
                 $query->select('document_id')  // Select the correct column (document_id)
-                    ->from('master.file_list')         // Correct table name (assuming it's 'filelists')
+                    ->from('master.file_list')  
+                    ->whereIn('master.file_list.is_file_ddo_verified', [1])       // Correct table name (assuming it's 'filelists')
                     ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
             })
             // Conditionally add the exclusion for document type 8 based on the user's role
@@ -615,6 +616,10 @@ class QuartersController extends Controller
             ->select('rev_id', 'doc_id', 'document_name')
             ->get();
         //dd( $attacheddocument );
+
+         $ddo_remarks=Tquarterrequesta::where('requestid',$request_id)->select('is_ddo_varified','ddo_remarks')->first();
+        //dd($ddo_remarks);
+        $this->_viewContent['ddo_remarks_status']=$ddo_remarks;
         $this->_viewContent['page_title'] = "Upload Document";
         $this->_viewContent['document_list'] = $document_list;
         $this->_viewContent['attacheddocument'] = $attacheddocument;

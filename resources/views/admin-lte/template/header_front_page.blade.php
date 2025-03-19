@@ -38,12 +38,13 @@
                 @auth
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/home') }}" class="logindata">Home</a></li>
                   @else
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('login') }}" class="logindata">Login</a></li>
+                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/') }}" class="logindata {{ Request::is('/') ? 'round_btn' : '' }}">Home</a></li>
+                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('login') }}" class="logindata {{ Request::is('login') ? 'round_btn' : '' }}">Login</a></li>
                   <!-- @if (Route::has('register'))
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('register') }}" class="logindata">Register</a></li>
                   @endif -->
                   @if (Route::has('ddo.login'))
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('ddo.login.form') }}" class="logindata"> DDO Login</a></li>
+                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('ddo.login.form') }}" class="logindata {{ Request::is('ddo/login') ? 'round_btn' : '' }}"> DDO Login</a></li>
                   @endif
                   @if (Route::has('register'))
                   <li class="nav-item d-none d-sm-inline-block"><a href="https://staging5.gujarat.gov.in/SSOtest/SSO.aspx?Rurl={{ route('grasapi') }}" class="logindata"> Department User Login</a></li>
@@ -53,9 +54,9 @@
                    <!-- <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('/ddo/login') }}" class="logindata"> DDO Login</a></li> -->
                   <!-- @endif -->
                
-                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata">Government Resolution</a></li>
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata">Download</a></li>
-                   <li class="nav-item d-none d-sm-inline-block round_btn"><a href="{{  route('vacant.quarter.form')}}" class="logindata">Check Vacant</a></li>
+                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata {{ Request::is('government_resolution') ? 'round_btn' : '' }}">Government Resolution</a></li>
+                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata {{ Request::is('government_document') ? 'round_btn' : '' }}">Download</a></li>
+                   <li class="nav-item d-none d-sm-inline-block "><a href="{{  route('vacant.quarter.form')}}" class="logindata {{ Request::is('checkvacant') ? 'round_btn' : '' }}">Check Vacant</a></li>
 
               </div>
             @endif

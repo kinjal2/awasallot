@@ -341,6 +341,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php $issue=0; ?>
                                     @foreach ($file_uploaded as $file)
                                     <tr>
                                         <td>{{ $file->document_name }}</td>
@@ -350,7 +351,8 @@
                                             </a>
                                         </td>
                                         <td>
-                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"  {{ $file->is_file_ddo_verified == 1 ? 'checked' : '' }}  />
+                                            
+                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"  {{ $file->is_file_ddo_verified == 1 ? 'checked' : $issue=1 }}  />
                                         </td>
                                     </tr>
                                     @endforeach
@@ -405,6 +407,8 @@
                                                 <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control">
                                             </div>
                                         </div> -->
+                            
+                                       
                                         <div class="col-12" id="remarks">
                                             <div class="form-group">
                                                 <label for="Name">Have Issue?</label>
@@ -420,13 +424,13 @@
                                                     name="submit_issue" value="submit_issue">Submit Review & Next</button>
                                             </div>
                                         </div>
-
+                                       
                                         <div class="col-12 ">
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-primary" id="submit_doc"
                                                     name="submit_doc" style="display: none;">Verified & Next</button>
                                             </div>
-                                            <div class="card-footer">
+                                            <div >
                                                 <input type="hidden" name="reqid" id="reqid"
                                                     value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
                                                 <input type="hidden" name="rvid" id="rvid"
@@ -447,6 +451,7 @@
                                                 @endif
                                             </div>
                                         </div>
+                                        
                                     </div>
                             </form>
                         </div>
@@ -592,6 +597,7 @@
                 <script>
                     document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
+                          // alert("test");
                          /*   let docId = checkbox.getAttribute('data-doc-id');
                             let isChecked = checkbox.checked ? 1 : 2; // 1 if checked, 2 if unchecked
 
@@ -623,6 +629,7 @@
 
 
                     function toggleSubmitButton() {
+                        //alert("Toggle Submit button");
                         // Get all checkboxes
                         const checkboxes = document.querySelectorAll('.file-checkbox');
 
@@ -638,9 +645,14 @@
                             submitButton.style.display = 'inline'; // Show button
                             remakrs.style.display = 'none';
                         } else {
+                           
                             submitButton.style.display = 'none'; // Hide button
                             remakrs.style.display = 'inline';
                         }
                     }
+                    $(document).ready(function() {
+                        toggleSubmitButton(); // Call the toggleSubmitButton function
+                    });
+
                 </script>
                 @endpush
