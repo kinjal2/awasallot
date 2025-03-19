@@ -38,6 +38,8 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\Localization::class,
+            \App\Http\Middleware\CheckHostHeader::class,
+            \App\Http\Middleware\PreventClickjacking::class,
         ],
 
         'api' => [
@@ -65,6 +67,9 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verifiedphone' => \App\Http\Middleware\EnsurePhoneIsVerified::class,
-        'role' => \App\Http\Middleware\CheckRole::class,
+        //'role' => \App\Http\Middleware\CheckRole::class,
+        'role' => \App\Http\Middleware\CheckUserRole::class,
+        'check.host' => \App\Http\Middleware\CheckHostHeader::class,
+        
     ];
 }

@@ -26,7 +26,7 @@ class RegistrationController extends Controller
                     $soap_service_url = config('app.soap_service_url');
                     //dd($soap_service_url);
                     $client = new \SoapClient($soap_service_url);
-
+                    //dd($url);
                      $resp =  $client->IsValidTokan(array('GId' => $gid,'AppURL' =>  $url));
 
                      $uid = $resp->IsValidTokanResult;

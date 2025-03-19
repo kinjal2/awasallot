@@ -28,12 +28,12 @@ class Tquarterrequestb extends Model
                 'address', 'maratial_status', 'contact_no', 'pancard',
                 'gpfnumber', 'date_of_retirement', 'date_of_transfer', 'date_of_birth',
                 'image', 'sign', 'current_address', 'office_phone',
-                'office_address','choice1','choice2','choice3','ddo_remarks'
+                'office_address'
             ]);
         }])
         ->select([
             'wno', 'quartertype', 'uid',
-            'request_date', 'inward_no', 'inward_date', 'is_varified', 'requestid', 'rivision_id'
+            'request_date', 'inward_no', 'inward_date', 'is_varified', 'requestid', 'rivision_id','uid','choice1','choice2','choice3','ddo_remarks'
         ])
         ->where('requestid', $requestid)
         ->where('rivision_id', $revision_id)
@@ -79,6 +79,11 @@ class Tquarterrequestb extends Model
                 'deputation_allowance' => $request->usermaster->deputation_allowance,
                 'totalpay' => $request->usermaster->basic_pay + $request->usermaster->personal_salary + $request->usermaster->special_salary + $request->usermaster->deputation_allowance,
                 'maratial_status' => $request->usermaster->maratial_status,
+                'user_id'=>$request->uid,
+                'chioce1'=>$request->chioce1,
+            'choice2'=>$request->choice2,
+            'choice3'=>$request->choice3,
+            'ddo_remarks'=>$request->ddo_remarks
             ];
         }
 

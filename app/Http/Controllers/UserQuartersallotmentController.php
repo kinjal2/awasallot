@@ -17,7 +17,8 @@ class UserQuartersallotmentController extends Controller
 
     public function index()
     {    
-	    $this->_viewContent['page_title'] = "Quarter Allotment" ;
+         dd("hjnhgj");
+	     $this->_viewContent['page_title'] = "Quarter Allotment" ;
         return view('quarterallotment/index',$this->_viewContent);
     }
     public function getList(Request $request)

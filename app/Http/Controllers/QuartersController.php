@@ -462,9 +462,24 @@ class QuartersController extends Controller
         $requestid = base64_decode($request_id);
         $type = base64_decode($performa);
         $rivision_id = base64_decode($revision_id);
-        $requestModel = new TQuarterRequesta();
+        if($type=='a'){
+            $requestModel = new TQuarterRequesta();
+            $data = $requestModel->getFormattedRequestData($requestid, $rivision_id);
+        }
+        else if($type=='b'){
+        $requestModel = new TQuarterRequestb();
         $data = $requestModel->getFormattedRequestData($requestid, $rivision_id);
-        //dd( $data);
+        }
+       // dd( $uid,$data['user_id']);
+        if ($data !== null && isset($data['user_id'])) {
+            // Compare the $uid with $data['user_id']
+            if ($uid !== $data['user_id']) {
+                abort(403, "You do not have permission to access this user's data.");
+            }
+        } else {
+            // Handle the case where $data is null or doesn't have the 'user_id' key
+            abort(403, "User data is not available.");
+        }
         $imageData = generateImage($uid);
         // Assign the image data to the data array to be passed to the view
         $data['imageData'] = $imageData;
