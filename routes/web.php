@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckVacantController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuartersController;
+use App\Http\Controllers\CaptchaController;
 use App\QuarterType;
 
 /*
@@ -37,7 +38,7 @@ Route::get('/send-test-email', function () {
 // Home route
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('prevent_clickjacking');
 
 // Language switch
 Route::get('locale/{locale}', function ($locale){
@@ -54,19 +55,60 @@ Auth::routes(['verify' => true]);
 // Phone Verification Routes
 Route::get('phone/verify', [PhoneVerificationController::class, 'show'])->name('phoneverification.notice');
 Route::post('phone/verify', [PhoneVerificationController::class, 'verify'])->name('phoneverification.verify');
-
-// Dashboard Routes
-Route::middleware(['verifiedphone', 'verified'])->group(function () {
-    Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('home');
+// Dashboard Routes user 
+Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent_clickjacking'])->group(function () {
+   
     Route::get('userdashboard', ['uses' => 'DashboardController@userdashboard', 'as' => 'user.dashboard.userdashboard']);
     Route::get('profile', ['as' => 'user.profile', 'uses' => 'ProfileController@index']);
     Route::get('quartersuser', ['as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
     Route::get('quarterschange', ['as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
     Route::get('quartershistory', ['as' => 'user.quarter.history', 'uses' => 'QuartersController@index']);
+    Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);
+    
+    Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);
+    Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
+    Route::post('saveHigherCategoryReq', ['uses' => 'QuartersController@saveHigherCategoryReq']);
+    Route::get('quarterschange', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
+
+    Route::get('quarters', [ 'as' => 'quarters', 'uses' => 'QuartersController@index']);
+    
+    Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
+    Route::post('getList2','QuartersPriorityController@getList');
+    Route::resource('quarterlistpriority', 'QuartersPriorityController');
+    Route::get('uploaddocument/:any', ['uses' => 'QuartersController@uploaddocument']);
+    Route::post('saveuploaddocument', ['uses' => 'QuartersController@saveuploaddocument']);
+    Route::post('deletedoc', ['uses' => 'QuartersController@deletedoc']);
+    Route::post('savefinalannexure',['as'=>'quarter.final.annexure','uses'=>'QuartersController@saveFinalAnnexure']);
+    Route::get('userallotmentlist',['UserQuartersallotmentController@index','as'=>'userallotmentlist.index']);
+    Route::post('request-history', ['uses' => 'QuartersController@requestHistory']);
+
+        
 });
 
 // Admin Dashboard
-Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
+
+
+    Route::middleware(['role:admin','check.host'])->group(function () {
+    Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
+    Route::get('user', [ 'as' => 'user', 'uses' => 'UserController@index']);
+    Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
+    Route::post('get-quarter-type/', [DashboardController::class, 'getQuarterType'])->name('getQuarterType');
+    Route::post('get-area/', [DashboardController::class, 'getAreaWiseQurtCnt'])->name('getArea');
+    Route::post('get-quarter-total/', [DashboardController::class, 'getQuarterTotalList'])->name('getQuarterList');
+    Route::post('/designationselection', 'UserController@designationselection')->name('designationselection');
+    Route::get('/checkuser', 'UserController@checkuser')->name('checkuser');
+    Route::get('quarter-police-document', ['as' => 'quarter.police.document', 'uses' => 'PolicestaffController@index']);
+    Route::post('normalquarter-list', ['as' => 'normalquarter-list', 'uses' => 'QuartersController@getNormalquarterList']);
+
+
+    // Other admin-specific routes
+});
+
+
+
+
+
 
 // User Profile Routes
 Route::post('profiledetails', 'ProfileController@updateprofiledetails');
@@ -142,23 +184,12 @@ Route::prefix('user')->group(function () {
     Route::post('resetpassword', 'UserController@resetpassword')->name('resetpassword');
     Route::post('resetname', 'UserController@resetname')->name('resetname');
     Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
-    Route::get('userallotmentlist',['UserQuartersallotmentController@index','as'=>'userallotmentlist.index']);
+  
     Route::post('/salarySlabDetails', [ProfileController::class, 'getSalarySlabDetails'])->name('salarySlabDetails');
-    Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);
+    
     Route::post('saveOfficeCode', ['uses' => 'QuartersController@saveOfficeCode']);
     Route::post('/getDDOCode',[QuartersController::class,'getDDOCode'])->name('ddo.getDDOCode');
-    Route::get('quartersuser', [ 'as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
-    Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);
-    Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
-    Route::post('saveHigherCategoryReq', ['uses' => 'QuartersController@saveHigherCategoryReq']);
-    Route::get('quarterschange', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
-
-    Route::get('quarters', [ 'as' => 'quarters', 'uses' => 'QuartersController@index']);
     
-    Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
-    Route::post('getList2','QuartersPriorityController@getList');
-    Route::resource('quarterlistpriority', 'QuartersPriorityController');
-        
     
 
 });
@@ -213,13 +244,16 @@ Route::get('/government_document', function () {
 });
 
 Route::post('/gettalukabydistrict', [RegisterController::class, 'getTalukaByDistrict'])->name('getTalukaByDistrict');
-Route::get('reload-captcha','Auth\RegisterController@reloadCaptcha')->name('reload-captcha');
+Route::get('reload-captcha', 'Auth\RegisterController@reloadCaptcha')->name('reload-captcha');
 Route::get('/ddo/reload-captcha', 'Auth\RegisterController@reloadCaptcha')->name('ddo.reload-captcha');
+Route::get('/phone/reload-captcha', 'CaptchaController@reloadCaptcha')->name('phone.reload-captcha');
 
-Route::post('request-history', ['uses' => 'QuartersController@requestHistory']);
+
+
 Route::get('/logout', 'Auth\LoginController@logout');
 
 Route::get('/ddo-quarters-normal', [DDOUserController::class, 'quartersNormal'])->name('ddo.quarters.normal')->middleware('auth:ddo_users');
+
 
 
 

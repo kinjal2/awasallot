@@ -37,7 +37,7 @@
                       <th>Designation</th>
                       <th >Office</th>
                       <th >Email</th>
-                      <th >Reset Password</th>
+                    
                     </tr>
                   </thead>
                   <tbody>
@@ -51,7 +51,7 @@
                     <th>Designation</th>
                     <th>Office</th>
                     <th>Email</th>
-                    <th></th> 
+                   
                     </tr>
                     </tfoot>
                 </table>
@@ -136,7 +136,7 @@ var table = $('#userlist').DataTable({
         {data: 'designation_link', name: 'designation'},
         {data: 'office_link', name: 'office'},
         {data: 'email', name: 'email'},
-        {data: 'action', name: 'action', orderable: false, searchable: false}
+
     ],
     // Other options...
 });

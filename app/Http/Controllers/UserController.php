@@ -71,9 +71,7 @@ $users = User::select(['name', 'date_of_birth', 'designation', 'office', 'email'
 
 return Datatables::of($users)
     ->addIndexColumn()
-    ->addColumn('action', function($row){
-        return '<a href="#" data-uid='.$row->id.'  data-toggle="modal" class="reset_password">Reset</a>';
-    })
+   
     ->addColumn('name_link', function($row){
         return '<a href="#"  data-toggle="modal" class="change_name" data-uid='.$row->id.'>'.$row->name.'</a>';
     })

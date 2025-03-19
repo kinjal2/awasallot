@@ -34,6 +34,7 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+        
     }
 
     protected function validator(array $data)
@@ -98,18 +99,18 @@ protected function create(array $data)
 
             // Create a new user with the provided data and generated password
             $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($password), // Hash the generated password
-            'date_of_birth' => $data['birthdate'],
-            'designation' => $data['designation'],
-            'office' => $data['officename'],
-            'contact_no' => $data['contact_no'],
-            //'ddo_no'=>$data['ddo_no'],
-            //'cardex_no'=>$data['cardex_no'],
-            //'ddo_code'=> $data['ddo_code'],
-            'dcode' => $data['district'],
-            'tcode'=> $data['taluka'],
+                    'name' => htmlentities(strip_tags($data['name'])),
+                    'email' => htmlentities(strip_tags($data['email'])),
+                    'password' => Hash::make($password), // Hash the generated password
+                    'date_of_birth' => htmlentities(strip_tags($data['birthdate'])),
+                    'designation' => htmlentities(strip_tags($data['designation'])),
+                    'office' => htmlentities(strip_tags($data['officename'])),
+                    'contact_no' => htmlentities(strip_tags($data['contact_no'])),
+                    //'ddo_no' => htmlentities(strip_tags($data['ddo_no'])),
+                    //'cardex_no' => htmlentities(strip_tags($data['cardex_no'])),
+                    //'ddo_code' => htmlentities(strip_tags($data['ddo_code'])),
+                    'dcode' => htmlentities(strip_tags($data['district'])),
+                    'tcode' => htmlentities(strip_tags($data['taluka'])),
             ]);
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
@@ -132,10 +133,11 @@ protected function create(array $data)
     }
 
 }
-    public function reloadCaptcha()
- {
-     return response()->json(['captcha'=> captcha_img()]);
- }
+public function reloadCaptcha()
+{
+    $captcha = captcha_img();
+    return response()->json(['captcha'=> captcha_img()]);
+}
 
  public function getDDOCode(Request $request)
  {
