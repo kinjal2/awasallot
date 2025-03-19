@@ -253,6 +253,12 @@ Route::get('/phone/reload-captcha', 'CaptchaController@reloadCaptcha')->name('ph
 Route::get('/logout', 'Auth\LoginController@logout');
 
 Route::get('/ddo-quarters-normal', [DDOUserController::class, 'quartersNormal'])->name('ddo.quarters.normal')->middleware('auth:ddo_users');
+Route::post('/designationselection', 'UserController@designationselection')->name('designationselection');
+Route::post('get-quarter-type/', [DashboardController::class, 'getQuarterType'])->name('getQuarterType');
+Route::post('get-area/', [DashboardController::class, 'getAreaWiseQurtCnt'])->name('getArea');
+Route::post('get-quarter-total/', [DashboardController::class, 'getQuarterTotalList'])->name('getQuarterList');
+Route::get('quarter-police-document', ['as' => 'quarter.police.document', 'uses' => 'PolicestaffController@index']);
+Route::post('normalquarter-list', ['as' => 'normalquarter-list', 'uses' => 'QuartersController@getNormalquarterList']);
 
 
 
