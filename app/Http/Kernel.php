@@ -20,7 +20,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\SessionTimeout::class,  // Add this line
+        \App\Http\Middleware\SessionTimeout::class,  
+        \App\Http\Middleware\PreventClickjacking::class,
     ];
 
     /**
@@ -70,6 +71,7 @@ class Kernel extends HttpKernel
         //'role' => \App\Http\Middleware\CheckRole::class,
         'role' => \App\Http\Middleware\CheckUserRole::class,
         'check.host' => \App\Http\Middleware\CheckHostHeader::class,
+        'prevent_clickjacking' => \App\Http\Middleware\PreventClickjacking::class,
         
     ];
 }

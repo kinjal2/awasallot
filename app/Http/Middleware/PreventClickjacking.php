@@ -15,14 +15,7 @@ class PreventClickjacking
      */
     public function handle($request, Closure $next)
     {
-        $response = $next($request);
-
-        // Set the HTTP header to prevent clickjacking
-        $response->headers->set('X-Frame-Options', 'DENY');
-        
-        // Alternatively, you can use 'SAMEORIGIN' to allow embedding on the same origin
-        // $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
-        
-        return $response;
+        // Add X-Frame-Options header to prevent clickjacking
+        return $next($request)->header('X-Frame-Options', 'DENY');
     }
 }
