@@ -46,33 +46,51 @@ class ReportsController extends Controller
     }
     public function getWaitingList(request $request)
     {
-        //dd($request->quartertype);
-        $officecode=Session::get('officecode');
-        //dd($officecode);
-        $first = Tquarterrequesta::select([DB::raw("'New' as requesttype"),DB::raw("'New' as tableof"),'requestid','wno','inward_no','inward_date','u.name','u.designation','quartertype','office','rivision_id','date_of_retirement','contact_no',
-        'address','gpfnumber','is_accepted','is_allotted','is_varified','email','u.id','r_wno','office_email_id','office_remarks','withdraw_remarks','officecode'])
-        ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_a.uid')
-        ;
+        $quartertype = $request->quartertype;
+$officecode = Session::get('officecode');
 
-      $union =Tquarterrequestb::select([DB::raw("'Higher Category' as requesttype"),DB::raw("'Higher Category' as tableof"),'requestid','wno','inward_no','inward_date','u.name','u.designation','quartertype','office','rivision_id','date_of_retirement','contact_no',
-        'address','gpfnumber','is_accepted','is_allotted','is_varified','email','u.id','r_wno','office_email_id','office_remarks','withdraw_remarks','officecode'])
-        ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_b.uid')
+// First query for "New" request type
+$first = Tquarterrequesta::select([
+    DB::raw("'New' as requesttype"),
+    DB::raw("'New' as tableof"),
+    'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
+    'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
+    'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
+])
+->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_a.uid');
 
-        ->union($first);
+// Second query for "Higher Category" request type
+$union = Tquarterrequestb::select([
+    DB::raw("'Higher Category' as requesttype"),
+    DB::raw("'Higher Category' as tableof"),
+    'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
+    'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
+    'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
+])
+->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_b.uid')
+->union($first);
 
-    $query = DB::table(DB::raw("({$union->toSql()}) as x"))
-        ->select(['requesttype', 'tableof','requestid','wno','inward_no','inward_date','name','designation','quartertype','office','rivision_id','date_of_retirement', 'contact_no',
-        'address', 'gpfnumber','is_accepted','is_allotted','is_varified','email','id','r_wno','office_email_id','office_remarks','withdraw_remarks','officecode'])
+// Main query with conditional whereIn clause
+$query = DB::table(DB::raw("({$union->toSql()}) as x"))
+    ->select([
+        'requesttype', 'tableof', 'requestid', 'wno', 'inward_no', 'inward_date', 'name', 'designation', 
+        'quartertype', 'office', 'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 
+        'is_accepted', 'is_allotted', 'is_varified', 'email', 'id', 'r_wno', 'office_email_id', 'office_remarks', 
+        'withdraw_remarks', 'officecode'
+    ])
+    ->where(function ($query) use ($officecode, $quartertype) {
+        $query->where('is_accepted', '=', 1)
+            ->where('is_allotted', '=', 0)
+            ->where('is_varified', '=', 1)
+            ->where('officecode', '=', $officecode);
+        
+        // Add whereIn only if $quartertype is not empty
+        if (!empty($quartertype)) {
+            $query->whereIn('quartertype', $quartertype);
+        }
 
-        ->where(function ($query) use ($officecode) {
-
-            $query->where('is_accepted', '=', 1)
-
-            ->Where('is_allotted', '=', 0)
-            ->Where('is_varified', '=', 1)
-            ->where('officecode','=',$officecode)
-            ->orderBy('wno');
-        });
+        $query->orderBy('wno');
+    });
         // Apply global search
         if ($request->has('search') && $request->input('search')) {
             $search = $request->input('search');

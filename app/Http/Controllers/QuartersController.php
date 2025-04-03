@@ -465,6 +465,15 @@ class QuartersController extends Controller
         $requestModel = new TQuarterRequesta();
         $data = $requestModel->getFormattedRequestData($requestid, $rivision_id);
         //dd( $data);
+        if ($data !== null && isset($data['user_id'])) {
+            // Compare the $uid with $data['user_id']
+            if ($uid !== $data['user_id']) {
+                abort(403, "You do not have permission to access this user's data.");
+            }
+        } else {
+            // Handle the case where $data is null or doesn't have the 'user_id' key
+            abort(403, "User data is not available.");
+        }
         $imageData = generateImage($uid);
         // Assign the image data to the data array to be passed to the view
         $data['imageData'] = $imageData;
@@ -1039,6 +1048,7 @@ class QuartersController extends Controller
         //dd($status);
         $requestid = $request->requestid;
         $dg_allotment = $request->dg_allotment;
+        
         $rv = $request->rv;
         $dg_request_id = TQuarterRequestA::where('officecode', '=', $officecode)->orderBy('requestid', 'DESC')->value('requestid');
         //dd($dg_request_id );
@@ -1094,8 +1104,8 @@ class QuartersController extends Controller
                 dd($e->getMessage()); // For debugging purposes, you can dump the error message
             }
 
-            if ($dg_allotment == 'Y') {
-                try {
+            if ($dg_allotment == 'Y') { // dd("hi",$dg_allotment);
+                try { 
                     // Fetch the next quartertype directly in a single query
                     $quartertype = $result->quartertype;
                     $dgQuartertype = QuarterType::select('quartertype')
@@ -1108,44 +1118,58 @@ class QuartersController extends Controller
 
                     $quarterTypeInstance = new QuarterType();
                     $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype, $officecode);
-
+                  //dd($dg_wno);
                     // Create and save a new TQuarterRequestA instance
-                    $requestModel = TQuarterRequestA::create([
-                        'uid' => $result->uid,
-                        'requestid' => $dg_request_id,
-                        'quartertype' => $dgQuartertype->quartertype,
-                        'inward_no' => $result->inward_no,
-                        'old_designation' => $result->old_designation,
-                        'old_office' => $result->old_office,
-                        'deputation_date' => $result->deputation_date,
-                        'prv_area_name' => $result->prv_area_name,
-                        'prv_building_no' => $result->prv_building_no,
-                        'prv_quarter_type' => $result->prv_quarter_type,
-                        'prv_rent' => $result->prv_rent,
-                        'prv_handover' => $result->prv_handover,
-                        'have_old_quarter' => $result->have_old_quarter,
-                        'old_quarter_details' => $result->old_quarter_details,
-                        'is_scst' => $result->is_scst,
-                        'scst_info' => $result->scst_info,
-                        'is_relative' => $result->is_relative,
-                        'relative_details' => $result->relative_details,
-                        'is_relative_householder' => $result->is_relative_householder,
-                        'relative_house_details' => $result->relative_house_details,
-                        'have_house_nearby' => $result->have_house_nearby,
-                        'nearby_house_details' => $result->nearby_house_details,
-                        'downgrade_allotment' => 'N',
-                        'request_date' => now(), // Using Laravels helper function to  the current date and time
-                        'is_downgrade_request' => 1,
-                        'is_priority' => 'N',
-                        'reference_id' => $result->requestid,
-                        'dg_rivision_id' => $result->rivision_id,
-                        'is_varified' => 1,
-                        'is_accepted' => 1,
-                        'remarks' => '',
-                        'updatedBy' => $result->uid,
-                        'Wno' => $dg_wno
-                    ]);
+                   // Enable query logging
+//DB::enableQueryLog();
 
+// Create the record
+$requestModel = TQuarterRequestA::create([
+    'uid' => $result->uid,
+    'requestid' => $dg_request_id,
+    'quartertype' => $dgQuartertype->quartertype,
+    'inward_no' => $result->inward_no,
+    'old_designation' => $result->old_designation,
+    'old_office' => $result->old_office,
+    'deputation_date' => $result->deputation_date,
+    'prv_area_name' => $result->prv_area_name,
+    'prv_building_no' => $result->prv_building_no,
+    'prv_quarter_type' => $result->prv_quarter_type,
+    'prv_rent' => $result->prv_rent,
+    'prv_handover' => $result->prv_handover,
+    'have_old_quarter' => $result->have_old_quarter,
+    'old_quarter_details' => $result->old_quarter_details,
+    'is_scst' => $result->is_scst,
+    'scst_info' => $result->scst_info,
+    'is_relative' => $result->is_relative,
+    'relative_details' => $result->relative_details,
+    'is_relative_householder' => $result->is_relative_householder,
+    'relative_house_details' => $result->relative_house_details,
+    'have_house_nearby' => $result->have_house_nearby,
+    'nearby_house_details' => $result->nearby_house_details,
+    'downgrade_allotment' => 'N',
+    'request_date' => now(),
+    'is_downgrade_request' => 1,
+    'is_priority' => 'N',
+    'reference_id' => $result->requestid,
+    'dg_rivision_id' => $result->rivision_id,
+    'is_varified' => 1,
+    'is_accepted' => 1,
+    'remarks' => '',
+    'updatedBy' => $result->uid,
+    'is_ddo_varified' => 1,
+    'cardex_no' => $result->cardex_no,
+    'ddo_code' => $result->ddo_code,
+    'wno' => $dg_wno,
+    'officecode' => $result->officecode,
+
+
+
+]);
+
+// Get the last executed query
+//$query = DB::getQueryLog();
+//dd(end($query));
                     // Update Dgrid in TQuarterRequestA
                     TQuarterRequestA::where('requestid', $requestid)
                         ->where('rivision_id', $rv)

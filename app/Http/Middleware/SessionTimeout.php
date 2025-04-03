@@ -11,7 +11,7 @@ class SessionTimeout
     public function handle($request, Closure $next)
     {
         // Set the maximum idle time in minutes (e.g., 15 minutes)
-        $maxIdleTime = 15; // 15 minutes
+        $maxIdleTime =30; // 15 minutes
 
         // Check if the user is authenticated
         if (Auth::check()) {
