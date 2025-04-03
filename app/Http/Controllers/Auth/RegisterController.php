@@ -43,8 +43,8 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            /*   'contact_no' => ['required', 'string', 'regex:/^[0-9]{10}$/', 'unique:users,contact_no'],
-            'captcha' => ['required', 'captcha'],*/
+            'contact_no' => ['required', 'string', 'regex:/^[0-9]{10}$/', 'unique:users,contact_no'],
+            'captcha' => ['required', 'captcha'],
             'designation' => 'required|regex:/^[a-zA-Z\s]+$/', // only letters and spaces
             'officename' => 'required|regex:/^[a-zA-Z\s]+$/', // only letters and spaces
             'district' => 'required',
@@ -64,12 +64,12 @@ class RegisterController extends Controller
             'officename.regex' => 'Office name should contain only letters and spaces',
             'district.required' => 'Please select your district',
             'taluka.required' => 'Please select your taluka',
-        /* 'contact_no.required' => 'The contact number is required.',
+             'contact_no.required' => 'The contact number is required.',
             'contact_no.string' => 'The contact number must be a string.',
             'contact_no.regex' => 'The contact number must be a valid 10-digit number.',
             'contact_no.unique' => 'The contact number has already been taken.',
             'captcha.required' => 'The captcha is required.',
-            'captcha.captcha' => 'The captcha is invalid.',*/
+            'captcha.captcha' => 'The captcha is invalid.',
         ]);
     }
 
