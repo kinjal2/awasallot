@@ -218,6 +218,7 @@ class PhoneVerificationController extends Controller
         // Update the `phone_verified_at` timestamp to mark the phone as verified
         return $user->forceFill([
             'phone_verified_at' => now(),
+            'email_verified_at' => Carbon::now()
         ])->save();
     }
 }

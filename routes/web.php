@@ -115,7 +115,7 @@ Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent
     Route::get('quarter-police-document', ['as' => 'quarter.police.document', 'uses' => 'PolicestaffController@index']);
     Route::post('normalquarter-list', ['as' => 'normalquarter-list', 'uses' => 'QuartersController@getNormalquarterList']);
     Route::get('editquarter_a/{r}/{rv}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
-    Route::get('editquarter_a/{r}/{rv}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
+   // Route::get('editquarter_a/{r}/{rv}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
     Route::get('editquarter_b/{r}/{rv}', ['as' => 'editquarter_b', 'uses' => 'QuartersController@editquarter_b']);
     Route::post('saveapplication', [ 'as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
     Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);

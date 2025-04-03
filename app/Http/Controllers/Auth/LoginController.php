@@ -95,7 +95,7 @@ class LoginController extends Controller
             'otp' => 'required|numeric|digits:6',
         ]);
         $user = session('user');
-        dd( $user);
+      //  dd( $user);
         // Retrieve OTP from the database
         $otp = Otp::where('user_id', $request->user_id)->first();
 
