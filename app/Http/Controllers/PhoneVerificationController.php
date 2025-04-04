@@ -58,85 +58,73 @@ class PhoneVerificationController extends Controller
      */
     public function verify(Request $request)
 {
-    // Validate the OTP input from the user
+    // Step 1: Validate the OTP input from the user
     $request->validate([
         'otpnumber' => 'required|numeric|digits:6', // OTP validation
     ]);
 
-    // Get the user from the session if available
-    $user = session('user') ?? $request->user();  // Try to get user from session or request
-    //dd( $user);
+    // Step 2: Get the user from the session or request
+    $user = session('user') ?? $request->user();
+
     if (!$user) {
-        // If user is not authenticated or session is expired, redirect back to login
         return redirect()->route('login')->withErrors('Session expired. Please log in again.');
     }
 
-    // Retrieve the most recent OTP record for the user
+    // Step 3: Retrieve the latest OTP record for the user
     $otp = Otp::where('user_id', $user->id)->latest()->first();
 
-    // If OTP is not found or has expired
     if (!$otp || now()->greaterThan($otp->expires_at)) {
-        return redirect()->back()->withErrors([
-            'code' => 'The OTP you provided is invalid or has expired. Please try again.'
-        ]);
+        return redirect()->back()->withErrors(['code' => 'The OTP you provided is invalid or has expired.']);
     }
 
-    // Reset failed attempts if the lockout period has expired
+    // Step 4: Handle OTP lockout
     if ($otp->blocked_until && now()->greaterThan($otp->blocked_until)) {
-        $otp->attempts = 0;  // Reset attempts
-        $otp->blocked_until = null;  // Unlock account
+        $otp->attempts = 0;
+        $otp->blocked_until = null;
         $otp->save();
     }
 
-    // If the OTP is locked due to too many failed attempts
     if ($otp->blocked_until && now()->lessThan($otp->blocked_until)) {
-        return redirect()->back()->withErrors([
-            'code' => 'Too many failed attempts. Your account is temporarily locked. Please try again later.'
-        ]);
+        return redirect()->back()->withErrors(['code' => 'Too many failed attempts. Please try again later.']);
     }
 
-    // If OTP is incorrect, increment the attempt count
+    // Step 5: Verify OTP
     if ($otp->otp !== $request->otpnumber) {
         $otp->increment('attempts');
 
-        // Lock the account for 30 minutes after 3 failed attempts
         if ($otp->attempts >= 3) {
-            $otp->blocked_until = now()->addMinutes(30);  // Lock for 30 minutes
+            $otp->blocked_until = now()->addMinutes(30);
             $otp->save();
-            return redirect()->back()->withErrors([
-                'code' => 'Too many failed attempts. Your account has been temporarily locked for 30 minutes.'
-            ]);
+            return redirect()->back()->withErrors(['code' => 'Too many failed attempts. Your account has been locked for 30 minutes.']);
         }
 
-        return redirect()->back()->withErrors([
-            'code' => 'The OTP you provided is incorrect. Please try again or request another OTP.'
-        ]);
+        return redirect()->back()->withErrors(['code' => 'The OTP you provided is incorrect.']);
     }
 
-    // If OTP is correct, proceed to phone verification
-    $this->phoneVerifiedAt($user);  // Mark the phone as verified
+    // Step 6: Mark phone as verified
+    $this->phoneVerifiedAt($user);
 
-    // Delete the OTP after successful verification
+    // Step 7: Prevent concurrent logins using `session_status`
+    if ($user->session_status == 1) {
+        Auth::logout();  // Log out the existing session
+        return redirect()->route('login')->withErrors('You were logged out from another device.');
+    }
+
+    // Step 8: Delete OTP after successful verification
     $otp->delete();
 
-    // Log the user in
-     // Log the user in
-     Auth::login($user);
+    // Step 9: Update session status
+    $user->update([
+        'session_status' => 1, // Set session status to active
+    ]);
 
-     // Regenerate session to ensure a fresh one
-     session()->regenerate();
-        /// Check if user is authenticated after login
-        if (Auth::check()) {
-            session()->forget('user');
-        // dd('User is authenticated:', Auth::user());
-        } else {
-        // dd('User is not authenticated after login');
-        }
+    // Step 10: Log the user in and regenerate session
+    Auth::login($user);
+    session()->regenerate();
+    session()->forget('user');
 
-    // Redirect to the home page or the intended page after successful login
     return redirect()->route('home')->with('status', 'Your phone was successfully verified!');
 }
-
 
     /**
      * Generate and send OTP to the user's phone.
@@ -218,7 +206,7 @@ class PhoneVerificationController extends Controller
         // Update the `phone_verified_at` timestamp to mark the phone as verified
         return $user->forceFill([
             'phone_verified_at' => now(),
-            'email_verified_at' => Carbon::now()
+            'email_verified_at' => now()
         ])->save();
     }
 }

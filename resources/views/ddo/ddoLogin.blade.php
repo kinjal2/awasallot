@@ -137,4 +137,18 @@
             });
         });
     });
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("LoginForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            let passwordField = document.getElementById("password");
+            let csrfToken = document.querySelector('input[name="_token"]').value; // Get CSRF token
+             /* alert(passwordField);
+              alert(csrfToken);*/
+            let encryptedPassword = btoa(passwordField.value + csrfToken); // Base64 encode password + CSRF token
+
+            passwordField.value = encryptedPassword; // Set the encrypted value
+            this.submit();
+        });
+    });
 </script>

@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Carbon\Carbon;
 
 
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
@@ -24,7 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'image_contents', 'last_login', 'last_ip', 'created_at', 'updated_at', 
         'is_admin', 'otp', 'otp_created_at', 'status', 'is_verified', 
         'office_email_id', 'is_police_staff', 'is_fix_pay_staff', 
-        'police_staff_verify', 'remarks','ddo_no','cardex_no','ddo_code','tcode','dcode','session_status'
+        'police_staff_verify', 'remarks','ddo_no','cardex_no','ddo_code','tcode','dcode','session_status','last_session_id'
     ];
 
     protected $hidden = [
@@ -157,5 +158,6 @@ User::updateOrCreate(
 		User::callToVerify1( $code,$receiverNumber);
      
     }
+    
 }
 

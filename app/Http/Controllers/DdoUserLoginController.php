@@ -19,61 +19,69 @@ class DdoUserLoginController extends Controller {
     }
     // Method for logging in a user
 
-    public function login( Request $request ) {
-        // Validate the request
-        try {
-            // Validate the mobile number or email and captcha
-            $request->validate( [
-                'ddo_reg_no' => [
-                    'required',
-                    'regex:/^SGV\d{6}[A-Z]$/', // Regex for DDO Registration Number format
-                ],
-                'password' => 'required',
-                'captcha' => 'required|captcha', // Validate the CAPTCHA
-            ],[
-                'ddo_reg_no.required' => 'The DDO Registration Number is required.',
-                'ddo_reg_no.regex' => 'The DDO Registration Number must be in the format SGV followed by 6 digits and an uppercase letter.',
-                'password.required' => 'The password is required.',
-                'captcha.required' => 'The CAPTCHA is required.',
-                'captcha.captcha' => 'The CAPTCHA is incorrect. Please try again.',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Log the validation errors
-
-            Log::error('Validation errors occurred: ', $e->errors());
-
-            // Optionally, return the error messages to the user
-            return back()->withErrors($e->errors());
-        }
-       
-       // dd($request->all());
-        // Attempt to log the user in
-        if ( Auth::guard( 'ddo_users' )->attempt( $request->only( 'ddo_reg_no', 'password' ) ) ) {
-            //dd("success");
-            $user = Auth::guard( 'ddo_users' )->user();
-            // Store the role and ddo_reg_no in the session
-            session( [ 'role' => 'ddouser' ] );
-            session( [ 'ddo_reg_no' => $user->ddo_reg_no ] );
-            // Store the ddo_reg_no
-            session( [ 'cardex_no' => $user->cardex_no ] );
-            // Store the cardex_no
-            session( [ 'ddo_code' => $user->ddo_code ] );
-            // Store the ddo_code
-            session( [ 'officecode' => $user->officecode ] );
-            //dd( session( 'officecode' ) );
-            $ddo_office_email_id = $user->ddo_office_email_id;
-            if ( $ddo_office_email_id == null ) {
-                return redirect()->route( 'ddo.set_office_email_pwd' )->with( 'message', 'Logged in successfully' );
-            } else {
-                return redirect()->route( 'ddo.dashboard' )->with( 'message', 'Logged in successfully' );
-            }
-            return redirect()->route( 'ddo.dashboard' )->with( 'message', 'Logged in successfully' );
-        }
-        else {
-           // dd("Fail");
-        return redirect()->back()->withErrors( [ 'ddo_reg_no' => 'Invalid credentials' ] )->withInput();
-        }
+    public function login(Request $request)
+{
+    try {
+        // Validate input
+        $request->validate([
+            'ddo_reg_no' => [
+                'required',
+                'regex:/^SGV\d{6}[A-Z]$/', // DDO Registration Number format
+            ],
+            'password' => 'required',
+            'captcha' => 'required|captcha', // Validate CAPTCHA
+        ], [
+            'ddo_reg_no.required' => 'The DDO Registration Number is required.',
+            'ddo_reg_no.regex' => 'The DDO Registration Number must be in the format SGV followed by 6 digits and an uppercase letter.',
+            'password.required' => 'The password is required.',
+            'captcha.required' => 'The CAPTCHA is required.',
+            'captcha.captcha' => 'The CAPTCHA is incorrect. Please try again.',
+        ]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Log::error('Validation errors occurred: ', $e->errors());
+        return back()->withErrors($e->errors());
     }
+
+    // Decode Base64 password
+    $decodedPassword = base64_decode($request->password);
+
+    // Ensure CSRF token is appended
+    if (!str_ends_with($decodedPassword, $request->_token)) {
+        return back()->withErrors(['password' => 'Decryption failed!']);
+    }
+
+    // Extract the original password
+    $password = str_replace($request->_token, '', $decodedPassword);
+
+    // Attempt login with decoded password
+    if (Auth::guard('ddo_users')->attempt([
+        'ddo_reg_no' => $request->ddo_reg_no,
+        'password'   => $password
+    ])) {
+        $user = Auth::guard('ddo_users')->user();
+
+        // Store user session data
+        session([
+            'role'       => 'ddouser',
+            'ddo_reg_no' => $user->ddo_reg_no,
+            'cardex_no'  => $user->cardex_no,
+            'ddo_code'   => $user->ddo_code,
+            'officecode' => $user->officecode
+        ]);
+
+        // Redirect based on email condition
+        return redirect()->route($user->ddo_office_email_id ? 'ddo.dashboard' : 'ddo.set_office_email_pwd')
+            ->with('message', 'Logged in successfully');
+    }
+
+    // Log failed login attempt (Optional)
+    Log::warning("Failed login attempt for DDO Reg No: " . $request->ddo_reg_no);
+
+    return back()
+        ->withErrors(['ddo_reg_no' => 'Invalid credentials'])
+        ->withInput();
+}
+
     // Method for logging out a user
 
     public function logout() {
