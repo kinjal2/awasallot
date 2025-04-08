@@ -32,7 +32,7 @@
                                 <input type="password" class="form-control" name="otpnumber" id="otpnumber"
                                     placeholder='******'>
                             </div> <!-- form-group / col ends -->
-                            <div class="form-group col-sm-12 col-lg-12 ">
+                            <div class="form-group col-sm-12 col-lg-12 mt-3 ">
                                 <div class='captcha m-0 mb-2'> <span>{!! captcha_img() !!} </span>
                                     <button type="button" class="btn btn-secondary" id="reload">
                                         &#x21bb;

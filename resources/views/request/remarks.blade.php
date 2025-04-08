@@ -31,15 +31,27 @@
               <!-- form start -->
           
 	<div class="card-body"> 
+    <form action="" method="POST" id="save_new_remark" name="save_new_remark">
+      @csrf
+      <div class="row">
+        <div class="col-,d-6">
+          <label for="new_remark">Add New Remark</label>
+          <input class="form-control" type="text" name="new_remark" id="new_remark" value="{{ old('new_remark') }}">
+          <input type="submit" value="Add New Remark" class="button btn bnt-success">
+        </div>
+      </div>
+    </form>
  <form method="POST" name="front_annexurea" id="front_annexurea" action="{{ url('saveremarks') }}" enctype="multipart/form-data">
             @csrf
 	  <input type="hidden" name="r" id="r" value="{{ $requestid }}" />
             <input type="hidden" name="rv" id="rv" value="{{ $rv }}" />
             <input type="hidden" name="type" id="type" value="{{ $type }}" />
             <input type="hidden" name="remarks" id="remarks"  />
-	<div  style="text-align:center;">
+	<div  style="text-align:center;" class="col-md-6">
+ 
             <input type="submit" class="button btn btn-success" value="Save" onclick="return validate();" />
 	</div>
+  
 <div  style="overflow-x:auto;">
 
 			<table class="table table-bordered" id="remarkslist">
@@ -58,6 +70,7 @@
 					@endforeach
 				</tbody>
                 </table>
+                
 		<!-- /.card-body -->
 		</div> 
 

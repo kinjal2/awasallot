@@ -83,9 +83,9 @@ Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent
 
     Route::get('quarters', [ 'as' => 'quarters', 'uses' => 'QuartersController@index']);
     
-   
-   
-    
+    Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
+    Route::post('getList2','QuartersPriorityController@getList');
+    Route::resource('quarterlistpriority', 'QuartersPriorityController');
     Route::get('uploaddocument/:any', ['uses' => 'QuartersController@uploaddocument']);
     Route::post('saveuploaddocument', ['uses' => 'QuartersController@saveuploaddocument']);
     Route::post('/get-document-url', [ 'as' => 'quarter.list.showDocument', 'uses' => 'QuartersController@showDocument']);
@@ -124,32 +124,7 @@ Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent
   Route::get('quarterlistnormal', [ 'as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
   Route::post('waiting-list', [ 'as' => 'waitinglist.data','uses' => 'ReportsController@getWaitingList']);
   Route::post('getdocumentdata', [ 'as' => 'getdocumentdata','uses' => 'ReportsController@getdocumentdata']);
- Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
-	Route::resource('quarterlistpriority', 'QuartersPriorityController');
-	 Route::get('allotmentlist', ['as' => 'allotment.list', 'uses' => 'ReportsController@allotmentlist']);
-    Route::get('vacantlist', ['as' => 'vacant.list', 'uses' => 'ReportsController@vacantlist']);
-    Route::get('quarteroccupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
-	
-	Route::post('allotment-list', ['as' => 'allotment-list', 'uses' => 'ReportsController@getAllotmentList']);
-	Route::post('vacant-list', ['as' => 'vacant-list', 'uses' => 'ReportsController@getVacantList']);
 
-	Route::post('vacant_quarter', ['as' => 'vacant_quarter', 'uses' => 'ReportsController@vacant_quarter']);
-
-
-	Route::get('quarter-occupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
-	Route::post('quarteroccupancylist', ['as' => 'quarter.occupancy.list', 'uses' => 'ReportsController@getquarteroccupancy']);
-	Route::post('policestaff-data', [ 'as' => 'policestaff.data','uses' => 'PolicestaffController@getpolicedocumentList']);
-	Route::get('editquarter_police_a/{r}/{rv}/{performa}', ['as' => 'editquarter_police_a', 'uses' => 'PolicestaffController@editquarter_a']);
-	//area
-Route::get('masterarea', ['uses' => 'AreaController@index', 'as' => 'masterarea.index']);
-Route::post('getList','AreaController@getList');
-Route::resource('masterarea', 'AreaController');
-//Route::delete('masterarea/{id}', [AreaController::class, 'destroy'])->name('masterarea.destroy');
-//Route::get('masterarea/{id}/edit', [AreaController::class, 'edit'])->name('masterarea.edit');
-Route::get('/addNewArea',[AreaController::class,'addNewArea'])->name('masterarea.addNewArea');
-Route::post('/addNewArea',[AreaController::class,'store'])->name('masterarea.store');
-Route::get('/editArea/{id}/edit',[AreaController::class,'editArea'])->name('masterarea.editArea');
-Route::post('/editArea',[AreaController::class,'store'])->name('masterarea.store');
     // Other admin-specific routes
 });
 
@@ -256,6 +231,12 @@ Route::prefix('masterquartertype')->group(function () {
     
 });
 
+// Area Routes
+Route::prefix('masterarea')->group(function () {
+    Route::get('/', [AreaController::class, 'index'])->name('masterarea.index');
+    Route::post('getList', 'AreaController@getList');
+    Route::resource('masterarea', 'AreaController');
+});
 
 // Cache clear route
 Route::get('/clear-cache', function () {

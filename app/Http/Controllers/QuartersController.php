@@ -1214,6 +1214,7 @@ $requestModel = TQuarterRequestA::create([
         } else {
             //dd("have issue");
            $status=2;
+
          //  dd($request->adm_remarks,$request->admin_remarks);
             $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rv)
                 ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
