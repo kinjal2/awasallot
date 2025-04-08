@@ -463,16 +463,17 @@
                                             <div class="form-group">
                                                 <label for="Name">Have Issue?</label>
                                             </div>
-                                            <div class="form-group">
+                                            <!-- <div class="form-group">
                                                 <label for="Name">Add Remarks</label>
-                                                <input type="text" name="adm_remarks" id="adm_remarks" class="form-control" style="display: none;">
-                                                 <!-- Remarks dropdown with multiple selectable options and "Other" option -->
-                                                {{ Form::select('admin_remarks[]',  getRemarks(), null, ['id' => 'admin_remarks', 'class' => 'form-control select2', 'multiple' => 'multiple']) }}
+                                                <input type="text" name="adm_remarks" id="adm_remarks" class="form-control" style="display: none;"> -->
+                                                  <!-- Remarks dropdown with multiple selectable options and "Other" option -->
+                                                <!-- {{ Form::select('admin_remarks[]',  getRemarks(), null, ['id' => 'admin_remarks', 'class' => 'form-control select2', 'multiple' => 'multiple']) }} -->
 
-                                            </div>
+                                            <!-- </div> --> 
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-primary" id="submit_issue"
-                                                    name="submit_issue" value="submit_issue">Submit Review & Next</button>
+                                                    name="submit_issue" value="submit_issue"> Add Remarks </button>
+                                                    <!-- Submit Review & Next -->
                                             </div>
                                     </div>
                                     <div id="submit">

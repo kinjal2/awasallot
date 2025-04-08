@@ -31,6 +31,7 @@
                         <label for="first_name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}&nbsp;<span class="text-danger">*</span></label>
                         <div class="row">
                             <div class="col-md-2">
+                                <input type="hidden" id="_token" name="_token" value="{{ csrf_token() }}">
                                 <input id="surname" type="text" class="custon-control  custon-control form-control @error('surname') is-invalid @enderror" name="surname" value="{{ old('surname') }}" required autocomplete="surname" placeholder="Surname">
                                 @error('surname')
                                 <span class="invalid-feedback" role="alert">

@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="{{ URL::asset('/css/jquery.datetimepicker.min.css') }}">
 
         <!-- DataTables -->
+         
         <link rel="stylesheet" href="{!! URL::asset(Config::get('app.theme_path').'/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') !!}">
   <link rel="stylesheet" href="{!! URL::asset(Config::get('app.theme_path').'/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') !!}">
 
