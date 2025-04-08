@@ -1,6 +1,9 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  
+  <!-- CSRF Token (Important for AJAX requests) -->
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>Selecao Bootstrap Template - Index</title>
   <meta content="" name="description">
@@ -21,27 +24,24 @@
 
   <!-- Template Main CSS File -->
   <link href="{{ URL::asset('/css/style.css') }}" rel="stylesheet">
-   <!-- Styles -->
-   <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
   
-   
-    
-    <style>
-        a.logindata {
-            color: white;
-            background-color: transparent;
-            text-decoration: none;
-            font-size: 20px;
-            padding-right: 8px;
-
-        }
-        .error-message {
-            color: red;
-        }
-        .error-field {
-            border-color: red;
-            box-shadow: 0 0 5px red;
-        }
-    </style>
-</head>
+  <!-- Styles -->
+  <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+  
+  <style>
+      a.logindata {
+          color: white;
+          background-color: transparent;
+          text-decoration: none;
+          font-size: 20px;
+          padding-right: 8px;
+      }
+      .error-message {
+          color: red;
+      }
+      .error-field {
+          border-color: red;
+          box-shadow: 0 0 5px red;
+      }
+  </style>

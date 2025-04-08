@@ -1,41 +1,51 @@
-<?php // app/Http/Middleware/SessionTimeout.php
+<?php
 
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
 
 class SessionTimeout
 {
     public function handle($request, Closure $next)
     {
-        // Set the maximum idle time in minutes (e.g., 15 minutes)
-        $maxIdleTime =30; // 15 minutes
+        $maxIdleTime = config('session.lifetime', 30); // fallback to 30 mins if not in config
 
-        // Check if the user is authenticated
         if (Auth::check()) {
             $user = Auth::user();
             $lastActivity = session('last_activity_time');
             $currentTime = Carbon::now();
 
-            // If last activity time exists and exceeds the max idle time, log the user out
-            if ($lastActivity && $currentTime->diffInMinutes($lastActivity) > $maxIdleTime) {
-                // Set the session status to 0 (inactive) in the database
-                $user->update(['session_status' => 0]); // Set session_status to 0 (inactive)
+            if ($lastActivity) {
+                $lastActivityTime = Carbon::parse($lastActivity);
 
-                // Logout the user and clear session
-                Auth::logout();
-                session()->flush();
-                return redirect()->route('login')->with('error', 'Session expired due to inactivity.');
+                // If the session is idle too long, log out the user
+                if ($lastActivityTime->diffInMinutes($currentTime) > $maxIdleTime) {
+                    $user->update(['session_status' => 0]);
+
+                    Auth::logout();
+                    session()->flush();
+
+                    return redirect()->route('login')->with('error', 'Session expired due to inactivity.');
+                }
             }
 
-            // Update the last activity time on every request
-            session(['last_activity_time' => Carbon::now()]);
+            // Update the activity timestamp in session
+            session(['last_activity_time' => $currentTime]);
 
-            // Update session_status to 1 (active) in the database
+            // Avoid unnecessary DB update
             if ($user->session_status !== 1) {
-                $user->update(['session_status' => 1]); // Set session_status to 1 (active)
+                $user->update(['session_status' => 1]);
+            }
+
+            // Optional: Check session ID for hijacking/concurrent session
+            if ($user->session_id && session('user_session_id') !== $user->session_id) {
+                Auth::logout();
+                session()->flush();
+
+                return redirect()->route('login')->withErrors('Session invalidated due to login from another device.');
             }
         }
 

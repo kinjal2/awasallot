@@ -106,7 +106,7 @@ Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent
     Route::middleware(['role:admin','check.host'])->group(function () {
     Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
     Route::get('user', [ 'as' => 'user', 'uses' => 'UserController@index']);
-    Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
+   // Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
     Route::post('get-quarter-type/', [DashboardController::class, 'getQuarterType'])->name('getQuarterType');
     Route::post('get-area/', [DashboardController::class, 'getAreaWiseQurtCnt'])->name('getArea');
     Route::post('get-quarter-total/', [DashboardController::class, 'getQuarterTotalList'])->name('getQuarterList');

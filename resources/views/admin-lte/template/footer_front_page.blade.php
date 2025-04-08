@@ -28,15 +28,24 @@
    <script src="{{ URL::asset(Config::get('app.theme_path').'/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script> 
 
    
-<script>
-    
-    // jQuery code
+   <script>
+   
     $(document).ready(function() {
+        console.log($('meta[name="csrf-token"]').attr('content')); 
+
+        console.log("CSRF Token:", $('meta[name="csrf-token"]').attr('content'));
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        console.log("CSRF Token:", $('meta[name="csrf-token"]').attr('content'));
         $('input.dateformat').datetimepicker({
             format: 'd-m-Y',
             timepicker: false
         });
-       
+
         $('#reload').on('click', function() {
             $.ajax({
                 type: 'GET',
@@ -46,7 +55,6 @@
                 }
             });
         });
-      
     });
 </script>
     <!-- Custom Script -->

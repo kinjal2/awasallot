@@ -149,35 +149,7 @@
                                 @enderror
 
                             </div>
-                        <!-- <div class="col-6 form-group relative mb-3">
-                        <label for="cardex_no" class="col-md-4 col-form-label text-md-right">{{ __('Cardex No') }}</label>
-                        <input id="cardex_no" type="text" class=" custon-control form-control @error('cardex_no') is-invalid @enderror" name="cardex_no"  value="{{ old('cardex_no') }}" required  autofocus>
-                    <i class="bi bi-phone form-icon"></i>
-
-                                @error('cardex_no')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-
-                                </div>
-                        </div>
-                        <div class="col-6 form-group relative mb-3">
-                            <label for="ddo_code" class="col-md-4 col-form-label text-md-right">{{ __('DDO Code') }}</label>
-                            <select id="ddo_code" name="ddo_code" class="form-control mt-2" >
-                                <option value="0">Select DDO Office</option>
-                            </select>
-                        <i class="bi bi-phone form-icon"></i>
-
-                                    @error('ddo_code')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-
-                            </div>
- -->
-
+                       
                         <div class="col-6 form-group relative mb-3">
                         <label for="captcha" class="col-md-4 col-form-label text-md-right">Captcha</label>
                         <div class='captcha m-0'> <span>{!! captcha_img() !!}  </span>
@@ -313,49 +285,7 @@
                 form.submit();
             }
         });
-       /* $('#cardex_no').on('blur', function() {
-            var cardexNo = $(this).val();
-            var csrfToken = $('#registrationForm input[name="_token"]').val();
-
-            if (cardexNo) {
-                $.ajax({
-                    url: "{{ route('ddo.getDDOCode') }}", // Your route to fetch data
-                    type: 'POST', // Change to POST
-                    data: {
-                        cardex_no: cardexNo,
-                        _token: csrfToken // Include CSRF token here
-                    },
-                    success: function(data) {
-                        const ddo_code = $('#ddo_code');
-                        ddo_code.empty(); // Clear previous suggestions
-                        if (data.length > 0) {
-                           // ddo_code.show();
-                            data.forEach(function(item) {
-                                ddo_code.append(`<option value="${item.ddo_code}">${item.ddo_office} [ Code - ${item.ddo_code} ]</option>`); // Adjust based on your data
-                            });
-                        } else {
-                            alert('Invalid Cardex No.');
-                            //ddo_code.hide(); // Hide if no data
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Error fetching data:', xhr.responseText);
-                        if (xhr.status === 401) {
-                            // Handle unauthenticated
-                            alert('You are not authenticated. Please log in.');
-                            window.location.href = '/login'; // Adjust to your login route
-                        }
-                    }
-                });
-            } else {
-               // $('#ddo_code').hide(); // Hide dropdown if input is empty
-            }
-        });*/
-
-        // Optionally hide suggestions on focus out
-        /*$('#ddo_code').on('focusout', function() {
-            $(this).hide();
-        });*/
+      
         });
 
      $('#district').on('change', function() {
@@ -368,7 +298,7 @@
             type: 'POST',
             data: {
                 dcode: dcode,
-                _token: csrfToken // Include CSRF token here
+              
             },
             success: function(data) {
                 //dd(data);

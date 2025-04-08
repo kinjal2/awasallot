@@ -22,7 +22,7 @@ class PhoneVerificationController extends Controller
     {
         // Check if the user is authenticated first
         $user = $request->user();
-        //dd($user);
+
         if (!$user) {
         // If the user is not authenticated, redirect to login or show an error
         return redirect()->route('login')->withErrors('You must be logged in to verify your phone.');
@@ -110,13 +110,12 @@ class PhoneVerificationController extends Controller
     // 6. Mark phone verified
     $this->phoneVerifiedAt($user);
 
-   
-     // 7. Check for existing session conflict
-     if ($user->session_status === 1) {
+    // 7. Check for existing session conflict
+    if ($user->session_status === 1) {
         $storedSessionId = $user->session_id;
         $currentSessionId = session('user_session_id');
 
-        dd($currentSessionId,$storedSessionId);
+        //dd($currentSessionId,$storedSessionId);
 
         if ($storedSessionId !== $currentSessionId) {
             Auth::logout();
@@ -135,14 +134,13 @@ class PhoneVerificationController extends Controller
 
     // 9. Log in user
     Auth::login($user);
-   // session()->regenerate();
-   // session()->forget('user');
-   // $otp->delete(); // OTP is valid
+    session()->regenerate();
+    session()->forget('user');
+    $otp->delete(); // OTP is valid
 
     if (Auth::check()) {
-     //dd('User is logged in:', [Auth::user()]);
-    // return  \Redirect::route('user.dashboard.userdashboard');
-    return redirect()->route('user.dashboard.userdashboard');
+     dd('User is logged in:', [Auth::user()]);
+     return  \Redirect::route('user.dashboard.userdashboard');
     } else {
         dd('Auth check failed');
     }
