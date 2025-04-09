@@ -15,18 +15,21 @@ class HomeController extends Controller
     public function __construct()
     {
     //  $this->middleware(['auth','verified','verifiedphone']);
-    $this->middleware(function ($request, $next) {
-      $user = Auth::user();
+    // $this->middleware(function ($request, $next) {
+    //   $user = Auth::user();
 
-      if (Auth::check() && (Auth::user()->is_admin == false || empty(Auth::user()->is_admin))) {
+    //   if (Auth::check() && (Auth::user()->is_admin == false || empty(Auth::user()->is_admin))) {
 
-          $this->middleware(['auth', 'verified', 'verifiedphone']);
-      }
-      else{
-        $this->middleware(['auth']);
-      }
-      return $next($request);
-  });
+    //       $this->middleware(['auth', 'verified', 'verifiedphone']);
+    //   }
+    //   else{
+    //     $this->middleware(['auth']);
+    //   }
+    //   return $next($request);
+  // });
+//    $this->middleware(['auth']);
+
+
 
     }
 

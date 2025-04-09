@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
 
 class PhoneVerificationController extends Controller
 {
@@ -59,6 +60,7 @@ class PhoneVerificationController extends Controller
      */
     public function verify(Request $request)
 {
+    //dd($request->all());
     // Constants
     $MAX_ATTEMPTS = 3;
     $LOCKOUT_MINUTES = 30;
@@ -76,6 +78,7 @@ class PhoneVerificationController extends Controller
 
     // 3. Get latest OTP record
     $otp = Otp::where('user_id', $user->id)->latest()->first();
+   //dd($otp);
     if (!$otp || now()->greaterThan($otp->expires_at)) {
         return redirect()->back()->withErrors(['code' => 'The OTP you provided is invalid or has expired.']);
     }
@@ -107,47 +110,73 @@ class PhoneVerificationController extends Controller
         return redirect()->back()->withErrors(['code' => 'The OTP you provided is incorrect.']);
     }
 
-    // 6. Mark phone verified
-    $this->phoneVerifiedAt($user);
-
    
+    //dd($this->phoneVerifiedAt($user));
+   
+    //dd($user->session_status);
      // 7. Check for existing session conflict
      if ($user->session_status === 1) {
         $storedSessionId = $user->session_id;
         $currentSessionId = session('user_session_id');
 
-        dd($currentSessionId,$storedSessionId);
+        //dd($currentSessionId,$storedSessionId);
 
         if ($storedSessionId !== $currentSessionId) {
+          //  dd("not matching");
+            $user->update([
+                'session_status' => 0,
+                'session_id' => null,
+            ]);
+            
             Auth::logout();
             return redirect()->route('login')->withErrors('You were logged out from another device. Try again to Login');
         }
     }
 
-    
+   // dd("hi");
     $newSessionId = Str::uuid()->toString();
     $user->update([
         'session_status' => 1,
         'session_id' => $newSessionId,
     ]);
-
+   // dd($newSessionId);
     session(['user_session_id' => $newSessionId]);
-
+    //dd($newSessionId,session('user_session_id'));
     // 9. Log in user
     Auth::login($user);
    // session()->regenerate();
    // session()->forget('user');
    // $otp->delete(); // OTP is valid
 
-    if (Auth::check()) {
-     //dd('User is logged in:', [Auth::user()]);
-    // return  \Redirect::route('user.dashboard.userdashboard');
-    return redirect()->route('user.dashboard.userdashboard');
-    } else {
-        dd('Auth check failed');
-    }
-    
-    return redirect()->route('home')->with('status', 'Your phone was successfully verified!');
+   /* if (Auth::check()) {*/
+        //dd('User is logged in:', [Auth::user()],Auth::user()->is_admin);
+       // dd(Auth::user()->is_admin);
+    //     if(Auth::check() && Auth::user()->is_admin === true)
+    //     {
+    //       $uid = Auth::user()->id;
+    //      $office_designations = DB::table('user_office_designation')->where('uid', '=', $uid)->where('user_office_designation.active', '=', 1)
+    //                                                   ->select('user_office_designation.officecode','user_office_designation.designationcode','offices.name as officename','designations.name as designation')
+    //                                                   ->leftJoin('offices', 'user_office_designation.officecode', '=', 'offices.id')
+    //                                                   ->leftJoin('designations', 'user_office_designation.designationcode', '=', 'designations.id')
+    //                                                   ->get();
+    //       dd($office_designations);
+    //       return view('checkuser', ['office_designations' => $office_designations]);
+    //     }
+    //     else{
+    //    //  dd("not an  admin");
+    //    session::put('role','user');
+    //       return redirect()->route('user.dashboard.userdashboard');
+    //     }  
+       
+    //     // return  \Redirect::route('user.dashboard.userdashboard');
+    //     return redirect()->route('home')->with('status', 'Your phone was successfully verified!....test');
+    // /*} else {
+    //     dd('Auth check failed');
+    // }*/
+     // 6. Mark phone verified
+     $this->phoneVerifiedAt($user);
+     return redirect()->route('home');
+   // return redirect()->route('home')->with('status', 'Your phone was successfully verified!');
 }
 
 

@@ -63,12 +63,12 @@ Route::get('/grasapi', 'RegistrationController@apiLogin')->name('grasapi');
 Auth::routes(['verify' => true]);
 
 // Phone Verification Routes
-Route::get('phone/verify', [PhoneVerificationController::class, 'show'])->name('phoneverification.notice');
-Route::post('phone/verify', [PhoneVerificationController::class, 'verify'])->name('phoneverification.verify');
+Route::get('/phone/verify', [PhoneVerificationController::class, 'show'])->name('phoneverification.notice');
+Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])->name('phoneverification.verify');
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/home', 'HomeController@index')->name('home');
 // Dashboard Routes user 
-Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent_clickjacking','check.session'])->group(function () {
-   
+ Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent_clickjacking','check.session'])->group(function () {   
     Route::get('userdashboard', ['uses' => 'DashboardController@userdashboard', 'as' => 'user.dashboard.userdashboard']);
     Route::get('profile', ['as' => 'user.profile', 'uses' => 'ProfileController@index']);
     Route::get('quartersuser', ['as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
@@ -311,7 +311,9 @@ Route::get('/custom-403', function () {
 })->name('custom.403.page');
 
 
-
+Route::get('/test',function(){
+    echo "test";
+})->name('test');
 
 
  
