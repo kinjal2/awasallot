@@ -103,6 +103,7 @@
                                                         {!! $quartertypeopt !!}
                                                     </select>
                                                     <input type="hidden" class="form-control" name="current_qaid" value="{{ $cur_qaid }}" />
+                                                    <input type="hidden" id="page" name="page" value="change_request" />
                                                 </div>
                                             </div>
                                             <div class="col-md-4">

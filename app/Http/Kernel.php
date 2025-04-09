@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'check.host' => \App\Http\Middleware\CheckHostHeader::class,
         'prevent_clickjacking' => \App\Http\Middleware\PreventClickjacking::class,
         'check.session' => \App\Http\Middleware\CheckSessionStatus::class,
+        'session.timeout' => \App\Http\Middleware\SessionTimeout::class,
         
     ];
 }

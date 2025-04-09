@@ -64,7 +64,11 @@
       <div class="carousel-item active">
         <div class="carousel-container">
           <h2 class="animate__animated animate__fadeInDown">Welcome to <span style="color: #ef6603;">Roads & Buildings Department</span></h2>
-          <p class="animate__animated fanimate__adeInUp">Ut velit est quam dolor ad a aliquid qui aliquid. Sequi ea ut et est quaerat sequi nihil ut aliquam. Occaecati alias dolorem mollitia ut. Similique ea voluptatem. Esse doloremque accusamus repellendus deleniti vel. Minus et tempore modi architecto.</p>
+          <p class="animate__animated fanimate__adeInUp">Welcome to this portal for easy quarter Allocation, Management and Maintenance</p>
+          <!-- Welcome to the Quarter Allocation, Management, and Maintenance Portal
+
+This portal provides seamless access to information on residential quarters and various government buildings.
+Designed with user convenience in mind, our platform enables quick and efficient application, allocation, and maintenance of quarters and office spaces. -->
           <!-- <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a> -->
         </div>
       </div>
@@ -96,16 +100,16 @@
         </div>
         <div class="row content" data-aos="fade-up">
           <div class="col-lg-6">
-            <p>
+            <!-- <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
               magna aliqua.
-            </p>
+            </p> -->
             <ul>
-              <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat</li>
-              <li><i class="ri-check-double-line"></i> Duis aute irure dolor in reprehenderit in voluptate velit</li>
-              <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat</li>
+            <li><i class="ri-check-double-line"></i> This Portal offers easy access to quarters information and various Government Buildings Information.</li>  
+            <li><i class="ri-check-double-line"></i> Our user Friendly portal enables swift application, Allocations and maintenance of the Quarters and Offices.</li>
+              <!-- <li><i class="ri-check-double-line"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat</li> -->
             </ul>
-            <a href="#" class="btn-learn-more">Learn More</a>
+            <!-- <a href="#" class="btn-learn-more">Learn More</a> -->
           </div>
           <div class="col-lg-6 pt-4 pt-lg-0">
             <img class="img-responsive"  src="{{ URL::asset('/images/gift-home.jpg') }}">

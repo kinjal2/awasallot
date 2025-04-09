@@ -68,7 +68,7 @@ Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])->na
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/home', 'HomeController@index')->name('home');
 // Dashboard Routes user 
- Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent_clickjacking','check.session'])->group(function () {   
+ Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent_clickjacking','check.session','session.timeout'])->group(function () {   
     Route::get('userdashboard', ['uses' => 'DashboardController@userdashboard', 'as' => 'user.dashboard.userdashboard']);
     Route::get('profile', ['as' => 'user.profile', 'uses' => 'ProfileController@index']);
     Route::get('quartersuser', ['as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
@@ -103,7 +103,7 @@ Route::post('/home', 'HomeController@index')->name('home');
 // Admin Dashboard
 
 
-    Route::middleware(['role:admin','check.host'])->group(function () {
+    Route::middleware(['role:admin','check.host','session.timeout'])->group(function () {
     Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
     Route::get('user', [ 'as' => 'user', 'uses' => 'UserController@index']);
   //  Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
@@ -208,7 +208,7 @@ Route::prefix('ddo')->group(function () {
     
 
     // DDO User Dashboard
-    Route::middleware('auth:ddo_users')->group(function () {
+    Route::middleware(['auth:ddo_users','session.timeout'])->group(function () {
         Route::get('dashboard', [DDOUserController::class, 'dashboard'])->name('ddo.dashboard');
         Route::get('quarters-normal', [DDOUserController::class, 'quartersNormal'])->name('ddo.quarters.normal');
         Route::post('quarters-normal-list', [DDOUserController::class, 'getNormalquarterList'])->name('ddo-normalquarter-list');

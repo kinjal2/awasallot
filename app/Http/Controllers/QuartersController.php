@@ -88,6 +88,7 @@ class QuartersController extends Controller
                 return redirect('userdashboard')->with('message', "You have been registered for a new quarter request.");
             } else {
                 $this->_viewContent['page_title'] = "Quarter Request";
+                $this->_viewContent['name'] = Session::get('Name');
                 $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                 return view('user/newQuarterRequest', $this->_viewContent);
             }
@@ -233,7 +234,8 @@ class QuartersController extends Controller
             'choice2'=>'required',
             'choice3'=>'required',
 
-            'agree_rules'=>'required', */
+            'agree_rules'=>'required', 
+            'declaration'=>'required'*/
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -518,7 +520,7 @@ class QuartersController extends Controller
             $mpdf->WriteHTML($html);
 
             // Output PDF to browser
-            $mpdf->Output('invoice.pdf', 'I');
+            $mpdf->Output($uid.'_'.Session::get('Name').'.pdf', 'I');
         } catch (\Mpdf\MpdfException $e) {
             echo $e->getMessage();
         }
@@ -2440,8 +2442,12 @@ $requestModel = TQuarterRequestA::create([
             {
                 return redirect('quartershigher');
             }
-            else {
+            else if($request->page == 'change_request'){
                 return redirect('quarterschange');
+            }
+            else
+            {
+                return redirect()->route('ddo_details');
             }
         } catch (Exception $e) {
             dd($e->getMessage());

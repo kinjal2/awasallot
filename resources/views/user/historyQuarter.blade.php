@@ -76,9 +76,13 @@
     var table = $('#request_history').DataTable({
         processing: true,
         serverSide: true,
+       
         ajax: {
             url: "{{ url('request-history') }}",
             'type': 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+             },
         },
         columns: [
             {data: 'requesttype', name: 'requesttype'},

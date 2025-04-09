@@ -300,6 +300,11 @@
       <td>:</td>
       <td>હા</td>
     </tr>
+    <tr>
+      <td>14</td>
+      <td colspan="3"> હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label></td>
+      
+    </tr>
   </table>
   <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b mt-25">
     <tr>
