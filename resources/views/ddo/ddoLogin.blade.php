@@ -102,7 +102,7 @@
             rules: {
                 ddo_reg_no: {
                     required: true,
-                    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
+                //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
                 },
                 password: {
                     required: true
@@ -114,7 +114,7 @@
             messages: {
                 ddo_reg_no: {
                     required: "Please enter your DDO Registration Number",
-                    pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
+                  //  pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
                 },
                 password: {
                     required: "Please enter your password"
@@ -138,17 +138,21 @@
         });
     });
     document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("LoginForm").addEventListener("submit", function (event) {
-            event.preventDefault();
+    const loginForm = document.getElementById("LoginForm");
 
-            let passwordField = document.getElementById("password");
-            let csrfToken = document.querySelector('input[name="_token"]').value; // Get CSRF token
-             /* alert(passwordField);
-              alert(csrfToken);*/
-            let encryptedPassword = btoa(passwordField.value + csrfToken); // Base64 encode password + CSRF token
+    loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-            passwordField.value = encryptedPassword; // Set the encrypted value
-            this.submit();
-        });
+        const passwordField = document.getElementById("password");
+        const ddoRegNoField = document.getElementById("ddo_reg_no");
+        const csrfToken = document.querySelector('input[name="_token"]').value;
+
+        const encodeWithCSRF = (value) => btoa(value + csrfToken);
+
+        passwordField.value = encodeWithCSRF(passwordField.value);
+        ddoRegNoField.value = encodeWithCSRF(ddoRegNoField.value);
+
+        this.submit();
     });
+}); 
 </script>
