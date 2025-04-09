@@ -37,7 +37,7 @@
                     <form method="POST" action="{{ route('otp.login') }}" id="LoginForm" name='LoginForm'>
                         @csrf
                         <div class="col-12 form-group relative mb-3">
-                          <label for="email" class="form-label">{{ __('E-Mail Address') }}&nbsp;  OR  {{ __('Mobile no') }}<span class="text-danger">*</span></label>
+                          <label for="email" class="form-label">{{ __('E-Mail Address') }}&nbsp;&nbsp;OR&nbsp;&nbsp;{{ __('Mobile No.') }}<span class="text-danger">*</span></label>
                           <input id="identifier" type="email" class="custon-control form-control @error('email') is-invalid @enderror" placeholder="Enter your E-mail"  name="identifier"  required autocomplete="identifier" autofocus >
                           <i class="bi bi-envelope form-icon"></i>
                             @error('email')

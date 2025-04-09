@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\DDOCode;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Validator;
 
 class DdoUserLoginController extends Controller {
 
@@ -22,42 +23,54 @@ class DdoUserLoginController extends Controller {
     public function login(Request $request)
 {
     try {
+		 // Decode base64 first
+		$decodedPassword = base64_decode($request->password);
+		$decodedDdoRegNo = base64_decode($request->ddo_reg_no);
+
+		// Validate CSRF token integrity
+		if (
+			!str_ends_with($decodedPassword, $request->_token) ||
+			!str_ends_with($decodedDdoRegNo, $request->_token)
+		) {
+			return back()->withErrors(['login' => 'Decryption failed!']);
+		}
+
+		// Extract actual values
+		$password = str_replace($request->_token, '', $decodedPassword);
+		$ddoRegNo = str_replace($request->_token, '', $decodedDdoRegNo);
+		
         // Validate input
-        $request->validate([
-            'ddo_reg_no' => [
-                'required',
-                'regex:/^SGV\d{6}[A-Z]$/', // DDO Registration Number format
-            ],
-            'password' => 'required',
-            'captcha' => 'required|captcha', // Validate CAPTCHA
-        ], [
-            'ddo_reg_no.required' => 'The DDO Registration Number is required.',
-            'ddo_reg_no.regex' => 'The DDO Registration Number must be in the format SGV followed by 6 digits and an uppercase letter.',
-            'password.required' => 'The password is required.',
-            'captcha.required' => 'The CAPTCHA is required.',
-            'captcha.captcha' => 'The CAPTCHA is incorrect. Please try again.',
-        ]);
+        // Now validate the decoded inputs
+		$validator = Validator::make([
+			'ddo_reg_no' => $ddoRegNo,
+			'password'   => $password,
+			'captcha'    => $request->captcha
+		], [
+			'ddo_reg_no' => ['required', 'regex:/^SGV\d{6}[A-Z]$/'],
+			'password'   => ['required'],
+			'captcha'    => ['required', 'captcha'],
+		], [
+			'ddo_reg_no.required' => 'The DDO Registration Number is required.',
+			'ddo_reg_no.regex' => 'The DDO Registration Number must be in the format SGV followed by 6 digits and an uppercase letter.',
+			'password.required' => 'The password is required.',
+			'captcha.required' => 'The CAPTCHA is required.',
+			'captcha.captcha' => 'The CAPTCHA is incorrect. Please try again.',
+		]);
+		  if ($validator->fails()) {
+        throw new \Illuminate\Validation\ValidationException($validator);
+    }
+
+
     } catch (\Illuminate\Validation\ValidationException $e) {
         Log::error('Validation errors occurred: ', $e->errors());
         return back()->withErrors($e->errors());
     }
 
-    // Decode Base64 password
-    $decodedPassword = base64_decode($request->password);
-
-    // Ensure CSRF token is appended
-    if (!str_ends_with($decodedPassword, $request->_token)) {
-        return back()->withErrors(['password' => 'Decryption failed!']);
-    }
-
-    // Extract the original password
-    $password = str_replace($request->_token, '', $decodedPassword);
-
-    // Attempt login with decoded password
-    if (Auth::guard('ddo_users')->attempt([
-        'ddo_reg_no' => $request->ddo_reg_no,
+		// Attempt login with decoded password
+       if (Auth::guard('ddo_users')->attempt([
+        'ddo_reg_no' => $ddoRegNo,
         'password'   => $password
-    ])) {
+    ])){
         $user = Auth::guard('ddo_users')->user();
 
         // Store user session data

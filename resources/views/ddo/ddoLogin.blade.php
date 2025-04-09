@@ -102,7 +102,7 @@
             rules: {
                 ddo_reg_no: {
                     required: true,
-                    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
+                //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
                 },
                 password: {
                     required: true
@@ -114,7 +114,7 @@
             messages: {
                 ddo_reg_no: {
                     required: "Please enter your DDO Registration Number",
-                    pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
+                  //  pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
                 },
                 password: {
                     required: "Please enter your password"
@@ -154,6 +154,5 @@
 
         this.submit();
     });
-});
-
+}); 
 </script>
