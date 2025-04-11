@@ -31,13 +31,13 @@
               <!-- form start -->
           
 	<div class="card-body"> 
-    <form action="" method="POST" id="save_new_remark" name="save_new_remark">
+    <form action="{{ route('quarter.list.addnewremark') }}" method="POST" id="save_new_remark" name="save_new_remark">
       @csrf
       <div class="row">
         <div class="col-,d-6">
           <label for="new_remark">Add New Remark</label>
           <input class="form-control" type="text" name="new_remark" id="new_remark" value="{{ old('new_remark') }}">
-          <input type="submit" value="Add New Remark" class="button btn bnt-success">
+          <input type="submit" value="Add New Remark" class="button btn btn-success mt-4">
         </div>
       </div>
     </form>
@@ -47,9 +47,9 @@
             <input type="hidden" name="rv" id="rv" value="{{ $rv }}" />
             <input type="hidden" name="type" id="type" value="{{ $type }}" />
             <input type="hidden" name="remarks" id="remarks"  />
-	<div  style="text-align:center;" class="col-md-6">
+	<div  style="text-align:right;" class="col-md-12">
  
-            <input type="submit" class="button btn btn-success" value="Save" onclick="return validate();" />
+            <input type="submit" class="button btn btn-success" value="Save Remarks" onclick="return validate();" />
 	</div>
   
 <div  style="overflow-x:auto;">

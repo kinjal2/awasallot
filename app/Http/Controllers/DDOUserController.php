@@ -37,6 +37,12 @@ class DDOUserController extends Controller
         $this->_viewContent['page_title'] = "DDO Login";
         return view('ddo.request.quartersnormal', $this->_viewContent);
     }
+    public function quartersRejected()
+    {
+        $this->_viewContent['page_title'] = "DDO Login";
+        return view('ddo.request.quartersrejected', $this->_viewContent);
+    }
+    
     public function getNormalquarterList_old(Request $request)
     {
         $cardexNo = session('cardex_no');
@@ -926,7 +932,7 @@ class DDOUserController extends Controller
         $cardexNo = session('cardex_no');
         $ddoCode = session('ddo_code');
 
-     //   \DB::enableQueryLog(); // Enable query log
+        \DB::enableQueryLog(); // Enable query log
 
         $officeCode = session('officecode'); // Get the office code from session
        // dd($cardexNo,$ddoCode,$officeCode);
@@ -954,7 +960,9 @@ class DDOUserController extends Controller
         'email',
         'is_priority',
         'u.ddo_code',
-        'u.cardex_no'
+        'u.cardex_no',
+        'a.created_at'
+       
     ])
     ->join('userschema.users as u', 'u.id', '=', 'a.uid')
     ->join('master.m_ddo as d', 'd.ddo_code', '=', 'a.ddo_code') // Join the ddo table
@@ -962,7 +970,8 @@ class DDOUserController extends Controller
     ->where('a.cardex_no',$cardexNo)
     ->where('d.officecode', $officeCode)// Filter by office_code
     ->where('is_accepted', '=', 1)
-    ->whereIn('is_ddo_varified',[0,2]); //12-12-2024   //filter by is_accepted
+    ->where('is_ddo_varified',0)
+    ->orderBy('a.inward_date', 'asc') ; //12-12-2024   //filter by is_accepted
 
 
 
@@ -991,7 +1000,9 @@ class DDOUserController extends Controller
         'email',
         'is_priority',
         'u.ddo_code',
-        'u.cardex_no'
+        'u.cardex_no',
+        'c.created_at'
+        
     ])
     ->join('userschema.users as u', 'u.id', '=', 'c.uid')
     ->join('master.m_ddo as d', 'd.ddo_code', '=', 'c.ddo_code') // Join the ddo table
@@ -999,7 +1010,8 @@ class DDOUserController extends Controller
     ->where('c.cardex_no',$cardexNo)
     ->where('d.officecode', $officeCode)// Filter by office_code
     ->where('is_accepted', '=', 1)//filter by is_accepted
-    ->whereIn('is_ddo_varified',[0,2]);   //12-12-2024
+    ->where('is_ddo_varified',0)
+    ->orderBy('c.inward_date', 'asc') ;   //12-12-2024
 
 $union = DB::table('master.t_quarter_request_b AS b')
     ->select([
@@ -1024,7 +1036,10 @@ $union = DB::table('master.t_quarter_request_b AS b')
         'email',
         'is_priority',
         'u.ddo_code',
-        'u.cardex_no'
+        'u.cardex_no',
+         'b.created_at'
+        
+
     ])
     ->join('userschema.users as u', 'u.id', '=', 'b.uid')
     ->join('master.m_ddo as d', 'd.ddo_code', '=', 'b.ddo_code') // Join the ddo table
@@ -1032,25 +1047,33 @@ $union = DB::table('master.t_quarter_request_b AS b')
     ->where('b.cardex_no',$cardexNo)
     ->where('d.officecode', $officeCode) // Filter by office_code
     ->where('is_accepted', '=', 1)  //filter by is_accepted
-    ->whereIn('is_ddo_varified',[0,2]) //12-12-2024
+    ->where('is_ddo_varified',0) //12-12-2024
+    ->orderBy('b.inward_date', 'asc') // 
     ->union($first)
     ->union($second);
+   
+   
+    // $queryLog = \DB::getQueryLog();
+    // echo $union->toSql();
 
+    // dd($queryLog); // Show results of the log
+    
+    
+        // Print the SQL query
+      
 // Execute the union query
 $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     ->mergeBindings($union)
+    ->orderBy('inward_date', 'asc') // 
     ->get(); // Get the results
 
-// Display the executed query log
-//$queryLog = \DB::getQueryLog();
-//dd($queryLog); // Show results of the log
 
+    // Display the executed query log
+   
 
-    // Print the SQL query
-  //  echo $query->toSql();
-
-
+    $cnt=0;
     return Datatables::of($results)
+    ->addIndexColumn() // Adds an index column named 'DT_RowIndex'
     ->addColumn('inward_date', function ($date) {
         if($date->inward_date=='')  return 'N/A';
 
@@ -1061,19 +1084,28 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
 
         return date('d-m-Y',strtotime($date->request_date));
     })
+    
+    ->addColumn('action', function($row) use (&$cnt) {
+        $cnt++; // increment per row processed
+        if ($cnt !== 1) return ''; // Only show on the first row
 
-    ->addColumn('action', function($row){
       //  $btn1 =   "edit";
-        if($row->requesttype=='New')
-        {
-        //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
-        $btn1 = '<a href="'.\route('ddo.editquarter.a.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
-        }
-        else
-        {
-        $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
-        }
-        return $btn1;
+      
+    
+            if($row->requesttype=='New')
+            {
+            //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
+            $btn1 = '<a href="'.\route('ddo.editquarter.a.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+            }
+            else
+            {
+            $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+            }
+           
+            return $btn1;
+       
+         
+       
      })
     /* ->addColumn('delete', function($row){
          $btn1 ='<a href="' . \URL::action('QuartersController@uploaddocument'). "?r=" . base64_encode($row->requestid)."&type=". base64_encode($row->type)."&rev=". base64_encode($row->rivision_id).'" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>';
@@ -1267,6 +1299,194 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
         }
         return $btn1;
+     })
+    /* ->addColumn('delete', function($row){
+         $btn1 ='<a href="' . \URL::action('QuartersController@uploaddocument'). "?r=" . base64_encode($row->requestid)."&type=". base64_encode($row->type)."&rev=". base64_encode($row->rivision_id).'" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>';
+         return $btn1;
+     })*/
+     ->rawColumns(['delete','action'])
+    ->make(true);
+    }
+    public function geteditquarter_b(Request $request)
+    {
+
+    }
+
+    public function getRejectedQuarterList()
+    {
+        $cardexNo = session('cardex_no');
+        $ddoCode = session('ddo_code');
+
+        \DB::enableQueryLog(); // Enable query log
+
+        $officeCode = session('officecode'); // Get the office code from session
+       // dd($cardexNo,$ddoCode,$officeCode);
+
+        $first = DB::table('master.t_quarter_request_a AS a')
+        ->select([
+        'request_date',
+        DB::raw("'a'::text as type"),
+        DB::raw("'New'::text as requesttype"),
+        'requestid',
+        'quartertype',
+        'inward_no',
+        'inward_date',
+        'u.name',
+        'u.designation',
+        'office',
+        'rivision_id',
+        'a.remarks',
+        'contact_no',
+        'address',
+        'gpfnumber',
+        'is_accepted',
+        'is_allotted',
+        'is_varified',
+        'email',
+        'is_priority',
+        'u.ddo_code',
+        'u.cardex_no',
+        'a.created_at'
+       
+    ])
+    ->join('userschema.users as u', 'u.id', '=', 'a.uid')
+    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'a.ddo_code') // Join the ddo table
+    ->where('a.ddo_code', $ddoCode) // Filter by ddo_code
+    ->where('a.cardex_no',$cardexNo)
+    ->where('d.officecode', $officeCode)// Filter by office_code
+    ->where('is_accepted', '=', 1)
+    ->where('is_ddo_varified',2)
+    ->orderBy('a.inward_date', 'asc') ; //12-12-2024   //filter by is_accepted
+
+
+
+
+
+    $second = DB::table('master.t_quarter_request_c AS c')
+    ->select([
+        'request_date',
+        DB::raw("'c' as type"),
+        DB::raw("'Change' as requesttype"),
+        'requestid',
+        'quartertype',
+        'inward_no',
+        'inward_date',
+        'u.name',
+        'u.designation',
+        'office',
+        'rivision_id',
+        'c.remarks',
+        'contact_no',
+        'address',
+        'gpfnumber',
+        'is_accepted',
+        'is_allotted',
+        'is_varified',
+        'email',
+        'is_priority',
+        'u.ddo_code',
+        'u.cardex_no',
+        'c.created_at'
+        
+    ])
+    ->join('userschema.users as u', 'u.id', '=', 'c.uid')
+    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'c.ddo_code') // Join the ddo table
+    ->where('c.ddo_code', $ddoCode) // Filter by ddo_code
+    ->where('c.cardex_no',$cardexNo)
+    ->where('d.officecode', $officeCode)// Filter by office_code
+    ->where('is_accepted', '=', 1)//filter by is_accepted
+    ->where('is_ddo_varified',2)
+    ->orderBy('c.inward_date', 'asc') ;   //12-12-2024
+
+$union = DB::table('master.t_quarter_request_b AS b')
+    ->select([
+        'request_date',
+        DB::raw("'b'::text as type"),
+        DB::raw("'Higher Category'::text as requesttype"),
+        'requestid',
+        'quartertype',
+        'inward_no',
+        'inward_date',
+        'u.name',
+        'u.designation',
+        'office',
+        'rivision_id',
+        'b.remarks',
+        'contact_no',
+        'address',
+        'gpfnumber',
+        'is_accepted',
+        'is_allotted',
+        'is_varified',
+        'email',
+        'is_priority',
+        'u.ddo_code',
+        'u.cardex_no',
+         'b.created_at'
+        
+
+    ])
+    ->join('userschema.users as u', 'u.id', '=', 'b.uid')
+    ->join('master.m_ddo as d', 'd.ddo_code', '=', 'b.ddo_code') // Join the ddo table
+    ->where('b.ddo_code', $ddoCode) // Filter by ddo_code
+    ->where('b.cardex_no',$cardexNo)
+    ->where('d.officecode', $officeCode) // Filter by office_code
+    ->where('is_accepted', '=', 1)  //filter by is_accepted
+    ->where('is_ddo_varified',2) //12-12-2024
+    ->orderBy('b.inward_date', 'asc') // 
+    ->union($first)
+    ->union($second);
+   
+   
+    // $queryLog = \DB::getQueryLog();
+    // echo $union->toSql();
+
+    // dd($queryLog); // Show results of the log
+    
+    
+        // Print the SQL query
+      
+// Execute the union query
+$results = DB::table(DB::raw("({$union->toSql()}) as combined"))
+    ->mergeBindings($union)
+    ->orderBy('inward_date', 'asc') // 
+    ->get(); // Get the results
+
+
+    // Display the executed query log
+   
+
+   
+    return Datatables::of($results)
+    ->addIndexColumn() // Adds an index column named 'DT_RowIndex'
+    ->addColumn('inward_date', function ($date) {
+        if($date->inward_date=='')  return 'N/A';
+
+        return date('d-m-Y',strtotime($date->inward_date));
+    })
+    ->addColumn('request_date', function ($date) {
+        if($date->request_date=='')  return 'N/A';
+
+        return date('d-m-Y',strtotime($date->request_date));
+    })
+    
+    ->addColumn('action', function($row) use (&$cnt) {
+       
+    
+            if($row->requesttype=='New')
+            {
+            //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
+            $btn1 = '<a href="'.\route('ddo.editquarter.a.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i> View Remarks</a>';
+            }
+            else
+            {
+            $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+            }
+           
+            return $btn1;
+       
+         
+       
      })
     /* ->addColumn('delete', function($row){
          $btn1 ='<a href="' . \URL::action('QuartersController@uploaddocument'). "?r=" . base64_encode($row->requestid)."&type=". base64_encode($row->type)."&rev=". base64_encode($row->rivision_id).'" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>';

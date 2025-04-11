@@ -1513,6 +1513,7 @@ $requestModel = TQuarterRequestA::create([
                     'inward_date' => now()->toDateString(),
                     'is_accepted' => 1,
                     'is_priority' => 'N',
+                    'is_ddo_varified' =>0
                 ];
 
                 $resp = TQuarterRequestA::where('requestid', $request->input('requestid'))->update($data);
@@ -2450,6 +2451,24 @@ $requestModel = TQuarterRequestA::create([
                 return redirect()->route('ddo_details');
             }
         } catch (Exception $e) {
+            dd($e->getMessage());
+            return redirect('session save')->with('failed', "operation failed");
+        }
+    }
+    public function addnewremarks(Request $request)
+    {
+        //dd($request->all());
+        try{
+
+            $newRemark = Remarks::create([
+                
+                'description' => $request->new_remark, 
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+            return redirect()->back();
+        }
+        catch (Exception $e) {
             dd($e->getMessage());
             return redirect('session save')->with('failed', "operation failed");
         }

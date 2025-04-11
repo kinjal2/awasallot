@@ -8,12 +8,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Quarter Request (Normal)</h1>
+            <h1 class="m-0 text-dark">Quarters Request Rejected</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Quarter Request (Normal)</li>
+              <li class="breadcrumb-item active">Quarters Request Rejected</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -29,7 +29,7 @@
             <!-- general form elements -->
             <div class="card card-head ">
               <div class="card-header">
-                <h3 class="card-title">Quarter Request (Normal)</h3>
+                <h3 class="card-title">Quarters Request Rejected</h3>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
@@ -81,7 +81,7 @@
         serverSide: true,
         
         ajax: {
-          url: "{{ route('ddo-normalquarter-list') }}",
+          url: "{{ route('ddo-rejectedquarter-list') }}",
           'type': 'POST',
           headers: {
                       'X-CSRF-TOKEN': '{{ csrf_token() }}',

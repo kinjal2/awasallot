@@ -371,6 +371,15 @@ return [
                     ],
                     'link' => 'quarterlistpriority.index',
                 ],
+                'Rejected List' => [
+                    'title' => 'menus.RejectedList',
+                    'icon' => 'fa fa-list',
+                    'permission_route' => 'ddo.request.rejected',
+                    'route' => [
+                        'ddorequestrejected'
+                    ],
+                    'link' => 'ddo.request.rejected',
+                ],
 
 			]
         ],

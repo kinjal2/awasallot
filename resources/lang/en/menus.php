@@ -26,4 +26,5 @@ return array(
     'quarterchangerequest'=>'Quarter Change Request',
     'emp_list'=>'Employee List',
     'DDO Details' => 'DDO Details',
+    'RejectedList' => 'Rejected List'
 );

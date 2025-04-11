@@ -78,7 +78,11 @@
  var table = $('#normalquarterlist').DataTable({ 
         processing: true,
         serverSide: true,
+       
         ajax: {
+          headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          },
       url: "{{ route('normalquarter-list') }}",
       'type': 'POST',
   },
