@@ -1226,7 +1226,7 @@ $requestModel = TQuarterRequestA::create([
                 $this->_viewContent['type'] = 'a';
                 $remarks = Remarks::get();
                 //  dd($remarks);
-                $this->_viewContent['remarks'] =  $remarks;
+               // $this->_viewContent['remarks'] =  $remarks;
                 $this->_viewContent['page_title'] = "Remarks";
                 return view('request/remarks', $this->_viewContent);
             } else {
@@ -2466,11 +2466,71 @@ $requestModel = TQuarterRequestA::create([
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ]);
-            return redirect()->back();
+            // Return success response
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Remark added successfully!',
+           
+        ]);
         }
         catch (Exception $e) {
             dd($e->getMessage());
-            return redirect('session save')->with('failed', "operation failed");
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to add remark: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+    public function listremarks(Request $request)
+    {
+        try {
+           
+            // Pagination variables
+             // Get the limit and offset (pagination) values from the DataTable request
+             $limit =$request->input('length',10);  // Default to 10 if not provided
+             $offset = $request->input('start',0);   // Default to 0 if not provided
+             $page = $request->input('page', 1);  // Default to page 1 if not provided
+            $search = $request->get('search')['value']; // Get the global search term
+            //dd($limit,$offset,$search);
+            // Fetch the paginated data
+            $data  = Remarks::select('remark_id', 'description')->skip($offset)->take($limit)->get();
+            //dd($data);
+            // Get total records count for pagination (without filtering)
+           
+            $totalRecords =Remarks::count();
+
+           // Get the filtered records count (filtered by the same query as $data)
+            $filteredRecords  = Remarks::select('remark_id', 'description')
+            ->when($search, function ($query) use ($search) {
+                // Add the search condition to the query if the search term is present
+                $query->where(function($q) use ($search) {
+                    $q->where('description', 'ilike', "%$search%");
+                    });
+                })  
+            ->count();  // Count the total number of records matching the query (without pagination)
+            //dd($filteredRecords);
+           // Return the DataTables response with pagination data and custom columns
+     return response()->json([
+        'draw' => $request->get('draw'),
+        'recordsTotal' => $totalRecords,
+        'recordsFiltered' => $filteredRecords,
+        'data' => $data->map(function ($row, $index) use ($offset) {
+           
+              // (Optional) Define the checkbox value
+            $checkbox = '<input type="checkbox" name="remarksArr[]" value="' . htmlspecialchars($row->remark_id, ENT_QUOTES, 'UTF-8') . '" onclick="SelectRemarks(this);" />';
+
+            return [
+                'index' => $offset + $index + 1,  // Add the index column (starts from 1)
+                'checkbox' => $checkbox, //Add checkbox as a column
+                'description' => $row->description
+              
+             ];
+            })
+     ]);
+        } catch (Exception $e) {
+            dd($e->getMessage());
+            \Log::error('Error fetching reconciliation list: ' . $e->getMessage());
+            return response()->json(['error' => 'Error fetching data.'], 500);
         }
     }
 }

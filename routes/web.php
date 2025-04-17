@@ -121,6 +121,7 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);
     
     Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
+    Route::post('listremarks', ['as' => 'quarter.list.listremarks', 'uses' => 'QuartersController@listremarks']);
     Route::post('addremarks', ['as' => 'quarter.list.addnewremark', 'uses' => 'QuartersController@addnewremarks']);
   //  Route::get('listnormal', ['as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
   Route::get('quarterlistnormal', [ 'as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);

@@ -57,17 +57,13 @@
 			<table class="table table-bordered" id="remarkslist">
                   <thead>                  
                     <tr>
-                   <th></th>
+                      <th>Select</th>
+                   <th>Sr No</th>
                     <th>Remarks</th>
                    </tr>
                   </thead>
                   <tbody>
-				     @foreach($remarks as $rm)
-					 <tr>
-						 <td><input type="checkbox" name="remarksArr[]" id="{{$rm->remark_id }}" onclick="SelectRemarks(this);" /></td>
-						 <td>{{$rm->description }}</td>
-					 </tr>
-					@endforeach
+				    
 				</tbody>
                 </table>
                 
@@ -94,9 +90,66 @@
 @push('footer-script')
 <script type="text/javascript">
 
-
+$('#remarkslist').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax:{ 
+      
+      url:"{{ route('quarter.list.listremarks') }}",
+            type: 'POST', // Ensure the POST method is used
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+             },
+       },
+    columns: [
+        { data: 'checkbox', orderable: false, searchable: false }, //  Checkbox column
+        { data: 'index', name: 'index', orderable: false, searchable: false }, 
+        {
+                data: 'description',
+                name: 'description'
+        },
+        
+    ]
+});
 $(document).ready( function () {
-    $('#remarkslist').DataTable();
+
+  
+   // $('#remarkslist').DataTable();
+    
+    $('#save_new_remark').on('submit', function (e) {
+            e.preventDefault(); // prevent default form submission
+
+            var formData = {
+                new_remark: $('#new_remark').val(),
+                _token: '{{ csrf_token() }}' // CSRF token for Laravel
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('quarter.list.addnewremark') }}",
+                data: formData,
+                success: function (response) {
+                    console.log('Remark added successfully:', response);
+                    if(response.status === 'success') {
+                      alert(response.message); // or use a toast/snackbar for better UI
+                      
+                      //location.reload(); // Reload the entire page
+                      // You can reset the form or update the UI
+                      //  Reload DataTable
+                    //   if ($.fn.dataTable.isDataTable('#remarkslist')) {
+                    //     $('#remarkslist').DataTable().clear().destroy();
+                    //   }
+                    // $('#remarkslist').DataTable(); // false = don't reset pagination
+                      $('#save_new_remark')[0].reset();
+                  }
+                    $('#save_new_remark')[0].reset(); 
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error submitting remark:', error);
+                    // Optional: Show error messages on the form
+                }
+            });
+        });
 } );
   function SelectRemarks(obj)
     { 
