@@ -49,7 +49,7 @@
         });
 
         // Debugging: Check if CSRF token is correctly set
-        console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
+        // console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
 
         @stack('page-ready-script');
     });

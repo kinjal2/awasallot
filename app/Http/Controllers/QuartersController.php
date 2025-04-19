@@ -16,6 +16,7 @@ use App\User;
 use App\Area;
 use App\DDOCode;
 use App\QuarterAllotment;
+use App\Tquarterequesthistorya;
 use Carbon\Carbon;
 use Session;
 use Yajra\Datatables\Datatables;
@@ -1077,6 +1078,22 @@ class QuartersController extends Controller
                 $rWnoB = TQuarterRequestB::getMaxRwno($result->quartertype, $officecode);
                 $rWno = max($rWnoA, $rWnoB) + 1;
                 // Update the TQuarterRequestA record
+                $t_quarterrequest_a= TQuarterRequestA::where('requestid', $requestid)
+                ->where('rivision_id', $rv)->where('uid',$result->uid)->get();
+                dd($t_quarterrequest_a);
+                dd(auth()->user()->id);
+                if ($t_quarterrequest_a) {
+                    // Store the current customer details in history before updating
+                    $t_quarterrequest_a_Data = $t_quarterrequest_a->toArray();
+                    $t_quarterrequest_a_Data['created_by'] = auth()->user()->id;  // User's ID for created_by
+                    $t_quarterrequest_a_Data['updated_by'] = auth()->user()->id;  // User's ID for updated_by
+                    $t_quarterrequest_a_Data['created_at'] = now();  // Current timestamp for created_at
+                    $t_quarterrequest_a_Data['updated_at'] = now();  // Current timestamp for updated_at
+    
+                    //dd($request->get('conn_status'));
+                    // Insert data into the history table
+                    Tquarterequesthistorya::create($t_quarterrequest_a_Data);
+                }
                 TQuarterRequestA::where('requestid', $requestid)
                     ->where('rivision_id', $rv)
                     ->update([
@@ -1216,7 +1233,7 @@ $requestModel = TQuarterRequestA::create([
         } else {
             //dd("have issue");
            $status=2;
-
+            
          //  dd($request->adm_remarks,$request->admin_remarks);
             $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rv)
                 ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
@@ -1224,9 +1241,10 @@ $requestModel = TQuarterRequestA::create([
                 $this->_viewContent['requestid'] = $requestid;
                 $this->_viewContent['rv'] = $rv;
                 $this->_viewContent['type'] = 'a';
-                $remarks = Remarks::get();
+                $remarks=Tquarterrequesta::select('remarks')->where('requestid', $requestid)->where('rivision_id', $rv)->first();
+               // $remarks = Remarks::get();
                 //  dd($remarks);
-               // $this->_viewContent['remarks'] =  $remarks;
+                $this->_viewContent['remarks'] =  $remarks;
                 $this->_viewContent['page_title'] = "Remarks";
                 return view('request/remarks', $this->_viewContent);
             } else {
@@ -1778,7 +1796,7 @@ $requestModel = TQuarterRequestA::create([
                 $this->_viewContent['type'] = 'b';
                 $remarks = Remarks::get();
                 //  dd($remarks);
-                $this->_viewContent['remarks'] =  $remarks;
+               // $this->_viewContent['remarks'] =  $remarks;
                 $this->_viewContent['page_title'] = "Remarks";
                 return view('request/remarks', $this->_viewContent);
             } else {
@@ -1790,19 +1808,44 @@ $requestModel = TQuarterRequestA::create([
     public function saveremarks(request $request)
     {
         $result1 = $request->all();
+        // dd($result1);
         $type = $result1['type'];
         $requestid = $result1['r'];
         $rv = $result1['rv'];
         $remarks = $result1['remarks'];
+        //dd($remarks);
+        $remarks = trim($remarks, '"'); // Remove trailing quote
+        $remarksArray = explode(',', $remarks);
         if ($type == 'a') {
+
+            $t_quarterrequest_a= TQuarterRequestA::where('requestid', $requestid)
+            ->where('rivision_id', $rv)->first();
+           // dd($t_quarterrequest_a);
+            //dd(auth()->user()->id);
+            if ($t_quarterrequest_a) {
+                // Store the current customer details in history before updating
+                $t_quarterrequest_a_Data = $t_quarterrequest_a->toArray();
+                //dd($t_quarterrequest_a_Data);
+                $t_quarterrequest_a_Data['created_by'] = auth()->user()->id;  // User's ID for created_by
+                $t_quarterrequest_a_Data['updated_by'] = auth()->user()->id;  // User's ID for updated_by
+                $t_quarterrequest_a_Data['created_at'] = now();  // Current timestamp for created_at
+                $t_quarterrequest_a_Data['updated_at'] = now();  // Current timestamp for updated_at
+
+                //dd($request->get('conn_status'));
+                // Insert data into the history table
+               
+                Tquarterequesthistorya::create($t_quarterrequest_a_Data);
+               
+            }
+
             $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rv)
-                ->update(['remarks' => $remarks, 'remarks_date' => date('Y-m-d')]);
-            return redirect('/quarterlistnormal')->with('success', 'Quarter request processed successfully!');
+                ->update(['remarks' => $remarksArray, 'remarks_date' => date('Y-m-d')]);
+            return redirect('/quarterlistnormal')->with('success', 'Remarks added successfully!');
         }
         if ($type == 'b') {
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rv)
-                ->update(['remarks' => $remarks, 'remarks_date' => date('Y-m-d')]);
-            return redirect('/quarterlistnormal')->with('success', 'Quarter request processed successfully!');
+                ->update(['remarks' => $remarksArray, 'remarks_date' => date('Y-m-d')]);
+            return redirect('/quarterlistnormal')->with('success', 'Remarks added successfully!');
         }
     }
     public function viewApplication(request $request, $requestid, $rivision_id, $performa)
@@ -2483,6 +2526,15 @@ $requestModel = TQuarterRequestA::create([
     }
     public function listremarks(Request $request)
     {
+        $remarksData = json_decode($request->input('remarks_selected'), true);
+        // dd($remarksData);
+        // Extract the remarks value (e.g., "2,3,4")
+        $remarksString = $remarksData['remarks'] ?? '';
+      //  dd($remarksString);
+         // Convert to array
+        $remarksArray = explode(',', $remarksString);
+        //dd($remarksArray);
+        //dd($request->all());
         try {
            
             // Pagination variables
@@ -2493,7 +2545,13 @@ $requestModel = TQuarterRequestA::create([
             $search = $request->get('search')['value']; // Get the global search term
             //dd($limit,$offset,$search);
             // Fetch the paginated data
-            $data  = Remarks::select('remark_id', 'description')->skip($offset)->take($limit)->get();
+            $data  = Remarks::select('remark_id', 'description')
+            ->when($search, function ($query) use ($search) {
+                // Add the search condition to the query if the search term is present
+                $query->where(function($q) use ($search) {
+                    $q->where('description', 'ilike', "%$search%");
+                    });
+                })->skip($offset)->take($limit)->get();
             //dd($data);
             // Get total records count for pagination (without filtering)
            
@@ -2514,10 +2572,14 @@ $requestModel = TQuarterRequestA::create([
         'draw' => $request->get('draw'),
         'recordsTotal' => $totalRecords,
         'recordsFiltered' => $filteredRecords,
-        'data' => $data->map(function ($row, $index) use ($offset) {
+        'data' => $data->map(function ($row, $index) use ($offset,$remarksArray) {
            
+            $isChecked = in_array($row->remark_id, $remarksArray) ? 'checked' : '';
+
+$checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars($row->remark_id, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars($row->remark_id, ENT_QUOTES, 'UTF-8') . '" onclick="SelectRemarks(this);" ' . $isChecked . ' />';
+
               // (Optional) Define the checkbox value
-            $checkbox = '<input type="checkbox" name="remarksArr[]" value="' . htmlspecialchars($row->remark_id, ENT_QUOTES, 'UTF-8') . '" onclick="SelectRemarks(this);" />';
+          //  $checkbox = '<input type="checkbox"  name="remarksArr[]"  id="' . htmlspecialchars($row->remark_id, ENT_QUOTES, 'UTF-8') . '"value="' . htmlspecialchars($row->remark_id, ENT_QUOTES, 'UTF-8') . '" onclick="SelectRemarks(this);" />';
 
             return [
                 'index' => $offset + $index + 1,  // Add the index column (starts from 1)
@@ -2532,5 +2594,193 @@ $requestModel = TQuarterRequestA::create([
             \Log::error('Error fetching reconciliation list: ' . $e->getMessage());
             return response()->json(['error' => 'Error fetching data.'], 500);
         }
+    }
+    public function admin_quartersRejected()
+    {
+        $this->_viewContent['page_title'] = "Request Rejected";
+        return view('request.quartersrejected', $this->_viewContent);
+    }
+    public function admin_getRejectedQuarterList(Request $request)
+    {
+        $officecode = Session::get('officecode');
+        //dd($officecode);
+        //DB::enableQueryLog();
+        $first = Tquarterrequesta::from('master.t_quarter_request_a AS a')->select([
+            'request_date',
+            DB::raw("'a'::text as type"),
+            DB::raw("'New'::text as requesttype"),
+            'requestid',
+            'quartertype',
+            'inward_no',
+            'inward_date',
+            'a.uid',
+            'u.name',
+            'u.designation',
+            'office',
+            'rivision_id',
+            'a.remarks',
+            'contact_no',
+            'address',
+            'gpfnumber',
+            'is_accepted',
+            'is_allotted',
+            'is_varified',
+            'email',
+            'remarks_date',
+            'is_priority',
+            'is_ddo_varified',
+            'officecode'
+
+        ])
+            ->join('userschema.users as u', 'u.id', '=', 'a.uid');
+
+        $second = Tquarterrequestc::from('master.t_quarter_request_c AS c')->select([
+            'request_date',
+            DB::raw("'c' as type"),
+            DB::raw("'Change' as requesttype"),
+            'requestid',
+            'quartertype',
+            'inward_no',
+            'inward_date',
+            'c.uid',
+            'u.name',
+            'u.designation',
+            'office',
+            'rivision_id',
+            'c.remarks',
+            'contact_no',
+            'address',
+            'gpfnumber',
+            'is_accepted',
+            'is_allotted',
+            'is_varified',
+            'email',
+            'remarks_date',
+            'is_priority',
+            'is_ddo_varified',
+            'officecode'
+        ])
+            ->join('userschema.users as u', 'u.id', '=', 'c.uid');
+        $union = Tquarterrequestb::from('master.t_quarter_request_b AS b')->select([
+            'request_date',
+            DB::raw("'b'::text as type"),
+            DB::raw("'Higher Category'::text  as requesttype"),
+            'requestid',
+            'quartertype',
+            'inward_no',
+            'inward_date',
+            'b.uid',
+            'u.name',
+            'u.designation',
+            'office',
+            'rivision_id',
+            'b.remarks',
+            'contact_no',
+            'address',
+            'gpfnumber',
+            'is_accepted',
+            'is_allotted',
+            'is_varified',
+            'email',
+            'remarks_date',
+            'is_priority',
+            'is_ddo_varified',
+            'officecode'
+        ])
+            ->join('userschema.users as u', 'u.id', '=', 'b.uid')
+            ->union($first)
+            ->union($second);
+
+        $query = DB::table(DB::raw("({$union->toSql()}) as x"))
+            ->select([
+                'type',
+                'requesttype',
+                'requestid',
+                'quartertype',
+                'inward_no',
+                'inward_date',
+                'uid',
+                'name',
+                'designation',
+                'office',
+                'rivision_id',
+                'remarks',
+                'contact_no',
+                'address',
+                'gpfnumber',
+                'is_accepted',
+                'is_allotted',
+                'is_varified',
+                'email',
+                'request_date',
+                'remarks_date',
+                'is_priority',
+                'is_ddo_varified',
+                'officecode'
+
+            ])
+            ->where(function ($query) use ($officecode) {
+                $query->where('is_accepted', '=', 1)
+                    //->whereNotNull('remarks')
+                    //->where('is_varified', '=', 0)
+                    ->where('is_priority', '=', 'N')
+                    ->where('is_ddo_varified', '=', 1)
+                    ->where('officecode', '=', $officecode)
+                    ->where('is_varified',2)
+                    ->orderBy('wno'); // assuming 'wno' is a column in the database
+            })
+            ->orderBy('remarks_date');
+        // Print the SQL query
+         //dd( $query->toSql());
+        //     dd("hello");
+
+        return Datatables::of($query)
+            ->addColumn('inward_date', function ($date) {
+                if ($date->inward_date == '')  return 'N/A';
+
+                return date('d-m-Y', strtotime($date->inward_date));
+            })
+            ->addColumn('request_date', function ($date) {
+                if ($date->request_date == '')  return 'N/A';
+
+                return date('d-m-Y', strtotime($date->request_date));
+            })
+            ->addColumn('remarks_date', function ($date) {
+                if ($date->remarks_date == '')  return 'N/A';
+
+                return date('d-m-Y', strtotime($date->remarks_date));
+            })
+
+            ->addColumn('action', function ($row) {
+                    $btn1='';
+                    //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
+                    // $btn1 = '<a href="' . \route('editquarter_a', ['r' =>  base64_encode($row->requestid), 'rv' =>  base64_encode($row->rivision_id)]) . '" class="btn btn-success "><i class="fas fa-edit"></i>&nbsp;View Remarks</a>';
+                    $btn2 = '<button type="button" data-uid="'.base64_encode($row->uid).'" data-rivision_id="'.base64_encode($row->rivision_id).'"data-type="'.base64_encode($row->type).'"  data-requestid="'.base64_encode($row->requestid).'"  data-remarks="'.base64_encode($row->remarks).'" data-toggle="modal"  class=" btn-view-custom getdocument" > View Remarks</button>';
+              
+                return $btn1 . $btn2;
+            })
+           
+            /* ->addColumn('delete', function($row){
+         $btn1 ='<a href="' . \URL::action('QuartersController@uploaddocument'). "?r=" . base64_encode($row->requestid)."&type=". base64_encode($row->type)."&rev=". base64_encode($row->rivision_id).'" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>';
+         return $btn1;
+     })*/
+            ->rawColumns([ 'action'])
+            ->make(true);
+    }
+    public function getremarks(Request $request)
+    {
+        // dd($request->all());
+        $uid=base64_decode($request->uid);
+        $type=base64_decode($request->type);
+        $rivision_id=base64_decode($request->rivision_id);
+        $requestid=base64_decode($request->requestid);
+        $remarks=base64_decode($request->remarks);
+        $remarksArray = explode(',', $remarks);
+       // dd($remarksArray);
+        //dd($uid,$type,$rivision_id,$requestid,$remarks);
+       
+        $remarksdata=Remarks::select('description')->whereIn('remark_id',$remarksArray)->get();
+       //dd($remarksdata);
+       return response()->json($remarksdata);
     }
 }

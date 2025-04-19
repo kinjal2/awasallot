@@ -166,6 +166,9 @@
         serverSide: true,
 
         ajax: {
+          headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+             },
        url: "{{ route('waitinglist.data') }}",
        type:"POST",
     data: function (d) {

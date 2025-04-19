@@ -119,7 +119,8 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::get('editquarter_b/{r}/{rv}', ['as' => 'editquarter_b', 'uses' => 'QuartersController@editquarter_b']);
     Route::post('saveapplication', [ 'as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
     Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);
-    
+
+    Route::post('getremarks', ['as' => 'quarter.list.getremarks', 'uses' => 'QuartersController@getremarks']);
     Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
     Route::post('listremarks', ['as' => 'quarter.list.listremarks', 'uses' => 'QuartersController@listremarks']);
     Route::post('addremarks', ['as' => 'quarter.list.addnewremark', 'uses' => 'QuartersController@addnewremarks']);
@@ -144,15 +145,19 @@ Route::post('/home', 'HomeController@index')->name('home');
 	Route::post('policestaff-data', [ 'as' => 'policestaff.data','uses' => 'PolicestaffController@getpolicedocumentList']);
 	Route::get('editquarter_police_a/{r}/{rv}/{performa}', ['as' => 'editquarter_police_a', 'uses' => 'PolicestaffController@editquarter_a']);
 	//area
-Route::get('masterarea', ['uses' => 'AreaController@index', 'as' => 'masterarea.index']);
-Route::post('getList','AreaController@getList');
-Route::resource('masterarea', 'AreaController');
-//Route::delete('masterarea/{id}', [AreaController::class, 'destroy'])->name('masterarea.destroy');
-//Route::get('masterarea/{id}/edit', [AreaController::class, 'edit'])->name('masterarea.edit');
-Route::get('/addNewArea',[AreaController::class,'addNewArea'])->name('masterarea.addNewArea');
-Route::post('/addNewArea',[AreaController::class,'store'])->name('masterarea.store');
-Route::get('/editArea/{id}/edit',[AreaController::class,'editArea'])->name('masterarea.editArea');
-Route::post('/editArea',[AreaController::class,'store'])->name('masterarea.store');
+    Route::get('masterarea', ['uses' => 'AreaController@index', 'as' => 'masterarea.index']);
+    Route::post('getList','AreaController@getList');
+    Route::resource('masterarea', 'AreaController');
+    //Route::delete('masterarea/{id}', [AreaController::class, 'destroy'])->name('masterarea.destroy');
+    //Route::get('masterarea/{id}/edit', [AreaController::class, 'edit'])->name('masterarea.edit');
+    Route::get('/addNewArea',[AreaController::class,'addNewArea'])->name('masterarea.addNewArea');
+    Route::post('/addNewArea',[AreaController::class,'store'])->name('masterarea.store');
+    Route::get('/editArea/{id}/edit',[AreaController::class,'editArea'])->name('masterarea.editArea');
+    Route::post('/editArea',[AreaController::class,'store'])->name('masterarea.store');
+
+    Route::get('admin-quarters-rejected', [QuartersController::class, 'admin_quartersRejected'])->name('request.rejected');
+    Route::post('admin-quarters-rejected-list', [QuartersController::class, 'admin_getRejectedQuarterList'])->name('request.rejectedquarter-list');
+
     // Other admin-specific routes
 });
 

@@ -41,6 +41,15 @@ return [
                     ],
                     'link' => 'quarterlistpriority.index',
                 ],
+                'Rejected List' => [
+                    'title' => 'menus.RejectedList',
+                    'icon' => 'fa fa-list',
+                    'permission_route' => 'request.rejected',
+                    'route' => [
+                        'requestrejected'
+                    ],
+                    'link' => 'request.rejected',
+                ],
 				/*	'New Request' => [
                     'title' => 'menus.New Request',
                     'icon' => 'fa fa-paper-plane',
