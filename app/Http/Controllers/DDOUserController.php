@@ -409,7 +409,7 @@ class DDOUserController extends Controller
     public function submitdocument_a(Request $request)
     {
         $files= $request->input('files');
-      //dd($request->all());
+      dd($request->all());
       //  dd($request->submit_issue);
         // dd($request->reqid);
         //Find the record based on the composite primary key
@@ -417,6 +417,7 @@ class DDOUserController extends Controller
         $rivision_id = base64_decode($request->rvid);
         $uid = base64_decode($request->uid);
         $qttype = base64_decode($request->qttype);
+        dd($qttype);
         $ddo_remarks = $request->ddo_remarks;
         if (isset($request->submit_issue)) {
             $is_ddo_varified = 2;
@@ -894,6 +895,7 @@ class DDOUserController extends Controller
         $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name','is_file_ddo_verified'])
         ->join('master.m_document_type as d', 'd.document_type', '=', 'file_list.document_id')
         ->where('request_id', '=', $requestid)
+        ->where('uid','=',$quarterrequest['uid'])
         ->get(); //12-12-2024
 
 
@@ -1307,8 +1309,53 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
      ->rawColumns(['delete','action'])
     ->make(true);
     }
-    public function geteditquarter_b(Request $request)
+    public function geteditquarter_b(Request $request, $requestid, $rivision_id)
     {
+       
+        $requestid=base64_decode( $requestid);
+        $rivision_id=base64_decode($rivision_id);
+        //dd($requestid,$rivision_id); 
+        $requestModel = new Tquarterrequestb();
+        $quarterrequest = $requestModel->getFormattedRequestData($requestid, $rivision_id);
+        //dd($quarterrequest);
+        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name','is_file_ddo_verified'])
+        ->join('master.m_document_type as d', 'd.document_type', '=', 'file_list.document_id')
+        ->where('request_id', '=', $requestid)
+        ->where('uid','=',$quarterrequest['uid'])
+        ->get(); //12-12-2024
+
+       // dd($this->_viewContent['file_uploaded']);
+
+        $this->_viewContent['quarterrequest1'] = Tquarterrequestb::select(['request_date','requestid','quartertype','inward_no','inward_date','rivision_id','remarks',
+        'is_accepted','is_allotted','is_varified','uid','ddo_remarks'])
+        ->where('requestid','=',$requestid)
+        ->where('uid','=',$quarterrequest['uid'])
+        ->get();
+       // dd($this->_viewContent['quarterrequest1']);
+        $type ='b';
+       //  DB::enableQueryLog();
+            $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
+            ->whereIn('document_type', [10])
+            ->whereNotIn('document_type', Filelist::WHERE('uid', $quarterrequest['uid'])
+            ->WHERE('request_id', $requestid)->WHERE('performa', $type)
+            ->pluck('document_id'))
+            ->pluck('document_name', 'document_type');
+            
+       // dd($document_list);
+         $query = DB::getQueryLog();
+       // dd($query);
+        // $this->_viewContent['document_list']=$document_list;
+        //23-1-2025
+        $officecode = Session::get('officecode');
+        $officecode = getOfficeByCode($officecode);
+        //dd($officecode);
+        $this->_viewContent['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
+
+        $this->_viewContent['requestid']=$requestid;
+        $this->_viewContent['quarterrequest']=(isset($quarterrequest) && isset($quarterrequest))?$quarterrequest:'';
+        $this->_viewContent['page_title'] = "Quarter Edit Details";
+        return view('ddo.request.updatequarterrequestb',$this->_viewContent);
+
 
     }
 
@@ -1475,12 +1522,13 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     
             if($row->requesttype=='New')
             {
+
             //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
             $btn1 = '<a href="'.\route('ddo.editquarter.a.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i> View Remarks</a>';
             }
             else
             {
-            $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+            $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i> View Remarks</a>';
             }
            
             return $btn1;
@@ -1494,5 +1542,83 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
      })*/
      ->rawColumns(['delete','action'])
     ->make(true);
+    }
+    public function submitdocument_b(Request $request)
+    {
+        $files= $request->input('files');
+      //dd($request->all());
+      //  dd($request->submit_issue);
+        // dd($request->reqid);
+        //Find the record based on the composite primary key
+        $requestid = base64_decode($request->reqid);
+        $rivision_id = base64_decode($request->rvid);
+        $uid = base64_decode($request->uid);
+        $qttype = base64_decode($request->qttype);
+        //dd($qttype);
+        $ddo_remarks = $request->ddo_remarks;
+        if (isset($request->submit_issue)) {
+            $is_ddo_varified = 2;
+        } else {
+            $is_ddo_varified = 1;
+        }
+
+
+        // dd($requestid,$rivision_id,$uid,$qttype,$ddo_remarks,$request->submit_issue,$is_ddo_varified);
+        if ($is_ddo_varified != 2) {
+            $ddo_remarks = null;
+        }
+
+        $filetable = Filelist::where('uid', $uid)->get(); // Get all files for the user
+        $files = $request->input('files'); // Get files from the form (array of doc_id => 'on' or 'off')
+        //dd($files);
+       // dd($filetable);
+        foreach ($filetable as $file) {
+            //dd($file->doc_id);
+            // Check if the doc_id exists in the $files array
+            if (isset($files[$file->doc_id])) {
+                //dd("hello");
+                // If the checkbox for this file was checked
+                if ($files[$file->doc_id] === 'on') {
+                  //  dd("on");
+                    // Update the file to 'checked'
+                 Filelist::where('doc_id', $file->doc_id)
+                    ->update(['is_file_ddo_verified' => 1]); // Update      
+                } 
+            }
+            else
+            {
+                
+                Filelist::where('doc_id', $file->doc_id)
+                ->update(['is_file_ddo_verified' => 2]); // Update directly
+            }
+
+           
+        }
+
+       
+        try {
+
+            $updated = Tquarterrequestb::where('requestid', $requestid)
+                ->where('rivision_id', $rivision_id)
+                ->where('uid', $uid)
+                ->where('quartertype', $qttype)
+                ->update([
+                    'is_ddo_varified' => $is_ddo_varified,
+                    'ddo_remarks' => $ddo_remarks,  // Assuming $remarks is a variable that contains the remark data
+                ]);
+
+            if ($updated) {
+                //return response()->json(['message' => 'Documents are submitted successfully!']);
+                //return redirect()->back()->with(['message' => 'Review were submitted successfully!']);
+                return redirect('/ddo-quarters-normal')->with('success', 'Request Verified Successfully!');
+            } else {
+                //return response()->json(['message' => 'Record not found or no changes made'], 404);
+                return redirect('/ddo-quarters-normal')->back()->with(['message' => 'Something went wrong. Please try again']);
+            }
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            \Log::error('Error updating record: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while updating the record'], 500);
+        }
     }
 }

@@ -225,6 +225,7 @@ Route::prefix('ddo')->group(function () {
         Route::post('/generateCertificate', [DDOUserController::class, 'generatecertificate_a'])->name('ddo.editquarter.a.generatecertificate')->middleware('auth:ddo_users');
         Route::get('/ddo-editquarter_b/{r}/{rv}', [DDOUserController::class, 'geteditquarter_b'])->name('ddo.editquarter.b.list')->middleware('auth:ddo_users');
         Route::post('/ddo-editquarter_a_submitdocument', [DDOUserController::class, 'submitdocument_a'])->name('ddo.editquarter.a.submitdocument')->middleware('auth:ddo_users');
+        Route::post('/ddo-editquarter_b_submitdocument', [DDOUserController::class, 'submitdocument_b'])->name('ddo.editquarter.b.submitdocument')->middleware('auth:ddo_users');
         Route::get('/ddo-viewprofile/{uid}', [DDOUserController::class, 'getuserprofile'])->name('ddo.viewuserprofile')->middleware('auth:ddo_users');
 Route::post('/user_quarter_application',[DDOUserController::class,'getUserQuarterApplication'])->name('ddo.getUserQuarterApplication')->middleware('auth:ddo_users');
 Route::get('quarters-rejected', [DDOUserController::class, 'quartersRejected'])->name('ddo.request.rejected');

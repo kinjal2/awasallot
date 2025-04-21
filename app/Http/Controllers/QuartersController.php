@@ -17,6 +17,7 @@ use App\Area;
 use App\DDOCode;
 use App\QuarterAllotment;
 use App\Tquarterequesthistorya;
+use App\Tquarterrequesthistoryb;
 use Carbon\Carbon;
 use Session;
 use Yajra\Datatables\Datatables;
@@ -532,7 +533,7 @@ class QuartersController extends Controller
         $request_id = base64_decode($_REQUEST['r']);
         $type = base64_decode($_REQUEST['type']);
         $rev = base64_decode($_REQUEST['rev']);
-        //dd($request_id);
+        
         // DB::enableQueryLog();
 
         //dd('hello');
@@ -634,6 +635,10 @@ class QuartersController extends Controller
          $ddo_remarks=Tquarterrequesta::where('requestid',$request_id)->select('is_ddo_varified','ddo_remarks')->first();
          $this->_viewContent['ddo_remarks_status']=$ddo_remarks;
         }
+        else if($type=='b'){
+            $ddo_remarks=Tquarterrequestb::where('requestid',$request_id)->select('is_ddo_varified','ddo_remarks')->first();
+            $this->_viewContent['ddo_remarks_status']=$ddo_remarks;
+           }
         //dd($ddo_remarks);
       
         $this->_viewContent['page_title'] = "Upload Document";
@@ -1580,6 +1585,7 @@ $requestModel = TQuarterRequestA::create([
             }
         }
         if ($request->type == 'b') {
+            //dd(Session::get('Uid'));
             $result = Tquarterrequestb::where('requestid', $requestid)
                 ->first();
             if ($downgrade_requestid != "") {
@@ -1626,7 +1632,7 @@ $requestModel = TQuarterRequestA::create([
             $doc_submitted = Filelist::where('request_id', $requestid)
                 //->whereNotIn('document_id', [2, 6, 9, 10, 3, 7])  // Exclude document types
                 ->whereNotIn('document_id', [6,  10])
-                ->where('performa', 'a')
+                ->where('performa', 'b')
                 ->when($isPoliceStaff == 'N', function ($query) {
                     // If user is not a police staff, exclude document_type = 8
                     return $query->whereNotIn('document_id', [8]);
@@ -1648,7 +1654,7 @@ $requestModel = TQuarterRequestA::create([
                 )
                 ->count();
 
-            // dd($doc_tobe_submit,'hii<br>',$doc_submitted);
+            //dd($doc_tobe_submit,'hii<br>',$doc_submitted);
             if ($doc_tobe_submit != $doc_submitted) { //dd("test");
 
 
@@ -1676,7 +1682,9 @@ $requestModel = TQuarterRequestA::create([
                     'inward_date' => now()->toDateString(),
                     'is_accepted' => 1,
                     'is_priority' => 'N',
+                    'is_ddo_varified' =>0
                 ];
+               
 
                 $resp = TQuarterRequestB::where('requestid', $request->input('requestid'))->update($data);
 
@@ -1726,7 +1734,7 @@ $requestModel = TQuarterRequestA::create([
     }
     public function saveapplication_b(request $request)
     {
-
+        $officecode = Session::get('officecode');
         $status = $request->status;
         $requestid = $request->requestid;
         $dg_allotment = $request->dg_allotment;
@@ -1738,18 +1746,36 @@ $requestModel = TQuarterRequestA::create([
             ->where('rivision_id', $rv)
             ->first();
         //echo "<pre>";  print_r( $result);
-        if ($status != 0) {
+        if ($status == 0) {
             try {
 
                 $quarterTypeInstance = new QuarterType();
-                $wno = $quarterTypeInstance->getNextWno($result->quartertype);
+                $wno = $quarterTypeInstance->getNextWno($result->quartertype, $officecode);
                 // echo $wno; exit;
 
                 // Retrieve r_wno value
                 $rWnoA = TQuarterRequestA::getMaxRwno($result->quartertype);
                 $rWnoB = TQuarterRequestB::getMaxRwno($result->quartertype);
                 $rWno = max($rWnoA, $rWnoB) + 1;
-                // Update the TQuarterRequestA record
+				
+				// Update the TQuarterRequestB record
+                $t_quarterrequest_b= Tquarterrequestb::where('requestid', $requestid)
+                ->where('rivision_id', $rv)->where('uid',$result->uid)->get();
+               //dd($t_quarterrequest_b);
+                //dd(auth()->user()->id);
+                if ($t_quarterrequest_b) {
+                // Store the current customer details in history before updating
+                $t_quarterrequest_b_Data = $t_quarterrequest_b->toArray();
+               // dd($t_quarterrequest_b_Data);
+                $t_quarterrequest_b_Data['created_by'] = auth()->user()->id; // User's ID for created_by
+                $t_quarterrequest_b_Data['updated_by'] = auth()->user()->id;// User's ID for updated_by
+                $t_quarterrequest_b_Data['created_at'] = now(); // Current timestamp for created_at
+                $t_quarterrequest_b_Data['updated_at'] = now(); // Current timestamp for updated_at
+                // Insert data into the history table
+                Tquarterrequesthistoryb::create($t_quarterrequest_b_Data);
+                }
+
+                // Update the TQuarterRequestB record
                 TQuarterRequestb::where('requestid', $requestid)
                     ->where('rivision_id', $rv)
                     ->update([
@@ -1788,15 +1814,17 @@ $requestModel = TQuarterRequestA::create([
             //  Master::notify('S',"Request with inward no : $inward_no has been Accepted successfully. Kindly check <a href='front.php?pagename=".base64_encode("front_links.php")."'>Quarter Request</a> section for further details",$req_uid);
             return redirect('/quarterlistnormal')->with('success', 'Request Verified Successfully!');
         } else {
+			$status=2;
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rv)
                 ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
             if ($result) {
                 $this->_viewContent['requestid'] = $requestid;
                 $this->_viewContent['rv'] = $rv;
                 $this->_viewContent['type'] = 'b';
-                $remarks = Remarks::get();
+                //$remarks = Remarks::get();
+				$remarks=Tquarterrequestb::select('remarks')->where('requestid', $requestid)->where('rivision_id', $rv)->first();
                 //  dd($remarks);
-               // $this->_viewContent['remarks'] =  $remarks;
+               $this->_viewContent['remarks'] =  $remarks;
                 $this->_viewContent['page_title'] = "Remarks";
                 return view('request/remarks', $this->_viewContent);
             } else {

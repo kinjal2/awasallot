@@ -1,6 +1,7 @@
-@extends(\Config::get('app.theme').'.master')
+@extends(\Config::get('app.theme') . '.master')
 @section('title', $page_title)
 @section('content')
+
 <div class="content">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -12,7 +13,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Quarter Request (Normal)</li>
+                        <li class="breadcrumb-item active">Higher Category Quarter Request </li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -21,8 +22,7 @@
     <div class="container-fluid">
         <div class="row">
             <!-- left column -->
-             <!-- left column -->
-             <div class="col-md-8">
+            <div class="col-md-8">
                 <!-- general form elements -->
                 <div class="card">
                     <div class="card-header card-new_head text-white">
@@ -114,14 +114,17 @@
                                     <p> {{ isset($quarterrequest) ? $quarterrequest['officename'] : 'N/A' }} </p>
                                     </div>
                                 </div>
-                               
+                                <div class="row user_details_view">
+                                    <div class="col-sm-6">
+                                    <h6 class="mb-0"> જ્યાંથી બદલી થઈ ને આવ્યા હોય /પ્રતિનિયુક્તિ ઉપર આવ્યા હોય ત્યાંનો હોદ્દો અને કચેરી નું નામ<span>:</span></h6>
+                                    </div>
+                                    
+                                </div>
                                 <div class="row user_details_view">
                                 <div class="col-sm-6">
                                     <h6 class="mb-0">હોદ્દો <span>:</span></h6>
                                 </div>
-                                <div class="col-sm-6">
-                                    <p> {{ isset($quarterrequest) ? $quarterrequest['designation'] : 'N/A' }} </p>
-                                    </div>
+                                
                             </div>
                             <div class="row user_details_view">
                                 <div class="col-sm-6">
@@ -437,176 +440,229 @@
             <div class="col-md-4">
                 <!-- Form Element sizes -->
                 <div class="card card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">Review</h3>
+                <form method="POST" name="ddo_submit_document_b" id="ddo_submit_document_b" action="{{route('ddo.editquarter.b.submitdocument')}}">
+                @csrf
+                    <!-- /.card -->
+                    <div class="card-success">
+                        <div class="card-header card-new_head text-white">
+                            <h3 class="card-title">Attachments</h3>
+                        </div>
+                        <div class="card-body p-2">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Document Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $issue=0; ?>
+                                    @foreach ($file_uploaded as $file)
+                                    <tr>
+                                        <td>{{ $file->document_name }}</td>
+                                        <td>
+                                            <a href="{{ url('/download_file/' . $file->doc_id) }}" target="_blank">
+                                                <img src="{{ URL::asset('images/pdf.png') }}" class="export-icon" style="width: 30px;" />
+                                            </a>
+                                        </td>
+                                        <td>
+                                            
+                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"  {{ $file->is_file_ddo_verified == 1 ? 'checked' : $issue=1 }}  />
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="col-12 mt-20 pt-4">
+                                <div class="form-group">
+                                  
+                                </div>
+                                <div id="message-container_submitdoc" style="margin-top: 10px;"></div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
                     </div>
-                    <div class="card-body">
-                        <form method="POST" name="front_annexurea" id="front_annexurea" action="{{ url('saveapplication_b') }}" enctype="multipart/form-data">
-                            @csrf
-                            <div class="row">
-                                <div class="col-12">
-                                    <!-- <div class="form-group">
-                                        <label for="Name">Status</label>
-                                        {{ Form::select('status',[null=>__('common.select')] + getupdatestatus(),"",['id'=>'status','class'=>'form-control select2']) }}
 
-                                    </div> -->
-                                    <div class="col-12" id="remarks">
+
+
+
+                    <!-- /.card -->
+
+                    <!-- for review 22-11-2024 -->
+                    
+                </div>
+                <div class="card card-success">
+                        <div class="card-header card-new_head text-white">
+                            <h3 class="card-title">Review</h3>
+                        </div>
+                        <div class="card-body p-2">
+                          
+                                <div class="row">
+                                    <div class="col-12">
+                                  
+                                        <!-- <div class="form-group">
+                                            <label for="Name">Status</label>
+                                            {{ Form::select('status', [null => __('common.select')] + getddoupdatestatus(), '', ['id' => 'status', 'class' => 'form-control select2']) }}
+
+                                        </div> -->
+                                        <!-- <div class="col-12 yesno_status" >
+
+                                            <div class="form-group">
+                                                <label for="Name">Add Remarks</label>
+                                                <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control">
+                                            </div>
+                                        </div> -->
+                            
+                                       
+                                        <div class="col-12" id="remarks">
                                             <div class="form-group">
                                                 <label for="Name">Have Issue?</label>
                                             </div>
-                                            <!-- <div class="form-group">
-                                                <label for="Name">Add Remarks</label>
-                                                <input type="text" name="adm_remarks" id="adm_remarks" class="form-control" style="display: none;"> -->
-                                                  <!-- Remarks dropdown with multiple selectable options and "Other" option -->
-                                                <!-- {{ Form::select('admin_remarks[]',  getRemarks(), null, ['id' => 'admin_remarks', 'class' => 'form-control select2', 'multiple' => 'multiple']) }} -->
-
-                                            <!-- </div> --> 
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary" id="submit_issue"
-                                                    name="submit_issue" value="submit_issue"> Add Remarks </button>
-                                                    <!-- Submit Review & Next -->
+                                                <label for="Name">Add Remarks</label>
+                                                <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control" value="{{ isset($quarterrequest['ddo_remarks']) ? $quarterrequest['ddo_remarks'] : '' }}">
                                             </div>
-                                    </div>
-                                    <div id="submit">
-                                        <div class="col-12 yesno_status"  id="yesno_status1">
-                                           
+                                            <div class="form-group">
+
+
+                                                <button type="submit" class="btn btn-primary" id="submit_issue"
+                                                    name="submit_issue" value="submit_issue">Submit Review & Next</button>
+                                            </div>
                                         </div>
-                                        <div class="card-footer">
-                                            <input type="hidden" name="requestid" value="{{ isset($quarterrequest['requestid'])?$quarterrequest['requestid']:'' }}" />
-                                            <input type="hidden" name="rv" value="{{ isset($quarterrequest['rivision_id'])?$quarterrequest['rivision_id']:'' }}" />
-                                            <input type="hidden" name="dgr" value="{{ isset($quarterrequest['dgrid'])?$quarterrequest['dgrid']:'' }}" />
-                                            <input type="hidden" name="status" value="1" />
-                                                
-                                            <button type="submit" class="btn btn-primary" id="submit_doc" name="submit_doc" >Save & Next</button>
+                                       
+                                        <div class="col-12 ">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary" id="submit_doc"
+                                                    name="submit_doc" style="display: none;">Verified & Next</button>
+                                            </div>
+                                            <div >
+                                                <input type="hidden" name="reqid" id="reqid"
+                                                    value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
+                                                <input type="hidden" name="rvid" id="rvid"
+                                                    value="{{ isset($quarterrequest['rivision_id']) ? base64_encode($quarterrequest['rivision_id']) : '' }}" />
+                                                <input type="hidden" name="uid" id="uid"
+                                                    value="{{ base64_encode($quarterrequest['uid']) }}">
+                                                <input type="hidden" name="qttype" id="qttype"
+                                                    value="{{ isset($quarterrequest['quartertype']) ? base64_encode($quarterrequest['quartertype']) : '' }}" />
+
+
+                                                <!-- <button type="submit" class="btn btn-primary" id="submit_doc"
+                                                    name="submit_doc" style="display: none;">Submit Review & Next</button> -->
+
+                                                @if (Session::has('message'))
+                                                <div id="message" style="margin-top: 10px; color: green;">
+                                                    {{ Session::get('message') }}
+                                                </div>
+                                                @endif
+                                            </div>
                                         </div>
+                                        
                                     </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-                <div class="card card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">Attachments</h3>
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Document Name</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($file_uploaded as $file)
-                                <tr>
-                                    <td>{{ $file->document_name }}</td>
-                                    <td>
-                                        <a href="{{ url('/download_file/'.$file->doc_id) }}" target="_blank">
-                                            <img src="{{ URL::asset('images/pdf.png') }}" class="export-icon" />
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" class="file-checkbox" data-doc-id="{{ $file->doc_id }}" {{ $file->is_file_admin_verified == 1 ? 'checked' : '' }} />
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-
-                <!-- /.card -->
-                <div class="card card-danger">
-                    <div class="card-header">
-                        <h3 class="card-title">View old version(s)</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    @foreach($quarterrequest1 as $request)
-                                    <label for="Name"></label>
-                                    @php
-                                    $url = url('/viewapplication/'.(base64_encode($request->requestid)).'/'.(base64_encode($request->rivision_id)).'/'.(base64_encode($quarterrequest['quartertype'])));
-                                    @endphp
-                                    <a href="{{ $url }}">
-                                        <img src="{{ URL::asset('images/archive.png') }}" class="export-icon" />
-                                    </a>
-
-
-                                    @if($request->rivision_id == 0)
-                                    {{ "Application" }}
-                                    @else
-                                    {{ "Rivision ".$request->rivision_id }}
-                                    @endif
-
-
-                                    @endforeach
-                                </div>
-                            </div>
+                            </form>
                         </div>
-
+                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-
-            </div>
 
 
+                @endsection
+                @push('page-ready-script')
+                @endpush
+                @push('footer-script')
+                <script type="text/javascript">
+                    $('#status').change(function() {
+                        if (this.value == 1) {
 
-            @endsection
-            @push('page-ready-script')
+                            $('.yesno_status').hide();
+                        } else if (this.value == 2) {
+                            $('.yesno_status').show();
+                        }
+                    });
+                    $("#ddo_submit_document_b").validate({
+                        rules: {
+                            ddo_remarks: "required",
 
-            @endpush
-            @push('footer-script')
-            <script type="text/javascript">
-              $(document).ready(function() {
-                // Initially hide the remarks text input
-                $('#adm_remarks').hide();
+                        }
+                    });
+                </script>
+               
 
-                // Listen for changes on the select box
-                $('#admin_remarks').change(function() {
-                    // Get the selected values (an array of selected options)
-                    var selectedValues = $(this).val();
 
-                    // Check if "Other" is selected
-                    if (selectedValues && selectedValues.includes('other')) {
-                        $('#adm_remarks').show();  // Show the remarks text input for "Other"
-                    } else {
-                        $('#adm_remarks').hide();  // Hide the remarks text input if "Other" is not selected
-                    }
-                });
 
-                // Ensure the text box is hidden if no option is selected initially (or if "Other" is not selected)
-                var selectedValues = $('#admin_remarks').val();
-                if (!selectedValues || !selectedValues.includes('other')) {
-                    $('#adm_remarks').hide();  // Hide remarks text input initially if "Other" is not selected
-                }
-            });
-                // $('#status').change(function() {
-                //     if (this.value == 1) {
-                //         $('.yesno_status').show();
-                //     } else if (this.value == 0) {
-                //         $('.yesno_status').hide();
-                //     }
-                // });
-                $("#front_annexurea").validate({
-                    rules: {
-                        // status: "required",
-                       // dg_allotment: "required",
+                <script>
+                    
+                    // $('#submit').on('click', function(event) {
+                    //     event.preventDefault(); // Prevent default form submission
 
-                    }
-                });
-            </script>
-            <script>
+                    //     const selectElement = $('#getpayslip_certificate');
+                    //     const selectedValue = selectElement.val();
+                    //     const fileInput = $('#image');
+                    //     const file = fileInput[0].files[0]; // Get the first selected file
+
+                    //     // Clear previous messages
+                    //     $('#message-container').text('').removeClass('alert alert-danger alert-success');
+
+
+                    //     // Validation checks
+                    //     if (!selectedValue) {
+                    //         //alert('Please select a document to upload.');
+                    //         $('#message-container').addClass('alert alert-danger').text('Please select a document to upload.');
+                    //         selectElement.focus();
+                    //         return; // Exit the function
+                    //     }
+
+                    //     if (!file) {
+                    //         //alert('Please upload a file.');
+                    //         $('#message-container').addClass('alert alert-danger').text('Please select file to upload.');
+                    //         fileInput.focus();
+                    //         return; // Exit the function
+                    //     }
+
+                    //     // Prepare FormData for AJAX
+                    //     const formData = new FormData();
+                    //     formData.append('getpayslip_certificate', selectedValue);
+                    //     formData.append('image', file);
+                    //     formData.append('request_id', $('#request_id').val());
+                    //     formData.append('uid', $('#uid').val());
+                    //     formData.append('_token', '{{ csrf_token() }}'); // Include CSRF token
+
+                    //     // AJAX request
+                    //     $.ajax({
+                    //         url: "{{ route('ddo.editquarter.a.savedocument') }}", // Update with your route name
+                    //         type: 'POST',
+                    //         data: formData,
+                    //         contentType: false,
+                    //         processData: false,
+                    //         success: function(response) {
+                    //             setTimeout(function() {
+                    //                 window.location.reload();
+                    //             }, 2000);
+                    //             $('#message-container').addClass('alert alert-success').text(
+                    //                 'File uploaded successfully!');
+
+                    //             // Optionally, you can redirect or reset the form here
+                    //         },
+                    //         error: function(xhr) {
+                    //             // Handle error response
+                    //             if (xhr.status === 422) {
+                    //                 const errors = xhr.responseJSON.errors;
+                    //                 let errorMessages = '';
+                    //                 $.each(errors, function(key, value) {
+                    //                     errorMessages += value[0] + '\n'; // Concatenate error messages
+                    //                 });
+                    //                 $('#message-container').addClass('alert alert-danger').text(
+                    //                     errorMessages); // Show error messages
+                    //             } else {
+                    //                 $('#message-container').addClass('alert alert-danger').text(
+                    //                     'An error occurred. Please try again.');
+                    //             }
+                    //         }
+                    //     });
+                    // });
+                </script>
+                <script>
                     document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
-                       
+                                 // Call the toggleSubmitButton function to update button visibility
                                 toggleSubmitButton();
                         });
                     });
@@ -621,17 +677,17 @@
                         const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
 
                         // Find the submit button
-                        const submitButton = document.getElementById('submit');
-                        var remarks = document.getElementById('remarks');
+                        const submitButton = document.getElementById('submit_doc');
+                        var remakrs = document.getElementById('remarks');
 
                         // Show the submit button if all checkboxes are checked
                         if (allChecked) {
                             submitButton.style.display = 'inline'; // Show button
-                            remarks.style.display = 'none';
+                            remakrs.style.display = 'none';
                         } else {
                            
                             submitButton.style.display = 'none'; // Hide button
-                            remarks.style.display = 'inline';
+                            remakrs.style.display = 'inline';
                         }
                     }
                     $(document).ready(function() {
@@ -639,5 +695,4 @@
                     });
 
                 </script>
-            
-            @endpush
+                @endpush
