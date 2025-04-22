@@ -68,7 +68,7 @@
         <div class="modal-content  pop_up_design">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">View Remarks</h4>
+                <h4 class="modal-title">Remarks</h4>
                 <button type="button" class="btn btn-danger close" data-dismiss="modal">&times;</button>
 
                 <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
@@ -140,17 +140,21 @@
             url: "{{ route('quarter.list.getremarks') }}",
             method: 'POST',
             data: {uid:uid,type:type,rivision_id:rivision_id,requestid:requestid,remarks:remarks},
-            success: function(result)
-            {
-              var html = '<ul>';
-              result.forEach(function (item) {
-                  html += '<li>' + item.description + '</li>';
-              });
-              html += '</ul>';
-              $("#viewdata").html(html);
-              $('#DocumentModal').show();
+            success: function(result) {
+            var html = '<ul>';
 
+            if (result.success === false || !result.data || result.data.length === 0) {
+                html += '<li>' + result.message + '</li>';
+            } else {
+                result.data.forEach(function(item) {
+                    html += '<li>' + item.description + '</li>';
+                });
             }
+
+            html += '</ul>';
+            $("#viewdata").html(html);
+            $('#DocumentModal').show();
+        }
           });
       });
 

@@ -409,7 +409,7 @@ class DDOUserController extends Controller
     public function submitdocument_a(Request $request)
     {
         $files= $request->input('files');
-      dd($request->all());
+     // dd($request->all());
       //  dd($request->submit_issue);
         // dd($request->reqid);
         //Find the record based on the composite primary key
@@ -417,7 +417,7 @@ class DDOUserController extends Controller
         $rivision_id = base64_decode($request->rvid);
         $uid = base64_decode($request->uid);
         $qttype = base64_decode($request->qttype);
-        dd($qttype);
+       // dd($qttype);
         $ddo_remarks = $request->ddo_remarks;
         if (isset($request->submit_issue)) {
             $is_ddo_varified = 2;

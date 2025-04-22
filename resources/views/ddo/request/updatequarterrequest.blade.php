@@ -473,7 +473,7 @@
                                         </td>
                                         <td>
                                             
-                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"  {{ $file->is_file_ddo_verified == 1 ? 'checked' : $issue=1 }}  />
+                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"   />
                                         </td>
                                     </tr>
                                     @endforeach

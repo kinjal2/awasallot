@@ -333,6 +333,7 @@ class QuartersController extends Controller
             'rivision_id',
             'is_ddo_varified',
             'ddo_remarks',
+            'is_varified'
 
         ])
             ->where('is_allotted', '=', 0)
@@ -360,6 +361,7 @@ class QuartersController extends Controller
             'rivision_id',
             'is_ddo_varified',
             'ddo_remarks',
+            'is_varified'
         ])
             ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
@@ -388,6 +390,7 @@ class QuartersController extends Controller
             'rivision_id',
             'is_ddo_varified',
             'ddo_remarks',
+            'is_varified'
         ])
             ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
@@ -441,7 +444,7 @@ class QuartersController extends Controller
 
                 // Conditional check for the upload button
                 //  if ($row->inward_no == '' &&  $row->is_ddo_varified==2) { // Replace with your own condition
-                if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2)) {
+                if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2) || ($row->inward_no != '' &&  $row->is_varified == 2)) {
                     $btn1 .= '<a href="' . \URL::action('QuartersController@uploaddocument') .
                         "?r=" . base64_encode($row->requestid) .
                         "&type=" . base64_encode($row->type) .
@@ -1085,8 +1088,8 @@ class QuartersController extends Controller
                 // Update the TQuarterRequestA record
                 $t_quarterrequest_a= TQuarterRequestA::where('requestid', $requestid)
                 ->where('rivision_id', $rv)->where('uid',$result->uid)->get();
-                dd($t_quarterrequest_a);
-                dd(auth()->user()->id);
+               // dd($t_quarterrequest_a);
+                //dd(auth()->user()->id);
                 if ($t_quarterrequest_a) {
                     // Store the current customer details in history before updating
                     $t_quarterrequest_a_Data = $t_quarterrequest_a->toArray();
@@ -1247,6 +1250,7 @@ $requestModel = TQuarterRequestA::create([
                 $this->_viewContent['rv'] = $rv;
                 $this->_viewContent['type'] = 'a';
                 $remarks=Tquarterrequesta::select('remarks')->where('requestid', $requestid)->where('rivision_id', $rv)->first();
+                //dd($remarks);
                // $remarks = Remarks::get();
                 //  dd($remarks);
                 $this->_viewContent['remarks'] =  $remarks;
@@ -1536,7 +1540,11 @@ $requestModel = TQuarterRequestA::create([
                     'inward_date' => now()->toDateString(),
                     'is_accepted' => 1,
                     'is_priority' => 'N',
-                    'is_ddo_varified' =>0
+                    'is_ddo_varified' =>0,
+                    'ddo_remarks' => null,
+                    'is_varified' => 0,
+                    'remarks' => null
+
                 ];
 
                 $resp = TQuarterRequestA::where('requestid', $request->input('requestid'))->update($data);
@@ -1682,7 +1690,10 @@ $requestModel = TQuarterRequestA::create([
                     'inward_date' => now()->toDateString(),
                     'is_accepted' => 1,
                     'is_priority' => 'N',
-                    'is_ddo_varified' =>0
+                    'is_ddo_varified' =>0,
+                    'ddo_remarks' => null,
+                    'is_varified' => 0,
+                    'remarks' => null
                 ];
                
 
@@ -1741,12 +1752,13 @@ $requestModel = TQuarterRequestA::create([
         $rv = $request->rv;
         $dg_request_id = TQuarterRequestb::orderBy('requestid', 'DESC')->value('requestid');
         $dg_request_id += 1;
+       // dd($request->submit_issue);
         //get data using request and revision id
         $result = Tquarterrequestb::where('requestid', $requestid)
             ->where('rivision_id', $rv)
             ->first();
         //echo "<pre>";  print_r( $result);
-        if ($status == 0) {
+        if ($request->submit_issue == null) {
             try {
 
                 $quarterTypeInstance = new QuarterType();
@@ -1760,13 +1772,18 @@ $requestModel = TQuarterRequestA::create([
 				
 				// Update the TQuarterRequestB record
                 $t_quarterrequest_b= Tquarterrequestb::where('requestid', $requestid)
-                ->where('rivision_id', $rv)->where('uid',$result->uid)->get();
-               //dd($t_quarterrequest_b);
+                ->where('rivision_id', $rv)->where('uid',$result->uid)->first();
+              // dd($t_quarterrequest_b);
                 //dd(auth()->user()->id);
                 if ($t_quarterrequest_b) {
                 // Store the current customer details in history before updating
                 $t_quarterrequest_b_Data = $t_quarterrequest_b->toArray();
-               // dd($t_quarterrequest_b_Data);
+               //dd($t_quarterrequest_b_Data);
+              // dd($requestid);
+            //   $t_quarterrequest_b_Data['requestid'] = $requestid;  // make sure this is not null
+            //   $t_quarterrequest_b_Data['quartertype'] = $t_quarterrequest_b->quartertype;  
+            //   $t_quarterrequest_b_Data['uid'] = $result->uid;
+            //   $t_quarterrequest_b_Data['rivision_id']= $rv;
                 $t_quarterrequest_b_Data['created_by'] = auth()->user()->id; // User's ID for created_by
                 $t_quarterrequest_b_Data['updated_by'] = auth()->user()->id;// User's ID for updated_by
                 $t_quarterrequest_b_Data['created_at'] = now(); // Current timestamp for created_at
@@ -1818,12 +1835,14 @@ $requestModel = TQuarterRequestA::create([
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rv)
                 ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
             if ($result) {
+                //dd($requestid,$rv);
+
                 $this->_viewContent['requestid'] = $requestid;
                 $this->_viewContent['rv'] = $rv;
                 $this->_viewContent['type'] = 'b';
                 //$remarks = Remarks::get();
 				$remarks=Tquarterrequestb::select('remarks')->where('requestid', $requestid)->where('rivision_id', $rv)->first();
-                //  dd($remarks);
+                 // dd($remarks);
                $this->_viewContent['remarks'] =  $remarks;
                 $this->_viewContent['page_title'] = "Remarks";
                 return view('request/remarks', $this->_viewContent);
@@ -1843,7 +1862,11 @@ $requestModel = TQuarterRequestA::create([
         $remarks = $result1['remarks'];
         //dd($remarks);
         $remarks = trim($remarks, '"'); // Remove trailing quote
+      //  dd($remarks);
         $remarksArray = explode(',', $remarks);
+       // dd($remarksArray);
+        $remarksArray=array_map('intval',$remarksArray);
+        //dd($remarksArray);
         if ($type == 'a') {
 
             $t_quarterrequest_a= TQuarterRequestA::where('requestid', $requestid)
@@ -1867,12 +1890,12 @@ $requestModel = TQuarterRequestA::create([
             }
 
             $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rv)
-                ->update(['remarks' => $remarksArray, 'remarks_date' => date('Y-m-d')]);
+                ->update(['remarks' => $remarks, 'remarks_date' => date('Y-m-d')]);
             return redirect('/quarterlistnormal')->with('success', 'Remarks added successfully!');
         }
         if ($type == 'b') {
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rv)
-                ->update(['remarks' => $remarksArray, 'remarks_date' => date('Y-m-d')]);
+                ->update(['remarks' => $remarks, 'remarks_date' => date('Y-m-d')]);
             return redirect('/quarterlistnormal')->with('success', 'Remarks added successfully!');
         }
     }
@@ -2555,13 +2578,13 @@ $requestModel = TQuarterRequestA::create([
     public function listremarks(Request $request)
     {
         $remarksData = json_decode($request->input('remarks_selected'), true);
-        // dd($remarksData);
+         
         // Extract the remarks value (e.g., "2,3,4")
         $remarksString = $remarksData['remarks'] ?? '';
-      //  dd($remarksString);
+        
          // Convert to array
         $remarksArray = explode(',', $remarksString);
-        //dd($remarksArray);
+        
         //dd($request->all());
         try {
            
@@ -2580,7 +2603,7 @@ $requestModel = TQuarterRequestA::create([
                     $q->where('description', 'ilike', "%$search%");
                     });
                 })->skip($offset)->take($limit)->get();
-            //dd($data);
+           // dd($data);
             // Get total records count for pagination (without filtering)
            
             $totalRecords =Remarks::count();
@@ -2803,12 +2826,24 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
         $rivision_id=base64_decode($request->rivision_id);
         $requestid=base64_decode($request->requestid);
         $remarks=base64_decode($request->remarks);
-        $remarksArray = explode(',', $remarks);
-       // dd($remarksArray);
-        //dd($uid,$type,$rivision_id,$requestid,$remarks);
+      
+      
        
+      //  return response()->json($remarksdata);
+      
+       if ($remarks=='') {
+        return response()->json([
+            'success' => false,
+            'data' => [],
+            'message' => 'No Data Found'
+        ]);
+    } else {
+        $remarksArray = explode(',', $remarks);
         $remarksdata=Remarks::select('description')->whereIn('remark_id',$remarksArray)->get();
-       //dd($remarksdata);
-       return response()->json($remarksdata);
+        return response()->json([
+            'success' => true,
+            'data' => $remarksdata
+        ]);
+    }
     }
 }
