@@ -495,7 +495,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </form>
+
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -514,6 +514,7 @@
                             </thead>
                             <tbody>
                                 @foreach($file_uploaded as $file)
+                               
                                 <tr>
                                     <td>{{ $file->document_name }}</td>
                                     <td>
@@ -522,7 +523,8 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <input type="checkbox" class="file-checkbox" data-doc-id="{{ $file->doc_id }}" {{ $file->is_file_admin_verified == 1 ? 'checked' : '' }} />
+                                       
+                                    <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"   />
                                     </td>
                                 </tr>
                                 @endforeach
@@ -531,7 +533,7 @@
                     </div>
                     <!-- /.card-body -->
                 </div>
-
+                </form>
                 <!-- /.card -->
                 <div class="card card-danger">
                     <div class="card-header">

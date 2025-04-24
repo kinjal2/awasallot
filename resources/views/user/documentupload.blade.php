@@ -88,6 +88,15 @@
                     </div>
                     @endif
             @endif
+            @if(isset($admin_remarks_status))
+                    @if($admin_remarks_status['is_varified']==2)
+                        
+                        <div class="alert alert-warning">
+                             <button type="button" class="close" data-dismiss="alert">×</button>
+                              Department Remarks : {{$admin_remarks_status['remarks']}}
+                    </div>
+                    @endif
+            @endif
         </div>
         <div class="col-md-12">
             <!-- general form elements -->

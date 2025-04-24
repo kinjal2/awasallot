@@ -1,11 +1,13 @@
 <?php 
 return [
     'select' => 'Select Option',
-    'yes' => 'હા',
-    'no' => 'ના',
+    'yes' => 'Yes',
+    'no' => 'No',
     'home'=>'Home',
     'submit'=>'Submit',
-    'designation'=>'Designation'
+    'designation'=>'Designation',
+    'married' => 'Married',
+    'unmarried' => 'Unmarried',
 
 
 

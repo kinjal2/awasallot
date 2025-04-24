@@ -193,7 +193,7 @@
                   </div>
                   <div class="col-md-3">
                      <div class="form-group">
-                        <label for="grade_pay"> Select Matrix Pay Level <span class="error">*</span></label>
+                        <label for="grade_pay"> {{ __('profile.matrix_pay') }} <span class="error">*</span></label>
 
                         {{ Form::select('grade_pay', getPayScale(), $users->grade_pay ?: '', ['id' => 'grade_pay', 'class' => 'form-control select2']) }}
 
@@ -226,13 +226,13 @@
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="actual_salary">{{ __('profile.axtual_salary') }} <span class="error">*</span></label>
-                        <input type="text" class="form-control" value="{{isset($users->actual_salary)?$users->actual_salary:''}}" name="actual_salary" id="actual_salary" placeholder="actual salary">
+                        <input type="text" class="form-control" value="{{isset($users->actual_salary)?$users->actual_salary:''}}" name="actual_salary" id="actual_salary" placeholder="Enter Actual Salary">
                      </div>
                   </div>
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="basic_pay">{{ __('profile.basic_pay') }} <span class="error">*</span></label>
-                        <input type="text" class="form-control" value="{{isset($users->basic_pay)?$users->basic_pay:''}}" id="basic_pay" name="basic_pay" placeholder="Basic pay">
+                        <input type="text" class="form-control" value="{{isset($users->basic_pay)?$users->basic_pay:''}}" id="basic_pay" name="basic_pay" placeholder="Enter Basic pay">
                      </div>
                   </div>
 
@@ -245,7 +245,7 @@
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="panno">{{ __('profile.panno') }} </label>
-                        <input type="text" class="form-control" value="{{isset($users->pancard)?$users->pancard:''}}" id="pancard" name="pancard" placeholder="enter pan no">
+                        <input type="text" class="form-control" value="{{isset($users->pancard)?$users->pancard:''}}" id="pancard" name="pancard" placeholder="Enter PAN Number">
                      </div>
                   </div>
                   <div class="row">
@@ -290,14 +290,14 @@
                      <div class="col-md-3">
                         <div class="form-group">
                            <label for="office_address">{{ __('profile.office_address') }} <span class="error">*</span></label>
-                           <textarea class="form-control" id="office_address" name="office_address" placeholder="Enter address">{{ isset($users->office_address)?$users->office_address:''}}</textarea>
+                           <textarea class="form-control" id="office_address" name="office_address" placeholder="Enter Office Address">{{ isset($users->office_address)?$users->office_address:''}}</textarea>
 
                         </div>
                      </div>
                      <div class="col-md-3">
                         <div class="form-group">
                            <label for="Address">{{ __('profile.native_address') }} <span class="error">*</span> </label>
-                           <textarea class="form-control" id="address" name="address" placeholder="Enter address">{{ isset($users->address)?$users->address:''}}</textarea>
+                           <textarea class="form-control" id="address" name="address" placeholder="Enter Native Address">{{ isset($users->address)?$users->address:''}}</textarea>
                         </div>
                      </div>
                      <div class="col-md-3">

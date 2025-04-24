@@ -79,10 +79,8 @@
 
                                     <div class="mt-3">
                                         <div class="card-header">
-                                            @php
-                                                $location = (App::getLocale() == 'en') ? 'Ahmedabad' : 'અમદાવાદ';  // Gujarati version for example
-                                            @endphp
-                                            <h3 class="card-title"> {{ __('request.presentaddressdata', ['location' => $location]) }} </h3> <span class="error">*</span>
+                                           
+                                            <h3 class="card-title"> {{ __('request.presentaddressdata', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ]) }} </h3> <span class="error">*</span>
                                         </div>
                                         <div class="card-body border_light">
                                             <div class="row">

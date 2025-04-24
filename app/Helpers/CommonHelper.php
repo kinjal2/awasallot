@@ -22,17 +22,25 @@ function printLastQuery() {
 if(!function_exists('getYesNo')) {
 function getYesNo()
 {
-    $yesno = [];
-    $yesno = ['Y' => "હા", 'N' => "ના"];
-    return $yesno;
+    // $yesno = [];
+    // $yesno = ['Y' => "હા", 'N' => "ના"];
+    // return $yesno;
+    return [
+        'Y' => __('common.yes'),
+        'N' => __('common.no'),
+    ];
 }
 }
 if(!function_exists('getMaratialstatus')) {
 function getMaratialstatus()
 {
-    $maratialstatus = [];
-    $maratialstatus = ['U' => "Unmarried", 'M' => "Married"];
-    return $maratialstatus;
+    // $maratialstatus = [];
+    // $maratialstatus = ['U' => "Unmarried", 'M' => "Married"];
+    // return $maratialstatus;
+    return [
+        'U' => __('common.unmarried'),
+        'M' => __('common.married'),
+    ];
 }
 }
  if(!function_exists('getupdatestatus'))
@@ -834,6 +842,7 @@ if(!function_exists('getRemarks'))
                     'rivision_id' => $request_rev,
                     'request_id' => $request_id,
                     'is_file_ddo_verified'=>0, // added on 19-03-2025
+                    'is_file_admin_verified'=>0, // added on 19-03-2025
                     'file_name' => $fileName, // added on 19-03-2025
                     'rev_id' => $rev, // added on 19-03-2025
                 ]
@@ -848,4 +857,33 @@ if(!function_exists('getRemarks'))
         //dd("Doc recorded. id = ".$response->id." and revision = ".$response->rev."<br>\n");
 
 
+}
+if(!function_exists('getDistrictByCode')) {
+    function getDistrictByCode($dcode,$lang=null)
+    {
+       
+        $locale = App::getLocale(); // Get current app language, e.g., 'en' or 'gu'
+        //dd($locale);
+        $district = District::select('dcode', 'name_g', 'name_e')->where('dcode', $dcode)->first();
+
+        if (!$district) {
+            return ''; // or return 'Unknown'
+        }
+       // dd($district);
+       if($lang)
+       {
+            if($lang=='gn')
+            {
+                return $district->name_g;
+            }
+            else
+            {
+                return $district->name_e;
+            }
+       }
+       else
+       {
+        return $locale === 'gn' ? $district->name_g : $district->name_e;
+       }
+    }
 }

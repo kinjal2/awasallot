@@ -49,7 +49,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="lg-block">
                                         <div class="form-group">
-                                            <label class="question_bg mb-3">{{ __('request.deputation_date') }}</label>
+                                            <label class="question_bg mb-3">{{ __('request.deputation_date', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ] ) }}</label>
                                             <div class="input-group date dateformat" id="deputation_date"
                                                 data-target-input="nearest">
                                                 <input type="text" value="" name="deputation_date"
@@ -158,7 +158,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="lg-block">
                                         <div class="form-group ">
-                                            <label class="question_bg mb-3">{{ __('request.beforeallot')}} </label>
+                                            <label class="question_bg mb-3">{{ __('request.beforeallot', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ] )}} </label>
                                             <div class="form-group">
                                                 <div class="icheck-primary d-inline p-3">
                                                     <input type="radio" id="have_old_quarter_y" name="have_old_quarter_yn"
@@ -190,7 +190,7 @@
                                 <div class="col-md-6">
                                     <div class="lg-block">
                                         <div class="form-group">
-                                            <label class="question_bg mb-3">{{ __('request.lives')}}</label>
+                                            <label class="question_bg mb-3">{{ __('request.lives', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                             <div class="form-group clearfix">
                                                 <div class="icheck-primary d-inline p-3">
                                                     <input type="radio" id="is_relative_y" name="is_relative_yn" value="Y">
@@ -217,8 +217,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="lg-block">
                                         <div class="form-group">
-                                            <label class="question_bg mb-3">શિડ્યુલ કાસ્ટ અથવા શિડ્યુલ ટ્રાઈબ ના કર્મચારી છે? જો
-                                                હોય તો તેમણે વિગત આપવી તથા કચેરીનાં વડાનું પ્રમાણપત્ર સામેલ કરવું</label>
+                                            <label class="question_bg mb-3">{{ __('request.schedualcast', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                             <div class="form-group clearfix">
                                                 <div class="icheck-primary d-inline p-3">
                                                     <input type="radio" id="is_stsc_y" name="is_stsc_yn" value="Y">
@@ -245,8 +244,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="lg-block">
                                         <div class="form-group">
-                                            <label class="question_bg mb-3">ગાંધીનગર ખાતે માતા/પિતા. પતિ/પત્ની વિગેરે લોહી ની
-                                                સગાઈ જેવા સંબંધીને મકાન ફાળવેલ છે?</label>
+                                            <label class="question_bg mb-3">{{ __('request.relative', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                             <div class="form-group clearfix">
                                                 <div class="icheck-primary d-inline p-3">
                                                     <input type="radio" id="is_relative_house_y" name="is_relative_house_yn"
@@ -275,9 +273,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <div class="lg-block">
-                                        <label class="question_bg mb-3">ગાંધીનગર શહેર ની હદ માં અથવા સચિવાલય થી ૧૦ કિલોમીટર ની
-                                            હદ માં અથવા ગાંધીનગર ની હદ માં આવતા ગામડાં માં તેમના પિતા/પતિ/પત્ની કે કુટુંબ ના
-                                            કોઈપણ સભ્યને નામે રહેણાંકનું મકાન છે?</label>
+                                        <label class="question_bg mb-3">{{ __('request.rearea', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                         <div class="form-group clearfix">
                                             <div class="icheck-primary d-inline p-3">
                                                 <input type="radio" id="have_house_nearby_y" name="have_house_nearby_yn"
@@ -334,9 +330,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="lg-block">
                                         <div class="mb-1">
-                                            <label class="question_bg mb-3">જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું
-                                                વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા
-                                                વિનંતી છે?</label>
+                                            <label class="question_bg mb-3">{{ __('request.transeringandinagar', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                             {{ Form::select('downgrade_allotment',getYesNo(),'',['id'=>'downgrade_allotment','class'=>'form-control']) }}
                                         </div>
                                     </div>
@@ -346,16 +340,14 @@
                                     <div class="form-group icheck-primary d-inline question_bg mb-3 px-3">
                                         <input type="checkbox" id="agree_rules" name="agree_rules">
                                         <label for="agree_rules"></label>
-                                        <label style="padding: 0px !important;">સરકારશ્રી મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર
-                                            પાડે તેનું પાલન કરવા હું સંમત છુ.</label>
+                                        <label style="padding: 0px !important;">{{ __('request.govallotment', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-4">
                                     <div class="form-group icheck-primary d-inline question_bg mb-3 px-3">
                                         <input type="checkbox" id="agree_transfer" name="agree_transfer">
                                         <label for="agree_transfer"></label>
-                                        <label style="padding: 0px !important;"> મારી બદલી થાય તો તે અંગે ની જાણ તુરત
-                                            કરીશ.</label>
+                                        <label style="padding: 0px !important;">{{ __('request.iftranser', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                     </div>
                                 </div>
                                 <div class="col-md-12 mb-4">

@@ -8,7 +8,7 @@
     <style>
        
         body {
-            font-family: 'ind_gu_1_001';
+            font-family: 'shruti';
            
         }
 .image-cell {
@@ -73,7 +73,7 @@
     </thead>
     <tbody>
       <tr>
-        <td style="width:1%;">1</td>
+        <td style="width:5%; " >1)</td>
         <td style="width:40%;">નામ(પુરેપુરેરૂ)</td>
         <td>:</td>
         <td>{{$name}}</td>
@@ -91,7 +91,7 @@
         <td>{{$is_dept_head}}</td>
       </tr>
       <tr>
-        <td>2</td>
+        <td>2)</td>
         <td>( અ ) જે વિભાગ/કચેરી માં કામ કરતા હોય તેનુ નામ</td>
         <td>:</td>
         <td>{{$officename}}<br/> {{$officeaddress}}</td>
@@ -110,7 +110,7 @@
       </tr>
       <tr>
         <td></td>
-        <td>( ક ) ગાંધીનગર ખાતે હાજર થયા તારીખ</td>
+        <td>( ક ) {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} ખાતે હાજર થયા તારીખ</td>
         <td>:</td>
         <td>{{$deputation_date}}</td>
       </tr>
@@ -139,13 +139,13 @@
         <td>{{$gpfnumber}}</td>
       </tr>
       <tr>
-        <td>3</td>
+        <td>3)</td>
         <td>સરકારી નોકરી માં મૂળ નિમણુંક તારીખ્</td>
         <td>:</td>
         <td>{{$appointment_date}}</td>
       </tr>
       <tr>
-        <td>4</td>
+        <td>4)</td>
         <td>( અ ) પગાર નો સ્કેલ (વિગતવાર આપવો)</td>
         <td>:</td>
         <td>{{ $salary_slab }}</td>
@@ -187,13 +187,13 @@
         <td>{{$totalpay}}</td>
       </tr>
       <tr>
-        <td>5</td>
+        <td>5)</td>
         <td>( અ ) પરણિત/અપરણિત</td>
         <td>:</td>
         <td>{{$maratial_status}}</td>
       </tr>
       <tr>
-        <td>6</td>
+        <td>6)</td>
         <td colspan="3">આ પહેલા ના સ્થ્ળે સરકારશ્રી એ વસવાટ ની સવલત આપી હોય તો</td>
       </tr>
       <tr>
@@ -231,8 +231,8 @@
 
   <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 border-tbl_bdr font-13 text-b steper_new">
     <tr>
-      <td>7</td>
-      <td>અગાઉ ગાંધીનગર માં મકાન મેળવવા અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ છે?</td>
+      <td>7)</td>
+      <td>અગાઉ {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} માં મકાન મેળવવા અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ છે?</td>
       <td>:</td>
       <td>{{$have_old_quarter}}</td>
     </tr>
@@ -243,7 +243,7 @@
       <td>{{$old_quarter_details}}</td>
     </tr>
     <tr>
-      <td>8</td>
+      <td>8)</td>
       <td> શિડ્યુલ કાસ્ટ અથવા શિડ્યુલ ટ્રા ઈબ ના કર્મચારી હોય તો તેમણે વિગત આપવી તથા કચેરી નાં વડાનું પ્રમાણપત્ર સામેલ કરવું</td>
       <td>:</td>
       <td>{{-- $is_stsc --}}</td>
@@ -253,8 +253,8 @@
       <td colspan="3">વિગત : N/A</td>
     </tr>
     <tr>
-      <td>9</td>
-      <td>ગાંધીનગર ખાતે જો રહેતા હોય તો કોની સાથે, તેમની સાથેનો સંબંધ અનેમકાન ની વિગત</td>
+      <td>9)</td>
+      <td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} ખાતે જો રહેતા હોય તો કોની સાથે, તેમની સાથેનો સંબંધ અનેમકાન ની વિગત</td>
       <td>:</td>
       <td>{{-- $stsc_details --}}</td>
     </tr>
@@ -263,8 +263,8 @@
       <td colspan="3">વિગત : {{$relative_details}}</td>
     </tr>
     <tr>
-      <td>10</td>
-      <td>ગાંધીનગર ખાતે માતા/પિતા. પતિ/પત્ની વિગેરે લોહી ની સગાઈ જેવા જે સંબંધી ને મકાન ફાળવેલ છે?</td>
+      <td>10)</td>
+      <td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} ખાતે માતા/પિતા. પતિ/પત્ની વિગેરે લોહી ની સગાઈ જેવા જે સંબંધી ને મકાન ફાળવેલ છે?</td>
       <td>:</td>
       <td>{{$is_relative_householder}}</td>
     </tr>
@@ -273,8 +273,8 @@
       <td colspan="3">વિગત :{{$relative_house_details}}</td>
     </tr>
     <tr>
-      <td>11</td>
-      <td>ગાંધીનગર શહેર ની હદ માંઅથવા સચિવાલય થી ૧૦ કિલોમીટર ની હદ માંઅથવા ગાંધીનગર ની હદ માંઆવતા ગમડાંમાં તેમના પિતા/પતિ/પત્ની કે કુટુંબ ના કોઈપણ સભ્યને નામે રહેણાંક નું મકાન છે?</td>
+      <td>11)</td>
+      <td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} શહેર ની હદ માંઅથવા સચિવાલય થી ૧૦ કિલોમીટર ની હદ માંઅથવા {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} ની હદ માંઆવતા ગમડાંમાં તેમના પિતા/પતિ/પત્ની કે કુટુંબ ના કોઈપણ સભ્યને નામે રહેણાંક નું મકાન છે?</td>
       <td>:</td>
       <td>{{$have_house_nearby}}</td>
     </tr>
@@ -283,25 +283,25 @@
       <td colspan="3">વિગત : {{$nearby_house_details}}</td>
     </tr>
     <tr>
-      <td>12</td>
-      <td>જો જાહેરહિતાર્થે બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તેમળે ત્યાં સુધી તરત નીચી કક્ષા નું વસવાટ ફાળવી આપવા વિનંતી છે? </td>
+      <td>12)</td>
+      <td>જો જાહેરહિતાર્થે બદલી થઈ ને {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તેમળે ત્યાં સુધી તરત નીચી કક્ષા નું વસવાટ ફાળવી આપવા વિનંતી છે? </td>
       <td>:</td>
       <td>{{$downgrade_allotment}}</td>
     </tr>
     <tr>
-      <td>13</td>
+      <td>13)</td>
       <td>સરકારશ્રી મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર પાડે તેનું પાલન કરવા હું સંમત છુ?</td>
       <td>:</td>
       <td>હા</td>
     </tr>
     <tr>
-      <td>14</td>
+      <td>14)</td>
       <td>મારી બદલી થાય તો તે અંગેની જાણ તુરત કરીશ</td>
       <td>:</td>
       <td>હા</td>
     </tr>
     <tr>
-      <td>14</td>
+      <td>15)</td>
       <td colspan="3"> હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label></td>
       
     </tr>
@@ -329,31 +329,31 @@
         <td style="width: 70%;">
         <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b steper_new ">
             <tr>
-              <td style="width: 3%;">1</td>
+              <td style="width: 3%;">1)</td>
               <td style="width: 70%;">આસન ૪ માં દર્શાવેલ પગાર બરાબર છે?</td>
               <td>:</td>
               <td>No</td>
             </tr>
             <tr>
-              <td>2</td>
+              <td>2)</td>
               <td>કર્મચારી કાયમી/ હંગામી / વર્કચાર્જ છે ?</td>
               <td>:</td>
               <td>No Data</td>
             </tr>
             <tr>
-              <td>3</td>
+              <td>3)</td>
               <td>કર્મચારી પ્રતિનિયુકત પર આવેલ છે ? જો હા, તો કેટલા સમય માટે ?</td>
               <td>:</td>
               <td>No Data</td>
             </tr>
             <tr>
-              <td>4</td>
+              <td>4)</td>
               <td>કર્મચારી નોકરી એક વર્ષથી વધુછે ?</td>
               <td>:</td>
               <td>No Data</td>
             </tr>
             <tr>
-              <td>5</td>
+              <td>5)</td>
               <td>(અ) નવી નિમણુંક અંગે અરજી મોકલ્યાની તારીખથી એક વર્ષથી વધુ નોકરીમાં ચાલુ રહેશે ?</td>
               <td>:</td>
               <td>No Data</td>
@@ -392,18 +392,10 @@
         </td>
       </tr>
     </table>
-
-
-    
-
-  
-          
-
-
     <table cellspacing="0" cellpadding="0" style="width:100%; margin-top: -3px;" class="padd-3 font-13 text-b steper">
-      <tr><td>6 નામ:{{$name}} તા.{{ $appointment_date}} ના રોજ ગાંધીનગર હાજર થયેલ છે.</td></tr>
-      <tr><td>7 કચેરીનો ફોન નંબર</td></tr>
-      <tr><td>નોધં : મકાન મેળવવા માટેની અરજી મોકલતા પહેલા જો કર્મચારીનેવગર નોટીસેછુટા કરી શકાય તેમ હોય તો અરજી તેમની કચેરીમાંજ દફતરે કરવી. અરજી મોકલતી
+      <tr class="font-13"><td style="width: 3%;">6)</td><td style="width:40%;"> નામ:</td><td style="width:57%;">{{$name}} તા.{{ $appointment_date}} ના રોજ {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} હાજર થયેલ છે.</td></tr>
+      <tr><td style="width: 3%;">7)</td><td >કચેરીનો ફોન નંબર</td><td>1231312</td></tr>
+      <tr><td colspan="3">નોધં : મકાન મેળવવા માટેની અરજી મોકલતા પહેલા જો કર્મચારીનેવગર નોટીસેછુટા કરી શકાય તેમ હોય તો અરજી તેમની કચેરીમાંજ દફતરે કરવી. અરજી મોકલતી
         વખતેકર્મચારીનેખરેખર રે મળતા પગારની વિગતો જે કર્મચારીએ આસન ૪ માંજણાવેલ છે. તેની ચકાસણી કરીનેમોકલવી. (૨) સાતમા પગારપચ મુજબની તાજેતરજે ની
         પગાર સ્લિ પની નકલ સામેલ રાખવી. (૩) સરકારી આવાસ ફાળવણીના પ્રવર્તમાન નિયમોનુસાર સરકારી આવાસ ધરાવતા તેમજ ઓનલાઇન અરજી કરેલરે હોય તેવા
         કર્મચારીની બદલી/અવસાન/રાજીનામુંવગેરે પ્રસંગોએ અધિક્ષક ઇજનેરશ્રીની કચેરી, પાટનગર યોજના વર્તુળ, બ્લોક નં.૧૧/૨, ડૉ.જીવરાજ મહેતા ભવન, ગાંધીનગરને

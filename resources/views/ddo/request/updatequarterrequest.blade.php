@@ -473,7 +473,7 @@
                                         </td>
                                         <td>
                                             
-                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"   />
+                                            <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]"   name="files[{{ $file->doc_id }}]"  />
                                         </td>
                                     </tr>
                                     @endforeach

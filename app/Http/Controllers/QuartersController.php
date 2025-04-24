@@ -490,28 +490,46 @@ class QuartersController extends Controller
 
         try {
             // Define the path to the font directory
-            $fontDir = __DIR__ . '/vendor/mpdf/mpdf/ttfonts';
+            // $fontDir = __DIR__ . '/vendor/mpdf/mpdf/ttfonts';
 
-            // Custom font configuration
-            $defaultConfig = (new ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
+            // // Custom font configuration
+            // $defaultConfig = (new ConfigVariables())->getDefaults();
+            // $fontDirs = $defaultConfig['fontDir'];
 
-            $defaultFontConfig = (new FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
+            // $defaultFontConfig = (new FontVariables())->getDefaults();
+            // $fontData = $defaultFontConfig['fontdata'];
 
-            // Adding custom font directory and font data
-            $fontDirs = array_merge($fontDirs, [$fontDir]);
-            $fontData = $fontData + [
-                'ind_gu_1_001' => [
-                    'R' => 'ind_gu_1_001.ttf'
-                ]
-            ];
+            // // Adding custom font directory and font data
+            // $fontDirs = array_merge($fontDirs, [$fontDir]);
+            // $fontData = $fontData + [
+            //     'ind_gu_1_001' => [
+            //         'R' => 'ind_gu_1_001.ttf'
+            //     ]
+            // ];
 
             // Pass the updated font settings to mPDF
+            // $mpdf = new Mpdf([
+            //     'fontDir' => $fontDirs,
+            //     'fontdata' => $fontData,
+            //     'default_font' => 'ind_gu_1_001'
+            // ]);
+
+            $fontDir = base_path('resources/fonts/'); // Ensure this folder exists
             $mpdf = new Mpdf([
-                'fontDir' => $fontDirs,
-                'fontdata' => $fontData,
-                'default_font' => 'ind_gu_1_001'
+                'mode' => 'utf-8',
+                'format' => 'A4',
+                'fontDir' => $fontDir,  // Specify the fonts directory
+                'fontdata' => [
+                    "shruti" => [
+					'R' => "shruti.ttf",
+					'B' => "shrutib.ttf",
+					/*'I' => "shruti.ttf",
+					'BI' => "shruti.ttf",*/
+					'useOTL' => 0xFF,
+					'useKashida' => 75,
+				],
+                ],
+                'default_font' => 'shruti',  // Set the default font
             ]);
 
             // Enable auto language and font settings
@@ -537,48 +555,7 @@ class QuartersController extends Controller
         $type = base64_decode($_REQUEST['type']);
         $rev = base64_decode($_REQUEST['rev']);
         
-        // DB::enableQueryLog();
-
-        //dd('hello');
-        // $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-        //     ->whereNotIn('document_type', [2, 6, 9, 10, 3, 7]) // Exclude certain document types
-        //     ->whereNotIn('document_type',  Filelist::WHERE('uid',Session::get('Uid')))
-        //    /* ->whereNotIn('document_type', function ($query) use ($request_id, $type) {
-        //         $query->select('document_id')
-        //             ->from('master.file_list')
-        //             ->where('id', Session::get('Uid'))
-        //             ->where('request_id', $request_id)
-        //             ->where('performa', $type);
-        //     })*/
-        //     // Conditionally add the exclusion for document type 8 based on the user's role
-        //     ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
-        //         // Only apply this whereNotIn condition if the user is not a police staff
-        //         return $query->whereNotIn('document_type', [8]);  // Exclude document type 8
-        //     })
-        //     ->pluck('document_name', 'document_type');
-
-
-
-        // $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-        //     //->whereNotIn('document_type', [2, 6, 9, 10, 3, 7]) // Exclude certain document types
-        //     ->whereNotIn('document_type', [6, 9, 10]) // Exclude certain document types
-        //     ->whereNotIn('document_type', function ($query) {
-        //         $query->select('document_id')  // Select the correct column (document_id)
-        //             ->from('master.file_list')         // Correct table name (assuming it's 'filelists')
-        //             ->where('id', Session::get('Uid'));  // Correct the condition for 'uid'
-        //     })
-        //     // Conditionally add the exclusion for document type 8 based on the user's role
-        //     ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
-        //         // Only apply this whereNotIn condition if the user is not a police staff
-        //         return $query->whereNotIn('document_type', [8]);  // Exclude document type 8
-        //     })
-        //      // Conditionally add the exclusion for document type 7 based on the user's role
-        //      ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
-        //         // Only apply this whereNotIn condition if the user is not a fix pay staff
-        //         return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
-        //     })
-        //     ->pluck('document_name', 'document_type');
-
+       
         // Fetch user-specific details (only once)
         $user = User::find(Session::get('Uid'));
 
@@ -591,6 +568,7 @@ class QuartersController extends Controller
                 $query->select('document_id')  // Select the correct column (document_id)
                     ->from('master.file_list')  
                     ->whereIn('master.file_list.is_file_ddo_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+                    ->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
                     ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
                     ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
             })
@@ -629,18 +607,26 @@ class QuartersController extends Controller
             ->WHERE('uid', Session::get('Uid'))
             ->WHERE('request_id', $request_id)
             ->WHERE('master.file_list.performa', 'LIKE', '%' . $type . '%')
-            ->whereIn('master.file_list.is_file_ddo_verified', [0, 2]) //12-12-2024
+            ->where(function ($query) {
+                $query->whereIn('master.file_list.is_file_ddo_verified', [0, 2])
+                      ->orWhereIn('master.file_list.is_file_admin_verified', [0, 2]);
+            })
             ->select('rev_id', 'doc_id', 'document_name')
             ->get();
         //dd( $attacheddocument );
             
         if($type=='a'){
          $ddo_remarks=Tquarterrequesta::where('requestid',$request_id)->select('is_ddo_varified','ddo_remarks')->first();
+         $admin_remarks=Tquarterrequesta::where('requestid',$request_id)->select('is_varified','remarks')->first();
+         
          $this->_viewContent['ddo_remarks_status']=$ddo_remarks;
+         $this->_viewContent['admin_remarks_status']=$admin_remarks;
         }
         else if($type=='b'){
             $ddo_remarks=Tquarterrequestb::where('requestid',$request_id)->select('is_ddo_varified','ddo_remarks')->first();
+            $admin_remarks=Tquarterrequestb::where('requestid',$request_id)->select('is_varified','remarks')->first();
             $this->_viewContent['ddo_remarks_status']=$ddo_remarks;
+            $this->_viewContent['admin_remarks_status']=$admin_remarks;
            }
         //dd($ddo_remarks);
       
@@ -933,7 +919,7 @@ class QuartersController extends Controller
         $quarterrequest = $requestModel->getFormattedRequestData($requestid, $rivision_id);
 
 
-        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name'])
+        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name','is_file_admin_verified'])
             ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
             ->where('request_id', '=', $requestid)
             ->get();
@@ -968,7 +954,7 @@ class QuartersController extends Controller
         $quarterrequest = $requestModel->getFormattedRequestData($requestid, $rivision_id);
 
 
-        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name'])
+        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name','is_file_admin_verified'])
             ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
             ->where('request_id', '=', $requestid)
             ->where('rivision_id', '=', $rivision_id)
@@ -1059,7 +1045,8 @@ class QuartersController extends Controller
         //dd($status);
         $requestid = $request->requestid;
         $dg_allotment = $request->dg_allotment;
-        
+        //$files= $request->input('files');
+        //dd($files);
         $rv = $request->rv;
         $dg_request_id = TQuarterRequestA::where('officecode', '=', $officecode)->orderBy('requestid', 'DESC')->value('requestid');
         //dd($dg_request_id );
@@ -1087,7 +1074,7 @@ class QuartersController extends Controller
                 $rWno = max($rWnoA, $rWnoB) + 1;
                 // Update the TQuarterRequestA record
                 $t_quarterrequest_a= TQuarterRequestA::where('requestid', $requestid)
-                ->where('rivision_id', $rv)->where('uid',$result->uid)->get();
+                ->where('rivision_id', $rv)->where('uid',$result->uid)->first();
                // dd($t_quarterrequest_a);
                 //dd(auth()->user()->id);
                 if ($t_quarterrequest_a) {
@@ -1145,58 +1132,58 @@ class QuartersController extends Controller
 
                     $quarterTypeInstance = new QuarterType();
                     $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype, $officecode);
-                  //dd($dg_wno);
+                    //dd($dg_wno);
                     // Create and save a new TQuarterRequestA instance
                    // Enable query logging
-//DB::enableQueryLog();
+                    //DB::enableQueryLog();
 
-// Create the record
-$requestModel = TQuarterRequestA::create([
-    'uid' => $result->uid,
-    'requestid' => $dg_request_id,
-    'quartertype' => $dgQuartertype->quartertype,
-    'inward_no' => $result->inward_no,
-    'old_designation' => $result->old_designation,
-    'old_office' => $result->old_office,
-    'deputation_date' => $result->deputation_date,
-    'prv_area_name' => $result->prv_area_name,
-    'prv_building_no' => $result->prv_building_no,
-    'prv_quarter_type' => $result->prv_quarter_type,
-    'prv_rent' => $result->prv_rent,
-    'prv_handover' => $result->prv_handover,
-    'have_old_quarter' => $result->have_old_quarter,
-    'old_quarter_details' => $result->old_quarter_details,
-    'is_scst' => $result->is_scst,
-    'scst_info' => $result->scst_info,
-    'is_relative' => $result->is_relative,
-    'relative_details' => $result->relative_details,
-    'is_relative_householder' => $result->is_relative_householder,
-    'relative_house_details' => $result->relative_house_details,
-    'have_house_nearby' => $result->have_house_nearby,
-    'nearby_house_details' => $result->nearby_house_details,
-    'downgrade_allotment' => 'N',
-    'request_date' => now(),
-    'is_downgrade_request' => 1,
-    'is_priority' => 'N',
-    'reference_id' => $result->requestid,
-    'dg_rivision_id' => $result->rivision_id,
-    'is_varified' => 1,
-    'is_accepted' => 1,
-    'remarks' => '',
-    'updatedBy' => $result->uid,
-    'is_ddo_varified' => 1,
-    'cardex_no' => $result->cardex_no,
-    'ddo_code' => $result->ddo_code,
-    'wno' => $dg_wno,
-    'officecode' => $result->officecode,
+                    // Create the record
+                    $requestModel = TQuarterRequestA::create([
+                        'uid' => $result->uid,
+                        'requestid' => $dg_request_id,
+                        'quartertype' => $dgQuartertype->quartertype,
+                        'inward_no' => $result->inward_no,
+                        'old_designation' => $result->old_designation,
+                        'old_office' => $result->old_office,
+                        'deputation_date' => $result->deputation_date,
+                        'prv_area_name' => $result->prv_area_name,
+                        'prv_building_no' => $result->prv_building_no,
+                        'prv_quarter_type' => $result->prv_quarter_type,
+                        'prv_rent' => $result->prv_rent,
+                        'prv_handover' => $result->prv_handover,
+                        'have_old_quarter' => $result->have_old_quarter,
+                        'old_quarter_details' => $result->old_quarter_details,
+                        'is_scst' => $result->is_scst,
+                        'scst_info' => $result->scst_info,
+                        'is_relative' => $result->is_relative,
+                        'relative_details' => $result->relative_details,
+                        'is_relative_householder' => $result->is_relative_householder,
+                        'relative_house_details' => $result->relative_house_details,
+                        'have_house_nearby' => $result->have_house_nearby,
+                        'nearby_house_details' => $result->nearby_house_details,
+                        'downgrade_allotment' => 'N',
+                        'request_date' => now(),
+                        'is_downgrade_request' => 1,
+                        'is_priority' => 'N',
+                        'reference_id' => $result->requestid,
+                        'dg_rivision_id' => $result->rivision_id,
+                        'is_varified' => 1,
+                        'is_accepted' => 1,
+                        'remarks' => '',
+                        'updatedBy' => $result->uid,
+                        'is_ddo_varified' => 1,
+                        'cardex_no' => $result->cardex_no,
+                        'ddo_code' => $result->ddo_code,
+                        'wno' => $dg_wno,
+                        'officecode' => $result->officecode,
 
 
 
-]);
+                    ]);
 
-// Get the last executed query
-//$query = DB::getQueryLog();
-//dd(end($query));
+                    // Get the last executed query
+                    //$query = DB::getQueryLog();
+                    //dd(end($query));
                     // Update Dgrid in TQuarterRequestA
                     TQuarterRequestA::where('requestid', $requestid)
                         ->where('rivision_id', $rv)
@@ -1240,8 +1227,32 @@ $requestModel = TQuarterRequestA::create([
             return redirect('/quarterlistnormal')->with('success', 'Request Verified Successfully!');
         } else {
             //dd("have issue");
-           $status=2;
-            
+                $status=2;
+                $filetable = Filelist::where('uid', $result->uid)->get(); // Get all files for the user
+                $files = $request->input('files'); // Get files from the form (array of doc_id => 'on' or 'off')
+                //dd($files);
+                // dd($filetable);
+                foreach ($filetable as $file) 
+                {
+                //dd($file->doc_id);
+                    // Check if the doc_id exists in the $files array
+                    if (isset($files[$file->doc_id])) 
+                    {
+                        //dd("hello");
+                        // If the checkbox for this file was checked
+                            if ($files[$file->doc_id] === 'on') {
+                            //  dd("on");
+                        // Update the file to 'checked'
+                            Filelist::where('doc_id', $file->doc_id)
+                                ->update(['is_file_admin_verified' => 1]); // Update      
+                        } 
+                    }
+                    else
+                    {
+                        Filelist::where('doc_id', $file->doc_id)
+                        ->update(['is_file_admin_verified' => 2]); // Update directly
+                    }
+                }
          //  dd($request->adm_remarks,$request->admin_remarks);
             $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rv)
                 ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
@@ -1832,6 +1843,31 @@ $requestModel = TQuarterRequestA::create([
             return redirect('/quarterlistnormal')->with('success', 'Request Verified Successfully!');
         } else {
 			$status=2;
+            $filetable = Filelist::where('uid', $result->uid)->get(); // Get all files for the user
+            $files = $request->input('files'); // Get files from the form (array of doc_id => 'on' or 'off')
+            //dd($files);
+            // dd($filetable);
+            foreach ($filetable as $file) 
+            {
+            //dd($file->doc_id);
+                // Check if the doc_id exists in the $files array
+                if (isset($files[$file->doc_id])) 
+                {
+                    //dd("hello");
+                    // If the checkbox for this file was checked
+                        if ($files[$file->doc_id] === 'on') {
+                        //  dd("on");
+                    // Update the file to 'checked'
+                        Filelist::where('doc_id', $file->doc_id)
+                            ->update(['is_file_admin_verified' => 1]); // Update      
+                    } 
+                }
+                else
+                {
+                    Filelist::where('doc_id', $file->doc_id)
+                    ->update(['is_file_admin_verified' => 2]); // Update directly
+                }
+            }
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rv)
                 ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
             if ($result) {
@@ -2542,7 +2578,7 @@ $requestModel = TQuarterRequestA::create([
             }
             else
             {
-                return redirect()->route('ddo_details');
+                return redirect()->route('user.ddo_details');
             }
         } catch (Exception $e) {
             dd($e->getMessage());

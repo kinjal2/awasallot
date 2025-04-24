@@ -250,6 +250,7 @@ class DashboardController extends Controller
 
         Session::put('Name', $usermaster->name);
         Session::put('Uid', $uid);
+        Session::put('dcode',$usermaster->dcode);
         if ($usermaster->basic_pay == '') {
             return redirect('profile');
         } else {  //echo $usermaster->basic_pay;
