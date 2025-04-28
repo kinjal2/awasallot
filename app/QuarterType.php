@@ -61,9 +61,9 @@ public function calculateDgWno($dg_quartertype,$officecode)
 {
     // Fetch the last Wno for each type of request and prioritize them
     $dg_last_wno = self::with(['requestsA' => function ($query) {
-        $query->whereNotNull('wno')->where('IsPriority', 'N')->orderByDesc('wno')->take(1);
+        $query->whereNotNull('wno')->where('is_priority', 'N')->orderByDesc('wno')->take(1);
     }, 'requestsB' => function ($query) {
-        $query->whereNotNull('wno')->where('IsPriority', 'N')->orderByDesc('wno')->take(1);
+        $query->whereNotNull('wno')->where('is_priority', 'N')->orderByDesc('wno')->take(1);
     }])
         ->where('quartertype', $dg_quartertype)
         ->where('officecode', '=', $officecode)

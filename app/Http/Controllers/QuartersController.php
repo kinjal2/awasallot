@@ -957,11 +957,16 @@ class QuartersController extends Controller
                 $quarterTypeInstance = new QuarterType();
                 $wno = $quarterTypeInstance->getNextWno($result->quartertype, $officecode);
                 // echo $wno; exit;
+                //dd($wno);
 
                 // Retrieve r_wno value
-                $rWnoA = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
-                $rWnoB = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
-                $rWno = max($rWnoA, $rWnoB) + 1;
+               // $rWnoA = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
+               // $rWnoB = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
+                $rWnoA = $quarterTypeInstance->getNextRwno($result->quartertype, $officecode);
+            //    $rWnoB = $quarterTypeInstance->getMaxRwno($result->quartertype, $officecode);
+              //  $rWno = max($rWnoA, $rWnoB) + 1;
+                $rWno=$rWnoA;
+                //dd($rWno);
                 // Update the TQuarterRequestA record
                 $t_quarterrequest_a= Tquarterrequesta::where('requestid', $requestid)
                 ->where('rivision_id', $rv)->where('uid',$result->uid)->first();
@@ -1019,10 +1024,10 @@ class QuartersController extends Controller
                                 ->where('quartertype', $quartertype);
                         })
                         ->first();
-
+                       // dd($dgQuartertype->quartertype);
                     $quarterTypeInstance = new QuarterType();
-                    $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype, $officecode);
-                    //dd($dg_wno);
+                    $dg_wno = $quarterTypeInstance->calculateDgWno($dgQuartertype->quartertype, $officecode);
+                  //  dd($dg_wno);
                     // Create and save a new Tquarterrequesta instance
                    // Enable query logging
                     //DB::enableQueryLog();
@@ -1095,7 +1100,7 @@ class QuartersController extends Controller
                         ->max('r_wno');
 
                     $rWno1 = $maxRwno + 1;
-
+                       // dd($rWno1);
                     // Update r_wno in TQuarterRequestA
                     DB::table('master.t_quarter_request_a')
                         ->where('quartertype', $dgQuartertype->quartertype)
@@ -1496,12 +1501,16 @@ class QuartersController extends Controller
                 $quarterTypeInstance = new QuarterType();
                 $wno = $quarterTypeInstance->getNextWno($result->quartertype, $officecode);
                 // echo $wno; exit;
+               // dd($wno);
 
                 // Retrieve r_wno value
-                $rWnoA = Tquarterrequesta::getMaxRwno($result->quartertype);
-                $rWnoB = Tquarterrequestb::getMaxRwno($result->quartertype);
-                $rWno = max($rWnoA, $rWnoB) + 1;
-				
+                // $rWnoA = Tquarterrequesta::getMaxRwno($result->quartertype);
+                // $rWnoB = Tquarterrequestb::getMaxRwno($result->quartertype);
+                $rWnoA = $quarterTypeInstance->getNextRWno($result->quartertype, $officecode);
+                //$rWnoB = $quarterTypeInstance->getNextRWno($result->quartertype, $officecode);
+                //$rWno = max($rWnoA, $rWnoB) + 1;
+                $rWno=$rWnoA;
+				//dd($rWnoA,$rWno);
 				// Update the TQuarterRequestB record
                 $t_quarterrequest_b= Tquarterrequestb::where('requestid', $requestid)
                 ->where('rivision_id', $rv)->where('uid',$result->uid)->first();
@@ -1896,8 +1905,8 @@ class QuartersController extends Controller
             'officecode'
 
         ])
-            ->join('userschema.users as u', 'u.id', '=', 'a.uid')
-            ->orderBy('a.inward_date');
+            ->join('userschema.users as u', 'u.id', '=', 'a.uid');
+            // ->orderBy('a.inward_date');
 
         $second = Tquarterrequestc::from('master.t_quarter_request_c AS c')->select([
             'request_date',
@@ -1923,8 +1932,8 @@ class QuartersController extends Controller
             'is_ddo_varified',
             'officecode'
         ])
-            ->join('userschema.users as u', 'u.id', '=', 'c.uid')
-            ->orderBy('c.inward_date');
+            ->join('userschema.users as u', 'u.id', '=', 'c.uid');
+            // ->orderBy('c.inward_date');
 
         $union = Tquarterrequestb::from('master.t_quarter_request_b AS b')->select([
             'request_date',
@@ -1951,7 +1960,7 @@ class QuartersController extends Controller
             'officecode'
         ])
             ->join('userschema.users as u', 'u.id', '=', 'b.uid')
-            ->orderBy('b.inward_date')
+            // ->orderBy('b.inward_date')
             ->union($first)
             ->union($second);
 
@@ -1988,10 +1997,10 @@ class QuartersController extends Controller
                     ->where('is_priority', '=', 'N')
                     ->where('is_ddo_varified', '=', 1)
                     ->where('officecode', '=', $officecode)
-                    ->where('is_varified',0)
+                    ->where('is_varified',0);
                     //->orderBy('wno') // assuming 'wno' is a column in the database
-                    ->orderBy('inward_date','asc');
-            });
+                    
+            })->orderBy('inward_date','asc');
 
         // Print the SQL query
          //dd( $query->toSql());

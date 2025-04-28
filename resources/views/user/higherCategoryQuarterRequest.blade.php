@@ -133,7 +133,7 @@
 
                                             </div>
                                             <div class="row form-group">
-                                                <label class="card-title mb-3"> અગાઉ ઉચ્ચલ કક્ષાનું વસવાટ ફાળવવામાં આવેલ હતું કે કેમ ?  <span class="error">*</span> &nbsp;</label>
+                                                <label class="card-title mb-3"> અગાઉ ઉચ્ચ કક્ષાનું વસવાટ ફાળવવામાં આવેલ હતું કે કેમ ?  <span class="error">*</span> &nbsp;</label>
                                                     <div class="form-group clearfix">
                                                         <div class="icheck-primary d-inline">
                                                             <input type="radio" id="have_hc_quarter_y" name="have_hc_quarter_yn" 	value="Y">
@@ -195,7 +195,7 @@
                                             <div class="row">
                                                 <div class="">
                                                     <div class="mt-3">
-                                                        <div class="form-group icheck-primary d-inline question_bg mb-3 px-3">
+                                                        <div class="icheck-primary d-inline">
                                                             <input type="checkbox" id="declaration" name="declaration">
                                                             <label for="declaration"></label>
                                                             <label style="padding: 0px !important;"> હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label>
