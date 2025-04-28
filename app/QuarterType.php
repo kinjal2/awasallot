@@ -3,7 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Tquarterrequesta;
+use App\Tquarterrequestb;
 class QuarterType extends Model
 {
     //
@@ -49,12 +50,12 @@ class QuarterType extends Model
     ];
     public function requestsA()
 {
-    return $this->hasMany(TQuarterRequestA::class, 'quartertype', 'quartertype');
+    return $this->hasMany(Tquarterrequesta::class, 'quartertype', 'quartertype');
 }
 
 public function requestsB()
 {
-    return $this->hasMany(TQuarterRequestB::class, 'quartertype', 'quartertype');
+    return $this->hasMany(Tquarterrequestb::class, 'quartertype', 'quartertype');
 }
 public function calculateDgWno($dg_quartertype,$officecode)
 {
@@ -87,13 +88,13 @@ public function calculateDgWno($dg_quartertype,$officecode)
 }
 public  function getNextWno($quartertype,$officecode)
     {
-        $lastWnoA = TQuarterRequestA::where('quartertype', $quartertype)
+        $lastWnoA = Tquarterrequesta::where('quartertype', $quartertype)
             ->where('is_priority', 'N')
             ->where('officecode', '=', $officecode)
             ->whereNotNull('wno')
             ->max('wno');
 
-        $lastWnoB = TQuarterRequestB::where('quartertype', $quartertype)
+        $lastWnoB = Tquarterrequestb::where('quartertype', $quartertype)
             ->where('is_priority', 'N')
             ->where('officecode', '=', $officecode)
             ->whereNotNull('wno')
@@ -103,7 +104,7 @@ public  function getNextWno($quartertype,$officecode)
     }
 public function getNextRWno($q,$officecode)
 {
-    $maxObj = TQuarterRequestA::where('quartertype', $q)
+    $maxObj = Tquarterrequesta::where('quartertype', $q)
     ->where('is_priority', 'N')
     ->where('officecode', '=', $officecode)
     ->whereNotNull('wno')
@@ -112,7 +113,7 @@ public function getNextRWno($q,$officecode)
     ->limit(1)
     ->first();
 
-$maxObj1 = TQuarterRequestB::where('quartertype', $q)
+$maxObj1 = Tquarterrequestb::where('quartertype', $q)
     ->where('is_priority', 'N')
     ->where('officecode', '=', $officecode)
     ->whereNotNull('wno')

@@ -150,7 +150,7 @@
                 <th colspan="5" style="text-align: center;">પરિશિષ્‍ટ - બ</th>
             </tr>
             <tr>
-                <th colspan="5" style="text-align: center;">ગાંધીનગરમાં ઉચ્‍ચ કક્ષાની સરકારી વસવાટ મેળવવા માટે સરકારી કર્મચારી કે અધિકારીએ કરવાની અરજી </th>
+                <th colspan="5" style="text-align: center;">{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}માં ઉચ્‍ચ કક્ષાની સરકારી વસવાટ મેળવવા માટે સરકારી કર્મચારી કે અધિકારીએ કરવાની અરજી </th>
             </tr>
             <tr>
                 <th></th>
@@ -168,7 +168,7 @@
                 <th></th>
                 <th> જન્મ તારીખ</th>
                 <td colspan="4">
-                    {{ $birth_date }}
+                    {{ $date_of_birth }}
                 </td>
             </tr>
             <tr>
@@ -201,7 +201,7 @@
             <tr>
 		<th>4</th>
                 <th>&nbsp;<strong>કચેરી ફોન નંબર</strong></th>
-                <td colspan="3">{{$officephone }}</td>
+                <td colspan="3">{{ $officephone }}</td>
 		
             </tr>
             <tr>
@@ -216,7 +216,7 @@
                 <th></th>
                 <th>&nbsp;( બ ) અરજીની તારીખે મળતો મૂળ પગાર  (As per 7<sup>th</sup> pay)</th>
                 <td colspan="3">
-                    {{$basicpay }}
+                    {{$basic_pay }}
                 </td>
             </tr>
             <tr>
@@ -230,7 +230,7 @@
                 <th></th>
                 <th>&nbsp;( ડ ) નિવ્રૂત્તિ ની તારીખ</th>
                 <td colspan="3">
-                    {{$retirement_date }}
+                    {{$date_of_retirement }}
                 </td>
             </tr>
             <tr>
@@ -244,14 +244,14 @@
     
             <tr>
                 <Th >6</Th>
-                <th colspan="4">&nbsp;ગાંધીનગરમાં અત્યારે જે કક્ષાના વસવાટમાં રહેતા હો તેની માહિતી નીચે પ્રમાણે આપવી.  </th>
+                <th colspan="4">&nbsp;{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}માં અત્યારે જે કક્ષાના વસવાટમાં રહેતા હો તેની માહિતી નીચે પ્રમાણે આપવી.  </th>
 	    </tr>
 	    <tr>
 		<th></th>
 		<th></th>
                 <td><strong>&nbsp;( ક ) વસવાટની કક્ષા </strong></td>
                 <td colspan="2" >
-                    {{$prv_quartertype }}
+                    {{$prv_quarter_type }}
                 </td>
             </tr>
             <tr>
@@ -259,7 +259,7 @@
                 <th ></th>
                 <td><strong>&nbsp;( ખ ) સેકટર નં. </strong></td>
                 <td colspan="2">
-                    {{ $prv_area }}
+                    {{ $prv_area_name }}
                 </td>
             </tr>
             <tr>
@@ -304,7 +304,7 @@
 		<th></th>
                 <td><strong>&nbsp;( ક ) વસવાટની કક્ષા </strong></td>
                 <td colspan="2">
-                    {{$hc_quartertype }}
+                    {{$hc_quarter_type }}
                 </td>
             </tr>
             <tr>
@@ -342,10 +342,16 @@
             
             <tr>
                 <th>8</th>
-                <th colspan="3">&nbsp;આ સાથે સામેલ રાખેલ ઉચ્ચગ કક્ષાનું વસવાટ મેળવવાને લગતી સૂચનાઓ મેં વાંચી છે અને તે તથા સરકારશ્રી વખતો વખત આ અંગે સૂચનાઓ બહાર પાડે તેનું પાલન કરવા હું સંમત છું.</th>
+                <th colspan="3">&nbsp;આ સાથે સામેલ રાખેલ ઉચ્ચ કક્ષાનું વસવાટ મેળવવાને લગતી સૂચનાઓ મેં વાંચી છે અને તે તથા સરકારશ્રી વખતો વખત આ અંગે સૂચનાઓ બહાર પાડે તેનું પાલન કરવા હું સંમત છું.</th>
                 <td >
 			હા
                 </td>
+            </tr>
+            <tr>
+                <th>9</th>
+                <th colspan="3"> હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label>
+                </th>
+                <td>હા</td>
             </tr>
            
 	</table>
@@ -370,12 +376,12 @@
 	    <tr>
 		<td></td>
 		<td>સ્થળ</td>
-		<td colspan='2'>ગાંધીનગર</td>
+		<td colspan='2'>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}</td>
 	    </tr>
 	    <tr>
 		<td></td>
 		<td>તારીખ</td>
-		<td colspan="2">{{  $requestdate }}</td>
+		<td colspan="2">{{  $request_date }}</td>
 	    </tr>
 	    <tr style="height: 60px;">
 		<td></td>

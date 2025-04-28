@@ -189,6 +189,21 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
+
+                                            
+                                            <div class="row">
+                                                <div class="">
+                                                    <div class="mt-3">
+                                                        <div class="form-group icheck-primary d-inline question_bg mb-3 px-3">
+                                                            <input type="checkbox" id="declaration" name="declaration">
+                                                            <label for="declaration"></label>
+                                                            <label style="padding: 0px !important;"> હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -253,6 +268,7 @@
                 hc_unitno		:	{required:true,number:true},
                 hc_allotment_details	:	"required",
                 agree_rules:	"required",
+                declaration : "required",
             }
         });
         $("#cardexForm").validate({

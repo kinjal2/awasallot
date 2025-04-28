@@ -124,7 +124,7 @@
         <td></td>
         <td>(ઇ) જન્મ તારીખ</td>
         <td>:</td>
-        <td>03-01-1995</td>
+        <td>{{ $date_of_birth}}</td>
       </tr>
       <tr>
         <td></td>
