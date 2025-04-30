@@ -255,7 +255,7 @@ class DashboardController extends Controller
             return redirect('profile');
         } else {  //echo $usermaster->basic_pay;
             Session::put('basic_pay', $usermaster->basic_pay);
-
+            //dd($usermaster->basic_pay);
             $q_officecode = Session::get('q_officecode', $officecode);
             //            dd($q_officecode);
             //  $this->_viewContent['quarterlist'] = Quarter::all();
@@ -266,7 +266,7 @@ class DashboardController extends Controller
             $this->_viewContent['notification'] = Notification::where('uid', '=',  $uid)->get();
             $basic_pay = Session::get('basic_pay');
             $this->_viewContent['quarterselect'] = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
-
+            //dd($this->_viewContent['quarterselect']);
             $this->_viewContent['page_title'] = "Dashboard";
             return view('user/dashboard', $this->_viewContent);
         }

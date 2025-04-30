@@ -1933,7 +1933,7 @@ class QuartersController extends Controller
             'officecode'
         ])
             ->join('userschema.users as u', 'u.id', '=', 'c.uid');
-            // ->orderBy('c.inward_date');
+          
 
         $union = Tquarterrequestb::from('master.t_quarter_request_b AS b')->select([
             'request_date',
@@ -1960,7 +1960,7 @@ class QuartersController extends Controller
             'officecode'
         ])
             ->join('userschema.users as u', 'u.id', '=', 'b.uid')
-            // ->orderBy('b.inward_date')
+           
             ->union($first)
             ->union($second);
 

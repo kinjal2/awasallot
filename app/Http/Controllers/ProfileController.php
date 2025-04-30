@@ -78,6 +78,8 @@ class ProfileController extends Controller
             'office_address'=>'required',
             'is_police_staff'=>'required',
             'is_fix_pay_staff'=>'required',
+            'is_judge' => 'required',
+            'is_phy_dis' => 'required',
 			'dis_per'=>'nullable|numeric|max:100|regex:/^\d+(\.\d{1,3})?$/'
         ];
 		 $messages = [

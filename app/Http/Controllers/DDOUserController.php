@@ -846,7 +846,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         'u.designation',
         'office',
         'rivision_id',
-        'a.remarks',
+        'a.ddo_remarks',
         'contact_no',
         'address',
         'gpfnumber',
@@ -887,7 +887,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         'u.designation',
         'office',
         'rivision_id',
-        'c.remarks',
+        'c.ddo_remarks',
         'contact_no',
         'address',
         'gpfnumber',
@@ -924,7 +924,7 @@ $union = DB::table('master.t_quarter_request_b AS b')
         'u.designation',
         'office',
         'rivision_id',
-        'b.remarks',
+        'b.ddo_remarks',
         'contact_no',
         'address',
         'gpfnumber',
@@ -999,7 +999,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
             // }
            
             // return $btn1;
-            $btn2 = '<button type="button" data-uid="'.base64_encode($row->id).'" data-rivision_id="'.base64_encode($row->rivision_id).'"data-type="'.base64_encode($row->type).'"  data-requestid="'.base64_encode($row->requestid).'"  data-remarks="'.base64_encode($row->remarks).'" data-toggle="modal"  class=" btn-view-custom getdocument" > View Remarks</button>';
+            $btn2 = '<button type="button" data-uid="'.base64_encode($row->id).'" data-rivision_id="'.base64_encode($row->rivision_id).'"data-type="'.base64_encode($row->type).'"  data-requestid="'.base64_encode($row->requestid).'"  data-remarks="'.base64_encode($row->ddo_remarks).'" data-toggle="modal"  class=" btn-view-custom getdocument" > View Remarks</button>';
 
             return $btn2;
        

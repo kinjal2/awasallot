@@ -253,13 +253,13 @@
                      <div class="col-md-3">
                         <div class="form-group">
                            <label for="is_judge"> {{ __('profile.is_judge') }} <span class="error">*</span></label>
-                           {{ Form::select('is_dept_head',getYesNo(),($users->is_judge)?$users->is_judge:'',['id'=>'is_judge','class'=>'form-control select2']) }}
+                           {{ Form::select('is_judge',['' => 'Select An Option'] + getYesNo(),($users->is_judge)?$users->is_judge:'',['id'=>'is_judge','class'=>'form-control select2']) }}
                         </div>
                      </div>
                      <div class="col-md-3">
                         <div class="form-group">
                            <label for="is_phy_dis"> {{ __('profile.is_phy_dis') }} <span class="error">*</span></label>
-                           {{ Form::select('is_phy_dis',getYesNo(),($users->is_phy_dis)?$users->is_phy_dis:'',['id'=>'is_phy_dis','class'=>'form-control select2']) }}
+                           {{ Form::select('is_phy_dis',['' => 'Select An Option'] +  getYesNo(),($users->is_phy_dis)?$users->is_phy_dis:'',['id'=>'is_phy_dis','class'=>'form-control select2']) }}
                         </div>
                      </div>
                      <div class="col-md-3" id='dis_per_yes' style="display:none">
@@ -414,6 +414,8 @@
          "maratial_status": "required",
          "office": "required",
          "is_dept_head": "required",
+         "is_judge":"required",
+         "is_phy_dis":"required",
          "is_transferable": "required",
          "office_email_id": {
             "required": true,

@@ -137,7 +137,8 @@
           var rivision_id = $(this).attr('data-rivision_id');
           var requestid = $(this).attr('data-requestid');
           var remarks=$(this).attr('data-remarks');
-          $.ajax({
+          
+         /* $.ajax({
             url: "{{ route('quarter.list.getDDOremarks') }}",
             method: 'POST',
             data: {uid:uid,type:type,rivision_id:rivision_id,requestid:requestid,remarks:remarks},
@@ -150,13 +151,24 @@
                 result.data.forEach(function(item) {
                     html += '<li>' + item.description + '</li>';
                 });
-            }
+            } */
 
-            html += '</ul>';
+            //html += '</ul>';
+            var html ='';
+            if(remarks == '')
+            {
+              html='No Remarks Found';
+            }
+            else
+            {
+              html=atob(remarks);
+            }
+           
+           // alert(html);
             $("#viewdata").html(html);
             $('#DocumentModal').show();
-        }
-          });
+        
+        
       });
 
     </script>
