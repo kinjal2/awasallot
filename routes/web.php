@@ -230,6 +230,7 @@ Route::prefix('ddo')->group(function () {
 Route::post('/user_quarter_application',[DDOUserController::class,'getUserQuarterApplication'])->name('ddo.getUserQuarterApplication')->middleware('auth:ddo_users');
 Route::get('quarters-rejected', [DDOUserController::class, 'quartersRejected'])->name('ddo.request.rejected');
 Route::post('quarters-rejected-list', [DDOUserController::class, 'getRejectedQuarterList'])->name('ddo-rejectedquarter-list');
+Route::post('getDDOremarks', ['as' => 'quarter.list.getDDOremarks', 'uses' => 'DDOUserController@getDDOremarks']);
 
 
 

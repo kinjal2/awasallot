@@ -857,6 +857,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         'is_priority',
         'u.ddo_code',
         'u.cardex_no',
+        'u.id',
         'a.created_at'
        
     ])
@@ -897,6 +898,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         'is_priority',
         'u.ddo_code',
         'u.cardex_no',
+        'u.id',
         'c.created_at'
         
     ])
@@ -933,6 +935,7 @@ $union = DB::table('master.t_quarter_request_b AS b')
         'is_priority',
         'u.ddo_code',
         'u.cardex_no',
+        'u.id',
          'b.created_at'
         
 
@@ -984,18 +987,21 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     ->addColumn('action', function($row) use (&$cnt) {
        
     
-            if($row->requesttype=='New')
-            {
+            // if($row->requesttype=='New')
+            // {
 
-            //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
-            $btn1 = '<a href="'.\route('ddo.editquarter.a.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i> View Remarks</a>';
-            }
-            else
-            {
-            $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i> View Remarks</a>';
-            }
+            // //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
+            // $btn1 = '<a href="'.\route('ddo.editquarter.a.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i> View Remarks</a>';
+            // }
+            // else
+            // {
+            // $btn1 = '<a href="'.\route('ddo.editquarter.b.list', ['r' => base64_encode($row->requestid), 'rv' => base64_encode($row->rivision_id)]).'" class="btn btn-success "><i class="fas fa-edit"></i> View Remarks</a>';
+            // }
            
-            return $btn1;
+            // return $btn1;
+            $btn2 = '<button type="button" data-uid="'.base64_encode($row->id).'" data-rivision_id="'.base64_encode($row->rivision_id).'"data-type="'.base64_encode($row->type).'"  data-requestid="'.base64_encode($row->requestid).'"  data-remarks="'.base64_encode($row->remarks).'" data-toggle="modal"  class=" btn-view-custom getdocument" > View Remarks</button>';
+
+            return $btn2;
        
          
        
@@ -1084,5 +1090,34 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
             \Log::error('Error updating record: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while updating the record'], 500);
         }
+    }
+
+    public function getDDOremarks(Request $request)
+    {
+        // dd($request->all());
+        $uid=base64_decode($request->uid);
+        $type=base64_decode($request->type);
+        $rivision_id=base64_decode($request->rivision_id);
+        $requestid=base64_decode($request->requestid);
+        $remarks=base64_decode($request->remarks);
+      
+      
+       
+      //  return response()->json($remarksdata);
+      
+       if ($remarks=='') {
+        return response()->json([
+            'success' => false,
+            'data' => [],
+            'message' => 'No Data Found'
+        ]);
+    } else {
+        $remarksArray = explode(',', $remarks);
+        $remarksdata=Remarks::select('description')->whereIn('remark_id',$remarksArray)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $remarksdata
+        ]);
+    }
     }
 }

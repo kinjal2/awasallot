@@ -62,7 +62,28 @@
 		<!-- /.card-body -->
 		</div>
 	</div>
+          <!-- view remarks -->
+  <div class="modal" id="DocumentModal">
+    <div class="modal-dialog">
+        <div class="modal-content  pop_up_design">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Remarks</h4>
+                <button type="button" class="btn btn-danger close" data-dismiss="modal">&times;</button>
 
+                <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+               <div id='viewdata'></div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+            <button type="button" class="btn btn-danger">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
             </div>
             <!-- /.card -->
 
@@ -105,7 +126,39 @@
          ]
     });
   
-   
+    $('body').on('click', '.btn', function()
+      {
+         $('#DocumentModal').hide();
+      });
+     $('body').on('click', '.getdocument', function()
+      {
+          var uid = $(this).attr('data-uid');
+          var type = $(this).attr('data-type');
+          var rivision_id = $(this).attr('data-rivision_id');
+          var requestid = $(this).attr('data-requestid');
+          var remarks=$(this).attr('data-remarks');
+          $.ajax({
+            url: "{{ route('quarter.list.getDDOremarks') }}",
+            method: 'POST',
+            data: {uid:uid,type:type,rivision_id:rivision_id,requestid:requestid,remarks:remarks},
+            success: function(result) {
+            var html = '<ul>';
+
+            if (result.success === false || !result.data || result.data.length === 0) {
+                html += '<li>' + result.message + '</li>';
+            } else {
+                result.data.forEach(function(item) {
+                    html += '<li>' + item.description + '</li>';
+                });
+            }
+
+            html += '</ul>';
+            $("#viewdata").html(html);
+            $('#DocumentModal').show();
+        }
+          });
+      });
+
     </script>
 </script>
 @endpush
