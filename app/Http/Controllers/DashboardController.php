@@ -213,6 +213,10 @@ class DashboardController extends Controller
         if ($usermaster) {
             // dd("hello");
              // Access the related ddocode*/
+            if($usermaster->from_old_awasallot_app === 1 )
+            {
+                return redirect('updateoldprofile');
+            }
             if($usermaster->dcode != 6){
                 Session::put('q_officecode', 28084);
             }

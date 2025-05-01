@@ -75,6 +75,8 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::get('quarterschange', ['as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
     Route::get('quartershistory', ['as' => 'user.quarter.history', 'uses' => 'QuartersController@index']);
     Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);
+    Route::get('updateoldprofile', [ 'as' => 'user.update_old_profile_details', 'uses' => 'ProfileController@updateOldProfileDetails']);
+
     
     Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);
     Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);

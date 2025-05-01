@@ -122,6 +122,7 @@ protected function create(array $data)
                     //'ddo_code' => htmlentities(strip_tags($data['ddo_code'])),
                     'dcode' => htmlentities(strip_tags($data['district'])),
                     'tcode' => htmlentities(strip_tags($data['taluka'])),
+                    'from_old_awasallot_app' => 0,
             ]);
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);

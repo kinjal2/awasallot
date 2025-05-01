@@ -326,4 +326,8 @@ class ProfileController extends Controller
         $this->_viewContent['page']="ddo_detail";
         return view('user/user_ddo_detail',$this->_viewContent);
     }
+    public function updateOldProfileDetails()
+    {
+        return view('user/updateoldprofile');
+    }
 }
