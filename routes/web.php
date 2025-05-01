@@ -76,6 +76,8 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::get('quartershistory', ['as' => 'user.quarter.history', 'uses' => 'QuartersController@index']);
     Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);
     Route::get('updateoldprofile', [ 'as' => 'user.update_old_profile_details', 'uses' => 'ProfileController@updateOldProfileDetails']);
+    Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOldProfileDetails']);
+    Route::post('gettalukasbydistrict', [ProfileController::class, 'getTalukasByDistrict'])->name('getTalukasByDistrict');
 
     
     Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);

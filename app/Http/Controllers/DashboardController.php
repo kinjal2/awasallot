@@ -213,6 +213,8 @@ class DashboardController extends Controller
         if ($usermaster) {
             // dd("hello");
              // Access the related ddocode*/
+             Session::put('Name', $usermaster->name);
+             Session::put('Uid', $uid);
             if($usermaster->from_old_awasallot_app === 1 )
             {
                 return redirect('updateoldprofile');
@@ -252,8 +254,7 @@ class DashboardController extends Controller
         }
 
 
-        Session::put('Name', $usermaster->name);
-        Session::put('Uid', $uid);
+       
         Session::put('dcode',$usermaster->dcode);
         if ($usermaster->basic_pay == '') {
             return redirect('profile');

@@ -11,6 +11,8 @@ use App\Tquarterrequesta;
 use App\PayScale;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use App\District;
+use App\Taluka;
 
 class ProfileController extends Controller
 {
@@ -329,5 +331,65 @@ class ProfileController extends Controller
     public function updateOldProfileDetails()
     {
         return view('user/updateoldprofile');
+    }
+    public function saveOldProfileDetails(Request $request)
+    {
+        //dd($request->all());
+        $rules = [
+			'district' => 'required',
+			'taluka' => 'required',
+        ];
+        $messages = [
+            'district.required' => 'The district field is required.',
+            'taluka.required' => 'The taluka field is required.'
+        ];
+        $validator =  \Validator::make($request->all(),$rules,$messages);
+        if ($validator->fails()) {
+			return redirect('user.update_old_profile_details')
+			->withInput()
+			->withErrors($validator);
+		}
+		else{
+            $data = $request->input();
+            //dd($data);
+            try
+            {
+               $uid=Session::get('Uid');
+               //dd($uid);
+               $resp =\DB::table('userschema.users')
+               ->where('id',$uid)
+                ->update([
+                'dcode' => empty($request->get('district')) ? NULL : $request->get('district'),
+                'tcode' => empty($request->get('taluka')) ? NULL :  $request->get('taluka')
+                ]);
+                if($resp)
+                {
+                    return redirect()->route('user.profile')->with('success', ("Profile Updated Successfully"));
+                }
+                else
+                {
+                    return redirect()->back();
+                }
+            }
+            catch(Exception $e)
+            {
+                dd($e->getmessage());
+            }
+        }
+    }
+    public function getTalukasByDistrict(Request $request)
+    {
+
+        $dcode = $request->input('dcode');
+    //dd($dcode);
+        // Validate the input
+        if (!$dcode) {
+            return response()->json([], 400); // Return empty if dcode is not valid
+        }
+    
+        // Fetch talukas by district code (assuming you have a Taluka model with a dcode foreign key)
+        $talukas = Taluka::where('dcode', $dcode)->get(['tcode', 'name_g', 'name_e']);
+    
+        return response()->json($talukas);
     }
 }

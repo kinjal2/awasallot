@@ -9,7 +9,7 @@
         <div class="col-md-6 mx-auto">
             <div class="card box-design">
                 <div class="login-head text-center">
-                    <p class="login-icon py-2">DDO Login</p>
+                    <p class="login-icon py-2">Old Profile Update</p>
                     <h4 class="m-0"><b>E-State Management System</b></h4>
                     <p class="sub-title-form">Government of Gujarat</p>
                 </div>
@@ -20,57 +20,41 @@
                 @endif
 
                 <div class="card-body bg-lightwhite p-4">
-                    <form method="POST" action="{{ route('ddo.login') }}" id="LoginForm" name="LoginForm">
+                    <form method="POST" action="{{ route('user.saveoldprofiledetails') }}" id="oldProfileUpdateForm" name="oldProfileUpdateForm">
                         @csrf
                         <div class="col-12 form-group relative mb-3">
-                            <label for="ddo_reg_no" class="form-label">DDO Registration Number&nbsp;<span class="text-danger">*</span></label>
-                            <input id="ddo_reg_no" type="text" class="custon-control form-control @error('ddo_reg_no') is-invalid @enderror" placeholder="Enter your DDO Registration Number" name="ddo_reg_no" value="{{ old('ddo_reg_no') }}" required autocomplete="off" autofocus>
-                            <i class="bi bi-envelope form-icon"></i>
-                            @error('ddo_reg_no')
+                                <label for="district" class="col-md-4 col-form-label text-md-right">District&nbsp;<span class="text-danger">*</span></label>
+                                {{ Form::select('district',[null=>__('common.select')] + getDistricts(),"",['id'=>'district','class'=>' custon-control form-control  select2']) }}
+
+
+                                @error('district')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                            @enderror
-                        </div>
+                                @enderror
 
-                        <div class="col-12 form-group relative my-3">
-                            <label for="password" class="form-label">{{ __('Password') }}&nbsp;<span class="text-danger">*</span></label>
-                            <input id="password" type="password" class="custon-control form-control @error('password') is-invalid @enderror" placeholder="Enter your Password" name="password" required autocomplete="current-password">
-                            <i class="bi bi-lock form-icon"></i>
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group row relative my-3">
-                            <label for="captcha" class="col-md-4 col-form-label text-md-right">Captcha</label>
-                            <div class="col-md-6">
-                                <div class='captcha'>
-                                    <span>{!! captcha_img() !!}</span>
-                                    <button type="button" class="btn btn-secondary" id="reload">&#x21bb;</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row relative my-4">
-                            <label for="captcha" class="col-md-4 col-form-label text-md-right">Enter Captcha Here&nbsp;<span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control custon-control  @error('captcha') is-invalid @enderror" id="captcha" name="captcha" placeholder="Enter Captcha" required>
-                                @error('captcha')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
                             </div>
 
-                        </div>
+                            <div class="col-12 form-group relative mb-3">
+                                <label for="taluka" class="col-md-4 col-form-label text-md-right">Taluka&nbsp;<span class="text-danger">*</span></label>
+                                {{ Form::select('taluka',[null=>__('common.select')] + getTaluka(),"",['id'=>'taluka','class'=>' custon-control form-control  select2']) }}
+
+
+
+                                @error('taluka')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+
+                            </div>
+
+                       
                         <div class="form-group row relative my-4">
                                 <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <button class="btn-new btn btn-primary btn-md" type="submit">{{ __('Login') }}</button>
+                            <button class="btn-new btn btn-primary btn-md" type="submit">{{ __('Save') }}</button>
                             <!-- @if (Route::has('password.request'))
                                 <a class="btn btn-link float-right" href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
                             @endif -->
@@ -82,10 +66,11 @@
     </div>
 </div>
 @include(Config::get('app.theme').'.template.footer_front_page')
-@push('page-ready-script') @endpush @push('footer-script')
+
 <script>
-    $(document).ready(function() {
-        $('#LoginForm').validate({
+    $(document).ready(function() 
+    {
+        $('#oldProfileUpdateForm').validate({
             errorClass: "error-message",
             errorElement: "span",
             errorPlacement: function(error, element) {
@@ -100,60 +85,68 @@
                 $(element).closest('.form-control').removeClass('error-field');
             },
             rules: {
-                ddo_reg_no: {
+                district: {
                     required: true,
                 //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
                 },
-                password: {
+                taluka: {
                     required: true
                 },
-                captcha: {
-                    required: true
-                }
+                // captcha: {
+                //     required: true
+                // }
             },
             messages: {
-                ddo_reg_no: {
-                    required: "Please enter your DDO Registration Number",
+                district: {
+                    required: "Please Select District",
                   //  pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
                 },
-                password: {
-                    required: "Please enter your password"
+                taluka: {
+                    required: "Please Select Taluka"
                 },
-                captcha: {
-                    required: "Please enter the captcha"
-                }
+                // captcha: {
+                //     required: "Please enter the captcha"
+                // }
             }
         });
-        $('#reload').on('click', function() {
-            $.ajax({
-                type: 'GET',
-                url: "{{ route('ddo.reload-captcha') }}", // Use the correct route name
-                success: function(data) {
-                    $('.captcha span').html(data.captcha); // Update the captcha image
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error reloading captcha: ' + error);
-                }
-            });
-        });
-       
+    }); 
+        $('#district').on('change', function() {
+    var dcode = $(this).val(); // Get the selected district code
+    var csrfToken = $('#oldProfileUpdateForm input[name="_token"]').val();
+
+    if (dcode) {
+                $.ajax({
+                    url: "{{ route('getTalukasByDistrict') }}", // Your route to fetch talukas based on dcode
+                    type: 'POST',
+                    data: {
+                        dcode: dcode,
+                    
+                    },
+                    success: function(data) {
+                        //dd(data);
+                        talukaSelect = $('#taluka');
+                        talukaSelect.empty(); // Clear previous taluka options
+                        talukaSelect.append('<option value="">{{ __("common.select") }}</option>'); // Add the default "select" option
+
+                        if (data.length > 0) {
+                            data.forEach(function(item) {
+                                talukaSelect.append(`<option value="${item.tcode}">${item.name_e} [ ${item.name_g} ]</option>`);
+                            });
+                        } else {
+                            alert('No talukas found for this district.');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error fetching talukas:', xhr.responseText);
+                        if (xhr.status === 401) {
+                            alert('You are not authenticated. Please log in.');
+                            window.location.href = '/login'; // Redirect to login if needed
+                        }
+                    }
+                });
+            } else {
+                $('#taluka').empty().append("<option value=''>{{ __('common.select') }}</option>"); // Clear taluka options if no district selected
+        }   
     });
-    document.addEventListener("DOMContentLoaded", function () {
-    const loginForm = document.getElementById("LoginForm");
-
-    loginForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        const passwordField = document.getElementById("password");
-        const ddoRegNoField = document.getElementById("ddo_reg_no");
-        const csrfToken = document.querySelector('input[name="_token"]').value;
-
-        const encodeWithCSRF = (value) => btoa(value + csrfToken);
-
-        passwordField.value = encodeWithCSRF(passwordField.value);
-        ddoRegNoField.value = encodeWithCSRF(ddoRegNoField.value);
-
-        this.submit();
-    });
-}); 
 </script>
+
