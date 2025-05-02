@@ -14,51 +14,80 @@
                     <p class="sub-title-form">Government of Gujarat</p>
                 </div>
                 @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
                 @endif
 
                 <div class="card-body bg-lightwhite p-4">
                     <form method="POST" action="{{ route('user.saveoldprofiledetails') }}" id="oldProfileUpdateForm" name="oldProfileUpdateForm">
                         @csrf
-                        <div class="col-12 form-group relative mb-3">
-                                <label for="district" class="col-md-4 col-form-label text-md-right">District&nbsp;<span class="text-danger">*</span></label>
-                                {{ Form::select('district',[null=>__('common.select')] + getDistricts(),"",['id'=>'district','class'=>' custon-control form-control  select2']) }}
-
-
-                                @error('district')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="district" class="col-md-4 col-form-label text-md-right">District&nbsp;<span class="text-danger">*</span></label>
+                                    {{ Form::select('district',[null=>__('common.select')] + getDistricts(),"",['id'=>'district','class'=>' custon-control form-control  select2']) }}
+                                    @error('district')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
                             </div>
-
-                            <div class="col-12 form-group relative mb-3">
-                                <label for="taluka" class="col-md-4 col-form-label text-md-right">Taluka&nbsp;<span class="text-danger">*</span></label>
-                                {{ Form::select('taluka',[null=>__('common.select')] + getTaluka(),"",['id'=>'taluka','class'=>' custon-control form-control  select2']) }}
-
-
-
-                                @error('taluka')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-
-                            </div>
-
-                       
-                        <div class="form-group row relative my-4">
-                                <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <button class="btn-new btn btn-primary btn-md" type="submit">{{ __('Save') }}</button>
-                            <!-- @if (Route::has('password.request'))
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="taluka" class="col-md-4 col-form-label text-md-right">Taluka&nbsp;<span class="text-danger">*</span></label>
+                                    {{ Form::select('taluka',[null=>__('common.select')] + getTaluka(),"",['id'=>'taluka','class'=>' custon-control form-control  select2']) }}
+
+
+
+                                    @error('taluka')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="cardex_no" class="col-md-4 col-form-label text-md-right">{{ __('Cardex No') }}</label>
+                                    <input type="text" class="form-control @error('cardex_no') is-invalid @enderror" name="cardex_no" id="cardex_no" value="{{ session('cardex_no') }}" @if(!empty($cardex_no)) readonly @endif required autofocus>
+                                    @error('cardex_no')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="ddo_code" class="col-md-4 col-form-label text-md-right">{{ __('DDO Code') }}</label>
+                                    @if(empty($ddo_code))
+                                    {{ Form::select('ddo_code',[null=>__('common.select')] ,"", ['id'=>'ddo_code','class'=>' custon-control form-control  select2']) }}
+                                    @error('ddo_code')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    @else
+                                    <input type="text" class="form-control" value="{{ getDDO_OfficeByCode($cardex_no,$ddo_code) }}" readonly>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="form-group row relative my-4">
+                                <span class="text-danger">Fields marked with * are mandatory to fill. </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <button class="btn-new btn btn-primary btn-md" type="submit">{{ __('Save') }}</button>
+                                <!-- @if (Route::has('password.request'))
                                 <a class="btn btn-link float-right" href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
                             @endif -->
-                        </div>
+                            </div>
                     </form>
                 </div>
             </div>
@@ -68,8 +97,7 @@
 @include(Config::get('app.theme').'.template.footer_front_page')
 
 <script>
-    $(document).ready(function() 
-    {
+    $(document).ready(function() {
         $('#oldProfileUpdateForm').validate({
             errorClass: "error-message",
             errorElement: "span",
@@ -87,7 +115,7 @@
             rules: {
                 district: {
                     required: true,
-                //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
+                    //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
                 },
                 taluka: {
                     required: true
@@ -99,7 +127,7 @@
             messages: {
                 district: {
                     required: "Please Select District",
-                  //  pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
+                    //  pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
                 },
                 taluka: {
                     required: "Please Select Taluka"
@@ -109,44 +137,79 @@
                 // }
             }
         });
-    }); 
-        $('#district').on('change', function() {
-    var dcode = $(this).val(); // Get the selected district code
-    var csrfToken = $('#oldProfileUpdateForm input[name="_token"]').val();
+    });
+    $('#district').on('change', function() {
+        var dcode = $(this).val(); // Get the selected district code
+        var csrfToken = $('#oldProfileUpdateForm input[name="_token"]').val();
 
-    if (dcode) {
-                $.ajax({
-                    url: "{{ route('getTalukasByDistrict') }}", // Your route to fetch talukas based on dcode
-                    type: 'POST',
-                    data: {
-                        dcode: dcode,
-                    
-                    },
-                    success: function(data) {
-                        //dd(data);
-                        talukaSelect = $('#taluka');
-                        talukaSelect.empty(); // Clear previous taluka options
-                        talukaSelect.append('<option value="">{{ __("common.select") }}</option>'); // Add the default "select" option
+        if (dcode) {
+            $.ajax({
+                url: "{{ route('getTalukasByDistrict') }}", // Your route to fetch talukas based on dcode
+                type: 'POST',
+                data: {
+                    dcode: dcode,
 
-                        if (data.length > 0) {
-                            data.forEach(function(item) {
-                                talukaSelect.append(`<option value="${item.tcode}">${item.name_e} [ ${item.name_g} ]</option>`);
-                            });
-                        } else {
-                            alert('No talukas found for this district.');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Error fetching talukas:', xhr.responseText);
-                        if (xhr.status === 401) {
-                            alert('You are not authenticated. Please log in.');
-                            window.location.href = '/login'; // Redirect to login if needed
-                        }
+                },
+                success: function(data) {
+                    //dd(data);
+                    talukaSelect = $('#taluka');
+                    talukaSelect.empty(); // Clear previous taluka options
+                    talukaSelect.append('<option value="">{{ __("common.select") }}</option>'); // Add the default "select" option
+
+                    if (data.length > 0) {
+                        data.forEach(function(item) {
+                            talukaSelect.append(`<option value="${item.tcode}">${item.name_e} [ ${item.name_g} ]</option>`);
+                        });
+                    } else {
+                        alert('No talukas found for this district.');
                     }
-                });
-            } else {
-                $('#taluka').empty().append("<option value=''>{{ __('common.select') }}</option>"); // Clear taluka options if no district selected
-        }   
+                },
+                error: function(xhr) {
+                    console.error('Error fetching talukas:', xhr.responseText);
+                    if (xhr.status === 401) {
+                        alert('You are not authenticated. Please log in.');
+                        window.location.href = '/login'; // Redirect to login if needed
+                    }
+                }
+            });
+        } else {
+            $('#taluka').empty().append("<option value=''>{{ __('common.select') }}</option>"); // Clear taluka options if no district selected
+        }
+    });
+    $('#cardex_no').on('blur', function() {
+        var cardexNo = $(this).val();
+        var csrfToken = $('#cardexForm input[name="_token"]').val();
+
+        if (cardexNo) {
+            $.ajax({
+                url: "{{ route('ddo.getDDOCode') }}", // Your route to fetch data
+                type: 'POST', // Change to POST
+                data: {
+                    cardex_no: cardexNo,
+                    _token: csrfToken // Include CSRF token here
+                },
+                success: function(data) { //alert(data);
+                    console.log(data); // Check the actual response data from the server
+                    const ddo_code = $('#ddo_code');
+                    ddo_code.empty();
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(function(item) {
+                            ddo_code.append(`<option value="${item.ddo_code}">${item.ddo_office} [ Code - ${item.ddo_code} ]</option>`);
+                        });
+                    } else {
+                        alert('Invalid Cardex No.');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error fetching data:', xhr.responseText);
+                    if (xhr.status === 401) {
+                        // Handle unauthenticated
+                        alert('You are not authenticated. Please log in.');
+                        window.location.href = '/login'; // Adjust to your login route
+                    }
+                }
+            });
+        }
     });
 </script>
-

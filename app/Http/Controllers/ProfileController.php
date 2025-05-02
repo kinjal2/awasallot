@@ -8,6 +8,7 @@ use App\Couchdb\Couchdb;
 use Illuminate\Http\Request;
 use App\Tquarterrequestb;
 use App\Tquarterrequesta;
+use App\Tquarterrequestc;
 use App\PayScale;
 use DB;
 use Illuminate\Support\Facades\Auth;
@@ -356,12 +357,51 @@ class ProfileController extends Controller
             {
                $uid=Session::get('Uid');
                //dd($uid);
+               $cardex_no=$request->input('cardex_no');
+               $ddo_code=$request->input('ddo_code');
                $resp =\DB::table('userschema.users')
                ->where('id',$uid)
                 ->update([
                 'dcode' => empty($request->get('district')) ? NULL : $request->get('district'),
-                'tcode' => empty($request->get('taluka')) ? NULL :  $request->get('taluka')
+                'tcode' => empty($request->get('taluka')) ? NULL :  $request->get('taluka'),
+                'cardex_no' => $cardex_no,
+                'ddo_code' => $ddo_code,
                 ]);
+                $tquarterrequest_a = Tquarterrequesta::select('requestid')->where('uid', $uid)->first();
+                if($tquarterrequest_a)
+                {  
+                    $requestid=$tquarterrequest_a['requestid'];
+                   // dd($requestid);
+                  
+                    $updateA=Tquarterrequesta::where('requestid',$requestid)->update([
+                        'cardex_no' => $cardex_no,
+                        'ddo_code' => $ddo_code
+                    ]);
+                }
+                $tquarterrequest_b = Tquarterrequestb::select('requestid')->where('uid', $uid)->first();
+                if($tquarterrequest_b)
+                {  
+                    $requestid=$tquarterrequest_b['requestid'];
+                   // dd($requestid);
+                    $cardex_no=$request->input('cardex_no');
+                    $ddo_code=$request->input('ddo_code');
+                    $updateB=Tquarterrequestb::where('requestid',$requestid)->update([
+                        'cardex_no' => $cardex_no,
+                        'ddo_code' => $ddo_code
+                    ]);
+                }
+                $tquarterrequest_c = Tquarterrequestc::select('requestid')->where('uid', $uid)->first();
+                if($tquarterrequest_c)
+                {  
+                    $requestid=$tquarterrequest_c['requestid'];
+                   // dd($requestid);
+                    $cardex_no=$request->input('cardex_no');
+                    $ddo_code=$request->input('ddo_code');
+                    $updateC=Tquarterrequestc::where('requestid',$requestid)->update([
+                        'cardex_no' => $cardex_no,
+                        'ddo_code' => $ddo_code
+                    ]);
+                }
                 if($resp)
                 {
                     return redirect()->route('user.profile')->with('success', ("Profile Updated Successfully"));
