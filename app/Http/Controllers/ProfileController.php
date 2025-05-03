@@ -366,6 +366,7 @@ class ProfileController extends Controller
                 'tcode' => empty($request->get('taluka')) ? NULL :  $request->get('taluka'),
                 'cardex_no' => $cardex_no,
                 'ddo_code' => $ddo_code,
+                'updated_to_new_awasallot_app' => 2,
                 ]);
                 $tquarterrequest_a = Tquarterrequesta::select('requestid')->where('uid', $uid)->first();
                 if($tquarterrequest_a)
@@ -404,7 +405,7 @@ class ProfileController extends Controller
                 }
                 if($resp)
                 {
-                    return redirect()->route('user.profile')->with('success', ("Profile Updated Successfully"));
+                    return redirect()->route('user.dashboard.userdashboard')->with('success', ("Profile Updated Successfully"));
                 }
                 else
                 {
@@ -431,5 +432,143 @@ class ProfileController extends Controller
         $talukas = Taluka::where('dcode', $dcode)->get(['tcode', 'name_g', 'name_e']);
     
         return response()->json($talukas);
+    }
+
+    public function updateolduserprofiledetails(Request $request)
+    {
+        dd($request->all());
+        $rules = [
+			'name' => 'required|string',
+			'office' => 'required|string',
+			/*'office_email_id' => 'required|email',*/
+            'office_email_id' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
+            'is_dept_head' => 'required',
+            'is_transferable' => 'required',
+            'appointment_date' => 'required',
+            'date_of_retirement' => 'required',
+            'salary_slab' => 'required',
+            'grade_pay' => 'required',
+            'basic_pay' => 'required',
+            'address'=>'required',
+            'current_address'=>'required',
+            'office_phone'=>'required',
+            'office_address'=>'required',
+            'is_police_staff'=>'required',
+            'is_fix_pay_staff'=>'required',
+            'is_judge' => 'required',
+            'is_phy_dis' => 'required',
+			'dis_per'=>'nullable|numeric|max:100|regex:/^\d+(\.\d{1,3})?$/'
+        ];
+		 $messages = [
+            'name.required' => 'The name field is required.',
+            'name.string' => 'The name must be a valid string.',
+            'office.required' => 'The office field is required.',
+            'office.string' => 'The office must be a valid string.',
+            'office_email_id.required' => 'The office email is required',
+            'office_email_id.email' => 'The office email must be valid email address',
+            'is_dept_head.required' => 'The department head status is required.',
+            'is_transferable.required' => 'The transferability status is required.',
+            'appointment_date.required' => 'The appointment date is required.',
+            'date_of_retirement.required' => 'The date of retirement is required.',
+            'salary_slab.required' => 'The salary slab is required.',
+            'grade_pay.required' => 'The grade pay is required.',
+            'basic_pay.required' => 'The basic pay is required.',
+            'address.required' => 'The address field is required.',
+            'current_address.required' => 'The current address field is required.',
+            'office_phone.required' => 'The office phone number is required.',
+            'office_address.required' => 'The office address is required.',
+            'is_police_staff.required' => 'The Police Staff  is required.',
+            'is_fix_pay_staff.required' => 'The Fix Pay Staff   is required.',
+            'dis_per.numeric' => 'The disability percentage must be a numeric value.',
+            'dis_per.regex' => 'The disability percentage must be a valid number (up to three decimal places).',
+        ];
+		$validator =  \Validator::make($request->all(),$rules,$messages);
+        if ($validator->fails()) {
+			return redirect('profile')
+			->withInput()
+			->withErrors($validator);
+		}
+		else{
+            $data = $request->input();
+            //dd($data['is_phy_dis'],$data['dis_per']);
+            try
+            {
+               $uid=Session::get('Uid');
+               //dd($uid);
+                if ($request->hasFile('image'))
+                {
+                  
+                    $docId=(string)Session::get('Uid')."_0_photo";
+                    //uploadDocuments($docId,$request);
+					uploadDocuments($docId,$request->file('image'));
+                }
+                    $appointment_date = Carbon::createFromFormat('d-m-Y',$request->get('appointment_date'));
+                    $date_of_retirement = Carbon::createFromFormat('d-m-Y',$request->get('date_of_retirement'));
+                    // Enable query logging
+                   // DB::enableQueryLog();
+                    \DB::table('userschema.users')
+                        ->where('id',$uid)
+                        ->update([
+                    'name' => empty($request->get('name')) ? NULL : $request->get('name'),
+                    'designation' => empty($request->get('designation')) ? NULL :  $request->get('designation'),
+                    'office' => empty($request->get('office')) ? NULL : $request->get('office'),
+					'office_email_id' => empty($request->get('office_email_id')) ? NULL : $request->get('office_email_id'),
+                    'contact_no' => empty($request->get('contact_no')) ? NULL :  $request->get('contact_no'),
+                    'maratial_status' => empty($request->get('maratial_status')) ? NULL :  $request->get('maratial_status'),
+                    'is_dept_head' => empty($request->get('is_dept_head')) ? NULL :  $request->get('is_dept_head'),
+                    'is_transferable' => empty($request->get('is_transferable')) ? NULL :  $request->get('is_transferable'),
+                    'appointment_date' => empty($request->get('appointment_date')) ? NULL :  $appointment_date->format('Y-m-d'),
+                    'date_of_retirement' => empty($request->get('date_of_retirement')) ? NULL :   $date_of_retirement->format('Y-m-d'),
+                    'salary_slab' => empty($request->get('salary_slab')) ? NULL :  $request->get('salary_slab'),
+                    'grade_pay' => empty($request->get('grade_pay')) ? NULL :  $request->get('grade_pay'),
+                    'basic_pay' => empty($request->get('basic_pay')) ? NULL :  $request->get('basic_pay'),
+                    'actual_salary' => empty($request->get('actual_salary')) ? NULL :  $request->get('actual_salary'),
+                     'address' => empty($request->get('address')) ? NULL :  $request->get('address'),
+                    'current_address' => empty($request->get('current_address')) ? NULL :  $request->get('current_address'),
+                    'office_phone' => empty($request->get('office_phone')) ? NULL :  $request->get('office_phone'),
+                    'office_address' => empty($request->get('office_address')) ? NULL :  $request->get('office_address'),
+                    'gpfnumber' => empty($request->get('gpfnumber')) ? NULL :  $request->get('gpfnumber'),
+                    'pancard' => empty($request->get('pancard')) ? NULL :  $request->get('pancard'),
+                    'office_email_id' => empty($request->get('office_email_id')) ? NULL :  $request->get('office_email_id'),
+                    'is_police_staff' => empty($request->get('is_police_staff')) ? NULL :  $request->get('is_police_staff'),
+                    'is_fix_pay_staff' => empty($request->get('is_fix_pay_staff')) ? NULL :  $request->get('is_fix_pay_staff'),
+                    'image'=>empty($imageupload)?NULL:$imageupload,
+                    'is_judge' => empty($request->get('is_judge')) ? "N" :  $request->get('is_judge'),
+                   // 'dis_per' => empty($request->get('dis_per')) ? "N"  :  $request->get('dis_per'),
+                   'is_phy_dis' => empty($request->get('is_phy_dis')) ? NULL :  $request->get('is_phy_dis'),
+                   'dis_per' => ($request->get('is_phy_dis') == 'N') ? 0 : (empty($request->get('dis_per')) ? 0 : $request->get('dis_per')),
+                   'updated_to_new_awasallot_app' => 1,
+                    ]);
+                    
+                    // Get the executed queries
+                    //$queries = DB::getQueryLog();
+
+                    // Print the queries
+                    //dd($queries);
+                    if(!empty($request->get('basic_pay')))
+                    {
+                       Session::put('basic_pay',$request->get('basic_pay'));
+                    }
+
+					 //upload disability certificate
+                    if($request->get('is_phy_dis')=='Y')
+                    {
+                        if($request->get('dis_per')>60)
+                        {
+                            if ($request->hasFile('dis_certi'))
+                            {
+                            $docId=(string)Session::get('Uid')."_9_disabilityCertificate"; //9 is the code for disability certificat in document type table
+                            uploadDocuments($docId,$request->file('dis_certi'));
+                            }
+                        }
+                    }
+
+                return redirect('userprofile')->with('success',"Details Updated successfully");
+			}
+			catch(Exception $e){
+                dd($e->getMessage());
+				return redirect('userprofile')->with('failed',"operation failed");
+			}
+        }
     }
 }

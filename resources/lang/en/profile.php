@@ -32,5 +32,6 @@ return array(
     'dis_per'=>'Percentage of disability',
 	'dis_per_certi'=> 'Disability Certificate',
     'ddo_no'=>'DDO No',
+    'user_old_details'=>'User Old Details'
     
  );        

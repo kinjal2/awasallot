@@ -215,9 +215,23 @@ class DashboardController extends Controller
              // Access the related ddocode*/
              Session::put('Name', $usermaster->name);
              Session::put('Uid', $uid);
-            if($usermaster->from_old_awasallot_app === 1 )
+            if($usermaster->from_old_awasallot_app === 1  && $usermaster->updated_to_new_awasallot_app === 0)
             {
+            //     $basic_pay=$usermaster->basic_pay;
+            //    $quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
+            //    dd($quartertype);
                 return redirect('updateoldprofile');
+            }
+            Session::put('dcode',$usermaster->dcode);
+            if($usermaster->from_old_awasallot_app === 1  && $usermaster->updated_to_new_awasallot_app === 2)
+            {
+            //     $basic_pay=$usermaster->basic_pay;
+            //    $quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
+            //    dd($quartertype);
+                $this->_viewContent['users'] = User::find($uid); //
+                $this->_viewContent['imageData'] = generateImage($uid);
+                $this->_viewContent['page_title']= "Old Profile Verfiy and  Update";
+                return view('user/useroldprofile',$this->_viewContent);
             }
             if($usermaster->dcode != 6){
                 Session::put('q_officecode', 28084);
@@ -270,6 +284,7 @@ class DashboardController extends Controller
 
             $this->_viewContent['notification'] = Notification::where('uid', '=',  $uid)->get();
             $basic_pay = Session::get('basic_pay');
+            //dd($basic_pay);
             $this->_viewContent['quarterselect'] = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
             //dd($this->_viewContent['quarterselect']);
             $this->_viewContent['page_title'] = "Dashboard";
