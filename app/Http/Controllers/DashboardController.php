@@ -223,16 +223,6 @@ class DashboardController extends Controller
                 return redirect('updateoldprofile');
             }
             Session::put('dcode',$usermaster->dcode);
-            if($usermaster->from_old_awasallot_app === 1  && $usermaster->updated_to_new_awasallot_app === 2)
-            {
-            //     $basic_pay=$usermaster->basic_pay;
-            //    $quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
-            //    dd($quartertype);
-                $this->_viewContent['users'] = User::find($uid); //
-                $this->_viewContent['imageData'] = generateImage($uid);
-                $this->_viewContent['page_title']= "Old Profile Verfiy and  Update";
-                return view('user/useroldprofile',$this->_viewContent);
-            }
             if($usermaster->dcode != 6){
                 Session::put('q_officecode', 28084);
             }
@@ -254,8 +244,42 @@ class DashboardController extends Controller
                 ->where('ddo_code', $usermaster->ddo_code)
                 ->pluck('officecode')
                 ->first();
+               // dd($officecode);
                 Session::put('officecode', $officecode);
             }
+            if($usermaster->from_old_awasallot_app === 1  && $usermaster->updated_to_new_awasallot_app === 2)
+            {
+            //     $basic_pay=$usermaster->basic_pay;
+            //    $quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
+            //    dd($quartertype);
+                $this->_viewContent['users'] = User::find($uid); //
+                $this->_viewContent['imageData'] = generateImage($uid);
+                $this->_viewContent['page_title']= "Old Profile Verfiy and  Update";
+                return view('user/useroldprofile',$this->_viewContent);
+            }
+          /*  if($usermaster->dcode != 6){
+                Session::put('q_officecode', 28084);
+            }
+            else{
+                Session::put('q_officecode', 28083);
+            }
+            if($usermaster->cardex_no !=0 )
+            {
+                Session::put('cardex_no',$usermaster->cardex_no);
+
+            }
+            if($usermaster->ddo_code != 0)
+            {
+                Session::put('ddo_code',$usermaster->ddo_code);
+            }
+            if($usermaster->cardex_no !=0 && $usermaster->ddo_code !=0)
+            {
+                $officecode = DDOCode::where('cardex_no', $usermaster->cardex_no)
+                ->where('ddo_code', $usermaster->ddo_code)
+                ->pluck('officecode')
+                ->first();
+                Session::put('officecode', $officecode);
+            }*/
             /*if ($officecode) {
                 Session::put('officecode', $officecode);
                 if ($officecode != 28083) {
