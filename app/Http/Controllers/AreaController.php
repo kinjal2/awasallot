@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Area;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\Session;
+
 class AreaController extends Controller
 {
     public function index()
@@ -15,7 +17,8 @@ class AreaController extends Controller
     }
     public function getList(Request $request)
     {
-        $data = Area::select(['areaname', 'address', 'address_g','areaid','areacode']);
+        $officecode=Session::get('officecode');
+        $data = Area::select(['areaname', 'address', 'address_g','areaid','areacode'])->where('officecode',$officecode);
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function($row){
@@ -45,7 +48,7 @@ class AreaController extends Controller
     }
     public function store(Request $request)
     {
-
+        
         // Area::updateOrCreate(['areacode' => $request->area_id],
         //         ['areaname' => $request->areaname, 'address' => $request->address,'address_g' => $request->address_g,'officecode'=>28083]);
 
@@ -64,10 +67,29 @@ class AreaController extends Controller
             'address.required' => 'Address is required.',
             'address_g.required' => 'Address Gujarati is required.',
         ]);
-        Area::updateOrCreate(
-            ['areacode' => base64_decode($request->areacode)],
-            ['areaname' => $request->areaname, 'address' => $request->address, 'address_g' => $request->address_g, 'officecode' => 28083]
-        );
+        $officecode=Session::get('officecode');
+       
+        $decodedAreacode = base64_decode($request->areacode);
+       // dd($decodedAreacode);
+if (!empty($decodedAreacode) && is_numeric($decodedAreacode)) {
+    Area::updateOrCreate(
+        ['areacode' => (int)$decodedAreacode],
+        [
+            'areaname'   => $request->areaname,
+            'address'    => $request->address,
+            'address_g'  => $request->address_g
+        ]
+    );
+} else {
+   
+    // If you're trying to insert a new record (no areacode), use `create` instead:
+    Area::create([
+        'areaname'   => $request->areaname,
+        'address'    => $request->address,
+        'address_g'  => $request->address_g,
+        'officecode' => $officecode, // include required fields
+    ]);
+}
 
         return response()->json(['success' => 'Area saved successfully.']);
     } catch (Exception $e) {
@@ -84,6 +106,7 @@ class AreaController extends Controller
     }*/
     public function editArea($id)
     {
+        
         $editid = base64_decode($id);
         $Area = Area::find($editid);
        // print_r($Area);

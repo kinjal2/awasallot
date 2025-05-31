@@ -78,72 +78,69 @@
 @endpush
 @push('footer-script')
 <script type="text/javascript">
-        
- var table = $('#vacantlist').DataTable({
+    // Setup CSRF token for all AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    var table = $('#vacantlist').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-      url: "{{ route('vacant-list') }}",
-      'type': 'POST',
-
-  },
-        
-    columns: [
-          
-          {data: 'action', name: 'action',  'width' : '5%', orderable: true, 
-                searchable: true},
-          {data: 'quartertype', name: 'quartertype'},
-          {data: 'block_no', name: 'block_no'},
-          {data: 'unit_no', name: 'unit_no'},
-          {data: 'building_no', name: 'building_no'},
-          {data: 'floor', name: 'floor'},
-          {data: 'areaname', name: 'areaname'},
-         {data: 'name', name: 'name'},
-         ],
-         'columnDefs': [
-  {
-      "targets": 0, // your case first column
-      "className": "text-center",
-      "width": "4%"
- }
-],
- initComplete: function () {
+            url: "{{ route('vacant-list') }}",
+            type: 'POST',
+        },
+        columns: [
+            { data: 'action', name: 'action', width: '5%', orderable: true, searchable: true },
+            { data: 'quartertype', name: 'quartertype' },
+            { data: 'block_no', name: 'block_no' },
+            { data: 'unit_no', name: 'unit_no' },
+            { data: 'building_no', name: 'building_no' },
+            { data: 'floor', name: 'floor' },
+            { data: 'areaname', name: 'areaname' },
+            { data: 'name', name: 'name' },
+        ],
+        columnDefs: [
+            {
+                targets: 0,
+                className: "text-center",
+                width: "4%"
+            }
+        ],
+        initComplete: function () {
             this.api().columns().every(function () {
                 var column = this;
                 var input = document.createElement("input");
                 $(input).appendTo($(column.footer()).empty())
-                .on('change', function () {
-                    column.search($(this).val()).draw();
+                    .on('change', function () {
+                        column.search($(this).val()).draw();
+                    });
+            });
+        },
+        fnDrawCallback: function (oSettings) {
+            $(".vacantquarter").off('click').on('click', function () {
+                var categories = [];
+                $('input[name="quartertype[]"]:checked').each(function () {
+                    categories.push($(this).val());
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('vacant_quarter') }}",
+                    data: {
+                        category: categories,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        table.draw(true);
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
                 });
             });
-        } , 
-   fnDrawCallback: function (oSettings) { 
-      $( ".vacantquarter" ).click(function() {
-       categories = []; // reset 
-      $('input[name="quartertype[]"]:checked').each(function()
-        { 
-           categories.push($(this).val());
-        });
-        $.ajax({
-          'type': 'POST',
-            url:"{{ route('vacant_quarter') }}",
-            data: {
-              category:categories
-            },
-            dataType: 'json',
-            success: function (data) {
-              table.draw(true);
-            },
-            error: function (data) {
-                console.log(data);
-            }
-        });
-
-       
-    }); 
-        }        
+        }
     });
-  
- 
 </script>
 @endpush

@@ -18,7 +18,14 @@ class QuarterTypeController extends Controller
     }
     public function getList(Request $request)
     {
-        $data = QuarterType::select(['quartertype', 'bpay_from', 'bpay_to', 'rent_normal', 'rent_standard', 'rent_economical', 'rent_market', 'priority', 'officecode']);
+        $officecode=Session::get('officecode');
+       // dd($officecode);
+        if($officecode != 28083)
+        {
+            $officecode=28084;
+        }
+
+        $data = QuarterType::select(['quartertype', 'bpay_from', 'bpay_to', 'rent_normal', 'rent_standard', 'rent_economical', 'rent_market', 'priority', 'officecode'])->where('officecode',$officecode);
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
@@ -101,6 +108,7 @@ class QuarterTypeController extends Controller
     }
     public function storenew(Request $request)
     {
+        $officecode=Session::get('officecode');
         try {
             // Validate the incoming request data
             $validatedData = $request->validate([
@@ -118,7 +126,7 @@ class QuarterTypeController extends Controller
             ]);
            
             //check if already exists
-            $data = QuarterType::where('officecode', 28083)
+            $data = QuarterType::where('officecode', $officecode)
                 ->where('quartertype', $validatedData['quartertype'])->first();
                 // echo "<pre>";
                 // print_r($data);
@@ -128,7 +136,7 @@ class QuarterTypeController extends Controller
                 //dd($data);
             // Create a new QuarterType record
             $quarterType = QuarterType::create([
-                'officecode' =>'28083',
+                'officecode' =>$officecode,
                 'quartertype' => $validatedData['quartertype'],
                 'quartertype_g' => $validatedData['quartertype_g'],
                 'bpay_from' => $validatedData['bpay_from'],
