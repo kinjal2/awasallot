@@ -167,6 +167,10 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::post('admin-quarters-rejected-list', [QuartersController::class, 'admin_getRejectedQuarterList'])->name('request.rejectedquarter-list');
 
     // Other admin-specific routes
+    Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
+    Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
+    Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
+    Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
 });
 
 
@@ -204,10 +208,7 @@ Route::get('/generate-pdf/{request_id}/{revision_id}/{performa}', 'QuartersContr
 
 // DDO Routes
 Route::prefix('ddo')->group(function () {
-    Route::get('list', [DDOController::class, 'index'])->name('ddo.list');
-    Route::post('list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
-    Route::get('add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
-    Route::post('add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
+    
     
     // DDO Login Routes
     Route::get('login', [DdoUserLoginController::class, 'showLoginForm'])->name('ddo.login.form');

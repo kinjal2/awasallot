@@ -7,6 +7,8 @@ use App\DdoList;
 use App\DDOCode;
 use DB;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\Hash;
+
 
 
 class DDOController extends Controller
@@ -18,11 +20,13 @@ class DDOController extends Controller
     }
     public function index()
     {
+        
         $this->_viewContent['page_title'] = "DDO List";
         return view('ddo.index',$this->_viewContent);
     }
     public function show_ddolist(Request $request)
     {
+        
         try{
            // $query = DdoList::all();
 				$query = DDOCode::all();				   
@@ -79,7 +83,7 @@ class DDOController extends Controller
         // Store the data in your database
        // DdoList::Create(['ddo_office_name' => $request->ddoofficename, 'district_name' => $request->districtname, 'cardex_no' => $request->cardex_no,'ddo_registration_no' => $request->ddo_registration_no,'dto_registration_no'=>$request->dto_registration_no,'email' => $request->email,'mobile_no' => $request->mobile]);
 	   
-	   DDOCode::Create(['district' => $request->districtname,'ddo_code' => $request->ddocode,'cardex_no' => $request->cardex_no, 'ddo_reg_no' => $request->ddo_registration_no,'ddo_office' => $request->ddoofficename,'ddo_office_email_id' => $request->ddo_office_email_id]);
+	   DDOCode::Create(['district' => $request->districtname,'ddo_code' => $request->ddocode,'cardex_no' => $request->cardex_no, 'ddo_reg_no' => $request->ddo_registration_no,'ddo_office' => $request->ddoofficename,'ddo_office_email_id' => $request->ddo_office_email_id, 'password'=> Hash::make('Admin@123'),]);
 
 
             return response()->json(['success'=>'DDO saved successfully.']);

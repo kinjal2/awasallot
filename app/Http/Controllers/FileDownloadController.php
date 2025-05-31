@@ -65,7 +65,8 @@ class FileDownloadController extends Controller
                             ]);
 
                             // Set watermark
-                            $mpdf->SetWatermarkText($doc_id);
+                            $uid = explode('_', $doc_id)[0];
+                            $mpdf->SetWatermarkText($uid);
                             $mpdf->showWatermarkText = true;
 
                             // Import and apply watermark to each page

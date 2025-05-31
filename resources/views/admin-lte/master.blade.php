@@ -12,6 +12,7 @@
         <meta content="AwasAllot" name="description" />
         <meta content="AwasAllot" name="author" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
+          <!-- CSRF Token (Important for AJAX requests) -->
         @include(Config::get('app.theme').'.template.styles')
       
      </head>

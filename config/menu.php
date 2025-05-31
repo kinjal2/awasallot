@@ -197,7 +197,11 @@ return [
             'icon'=>'fa fa-user',
             'permission_route' => 'ddo.list',
             'route' => [
-                'ddo.list'
+                'ddo.list',
+                'ddo.showlist',
+                'ddo.addNewDDO',
+                'ddo.store'
+
             ],
             'link' => 'ddo.list',
           /*  'submenu' => ['Add' => [

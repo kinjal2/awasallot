@@ -74,59 +74,40 @@
         @push('page-ready-script')
         @endpush
         @push('footer-script')
-            <script type="text/javascript">
+            @push('footer-script')
+<script type="text/javascript">
+    // Setup CSRF token for all AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-                var table = $('#ddolist').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: "{{ route('ddo.showlist') }}",
-                        'type': 'POST',
-                    },
-                    columns: [{
-                            data: 'id'
-                        },
-                        {
-                            data: 'ddo_office'
-                        },
-                        {
-                            data: 'district'
-                        },
-                        {
-                            data: 'cardex_no'
-                        },
-                        {
-                            data: 'ddo_reg_no'
-                        },
-                        {
-                            data: 'ddo_office_email_id'
-                        },
+    $(document).ready(function () {
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-                       /* {
-                            data: 'dto_registration_no'
-                        },
-                        
-                        {
-                            data: 'mobile_no'
-                        },
-                        {
-                            data: 'created_at',
-                            render: function(data) {
-                             const date = new Date(data);
-                            return date.toISOString().split('T')[0]; // Outputs: "2024-09-24"
-                            }
-                        },
-                        {
-                            data: 'updated_at',
-                            render: function(data) {
-                             const date = new Date(data);
-                            return date.toISOString().split('T')[0]; // Outputs: "2024-09-24"
-                            }
-                        },*/
-                        {
-                            data: 'action'
-                        },
-                    ]
-                });
-            </script>
+        var table = $('#ddolist').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('ddo.showlist') }}",
+                type: 'POST',
+                data: function (d) {
+                    d._token = csrfToken; // Add CSRF token in payload
+                }
+            },
+            columns: [
+                { data: 'id' },
+                { data: 'ddo_office' },
+                { data: 'district' },
+                { data: 'cardex_no' },
+                { data: 'ddo_reg_no' },
+                { data: 'ddo_office_email_id' },
+                { data: 'action' }
+            ]
+        });
+    });
+</script>
+@endpush
+
         @endpush

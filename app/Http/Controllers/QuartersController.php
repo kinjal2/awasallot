@@ -562,9 +562,14 @@ class QuartersController extends Controller
                 'default_font' => 'shruti',  // Set the default font
             ]);
 
-            // Enable auto language and font settings
-            $mpdf->autoScriptToLang = true;
-            $mpdf->autoLangToFont = true;
+            // Convert uid to string to set as watermark
+           $uid = (string) $uid;
+            $mpdf->SetWatermarkText($uid);
+            $mpdf->showWatermarkText = true;
+
+
+            //  $mpdf->SetWatermarkText($uid);
+            // $mpdf->showWatermarkText = true;
 
             // Load HTML view and render it
             if($type==='a')
@@ -576,6 +581,8 @@ class QuartersController extends Controller
                 $html = view('request/applicationview_b', $data)->render();
             }
 
+        
+           
             // Write HTML to PDF
             $mpdf->WriteHTML($html);
 
