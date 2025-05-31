@@ -113,10 +113,10 @@
               <!-- /.card-header -->
               <div class="card-body">
               <ul class="notify-list">
-               @foreach($notification as $q1)
+               <!-- @foreach($notification as $q1)
               
                <li class="{{ $q1->type=='S' ? 'notification-success' :'notification-fail' }}">{{ $q1->message }}</li>
-                @endforeach
+                @endforeach -->
                     </ul>
               </div>
               <!-- /.card-body -->

@@ -286,7 +286,7 @@ return [
                     ],
                     'link' => 'user.quarter.higher',
                 ],
-                'Change Quarter Request' => [
+               /* 'Change Quarter Request' => [
                     'title' => 'menus.quarterchangerequest',
                     'icon' => 'far fa-circle',
                     'permission_route' => 'user.quarter.change',
@@ -294,7 +294,7 @@ return [
                         'quarterschange'
                     ],
                     'link' => 'user.quarter.change',
-                ],
+                ],*/
                 'Request History' => [
                     'title' => 'menus.Request History',
                     'icon' => 'nav-icon fa fa-history',
@@ -308,7 +308,7 @@ return [
             ]
         ],
        
-        'Quarter Allotment' => [
+       /* 'Quarter Allotment' => [
             'title' => 'menus.Quarter Allotment ',
             'icon' => 'fa fa-thumbs-up ',
             'permission_route' => 'userallotmentlist*',
@@ -316,7 +316,7 @@ return [
                 'userallotmentlist'
             ],
             'link' => 'userallotmentlist.index',
-        ],
+        ],*/
         'Logout' => [
             'title' => 'menus.Logout',
             'icon' => 'nav-icon fas fa-tachometer-alt',
@@ -340,7 +340,7 @@ return [
             'link' => 'ddo.dashboard',
             'submenu' => []
         ],
-        'Employees List' => [
+       /* 'Employees List' => [
             'title' => 'Employees List',
             'icon' => 'nav-icon fas fa-tachometer-alt',
             'permission_route' => 'ddo.emplist',
@@ -349,7 +349,7 @@ return [
             ],
             'link' => 'ddo.emp-list',
             'submenu' => []
-        ],
+        ],*/
        'Quarters' => [
             'title' => 'menus.Quarters',
             'icon' => 'icon-home',
@@ -371,7 +371,7 @@ return [
                     ],
                     'link' => 'ddo.quarters.normal',
                 ],
-					'Request List (Priority)' => [
+					/* 'Request List (Priority)' => [
                     'title' => 'menus.Request List (Priority)',
                     'icon' => 'fa fa-list',
                     'permission_route' => 'quarterlistpriority*',
@@ -379,7 +379,7 @@ return [
                         'quarterlistpriority'
                     ],
                     'link' => 'quarterlistpriority.index',
-                ],
+                ], */
                 'Rejected List' => [
                     'title' => 'menus.RejectedList',
                     'icon' => 'fa fa-list',
@@ -393,7 +393,7 @@ return [
 			]
         ],
         
-		 'Reports' => [
+		/* 'Reports' => [
             'title' => 'menus.Reports',
             'icon' => 'icon-home',
             'permission_route' => 'reports',
@@ -417,7 +417,7 @@ return [
                     'link' => 'waiting.list',
                 ],
 			]
-        ],
+        ], */
 
         'Logout' => [
             'title' => 'menus.Logout',

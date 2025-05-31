@@ -26,7 +26,7 @@ class CheckHostHeader
         // Check if the Host header is in the allowed hosts list
         if (!in_array($host, $allowedHosts)) {
              // Log the invalid attempt
-			// Log::error("Invalid Host header: $host");
+			Log::error("Invalid Host header: $host");
 
 			// Redirect to a 403 Forbidden error page
 			return response()->view('errors.403', [], 403);

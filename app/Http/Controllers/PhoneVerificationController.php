@@ -30,7 +30,7 @@ class PhoneVerificationController extends Controller
         }
 
        // dd($request->user());
-        if ($request->user()->hasVerifiedPhone()) {
+      /*  if ($request->user()->hasVerifiedPhone()) {
             User::updateOrCreate(
                 ['id' => $request->user()->id], // Attributes to find the user
                 [ // Attributes to update or create
@@ -39,7 +39,7 @@ class PhoneVerificationController extends Controller
                 ]
             );
             return redirect()->route('home');
-        }
+        }*/
        // dd($request->user());
         // Call the method to generate and send OTP to the user's phone
       // $this->callToVerify($request->user());
@@ -190,7 +190,7 @@ class PhoneVerificationController extends Controller
     {
         // Ensure that the user is authenticated
         if (!$user) {
-            Log::error('User not authenticated.');
+            // Log::error('User not authenticated.');
             return;
         }
 
@@ -246,7 +246,7 @@ class PhoneVerificationController extends Controller
         curl_close($ch);
 
         // Log or handle the response as needed
-        Log::info("OTP sent to $mobileNo: $message");
+        // Log::info("OTP sent to $mobileNo: $message");
     }
 
     /**
@@ -259,8 +259,8 @@ class PhoneVerificationController extends Controller
     {
         // Update the `phone_verified_at` timestamp to mark the phone as verified
         return $user->forceFill([
-            'phone_verified_at' => now(),
-            'email_verified_at' => now()
+            'phone_verified_at' => now()
+          
         ])->save();
     }
 }

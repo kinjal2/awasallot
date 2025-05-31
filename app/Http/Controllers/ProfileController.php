@@ -31,8 +31,27 @@ class ProfileController extends Controller
          $office_email_id = Auth::user()->office_email_id;
          $is_police_staff = Auth::user()->is_police_staff;
 	    $basic_pay=Auth::user()->basic_pay;
-        $this->_viewContent['users'] = User::find($uid); //
-        if( $basic_pay !='' && ( $office_email_id== '' ||$is_police_staff == '' ))
+       
+
+        $data= User::select('updated_to_new_awasallot_app')->where('id',$uid)->first(); // to check if old user has completed profile updation or not
+        if($data['updated_to_new_awasallot_app']==2)
+        {
+            return  redirect()->route('user.oldprofile')->with('failed','Update Old Profile to Proceed');
+        }
+  
+        $this->_viewContent['users'] = User::find($uid); 
+          $this->_viewContent['imageData'] = generateImage($uid);
+          //code to display disability certificate
+          $attacheddocument = DB::table('master.file_list')
+          ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
+          ->WHERE('uid', Session::get('Uid'))
+          ->WHERE('document_id', 9)
+          ->select('rev_id', 'doc_id', 'document_name')
+          ->first();
+
+          //dd($attacheddocument);
+          $this->_viewContent['attacheddocument'] = $attacheddocument;
+        if( $basic_pay !='' && ( $office_email_id== '' || $is_police_staff == '' ))
         {
              $subqueryA = Tquarterrequesta::selectRaw('COUNT(wno) as cnt_a')
             ->where('uid', $uid)
@@ -46,19 +65,10 @@ class ProfileController extends Controller
             ->selectRaw('COALESCE(SUM(cnt_a), 0) as wno')
             ->first();
             $this->_viewContent['wno'] =  $result->wno;
-            return view('user/userprofile_email_police',$this->_viewContent);
+            //return view('user/userprofile_email_police',$this->_viewContent);
+            return view('user/userprofile',$this->_viewContent);
         }
-        $this->_viewContent['imageData'] = generateImage($uid);
-          //code to display disability certificate
-          $attacheddocument = DB::table('master.file_list')
-          ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-          ->WHERE('uid', Session::get('Uid'))
-          ->WHERE('document_id', 9)
-          ->select('rev_id', 'doc_id', 'document_name')
-          ->first();
-
-          //dd($attacheddocument);
-          $this->_viewContent['attacheddocument'] = $attacheddocument;
+      
        return view('user/userprofile',$this->_viewContent);
     }
     public function updateprofiledetails(Request $request)
@@ -307,8 +317,17 @@ class ProfileController extends Controller
     {
         
         $basic_pay = Session::get('basic_pay');  //dd($basic_pay);
-        
+         $uid = Session::get('Uid');
         if ($basic_pay == null) {
+            $data= User::select('updated_to_new_awasallot_app')->where('id',$uid)->first(); // to check if old user has completed profile updation or not
+            if($data['updated_to_new_awasallot_app']==2)
+            {    
+                return  redirect()->route('user.oldprofile')->with('failed','Update Old Profile to Proceed');
+            }
+            else{
+             return redirect('profile')->with('failed', "Please complete your profile.");
+            }
+            return view('user/updateoldprofile');
             return redirect('profile')->with('failed', "Please complete your profile.");
         } 
         else
@@ -333,6 +352,14 @@ class ProfileController extends Controller
     public function updateOldProfileDetails()
     {
         return view('user/updateoldprofile');
+    }
+    public function viewuseroldprofile()
+    {
+            $uid=Session::get('Uid');
+            $this->_viewContent['users'] = User::find($uid); //
+            $this->_viewContent['imageData'] = generateImage($uid);
+            $this->_viewContent['page_title']= "Old Profile Verfiy and  Update";
+            return view('user/useroldprofile',$this->_viewContent);
     }
     public function saveOldProfileDetails(Request $request)
     {
@@ -369,41 +396,36 @@ class ProfileController extends Controller
                 'ddo_code' => $ddo_code,
                 'updated_to_new_awasallot_app' => 2,
                 ]);
-                $tquarterrequest_a = Tquarterrequesta::select('requestid')->where('uid', $uid)->first();
-                if($tquarterrequest_a)
-                {  
-                    $requestid=$tquarterrequest_a['requestid'];
-                   // dd($requestid);
-                  
-                    $updateA=Tquarterrequesta::where('requestid',$requestid)->update([
-                        'cardex_no' => $cardex_no,
-                        'ddo_code' => $ddo_code
-                    ]);
+                $tquarterrequest_a = Tquarterrequesta::select('requestid')->where('uid', $uid)->get();
+                if (!$tquarterrequest_a->isEmpty()) {
+                        foreach ($tquarterrequest_a as $row) {
+                        Tquarterrequesta::where('requestid', $row->requestid)->update([
+                            'cardex_no' => $cardex_no,
+                            'ddo_code' => $ddo_code
+                        ]);
+                    }
                 }
-                $tquarterrequest_b = Tquarterrequestb::select('requestid')->where('uid', $uid)->first();
-                if($tquarterrequest_b)
-                {  
-                    $requestid=$tquarterrequest_b['requestid'];
-                   // dd($requestid);
-                    $cardex_no=$request->input('cardex_no');
-                    $ddo_code=$request->input('ddo_code');
-                    $updateB=Tquarterrequestb::where('requestid',$requestid)->update([
-                        'cardex_no' => $cardex_no,
-                        'ddo_code' => $ddo_code
-                    ]);
+             
+                $tquarterrequest_b = Tquarterrequestb::select('requestid')->where('uid', $uid)->get();
+                if (!$tquarterrequest_b->isEmpty()) {
+                        foreach ($tquarterrequest_b as $row) {
+                        Tquarterrequestb::where('requestid', $row->requestid)->update([
+                            'cardex_no' => $cardex_no,
+                            'ddo_code' => $ddo_code
+                        ]);
+                    }
                 }
-                $tquarterrequest_c = Tquarterrequestc::select('requestid')->where('uid', $uid)->first();
-                if($tquarterrequest_c)
-                {  
-                    $requestid=$tquarterrequest_c['requestid'];
-                   // dd($requestid);
-                    $cardex_no=$request->input('cardex_no');
-                    $ddo_code=$request->input('ddo_code');
-                    $updateC=Tquarterrequestc::where('requestid',$requestid)->update([
-                        'cardex_no' => $cardex_no,
-                        'ddo_code' => $ddo_code
-                    ]);
+               
+                $tquarterrequest_c = Tquarterrequestc::select('requestid')->where('uid', $uid)->get();
+                if (!$tquarterrequest_c->isEmpty()) {
+                        foreach ($tquarterrequest_c as $row) {
+                        Tquarterrequestc::where('requestid', $row->requestid)->update([
+                            'cardex_no' => $cardex_no,
+                            'ddo_code' => $ddo_code
+                        ]);
+                    }
                 }
+                
                 if($resp)
                 {
                     return redirect()->route('user.dashboard.userdashboard')->with('success', ("Profile Updated Successfully"));

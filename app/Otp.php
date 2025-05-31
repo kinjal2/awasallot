@@ -62,7 +62,7 @@ class Otp extends Model
         curl_close($ch);
 
         // Log or handle the response as needed
-        \Log::info("OTP sent to $mobileNo: $message");
+        // Log::info("OTP sent to $mobileNo: $message");
     }
 
     /**

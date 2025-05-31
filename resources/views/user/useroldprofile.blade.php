@@ -113,8 +113,15 @@
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="maratial_status">{{ __('profile.maratial_status') }} </label>
-                        {{ Form::select('maratial_status',getMaratialstatus(),($users->maratial_status)?$users->maratial_status:'' ,['id'=>'maratial_status','class'=>'form-control select2']) }}
-                     </div>
+                        <select name="maratial_status" id="maratial_status" class="form-control select2">
+                           @foreach (getMaratialstatus() as $key => $label)
+                              <option value="{{ $key }}"
+                                    {{ (old('maratial_status', $users->maratial_status ?? '') == $key) ? 'selected' : '' }}>
+                                    {{ $label }}
+                              </option>
+                           @endforeach
+                        </select>                        
+                        </div>
                   </div>
                   <!-- <div class="row">
                   <div class="col-md-3">
@@ -137,13 +144,27 @@
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="is_dept_head"> {{ __('profile.is_head') }} <span class="error">*</span></label>
-                        {{ Form::select('is_dept_head',getYesNo(),($users->is_dept_head)?$users->is_dept_head:'',['id'=>'is_dept_head','class'=>'form-control select2']) }}
-                     </div>
+                        <select name="is_dept_head" id="is_dept_head" class="form-control select2">
+                           @foreach (getYesNo() as $key => $label)
+                              <option value="{{ $key }}"
+                                    {{ (old('is_dept_head', $users->is_dept_head ?? '') == $key) ? 'selected' : '' }}>
+                                    {{ $label }}
+                              </option>
+                           @endforeach
+                        </select>                    
+                      </div>
                   </div>
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="is_transferable"> {{ __('profile.is_transfer') }} <span class="error">*</span></label>
-                        {{ Form::select('is_transferable',getYesNo(),($users->is_transferable)?$users->is_transferable:'',['id'=>'is_transferable','class'=>'form-control select2']) }}
+                        <select name="is_transferable" id="is_transferable" class="form-control select2">
+                           @foreach (getYesNo() as $key => $label)
+                              <option value="{{ $key }}"
+                                    {{ (old('is_transferable', $users->is_transferable ?? '') == $key) ? 'selected' : '' }}>
+                                    {{ $label }}
+                              </option>
+                           @endforeach
+                        </select>                       
                      </div>
                   </div>
                </div>
@@ -157,15 +178,31 @@
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="is_police_staff"> {{ __('profile.is_police') }} <span class="error">*</span></label>
-                        {{ Form::select('is_police_staff',['' => 'Select An Option'] + getYesNo(),($users->is_police_staff)?$users->is_police_staff:'',['id'=>'is_police_staff','class'=>'form-control select2']) }}
-                     </div>
+                        <select name="is_police_staff" id="is_police_staff" class="form-control select2">
+                           <option value="">{{ __('Select An Option') }}</option>
+                           @foreach (getYesNo() as $key => $label)
+                              <option value="{{ $key }}"
+                                    {{ (old('is_police_staff', $users->is_police_staff ?? '') == $key) ? 'selected' : '' }}>
+                                    {{ $label }}
+                              </option>
+                           @endforeach
+                        </select>                       
+                         </div>
                      <label id="is_police_staff-error" class="error" for="is_police_staff"></label>
                   </div>
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="is_fix_pay_staff"> {{ __('profile.is_fix_pay') }} <span class="error">*</span></label>
-                        {{ Form::select('is_fix_pay_staff',['' => 'Select An Option'] +getYesNo(),($users->is_fix_pay_staff)?$users->is_fix_pay_staff:'',['id'=>'is_fix_pay_staff','class'=>'form-control select2']) }}
-                     </div>
+                        <select name="is_fix_pay_staff" id="is_fix_pay_staff" class="form-control select2">
+                           <option value="">{{ __('Select An Option') }}</option>
+                           @foreach (getYesNo() as $key => $label)
+                              <option value="{{ $key }}"
+                                    {{ (old('is_fix_pay_staff', $users->is_fix_pay_staff ?? '') == $key) ? 'selected' : '' }}>
+                                    {{ $label }}
+                              </option>
+                           @endforeach 
+                        </select>                          
+                          </div>
                      <label id="is_fix_pay_staff-error" class="error" for="is_fix_pay_staff"></label>
                   </div>
 
@@ -194,9 +231,14 @@
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="grade_pay"> {{ __('profile.matrix_pay') }} <span class="error">*</span></label>
-
-                        {{ Form::select('grade_pay', getPayScale(), $users->grade_pay ?: '', ['id' => 'grade_pay', 'class' => 'form-control select2']) }}
-
+                        <select name="grade_pay" id="grade_pay" class="form-control select2">
+                           @foreach (getPayScale() as $key => $label)
+                              <option value="{{ $key }}"
+                                    {{ (old('grade_pay', $users->grade_pay ?? '') == $key) ? 'selected' : '' }}>
+                                    {{ $label }}
+                              </option>
+                           @endforeach
+                        </select>
                      </div>
                   </div>
                   <!-- Container to display salary slab details -->
@@ -211,9 +253,14 @@
                   <!-- <div class="col-md-3">
                      <div class="form-group">
                         <label for="salary_slab"> {{ __('profile.salary_slab') }} <span class="error">*</span></label>
-
-                        {{ Form::select('salary_slab', getSalarySlab(), $users->salary_slab ?: '', ['id' => 'salary_slab', 'class' => 'form-control select2']) }}
-
+                     <select name="salary_slab" id="salary_slab" class="form-control select2">
+                        @foreach (getSalarySlab() as $key => $label)
+                           <option value="{{ $key }}"
+                                 {{ (old('salary_slab', $users->salary_slab ?? '') == $key) ? 'selected' : '' }}>
+                                 {{ $label }}
+                           </option>
+                        @endforeach
+                     </select>                           
                      </div>
                   </div> -->
 
@@ -253,14 +300,30 @@
                      <div class="col-md-3">
                         <div class="form-group">
                            <label for="is_judge"> {{ __('profile.is_judge') }} <span class="error">*</span></label>
-                           {{ Form::select('is_judge',['' => 'Select An Option'] + getYesNo(),($users->is_judge)?$users->is_judge:'',['id'=>'is_judge','class'=>'form-control select2']) }}
-                        </div>
+                        <select name="is_judge" id="is_judge" class="form-control select2">
+                           <option value="">{{ __('Select An Option') }}</option>
+                           @foreach (getYesNo() as $key => $label)
+                              <option value="{{ $key }}"
+                                    {{ (old('is_judge', $users->is_judge ?? '') == $key) ? 'selected' : '' }}>
+                                    {{ $label }}
+                              </option>
+                           @endforeach
+                        </select>                       
+                         </div>
                      </div>
                      <div class="col-md-3">
                         <div class="form-group">
                            <label for="is_phy_dis"> {{ __('profile.is_phy_dis') }} <span class="error">*</span></label>
-                           {{ Form::select('is_phy_dis',['' => 'Select An Option'] +  getYesNo(),($users->is_phy_dis)?$users->is_phy_dis:'',['id'=>'is_phy_dis','class'=>'form-control select2']) }}
-                        </div>
+                           <select name="is_phy_dis" id="is_phy_dis" class="form-control select2">
+                              <option value="">{{ __('Select An Option') }}</option>
+                              @foreach (getYesNo() as $key => $label)
+                                 <option value="{{ $key }}"
+                                       {{ (old('is_phy_dis', $users->is_phy_dis ?? '') == $key) ? 'selected' : '' }}>
+                                       {{ $label }}
+                                 </option>
+                              @endforeach
+                           </select>                          
+                          </div>
                      </div>
                      <div class="col-md-3" id='dis_per_yes' style="display:none">
                         <div class="form-group">
@@ -390,18 +453,24 @@
 }, "Invalid email. Email must end with @gujarat.gov.in.");
 
    // Add custom validation method for salary range - 8-1-2025
-   $.validator.addMethod("salaryRange", function(value, element, params) {
-               const [minSalary, maxSalary] = params.split(" - ");
-                
-               if(maxSalary=='above')
-               {
-                  return this.optional(element) || (value >= minSalary);
-               }
-               else
-               {
-                  return this.optional(element) || (value >= minSalary && value <= maxSalary);
-               }
-            }, "Gross salary must be within the salary slab range.");
+   // Custom validator for salary range
+      $.validator.addMethod("salaryRange", function(value, element) {
+         const slab = $("#salary_slab").val(); // e.g. "25500-81100" or "25500-above"
+
+         if (!slab || !value) return true; // Skip if empty
+
+         const parts = slab.split("-");
+         const minSalary = parseInt(parts[0], 10);
+         const maxPart = parts[1].trim().toLowerCase();
+
+         if (maxPart === 'above') {
+            return value >= minSalary;
+         } else {
+            const maxSalary = parseInt(maxPart, 10);
+            return value >= minSalary && value <= maxSalary;
+         }
+      }, "Basic pay must be within the salary slab range.");
+
    // Add custom validation method for basic pay (must be less than actual salary)
    $.validator.addMethod("lessThanActualSalary", function(value, element, params) {
                 const actualSalary = parseFloat($("#actual_salary").val());
@@ -449,15 +518,13 @@
          "actual_salary": {
             "required": true,
             "number": true,
-            "salaryRange": function() {
-                            // Get the value of the salary slab field dynamically
-                            return $("#salary_slab").val(); 
-                        }
+           
          },
          "basic_pay": {
             "required": true,
             "number": true,
-            "lessThanActualSalary": true // Ensure basic pay is less than actual salary
+            "lessThanActualSalary": true, // Ensure basic pay is less than actual salary
+             salaryRange: true // No need to pass param dynamically now
          },
          "personal_salary": {
             "required": true,

@@ -39,14 +39,14 @@ class LoginController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Log the validation errors
 
-            Log::error('Validation errors occurred: ', $e->errors());
+           // Log::error('Validation errors occurred:', ['context' => $e->errors()]);
 
             // Optionally, return the error messages to the user
             return back()->withErrors($e->errors());
         }
 
         // Log the request data if validation passes
-        Log::info('Request Data:', $request->all());
+        // Log::info('Request Data:', ['context' => $request->all()]);
 
         // Check if the user exists using either mobile number or email
         $user = User::where('contact_no', $request->identifier)
@@ -54,7 +54,7 @@ class LoginController extends Controller
                     ->first();
 
         // Log user data
-        Log::info('User found:', $user ? $user->toArray() : 'No user found');
+        // Log::info('User found:', $user ? $user->toArray() : 'No user found');
 
         // If no user is found, return with error
         if (!$user) {
@@ -119,7 +119,7 @@ class LoginController extends Controller
     {
         // Send the OTP to the user's email
         \Mail::to($email)->send(new \App\Mail\OtpMail($otp));
-        Log::info("OTP sent to email: $email");
+        // Log::info("OTP sent to email: $email");
     }
 
     // Send OTP to the user's phone number (SMS gateway)
@@ -134,7 +134,7 @@ class LoginController extends Controller
         curl_exec($ch);
         curl_close($ch);
 
-        Log::info("OTP sent to phone: $mobileNo");
+        // Log::info("OTP sent to phone: $mobileNo");
     }
 
     // Handle user logout

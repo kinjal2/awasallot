@@ -502,7 +502,14 @@
                                   
                                         <!-- <div class="form-group">
                                             <label for="Name">Status</label>
-                                            {{ Form::select('status', [null => __('common.select')] + getddoupdatestatus(), '', ['id' => 'status', 'class' => 'form-control select2']) }}
+                                           <x-select 
+                                            name="status"
+                                            :options="['' => __('common.select')] + getddoupdatestatus()"
+                                            :selected="''"
+                                            class="form-control select2"
+                                            id="status"
+                                        />
+
 
                                         </div> -->
                                         <!-- <div class="col-12 yesno_status" >

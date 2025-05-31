@@ -39,8 +39,10 @@ class ReportsController extends Controller
     public function waitinglist()
     {
         $this->_viewContent['page_title'] = "Waiting List";
+        $officecode = Session::get('officecode');
       //  $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->select(['quartertype'])->orderBy('priority')->get();
-        $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->orderBy('priority')->pluck('quartertype','quartertype')->all();
+       // $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->orderBy('priority')->pluck('quartertype','quartertype')->all();
+        $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->where('officecode',$officecode)->orderBy('priority')->pluck('quartertype','quartertype')->all();
 
         return view('report/waitinglist',$this->_viewContent);
     }
@@ -48,7 +50,7 @@ class ReportsController extends Controller
     {
         $quartertype = $request->quartertype;
 $officecode = Session::get('officecode');
-
+//dd($officecode);
 // First query for "New" request type
 $first = Tquarterrequesta::select([
     DB::raw("'New' as requesttype"),
@@ -81,8 +83,8 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
     ->where(function ($query) use ($officecode, $quartertype) {
         $query->where('is_accepted', '=', 1)
             ->where('is_allotted', '=', 0)
-            ->where('is_varified', '=', 1)
-            ->where('officecode', '=', $officecode);
+            ->where('is_varified', '=', 1);
+          //  ->where('officecode', '=', $officecode);
         
         // Add whereIn only if $quartertype is not empty
         if (!empty($quartertype)) {
@@ -416,27 +418,45 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
     }
     public function getdocumentdata(request $request)
     {
+        $performa='';
+        if($request->type=='New')
+        {
+            $performa='a';
+        }
+        else
+        {
+            $performa='b';
+        }
 
         $first = Filelist::select(['rev_id','doc_id','document_name'])
-        ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.Filelist.document_id')
+        ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
         ->Where('uid', '=', $request->uid)
         ->Where('request_id', '=', $request->requestid)
-        ->Where('master.Filelist.performa', '=', $request->type)
+        ->Where('master.file_list.performa', '=', $performa)
         ->Where('rivision_id', '=', $request->rivision_id)
         ->get();
-
+        //dd($first);
         $html = '<table border="1" width="100%" class="table"><thead><tr><th>Document Name</th><tr></thead>';
-        foreach ($first as $f){
+        foreach ($first as $f) {
+                $downloadUrl = route('download_file', ['filename' => $f->doc_id]);
 
-
-            $html .= '<tr>
-            <td><a href="' . \URL::action('ReportsController@download') . "/" . $f->doc_id . "/" . $f->rev_id . '" target="_blank"  doc_id='.$f->doc_id.' rev_id='.$f->rev_id.'>'.$f->document_name.'</a></td></tr>';
-        }
+                $html .= '<tr>
+                    <td>
+                        <a href="' . $downloadUrl . '" 
+                        target="_blank" 
+                        doc_id="' . htmlspecialchars($f->doc_id) . '" 
+                        rev_id="' . htmlspecialchars($f->rev_id) . '">
+                            ' . htmlspecialchars($f->document_name) . '
+                        </a>
+                    </td>
+                </tr>';
+            }
         $html .= '</table>';
         echo $html;
 
     }
     public function download(request $request){
+      //  dd($request);
      // echo   Request::segment(1);
     }
     public function html() {

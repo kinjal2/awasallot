@@ -46,7 +46,8 @@
                         <li class="flexlist-item"><span>{{ __('Department/Office Name') }} </span> : {{ $name }}</li>
                         <li class="flexlist-item"><span>{{ __('Designation') }} </span> : {{ $designation }}</li>
                         <li class="flexlist-item"><span>{{ __('Department/Office Name') }} </span> : {{ $officename }}</li>
-                        <li class="flexlist-item"><span>{{ __('Is Department Head?') }} </span> : {{ Form::select('is_dept_head', getYesNo(), $users->is_dept_head ?? '', ['id' => 'is_dept_head', 'class' => ' ', 'disabled' => 'disabled']) }} </span></li>   
+                        <li class="flexlist-item"><span>{{ __('Is Department Head?') }} </span> : <x-select name="is_dept_head" :options="getYesNo()" :selected="$users->is_dept_head ?? ''" id="is_dept_head" class="" disabled="disabled" />
+ </span></li>   
                         <li class="flexlist-item"><span>{{ __('Original Appointment Date in Government') }} </span> : {{ $appointment_date }}</li>
                         <li class="flexlist-item"><span>{{ __('Native Address') }} </span> : {{ $address }}</li>
                         <li class="flexlist-item"><span>{{ __('Retirement Date') }} </span> : {{ $retirement_date }}</li>
@@ -87,7 +88,8 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="Name">ક્વાર્ટર કેટેગરી</label>
-                                {{ Form::select('quartertype', [null => __('common.select')] + getBasicPay(), '', ['id' => 'quartertype', 'class' => 'form-control select2']) }}
+                                <x-select name="quartertype" :options="[null => __('common.select')] + getBasicPay()" :selected="old('quartertype', '')" id="quartertype" class="form-control select2" />
+
                             </div>
                         </div>
                         

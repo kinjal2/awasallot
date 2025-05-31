@@ -676,14 +676,16 @@ if(!function_exists('getTaluka')) {
 if(!function_exists('qCategoryAreaMapping')) {
     function qCategoryAreaMapping($qtype)
     {
+       // dd($qtype);
         $results = MQtCategoryAreaMapping::with('area') // Eager load the 'area' relationship
         ->where('quartertype', $qtype) // Filter by 'quartertype'
         ->orderBy('id', 'asc') // Order by 'id' in ascending order
         ->get(); // Execute the query and get the results
         $araedetails = [];
-
+       // dd($results);
         foreach ($results as $q) 
         {
+           
            $araedetails[$q->areacode] = $q->area->areaname;
         }
         $araedetails['-1'] = 'All of Any';

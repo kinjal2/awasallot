@@ -42,7 +42,15 @@
 			<div class="col-4">
 				<div class="form-group">
 				<label for="quartertype">Quarter Type</label>
-  {{ Form::select('quartertype[]',$quartertype ,'',['id'=>'quartertype','class'=>'form-control select2','multiple'=>"multiple"]) }}
+        <x-select 
+          name="quartertype" 
+          :options="$quartertype" 
+          :selected="[]" 
+          id="quartertype" 
+          class="form-control select2" 
+          multiple="true" 
+      />
+
 	</div>
   </div>
   <div class="col-4" style="padding-top: 30px;">

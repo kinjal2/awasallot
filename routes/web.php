@@ -78,6 +78,8 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::get('updateoldprofile', [ 'as' => 'user.update_old_profile_details', 'uses' => 'ProfileController@updateOldProfileDetails']);
     Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOldProfileDetails']);
     Route::post('updateolduserprofiledetails',[ProfileController::class ,'updateolduserprofiledetails'])->name('updateolduserprofiledetails');
+    
+    Route::get('useroldprofile', [ProfileController::class, 'viewuseroldprofile'])->name('user.oldprofile');
 
     Route::post('gettalukasbydistrict', [ProfileController::class, 'getTalukasByDistrict'])->name('getTalukasByDistrict');
 
@@ -233,10 +235,10 @@ Route::prefix('ddo')->group(function () {
         Route::post('/ddo-editquarter_a_submitdocument', [DDOUserController::class, 'submitdocument_a'])->name('ddo.editquarter.a.submitdocument')->middleware('auth:ddo_users');
         Route::post('/ddo-editquarter_b_submitdocument', [DDOUserController::class, 'submitdocument_b'])->name('ddo.editquarter.b.submitdocument')->middleware('auth:ddo_users');
         Route::get('/ddo-viewprofile/{uid}', [DDOUserController::class, 'getuserprofile'])->name('ddo.viewuserprofile')->middleware('auth:ddo_users');
-Route::post('/user_quarter_application',[DDOUserController::class,'getUserQuarterApplication'])->name('ddo.getUserQuarterApplication')->middleware('auth:ddo_users');
-Route::get('quarters-rejected', [DDOUserController::class, 'quartersRejected'])->name('ddo.request.rejected');
-Route::post('quarters-rejected-list', [DDOUserController::class, 'getRejectedQuarterList'])->name('ddo-rejectedquarter-list');
-Route::post('getDDOremarks', ['as' => 'quarter.list.getDDOremarks', 'uses' => 'DDOUserController@getDDOremarks']);
+        Route::post('/user_quarter_application',[DDOUserController::class,'getUserQuarterApplication'])->name('ddo.getUserQuarterApplication')->middleware('auth:ddo_users');
+        Route::get('quarters-rejected', [DDOUserController::class, 'quartersRejected'])->name('ddo.request.rejected');
+        Route::post('quarters-rejected-list', [DDOUserController::class, 'getRejectedQuarterList'])->name('ddo-rejectedquarter-list');
+        Route::post('getDDOremarks', ['as' => 'quarter.list.getDDOremarks', 'uses' => 'DDOUserController@getDDOremarks']);
 
 
 

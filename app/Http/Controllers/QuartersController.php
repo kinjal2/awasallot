@@ -49,8 +49,31 @@ class QuartersController extends Controller
      */
     public function index()
     {
-        $this->_viewContent['page_title'] = "Quarter History";
-        return view('user/historyQuarter', $this->_viewContent);
+        
+
+        $uid = Session::get('Uid');
+
+        $basic_pay = Session::get('basic_pay');
+        $q_officecode = Session::get('q_officecode');
+        
+       
+         $basic_pay = Session::get('basic_pay');  //dd($basic_pay);
+         $data= User::select('updated_to_new_awasallot_app')->where('id',$uid)->first(); // to check if old user has completed profile updation or not
+        if ($basic_pay == null) {
+           
+            if($data['updated_to_new_awasallot_app']==2)
+            {
+               return  redirect()->route('user.oldprofile')->with('failed','Update Old Profile to Proceed');
+            }
+            else{
+             return redirect('profile')->with('failed', "Please complete your profile.");
+            }
+        } 
+        else
+        {
+            $this->_viewContent['page_title'] = "Quarter History";
+            return view('user/historyQuarter', $this->_viewContent);
+        }
     }
     public function requestnewquarter()
     {
@@ -67,7 +90,15 @@ class QuartersController extends Controller
         $ddo_code = session('ddo_code');
         //dd($officecode,$cardex_no,$ddo_code,$basic_pay,$q_officecode);
         if ($basic_pay == null) {
-            return redirect('profile')->with('failed', "Please complete your profile.");
+
+             $data= User::select('updated_to_new_awasallot_app')->where('id',$uid)->first(); // to check if old user has completed profile updation or not
+             if($data['updated_to_new_awasallot_app']==2)
+            {
+                return  redirect()->route('user.oldprofile')->with('failed','Update Old Profile to Proceed');
+            }
+            else{
+                return redirect('profile')->with('failed', "Please complete your profile.");
+            }
             
         } else if ($basic_pay != null && $cardex_no == null && $ddo_code == null && $officecode == null) //21-01-2025
         {
@@ -109,7 +140,14 @@ class QuartersController extends Controller
         $ddo_code = session('ddo_code');
         //dd($officecode,$cardex_no,$ddo_code);
         if ($basic_pay == null) {
-            return redirect('profile')->with('failed', "Please complete your profile.");
+             $data= User::select('updated_to_new_awasallot_app')->where('id',$uid)->first(); // to check if old user has completed profile updation or not
+             if($data['updated_to_new_awasallot_app']==2)
+            {
+                return  redirect()->route('user.oldprofile')->with('failed','Update Old Profile to Proceed');
+            }
+            else{
+                return redirect('profile')->with('failed', "Please complete your profile.");
+            }
         } else if ($basic_pay != null && $cardex_no == null && $ddo_code == null && $officecode == null) //21-01-2025
         {
 
@@ -310,10 +348,12 @@ class QuartersController extends Controller
 
         //query only for gandhinagar district
         //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
-
-        //query for office for gandhinagara and other district
+        
+       
+             //query for office for gandhinagara and other district
         $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
         //dd($quarterselect);
+
         DB::enableQueryLog();
         $quarterlist = Tquarterrequestc::select([
             DB::raw("'c' as type"),
@@ -410,7 +450,7 @@ class QuartersController extends Controller
 
         //dd($queries);
         // You can also log them to Laravel's log file
-        //\Log::info($queries);
+        //\// Log::info($queries);
 
         return Datatables::of($quarterlist3)
             ->addIndexColumn()
@@ -447,7 +487,7 @@ class QuartersController extends Controller
 
                 // Conditional check for the upload button
                 //  if ($row->inward_no == '' &&  $row->is_ddo_varified==2) { // Replace with your own condition
-                if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2) || ($row->inward_no != '' &&  $row->is_varified == 2)) {
+               /* if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2) || ($row->inward_no != '' &&  $row->is_varified == 2)) {*/
                     $btn1 .= '<a href="' . \URL::action('QuartersController@uploaddocument') .
                         "?r=" . base64_encode($row->requestid) .
                         "&type=" . base64_encode($row->type) .
@@ -455,7 +495,7 @@ class QuartersController extends Controller
                         '" class="btn btn-primary btn-sm">
                 <i class="fa fa-upload" aria-hidden="true" alt="Upload Documents"></i>
             </a>';
-                }
+                /* } */
 
                 // Return the generated buttons
                 return $btn1;
@@ -464,6 +504,7 @@ class QuartersController extends Controller
             ->rawColumns(['action'])
 
             ->make(true);
+        
     }
     public function generate_pdf($request_id, $revision_id, $performa)
 
@@ -629,8 +670,12 @@ class QuartersController extends Controller
         //dd($ddo_remarks);
       
         $this->_viewContent['page_title'] = "Upload Document";
-        $this->_viewContent['document_list'] = $document_list;
-        $this->_viewContent['attacheddocument'] = $attacheddocument;
+            $this->_viewContent['document_list'] = "";
+        if(!$admin_remarks['is_varified']==1){
+            $this->_viewContent['document_list'] = $document_list;
+         }
+            $this->_viewContent['attacheddocument'] = $attacheddocument;
+       
         $this->_viewContent['request_id'] = $request_id;
         $this->_viewContent['rev'] = $rev;
         $this->_viewContent['type'] = $type;
@@ -656,7 +701,7 @@ class QuartersController extends Controller
             // Get document details from CouchDB
             $doc = $extended->getDocument(DATABASE, $request->id);
             $documentData = json_decode($doc, true);
-            //\Log::debug('Raw Document Response: ' . $doc);
+            //\// Log::debug('Raw Document Response: ' . $doc);
             // Access specific fields from the document data
             $id = $documentData['_id'];
             $rev = $documentData['_rev'];
@@ -2391,7 +2436,7 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
      ]);
         } catch (Exception $e) {
             dd($e->getMessage());
-            \Log::error('Error fetching reconciliation list: ' . $e->getMessage());
+            // Log::error('Error fetching reconciliation list: ' . $e->getMessage());
             return response()->json(['error' => 'Error fetching data.'], 500);
         }
     }

@@ -21,6 +21,7 @@
         <!-- /.content-header -->
         <div class="col-md-12">
             <!-- general form elements -->
+             @if($document_list != "")
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">Upload Document</h3>
@@ -47,7 +48,17 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="maratial_status">Document Type&nbsp;<span class="text-danger">*</span></label>
-                                    {{ Form::select('document_type', $document_list, null, ['id' => 'document_type', 'class' => 'form-control select2']) }}
+                                 <select name="document_type" id="document_type" class="form-control select2">
+                                    
+                                    @foreach($document_list as $key => $value)
+                                        <option value="{{ $key }}" {{ old('document_type', null) == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                  
+                                </select>
+
+
                                 </div>
                             </div>
                             <div class="col-4">
@@ -77,7 +88,9 @@
                         </div>
                     </div>
                 </form>
+                
             </div>
+            @endif
             <!-- /.card -->
             @if(isset($ddo_remarks_status))
                     @if($ddo_remarks_status['is_ddo_varified']==2)
@@ -116,7 +129,9 @@
                                     <tr>
                                         <th>Document Type</th>
                                         <th>File</th>
+                                        @if($document_list != "")
                                         <th>Delete</th>
+                                        @endif
 
                                     </tr>
                                 </thead>
@@ -129,13 +144,14 @@
                                                     data-id="{{ $a->doc_id }}">
                                                     <img src="{{ asset('/images/pdf.png') }}" width="30" height="30">
                                                 </a> </td>
-
+                                              @if($document_list != "")
                                             <td>
                                                 <a href="javascript:;" class="btn btn btn-danger delete_doc"
                                                     delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}"><i
                                                         class="fa fa-trash" aria-hidden="true"></i></a>
 
                                             </td>
+                                            @endif
                                         </tr>
                                     @endforeach
 
@@ -147,12 +163,13 @@
                                 <input type="hidden" name="type" value="{{ $type }} " />
                                 <input type="hidden" name="rev" value="{{ $rev }}" />
                                 <input type="hidden" name="dgr" value="{{ isset($dgr) ? $dgr : '' }}" />
-
+                                @if($document_list != "")
                                 <table width="100%">
                                     <tr>
                                         <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit</button></td>
                                     </tr>
                                 </table>
+                                @endif
                             </form>
                         </div>
 
@@ -288,12 +305,19 @@
                 image: {
                     required: true,
                     extension: "pdf"
+                },
+                 document_type: {
+                    required: true
                 }
             },
             messages: {
                 image: {
                     required: "Select File to Upload.",
                     extension: "Only PDF files are allowed."
+                },
+                document_type: {
+                    required: "Select Document Type"
+                   
                 }
             },
             submitHandler: function(form) {

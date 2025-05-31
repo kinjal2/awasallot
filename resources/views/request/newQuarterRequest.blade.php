@@ -61,7 +61,15 @@
 			  </div>
 			  
 			  <div class="col-6 col-sm-6 col-md-6">
-              {{ Form::select('quartertype',[null=>__('common.select')] + getBasicPay(),'',['id'=>'quartertype','class'=>'form-control ','style' => 'width:50%;']) }}                                       
+              <x-select 
+              name="quartertype"
+              :options="['null' => __('common.select')] + getBasicPay()"
+              :selected="old('quartertype', '')"
+              class="form-control"
+              style="width: 50%;"
+              id="quartertype"
+          />
+
 	
 			   
 			  <br><hr>
@@ -176,13 +184,29 @@
 				<div class="place">
                     
 					<p class="text-muted" style="line-height:35px;"><b>વસવાટ ની કેટેગરી</b> 
-						   {{ Form::select('prv_quarter_type',[null=>__('common.select')] + getBasicPay(),'',['id'=>'prv_quarter_type','class'=>'','style' => 'width:50%;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #495057;height: 32px;']) }}                                       
+						  <x-select 
+                name="prv_quarter_type"
+                :options="['null' => __('common.select')] + getBasicPay()"
+                :selected="old('prv_quarter_type', '')"
+                :class="''"
+                :style="'width:50%;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #495057;height: 32px;'"
+                id="prv_quarter_type"
+            />
+
 	
 					</p>
 					<hr>
 					 <p class="text-muted" style="line-height:35px;">
 					 <b>મકાન મળતાં ઉપર દર્શાવેલ મકાન સરકારને તુરત પાછું આપવામાં આવશે કે કેમ?</b>&nbsp;&nbsp;
-					 	{{ Form::select('prv_handover',getYesNo(),'',['id'=>'prv_handover','class'=>'','style'=>'width:21%;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #495057;height: 32px;']) }}                                       
+					 	<x-select 
+              name="prv_handover"
+              :options="getYesNo()"
+              :selected="old('prv_handover', '')"
+              :class="''"
+              :style="'width:21%;font-size: 1rem;font-weight: 400;line-height: 1.5;color: #495057;height: 32px;'"
+              id="prv_handover"
+          />
+
 		
 					</p>
 					<hr>
@@ -376,7 +400,15 @@
 			  
 			  <div class="col-6 col-sm-6 col-md-6">
 				<p class="text-muted"><b>જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે? </b><br><br>
-				 	{{ Form::select('downgrade_allotment',getYesNo(),'',['id'=>'downgrade_allotment','class'=>'form-control','style'=>'width:30%;']) }}                                       
+				 	<x-select 
+            name="downgrade_allotment"
+            :options="getYesNo()"
+            :selected="old('downgrade_allotment', '')"
+            class="form-control"
+            :style="'width:30%;'"
+            id="downgrade_allotment"
+        />
+                                     
 					
 				</p>
 				<hr>

@@ -31,8 +31,15 @@
                                     <label for="district"
                                         class="col-md-4 col-form-label text-md-right">District&nbsp;<span
                                             class="text-danger">*</span></label>
-                                    {{ Form::select('district',[null=>__('common.select')] + getDistricts(),"",['id'=>'district','class'=>' custon-control form-control  select2']) }}
-                                    @error('district')
+                                        <select name="district" id="district" class="custon-control form-control select2">
+                                            <option value="">{{ __('common.select') }}</option>
+                                            @foreach (getDistricts() as $key => $district)
+                                                <option value="{{ $key }}" {{ old('district', '') == $key ? 'selected' : '' }}>
+                                                    {{ $district }}
+                                                </option>
+                                            @endforeach
+                                        </select>                                            
+                                      @error('district')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -45,10 +52,14 @@
                                 <div class="form-group">
                                     <label for="taluka" class="col-md-4 col-form-label text-md-right">Taluka&nbsp;<span
                                             class="text-danger">*</span></label>
-                                    {{ Form::select('taluka',[null=>__('common.select')] + getTaluka(),"",['id'=>'taluka','class'=>' custon-control form-control  select2']) }}
-
-
-
+                                        <select name="taluka" id="taluka" class="custon-control form-control select2">
+                                            <option value="">{{ __('common.select') }}</option>
+                                            @foreach (getTaluka() as $key => $taluka)
+                                                <option value="{{ $key }}" {{ old('taluka', '') == $key ? 'selected' : '' }}>
+                                                    {{ $taluka }}
+                                                </option>
+                                            @endforeach
+                                        </select>                                    
                                     @error('taluka')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -79,7 +90,9 @@
                                     <label for="ddo_code"
                                         class="col-md-4 col-form-label text-md-right">{{ __('DDO Code') }}</label>
                                     @if(empty($ddo_code))
-                                    {{ Form::select('ddo_code',[null=>__('common.select')] ,"", ['id'=>'ddo_code','class'=>' custon-control form-control  select2']) }}
+                                    <select name="ddo_code" id="ddo_code" class="custon-control form-control select2">
+                                        <option value="">{{ __('common.select') }}</option>
+                                    </select>                                  
                                     @error('ddo_code')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

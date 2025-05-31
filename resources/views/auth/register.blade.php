@@ -126,9 +126,14 @@
                         </div> -->
                           <div class="col-6 form-group relative mb-3">
                                 <label for="district" class="col-md-4 col-form-label text-md-right">District&nbsp;<span class="text-danger">*</span></label>
-                                {{ Form::select('district',[null=>__('common.select')] + getDistricts(),"",['id'=>'district','class'=>' custon-control form-control  select2']) }}
-
-
+                                <select name="district" id="district" class="custon-control form-control select2">
+                                    <option value="">{{ __('common.select') }}</option>
+                                    @foreach (getDistricts() as $key => $value)
+                                        <option value="{{ $key }}" {{ old('district') == $key ? 'selected' : '' }}>
+                                            {{ $value }}
+                                        </option>
+                                    @endforeach
+                                </select>
                                 @error('district')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -139,7 +144,13 @@
 
                             <div class="col-6 form-group relative mb-3">
                                 <label for="taluka" class="col-md-4 col-form-label text-md-right">Taluka&nbsp;<span class="text-danger">*</span></label>
-                                {{ Form::select('taluka',[null=>__('common.select')] + getTaluka(),"",['id'=>'taluka','class'=>' custon-control form-control  select2']) }}
+                                <x-select 
+                                    name="taluka"
+                                    :options="['' => __('common.select')] + getTaluka()"
+                                    :selected="''"
+                                    class="custon-control form-control select2"
+                                    id="taluka"
+                                />
 
 
 

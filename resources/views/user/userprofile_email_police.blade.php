@@ -59,8 +59,16 @@
                   <div class="col-md-3">
                      <div class="form-group">
                         <label for="is_police_staff"> {{  __('profile.is_police') }} <span class="error">*</span></label>
-                        {{ Form::select('is_police_staff',['' => 'Select An Option'] + getYesNo(),($users->is_police_staff)?$users->is_police_staff:'',['id'=>'is_police_staff','class'=>'form-control select2']) }}                                       
-                     </div>
+                     <select name="is_police_staff" id="is_police_staff" class="form-control select2">
+                        <option value="">{{ __('Select An Option') }}</option>
+                        @foreach (getYesNo() as $key => $label)
+                           <option value="{{ $key }}"
+                                 {{ (old('is_police_staff', $users->is_police_staff ?? '') == $key) ? 'selected' : '' }}>
+                                 {{ $label }}
+                           </option>
+                        @endforeach
+                     </select>                      
+                       </div>
                   </div>
                   <div class="col-md-3" id='police_staff'  >
                      <div class="form-group">

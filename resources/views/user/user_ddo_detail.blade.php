@@ -52,7 +52,14 @@
                   <div class="form-group">
                      <label for="ddo_code">{{ __('DDO Code') }}</label>
                      @if(empty($ddo_code))
-                        {{ Form::select('ddo_code',[null=>__('common.select')] ,"", ['id'=>'ddo_code','class'=>' custon-control form-control  select2']) }}
+                        <x-select 
+                           name="ddo_code"
+                           :options="['null' => __('common.select')]"
+                           :selected="old('ddo_code', '')"
+                           class="custon-control form-control select2"
+                           id="ddo_code"
+                        />
+
                         @error('ddo_code')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

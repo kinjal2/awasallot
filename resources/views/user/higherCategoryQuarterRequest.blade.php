@@ -45,7 +45,14 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="quartertype">{{  __('request.Quarter_category') }}</label> <span class="error">*</span>
-                                                {{ Form::select('quartertype',[null=>__('common.select')] + getBasicPay(),'',['id'=>'quartertype','class'=>'form-control select2']) }}
+                                               <x-select  
+                                                    name="quartertype"
+                                                    :options="[null => __('common.select')] + getBasicPay()"
+                                                    :selected="''"
+                                                    id="quartertype"
+                                                    class="form-control select2"
+                                                />
+
                                             </div>
                                         </div>
                                     </div>
@@ -58,19 +65,44 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                     <label class="mb-4 pb-2">Choice 1</label>
-                                                    {{ Form::select('choice1',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice1','class'=>'form-control', 'onchange' => 'updateChoiceOptions()']) }}
+                                                   <x-select  
+                                                        name="choice1"
+                                                        :options="[null => __('common.select')] + qCategoryAreaMapping($quartertype)"
+                                                        :selected="''"
+                                                        id="choice1"
+                                                        class="form-control"
+                                                        onchange="updateChoiceOptions()"
+                                                    />
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                     <label class="mb-4 pb-2">Choice 2</label>
-                                                    {{ Form::select('choice2',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice2','class'=>'form-control', 'onchange' => 'updateChoiceOptions()']) }}
+                                                   <x-select  
+                                                        name="choice2"
+                                                        :options="[null => __('common.select')] + qCategoryAreaMapping($quartertype)"
+                                                        :selected="''"
+                                                        id="choice2"
+                                                        class="form-control"
+                                                        onchange="updateChoiceOptions()"
+                                                    />
+
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                     <label class="mb-4 pb-2">Choice 3</label>
-                                                    {{ Form::select('choice3',[null=>__('common.select')] + qCategoryAreaMapping($quartertype),'',['id'=>'choice3','class'=>'form-control', 'onchange' => 'updateChoiceOptions()']) }}
+                                                    <x-select  
+                                                        name="choice3"
+                                                        :options="[null => __('common.select')] + qCategoryAreaMapping($quartertype)"
+                                                        :selected="''"
+                                                        id="choice3"
+                                                        class="form-control"
+                                                        onchange="updateChoiceOptions()"
+                                                    />
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -87,13 +119,27 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="prv_quarter_type">{{  __('request.quarter_type') }}</label>  <span class="error">*</span>
-                                                        {{ Form::select('prv_quarter_type',[null=>__('common.select')] + getlowerquatercategory(),'',['id'=>'prv_quarter_type','class'=>'form-control select2']) }}
+                                                        <x-select  
+                                                            name="prv_quarter_type"
+                                                            :options="[null => __('common.select')] + getlowerquatercategory()"
+                                                            :selected="''"
+                                                            id="prv_quarter_type"
+                                                            class="form-control select2"
+                                                        />
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                     <label for="prv_area">{{  __('request.area') }} </label>  <span class="error">*</span>
-                                                    {{ Form::select('prv_area',[null=>__('common.select')] + getAreaDetails(),'',['id'=>'prv_area','class'=>'form-control select2']) }}
+                                                    <x-select  
+                                                        name="prv_area"
+                                                        :options="[null => __('common.select')] + getAreaDetails()"
+                                                        :selected="''"
+                                                        id="prv_area"
+                                                        class="form-control select2"
+                                                    />
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
@@ -150,13 +196,27 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="hc_quarter_type">{{  __('request.quarter_type') }}</label>  <span class="error">*</span>
-                                                        {{ Form::select('hc_quarter_type',[null=>__('common.select')] + getlowerquatercategory(),'',['id'=>'hc_quarter_type','class'=>'form-control select2']) }}
+                                                       <x-select  
+                                                            name="hc_quarter_type"
+                                                            :options="[null => __('common.select')] + getlowerquatercategory()"
+                                                            :selected="''"
+                                                            id="hc_quarter_type"
+                                                            class="form-control select2"
+                                                        />
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="hc_area">{{  __('request.area') }} </label>  <span class="error">*</span>
-                                                        {{ Form::select('hc_area',[null=>__('common.select')] + getAreaDetails(),'',['id'=>'hc_area','class'=>'form-control select2']) }}
+                                                        <x-select  
+                                                            name="hc_area"
+                                                            :options="[null => __('common.select')] + getAreaDetails()"
+                                                            :selected="''"
+                                                            id="hc_area"
+                                                            class="form-control select2"
+                                                        />
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">

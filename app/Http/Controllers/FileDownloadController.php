@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use App\Couchdb\Couchdb;
+use Mpdf\Mpdf;
+use Mpdf\Output\Destination;
+
 
 class FileDownloadController extends Controller
 {
@@ -43,13 +46,48 @@ class FileDownloadController extends Controller
 
                 if ($getFileContent) {
                     // Create a response with the correct headers to force the file to open in a new tab
-                    return response($getFileContent, 200)
-                        ->header('Content-Type', $contentType)
-                        ->header('Content-Disposition', 'inline; filename="' . $key . '"');
-                } else {
-                    return "Error fetching the document";
-                }
-            }
+                    // code to print pdf without watermark
+                    // return response($getFileContent, 200)
+                    //     //->header('Content-Type', $contentType)
+                    //     ->header('Content-Type', 'application/pdf')
+                    //     ->header('Content-Disposition', 'inline; filename="' . $key . '"');
+
+
+
+                             // Save original PDF temporarily
+                            $tempPath = storage_path('app/temp_original.pdf');
+                            file_put_contents($tempPath, $getFileContent);
+
+                            // Create mPDF instance
+                            $mpdf = new Mpdf([
+                                'mode' => 'utf-8',
+                                'format' => 'A4',
+                            ]);
+
+                            // Set watermark
+                            $mpdf->SetWatermarkText($doc_id);
+                            $mpdf->showWatermarkText = true;
+
+                            // Import and apply watermark to each page
+                            $pageCount = $mpdf->SetSourceFile($tempPath);
+                            for ($i = 1; $i <= $pageCount; $i++) {
+                                $templateId = $mpdf->ImportPage($i);
+                                $mpdf->AddPage();
+                                $mpdf->UseTemplate($templateId);
+                            }
+
+                            // Return PDF as browser response
+                            $output = $mpdf->Output('', Destination::STRING_RETURN);
+                            unlink($tempPath); // clean up temp file
+
+                            return response($output, 200)
+                                ->header('Content-Type', 'application/pdf')
+                                ->header('Content-Disposition', 'inline; filename="' . $key . '"');
+
+                                    } else {
+                                        return "Error fetching the document";
+                                    }
+                                }
     }
    
 }

@@ -250,7 +250,7 @@ class DDOUserController extends Controller
             }
         } catch (\Exception $e) {
             dd($e->getMessage());
-            \Log::error('Error updating record: ' . $e->getMessage());
+            // Log::error('Error updating record: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while updating the record'], 500);
         }
     }
@@ -1087,7 +1087,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
             }
         } catch (\Exception $e) {
             dd($e->getMessage());
-            \Log::error('Error updating record: ' . $e->getMessage());
+            // Log::error('Error updating record: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while updating the record'], 500);
         }
     }

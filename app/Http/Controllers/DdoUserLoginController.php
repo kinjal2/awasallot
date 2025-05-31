@@ -62,7 +62,7 @@ class DdoUserLoginController extends Controller {
 
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        Log::error('Validation errors occurred: ', $e->errors());
+        // Log::error('Validation errors occurred: ', $e->errors());
         return back()->withErrors($e->errors());
     }
 
@@ -88,7 +88,7 @@ class DdoUserLoginController extends Controller {
     }
 
     // Log failed login attempt (Optional)
-    Log::warning("Failed login attempt for DDO Reg No: " . $request->ddo_reg_no);
+    // Log::warning("Failed login attempt for DDO Reg No: " . $request->ddo_reg_no);
 
     return back()
         ->withErrors(['ddo_reg_no' => 'Invalid credentials'])

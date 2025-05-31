@@ -127,7 +127,7 @@ protected function create(array $data)
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     } catch (Exception $e) {
-        Log::error('Error creating user: ' . $e->getMessage());
+        // Log::error('Error creating user: ' . $e->getMessage());
 
         return response()->json(['error' => 'Error creating user'], 500);
     }

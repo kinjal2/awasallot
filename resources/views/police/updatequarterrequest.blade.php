@@ -324,7 +324,14 @@
 <div class="col-12">
 <div class="form-group">
 <label for="Name">Status</label>
-{{ Form::select('status',[null=>__('common.select')] + getupdatestatus(),"",['id'=>'status','class'=>'form-control select2']) }}                                       
+<x-select 
+    name="status"
+    :options="['' => __('common.select')] + getupdatestatus()"
+    :selected="''"
+    class="form-control select2"
+    id="status"
+/>
+
 
 </div>
 

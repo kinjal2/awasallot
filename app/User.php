@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Carbon\Carbon;
-
+use App\Notifications\CustomVerifyEmail;
 
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -148,7 +148,7 @@ User::updateOrCreate(
     ['id' => auth()->user()->id], // Attributes to find the user
     [ // Attributes to update or create
         'otp' => $code,
-        'email_verified_at' => Carbon::now(),
+       
     ]
 );
 
@@ -158,6 +158,10 @@ User::updateOrCreate(
 		User::callToVerify1( $code,$receiverNumber);
      
     }
+    public function sendEmailVerificationNotification()
+{
+    $this->notify(new CustomVerifyEmail);
+}
     
 }
 

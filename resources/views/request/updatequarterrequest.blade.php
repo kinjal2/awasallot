@@ -480,7 +480,14 @@
                                         <div class="col-12 yesno_status"  id="yesno_status1">
                                             <div class="form-group">
                                                 <label for="Name">Is Downgrade Allotment Allowed ?</label>
-                                                {{ Form::select('dg_allotment',[null=>__('common.select')] + getYesNo(),"",['id'=>'dg_allotment','class'=>'form-control select2']) }}
+                                               <x-select 
+                                                name="dg_allotment"
+                                                :options="[null => __('common.select')] + getYesNo()"
+                                                :selected="''"
+                                                id="dg_allotment"
+                                                class="form-control select2"
+                                            />
+
 
                                             </div>
                                         </div>

@@ -76,8 +76,15 @@
                     <div class="row col-md-12">
                         @csrf
                         <div class="col-md-3">
-                            <label>Select District</label>
-                            {{ Form::select('districts', ['' => 'Select District'] + getDistrictsWithOfficeCodes(), '', ['id' => 'districts', 'class' => 'form-control']) }}
+                            <label for="districts">Select District</label>
+                            <select name="districts" id="districts" class="form-control">
+                                <option value="">Select District</option>
+                                    @foreach (getDistrictsWithOfficeCodes() as $key => $name)
+                                    <option value="{{ $key }}" {{ old('districts') == $key ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <label>Select Quarter Type</label>
