@@ -39,7 +39,7 @@
         <x-select 
           name="quartertype[]" 
           :options="$quartertype" 
-          :selected="$selectedQuartertypes" 
+          :selected="[]" 
           class="form-control select2" 
           id="quartertype" 
           multiple="multiple" 
@@ -82,7 +82,7 @@
 
 @endpush
 @push('footer-script')
-<!-- <script type="text/javascript">
+ <script type="text/javascript">
     $(document).ready(function() {
         // Initialize DataTable
         var table = $('#waitinglist').DataTable({
@@ -114,7 +114,7 @@
             table.ajax.reload(); // Reload the table with new data
         });
     });
-</script> -->
+</script> 
 
 <script type="text/javascript">
     // var visible_columns= false;

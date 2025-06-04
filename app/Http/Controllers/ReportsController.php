@@ -170,8 +170,11 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
     }
     public function allotmentlist()
     {
+        $officecode = Session::get('officecode');
         $this->_viewContent['page_title'] = "Allotment List";
-        $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->orderBy('priority')->pluck('quartertype','quartertype')->all();
+//        $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->orderBy('priority')->pluck('quartertype','quartertype')->all();
+         $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->where('officecode',$officecode)->orderBy('priority')->pluck('quartertype','quartertype')->all();
+
         return view('report/allotmentlist',$this->_viewContent);
 
     }

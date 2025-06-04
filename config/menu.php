@@ -32,7 +32,7 @@ return [
                     ],
                     'link' => 'quarter.list.normal',
                 ],
-					'Request List (Priority)' => [
+				/*	'Request List (Priority)' => [
                     'title' => 'menus.Request List (Priority)',
                     'icon' => 'fa fa-list',
                     'permission_route' => 'quarterlistpriority*',
@@ -40,7 +40,7 @@ return [
                         'quarterlistpriority'
                     ],
                     'link' => 'quarterlistpriority.index',
-                ],
+                ], */
                 'Rejected List' => [
                     'title' => 'menus.RejectedList',
                     'icon' => 'fa fa-list',

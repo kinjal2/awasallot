@@ -37,7 +37,7 @@ class UserController extends Controller
     {
     
         $search = $request->input('search');
-
+        $officecode=Session::get('officecode');
        
     $columnFilters = [
         'name' => $request->input('name'),

@@ -116,7 +116,13 @@ var table = $('#userlist').DataTable({
     ],
     processing: true,
     serverSide: true,
+
+    
+   
     ajax: {
+        headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+             },
         url: "{{ route('user.list') }}",
         type: "POST",
       /*  data: function (d) {
