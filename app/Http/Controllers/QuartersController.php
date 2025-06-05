@@ -2044,7 +2044,7 @@ class QuartersController extends Controller
             ])
             ->where(function ($query) use ($officecode) {
                 $query->where('is_accepted', '=', 1)
-                    //->whereNotNull('remarks')
+                    ->whereNull('remarks')
                     //->where('is_varified', '=', 0)
                     ->where('is_priority', '=', 'N')
                     ->where('is_ddo_varified', '=', 1)
@@ -2055,7 +2055,7 @@ class QuartersController extends Controller
             })->orderBy('inward_date','asc');
 
         // Print the SQL query
-         //dd( $query->toSql());
+      //  dd( $query->toSql());
         //     dd("hello");
             $cnt=0;
         return Datatables::of($query)

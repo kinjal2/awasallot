@@ -4,14 +4,14 @@ namespace App\Couchdb;
 
 use Illuminate\Support\Facades\Facade;
 ini_set('MAX_EXECUTION_TIME', -1);
-define("URL_COUCHDB", "http://127.0.0.1:5984");
-//define("URL_COUCHDB", "http://10.154.3.99:5984");
+//define("URL_COUCHDB", "http://127.0.0.1:5984");
+define("URL_COUCHDB", "http://10.154.3.99:5984");
 
 define("DATABASE", "awas_document_new1");
 define("USERNAMECD", "admin");
 define("PASSWORDCD", "admin");
-define("COUCHDB_DOWNLOADURL", "http://admin:admin@127.0.0.1:5984");
-//define("COUCHDB_DOWNLOADURL", "http://admin:admin@10.154.3.99:5984");
+//define("COUCHDB_DOWNLOADURL", "http://admin:admin@127.0.0.1:5984");
+define("COUCHDB_DOWNLOADURL", "http://admin:admin@10.154.3.99:5984");
 
 
 // class CouchdbFacade extends Facade

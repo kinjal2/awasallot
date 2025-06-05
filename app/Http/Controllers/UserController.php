@@ -120,13 +120,14 @@ return Datatables::of($users)
        $tempval = explode(':',$officedesignation);
      // dd($tempval);
        Session::put('empname', strip_tags($tempval[0]));
-       Session::put('officecode', strip_tags($tempval[1]));
+      Session::put('officecode', strip_tags($tempval[1]));
        Session::put('designationcode', strip_tags($tempval[2]));
        Session::put('districtcode', strip_tags($tempval[3]));
        Session::put('officeeng', strip_tags($tempval[4]));
        Session::put('desigeng', strip_tags($tempval[5]));
        Session::put('districteng', strip_tags($tempval[6]));
        Session::put('deptid', strip_tags($tempval[7]));
+       //Session::put('officecode',28083); set manual in live to fetch records properly
         $validator = \Validator::make($request->all(), [
             'officedesignation' => 'required',
 

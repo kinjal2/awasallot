@@ -93,6 +93,7 @@
                 type: "POST",
                 // Sending additional data on the AJAX request
                 data: function (d) {
+                  d._token = '{{ csrf_token() }}'; // CSRF token
                     d.quartertype = $('#quartertype').val(); // Get the current value of quartertype
                 }
             },
@@ -105,7 +106,7 @@
                 {data: 'name', name: 'name'},
                 {data: 'designation', name: 'designation'},
                 {data: 'office', name: 'office'},
-                {data: 'office', name: 'office'}, // You might want to check if this is needed twice
+              
             ]
         });
 
@@ -147,11 +148,11 @@
                 {data: 'allotment_order_no', name: 'allotment_order_no'},
             ]*/
    // });
-    $('#quartertype').on('change',function (e) {
+  /*  $('#quartertype').on('change',function (e) {
 
       table.ajax.reload();
 
-     });
+     }); */
     //  $('#btnReset').on('click',function (e)
     //  {
     //    $("#quartertype").val("").trigger("change");

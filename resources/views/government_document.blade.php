@@ -40,7 +40,7 @@
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
           <h6 class="title mt-2">Pay Certificate</h6>
-          <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Pay Certificate.pdf') }}', '_blank')">
+          <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/PayCertificate.pdf') }}', '_blank')">
             Download
           </button>
         </div>

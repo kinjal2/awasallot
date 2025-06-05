@@ -90,7 +90,8 @@
        url: "{{ route('policestaff.data') }}",
        type:"POST",
     data: function (d) { 
-                d.quartertype = $('#quartertype').val()
+              d._token = '{{ csrf_token() }}'; // CSRF token
+                d.quartertype = $('#quartertype').val();
               
             }
   },

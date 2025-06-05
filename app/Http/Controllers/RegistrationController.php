@@ -56,7 +56,7 @@ class RegistrationController extends Controller
                  $userdet=$client->getUser(array('UserID'=>$uid,'enc_tokan'=> $token));
                  $userdet2=get_object_vars($userdet->getUserResult);
                  $office_designations = array();
-
+                
                 foreach($userdet2 as $name => $temp)
                 {
                     $i = 0;
@@ -77,6 +77,7 @@ class RegistrationController extends Controller
 								 $office_designations[$i]['deptid'] = $ttt['DeptID'];
 								 $office_designations[$i] = (object) $office_designations[$i];
 								 $i++;
+                                 
                              }
                          }
                     }
