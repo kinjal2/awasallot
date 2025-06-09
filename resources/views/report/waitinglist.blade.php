@@ -67,7 +67,7 @@
    </div>
 <div class="table-responsive"  >
 
-			<table class="table table-bordered table-hover custom_table dataTable" id="waitinglist">
+			<table class="table table-bordered table-hover custom_table dataTable" id="waitinglist" >
                   <thead>
                     <tr>
                     <th>R Waiting No.</th>
@@ -93,6 +93,29 @@
                   <tbody>
 
                   </tbody>
+                  <tfoot>
+                    <tr>
+                    <th>R Waiting No.</th>
+                    <th>Waiting List No.</th>
+                    <th>Quarter Type</th>
+                    <th>Request Type</th>
+                    <th>Inward No</th>
+                    <th>Inward Date</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Office</th>
+                    <th>Contact No</th>
+                    <th>Email Id</th>
+                    <th>GPF/CPF Number</th>
+                    <th>Retirment Date</th>
+                    <th>Native Address</th>
+                    <th>Action</th>
+                    <th>Remarks </th>
+                    <th>Office Email ID</th>
+                    <th>User Remarks</th>
+                   
+                    </tr>
+                    </tfoot>
                 </table>
 		<!-- /.card-body -->
 		</div>
@@ -172,6 +195,11 @@
  var table = $('#waitinglist').DataTable({
         processing: true,
         serverSide: true,
+         fixedHeader: true,
+        scrollY: '800px',    // Optional: vertical scroll height
+        scrollCollapse: true,
+         // Show dropdown for number of entries per page
+    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
 
         ajax: {
           headers: {

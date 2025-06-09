@@ -127,7 +127,7 @@ Designed with user convenience in mind, our platform enables quick and efficient
           <p>Information</p>
         </div>
         <div class="row">
-          <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
+          <!-- <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
             <div id="letest-news">
               <ul class="list">
                 <li class="shopping">
@@ -165,8 +165,9 @@ Designed with user convenience in mind, our platform enables quick and efficient
                 </li>
               </ul>
             </div>
-          </div>
-          <div class="col-lg-5" data-aos="fade-left">
+          </div> -->
+          <!-- <div class="col-lg-5" data-aos="fade-left"> original values -->
+          <div class="col-lg-12" data-aos="fade-left"> <!-- set col-lg-12 to fill the space -->
             <div id="no-more-tables">
               <table class=" table table-bordered table-striped table-responsive-stack text-center">
                 <thead class="cf">
