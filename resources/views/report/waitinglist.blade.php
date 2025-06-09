@@ -5,7 +5,25 @@
 .bg-light-pink {
     background-color: #FFC0CB; /* Light pink */
 }
+
+
+table.dataTable th,
+table.dataTable td,
+table.dataTable tfoot th {
+    white-space: nowrap;
+    text-align: left;
+    vertical-align: middle;
+    padding: 8px;
+}
+
+table.dataTable tfoot input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 12px;
+    padding: 4px;
+}
 </style>
+
 <div class="content">
  <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -65,7 +83,7 @@
 
 
    </div>
-<div class="table-responsive"  >
+<div class="table-responsive p-4"  >
 
 			<table class="table table-bordered table-hover custom_table dataTable" id="waitinglist" >
                   <thead>
@@ -93,9 +111,9 @@
                   <tbody>
 
                   </tbody>
-                  <tfoot>
+                  <tfoot >
                     <tr>
-                    <th>R Waiting No.</th>
+                    <th >R Waiting No.</th>
                     <th>Waiting List No.</th>
                     <th>Quarter Type</th>
                     <th>Request Type</th>
@@ -188,6 +206,7 @@
 
 @endpush
 @push('footer-script')
+
 <script type="text/javascript">
     var visible_columns= false;
     var hide_colunm = ["wno", "quartertype", "tableof","inward_no"];
@@ -195,9 +214,9 @@
  var table = $('#waitinglist').DataTable({
         processing: true,
         serverSide: true,
-         fixedHeader: true,
-        scrollY: '800px',    // Optional: vertical scroll height
-        scrollCollapse: true,
+     //    fixedHeader: true,
+      //  scrollY: '800px',    // Optional: vertical scroll height
+       // scrollCollapse: true,
          // Show dropdown for number of entries per page
     lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
 
@@ -231,8 +250,22 @@
             {data: 'office_remarks', name: 'office_remarks'},
             {data: 'office_email_id', name: 'office_email_id'},
             {data: 'withdraw_remarks', name: 'withdraw_remarks'},
-        ]
+        ],
+        
+         initComplete: function () {
+        this.api().columns().every(function () {
+            var column = this;
+            var input = $('<input type="text" placeholder="Search ' + $(column.header()).text() + '" style=" width:auto;" />')
+                .appendTo($(column.footer()).empty())
+                .on('keyup change clear', function () {
+                    if (column.search() !== this.value) {
+                        column.search(this.value).draw();
+                    }
+                });
+        });
+    }
     });
+   
     $('#quartertype').on('change',function (e) {
 
       table.ajax.reload();
