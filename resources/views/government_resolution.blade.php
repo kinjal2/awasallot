@@ -11,7 +11,7 @@
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
           <h6 class="title mt-2">સરકારી કર્મચારી/અધિકારીઓ માટે નવા પગારધોરણો મુજબ સરકારી આવાસની કક્ષા નક્કી કરવા બાબત.</h6>
-          <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/quarter_as_per_7th_pay.pdf') }}', '_blank')">
+          <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Quarter_as_per_7th_pay.pdf') }}', '_blank')">
             Download
           </button>
         </div>
