@@ -38,7 +38,7 @@
                         @csrf
                         <div class="col-12 form-group relative mb-3">
                           <label for="email" class="form-label">{{ __('E-Mail Address') }}&nbsp;&nbsp;OR&nbsp;&nbsp;{{ __('Mobile No.') }}<span class="text-danger">*</span></label>
-                          <input id="identifier" type="email" class="custon-control form-control @error('email') is-invalid @enderror" placeholder="Enter your E-mail"  name="identifier"  required autocomplete="identifier" autofocus >
+                          <input id="identifier" type="text" class="custon-control form-control @error('email') is-invalid @enderror" placeholder="Enter your E-mail"  name="identifier"  required autocomplete="identifier" autofocus >
                           <i class="bi bi-envelope form-icon"></i>
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
@@ -83,16 +83,20 @@
 </div>
 @include(Config::get('app.theme').'.template.footer_front_page')
 <script>
-
-    // jQuery code
     $(document).ready(function() {
         $('input.dateformat').datetimepicker({
             format: 'd-m-Y',
             timepicker: false
         });
 
+        // Custom validator: Email OR Mobile Number
+        $.validator.addMethod("emailOrMobile", function(value, element) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const mobilePattern = /^[0-9]{10}$/;
+            return this.optional(element) || emailPattern.test(value) || mobilePattern.test(value);
+        }, "Please enter a valid email or 10-digit mobile number.");
 
-      $('#LoginForm').validate({
+        $('#LoginForm').validate({
             errorClass: "error-message",
             errorElement: "span",
             errorPlacement: function(error, element) {
@@ -107,24 +111,22 @@
                 $(element).closest('.form-control').removeClass('error-field');
             },
             rules: {
-            /*    name: {
-                    required: true
-                },*/
                 identifier: {
-                    required: true
+                    required: true,
+                    emailOrMobile: true
                 },
-
-
-                // Add rules for other fields here
+                captcha: {
+                    required: true
+                }
             },
             messages: {
-               /* name: {
-                    required: "Please enter your name"
-                },*/
-                /*birthdate: {
-                    required: "Please enter birthdate"
-                },*/
-                // Add custom messages for other fields here
+                identifier: {
+                    required: "Please enter your email or mobile number",
+                    emailOrMobile: "Enter a valid email or 10-digit mobile number"
+                },
+                captcha: {
+                    required: "Please enter the captcha"
+                }
             }
         });
     });
