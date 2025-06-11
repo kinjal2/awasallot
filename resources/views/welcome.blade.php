@@ -18,6 +18,20 @@
   <link href="{{ URL::asset('/css/style.css') }}" rel="stylesheet">
    <!-- Styles -->
     </style>
+              
+<style>
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+  </style>
 </head>
 <body>
   <!-- ======= Header ======= -->
@@ -127,10 +141,19 @@ Designed with user convenience in mind, our platform enables quick and efficient
           <p>Information</p>
         </div>
         <div class="row">
-          <!-- <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
+           <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
             <div id="letest-news">
               <ul class="list">
-                <li class="shopping">
+                 <li >
+                  <span class="title"><h4><a   href="#" target="_blank" style="background-color: yellow; color: red; font-weight: bold; padding: 5px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 1s infinite;" target="_blank">User Guidelines</a></h4></span>
+                </li>
+                <li >
+                  <span class="title"><h4><a   href="#" target="_blank" style="background-color: yellow; color: red; font-weight: bold; padding: 5px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 1s infinite;" target="_blank">DDO Guidelines</a></h4></span>
+                </li>
+                <li >
+                  <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/ddo.pdf' }}" target="_blank" style="background-color: yellow; color: red; font-weight: bold; padding: 5px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 1s infinite;" target="_blank">View DDO List</a></h4></span>
+                </li>
+               <!-- <li class="shopping">
                   <span class="title">વેબસાઇટ પર રજીસ્ટ્રેશન સમયે અરજદારે પોતાનું પૂરૂ નામ CAPITAL LETTER માં નિમણૂંક હુકમમાં દર્શાવ્યા મુજબનું દર્શાવવુ.</span>
                 </li>
                 <li class="shopping">
@@ -162,11 +185,11 @@ Designed with user convenience in mind, our platform enables quick and efficient
                 </li>
                 <li class="shopping">
                   <span class="title">ઓનલાઇન અરજી સબંધીત માર્ગદર્શન માટે કચેરીમાં બપોરે ૩.૩૦ થી ૪.૩૦ ના સમયગાળામાં રૂબરૂ આવી શકો છો. સરનામુઃ અધિક્ષક ઇજનેરશ્રીની કચેરી, પાટનગર યોજના વર્તુળ,બ્લોક-૧૧/ર, ડો.જે.એમ.ભવન, ગાંધીનગર</span>
-                </li>
+                </li> -->
               </ul>
             </div>
-          </div> -->
-          <!-- <div class="col-lg-5" data-aos="fade-left"> original values -->
+          </div> 
+           <div class="col-lg-5" data-aos="fade-left"> <!-- original values -->
           <div class="col-lg-12" data-aos="fade-left"> <!-- set col-lg-12 to fill the space -->
             <div id="no-more-tables">
               <table class=" table table-bordered table-striped table-responsive-stack text-center">
