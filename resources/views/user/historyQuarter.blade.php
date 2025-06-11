@@ -60,6 +60,28 @@
                         <!-- Dynamic data will be loaded here by DataTables -->
                     </tbody>
                 </table>
+
+   <div class="modal" id="DocumentModal">
+    <div class="modal-dialog">
+        <div class="modal-content  pop_up_design">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Remarks</h4>
+                <button type="button" class="btn btn-danger close" data-dismiss="modal">&times;</button>
+
+                <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+               <div id='viewdata'></div>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+            <button type="button" class="btn btn-danger">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
             </div><!-- /.card-body -->
         </div><!-- /.card -->
     </div><!-- /.col-md-12 -->
@@ -93,7 +115,7 @@
             {data: 'inward_no', name: 'inward_no'},
             {data: 'inward_date', name: 'inward_date'},
             {data: 'action', name: 'action', orderable: true, searchable: true},
-            {data: 'remarks', name: 'remarks'},
+            {data: 'issues', name: 'remarks'},
             //{data: 'ddo_remarks', name: 'remarks'},
              { 
                 data: 'ddo_remarks', 
@@ -123,5 +145,84 @@
             },
         ]
     });
+
+    $('body').on('click', '.btn', function()
+      {
+         $('#DocumentModal').hide();
+      });
+    /* $('body').on('click', '.getdocument', function()
+      {
+          var uid = $(this).attr('data-uid');
+          var type = $(this).attr('data-type');
+          var rivision_id = $(this).attr('data-rivision_id');
+          var requestid = $(this).attr('data-requestid');
+          var remarks=$(this).attr('data-remarks');
+          
+          $.ajax({
+            url: "{{ route('quarter.list.getDDOremarks') }}",
+            method: 'POST',
+            data: {uid:uid,type:type,rivision_id:rivision_id,requestid:requestid,remarks:remarks},
+            success: function(result) {
+            var html = '<ul>';
+
+            if (result.success === false || !result.data || result.data.length === 0) {
+                html += '<li>' + result.message + '</li>';
+            } else {
+                result.data.forEach(function(item) {
+                    html += '<li>' + item.description + '</li>';
+                });
+            } 
+            
+
+            //html += '</ul>';
+            var html ='';
+            if(remarks == '')
+            {
+              html='No Remarks Found';
+            }
+            else
+            {
+              html=atob(remarks);
+            }
+           
+           // alert(html);
+            $("#viewdata").html(html);
+            $('#DocumentModal').show();
+        
+        
+      }); */
+
+     
+     $('body').on('click', '.getdocument', function()
+      {
+          var uid = $(this).attr('data-uid');
+          var type = $(this).attr('data-type');
+          var rivision_id = $(this).attr('data-rivision_id');
+          var requestid = $(this).attr('data-requestid');
+          var remarks=$(this).attr('data-remarks');
+          $.ajax({
+            url: "{{ route('quarter.list.getremarks') }}",
+            method: 'POST',
+            data: {uid:uid,type:type,rivision_id:rivision_id,requestid:requestid,remarks:remarks},
+            success: function(result) {
+            var html = '<ul>';
+
+            if (result.success === false || !result.data || result.data.length === 0) {
+                html += '<li>' + result.message + '</li>';
+            } else {
+                result.data.forEach(function(item) {
+                    html += '<li>' + item.description + '</li>';
+                });
+            }
+
+            html += '</ul>';
+            $("#viewdata").html(html);
+            $('#DocumentModal').show();
+        }
+          });
+      });
+</script>
+
+
 </script>
 @endpush

@@ -128,7 +128,7 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::post('saveapplication', [ 'as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
     Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);
 
-    Route::post('getremarks', ['as' => 'quarter.list.getremarks', 'uses' => 'QuartersController@getremarks']);
+    
     Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
     Route::post('listremarks', ['as' => 'quarter.list.listremarks', 'uses' => 'QuartersController@listremarks']);
     Route::post('addremarks', ['as' => 'quarter.list.addnewremark', 'uses' => 'QuartersController@addnewremarks']);
@@ -333,7 +333,7 @@ Route::get('/custom-403', function () {
     return view('errors.403');
 })->name('custom.403.page');
 
-
+Route::post('getremarks', ['as' => 'quarter.list.getremarks', 'uses' => 'QuartersController@getremarks']);
 Route::get('/test',function(){
     echo "test";
 })->name('test');
