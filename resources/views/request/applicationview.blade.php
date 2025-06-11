@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Invoice</title>
+    <title>{{$user_id.'_'.$name}}</title>
 	<meta charset="UTF-8">
     <style>
        
@@ -61,7 +61,8 @@
     <header>
     <table cellspacing="0" cellpadding="0" style="width:100%; border-bottom: 0px !important;" class="padd-3 font-13 text-b text-center">
       <tr><td>પરિશિષ્ટ - અ</td></tr>
-      <tr><td>{{ $officesname}}  માં સરકારી વસવાટ મેળવવા માટે સરકારી કર્મચારી કે અધિકારી એ કરવા ની અરજી</td></tr>
+      <tr><td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} માં સરકારી વસવાટ મેળવવા માટે સરકારી કર્મચારી કે અધિકારી એ કરવા ની અરજી  
+</td></tr>
     </table>
   </header>
 

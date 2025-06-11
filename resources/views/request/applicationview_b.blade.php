@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Invoice</title>
+    <title>{{$user_id.'_'.$name}}</title>
     <style>
         body {
             font-family: 'ind_gu_1_001';
