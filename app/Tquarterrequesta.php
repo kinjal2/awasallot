@@ -79,6 +79,7 @@ class Tquarterrequesta extends Model
             'is_dept_head' => $request->usermaster->is_dept_head,
             'officename' => $request->usermaster->office,
             'officeaddress' => $request->usermaster->office_address,
+            'office_phone' => $request->usermaster->office_phone,
             'old_desg' => $request->old_designation, // Note: use the correct field name
             'old_office' => $request->old_office,
             'deputation_date' => Carbon::parse($request->deputation_date)->format('d-m-Y'),
