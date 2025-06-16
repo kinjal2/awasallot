@@ -50,7 +50,7 @@
                                     <th>Id</th>
                                     <th>DDO Office Name</th>
                                     <th>District Name</th>
-                                    <th>Cardex No</th>
+                                    <th>Cardex No/DDO Code</th>
                                     <th>DDO Registration No</th>
                                     <th>Email</th>
 									{{-- <th>DTO Registration No</th>
@@ -100,7 +100,10 @@
                 { data: 'id' },
                 { data: 'ddo_office' },
                 { data: 'district' },
-                { data: 'cardex_no' },
+               {  data: null,
+                    render: function(data, type, row) {
+                        return row.cardex_no + '/' + row.ddo_code;
+                }},
                 { data: 'ddo_reg_no' },
                 { data: 'ddo_office_email_id' },
                 { data: 'action' }
