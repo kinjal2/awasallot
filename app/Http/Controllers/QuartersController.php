@@ -474,6 +474,8 @@ class QuartersController extends Controller
             })
             ->addColumn('issues', function ($row) {
                
+				$btn2='';
+               if ($row->is_accepted == 'YES') {
                 if($row->remarks=="" && $row->is_varified==1)
                 {
                     $btn2 ="Verified";
@@ -486,8 +488,10 @@ class QuartersController extends Controller
                 {
                      $btn2 = '<button type="button" data-uid="'.base64_encode($row->uid).'" data-rivision_id="'.base64_encode($row->rivision_id).'"data-type="'.base64_encode($row->type).'"  data-requestid="'.base64_encode($row->requestid).'"  data-remarks="'.base64_encode($row->remarks).'" data-toggle="modal"  class=" btn-view-custom getdocument" > View Remarks</button>';
                 }
+			   }
               
                 return  $btn2;
+        
             })
             ->addColumn('action', function ($row) {
                 /* return   $btn1 = '<a href="' . route('generate.pdf', [
@@ -1134,6 +1138,8 @@ class QuartersController extends Controller
         $rev = $request->rev;
         //dd($request->type);
         // dd( $rev);
+        //dd(Session::get('Uid'));
+        DB::enableQueryLog();
         if ($request->type == 'a') {
             $result = Tquarterrequesta::where('requestid', $requestid)
                 ->first();
@@ -1166,7 +1172,8 @@ class QuartersController extends Controller
                         ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
 																								
                 })
-                ->when($isPoliceStaff == 'N', function ($query) {
+                //->when($isPoliceStaff == 'N', function ($query) {
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
                     // If user is not a police staff, exclude document_type = 8
                     return $query->whereNotIn('document_type', [8]);
                 })
@@ -1184,14 +1191,18 @@ class QuartersController extends Controller
                         // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
                         return $query->whereNotIn('document_type', [9]);
                     }
-                )
-                ->count();
+                )->count();
+                // ->get();
+                
         
             $doc_submitted = Filelist::where('request_id', $requestid)
                 //->whereNotIn('document_id', [2, 6, 9, 10, 3, 7])  // Exclude document types
                 ->whereNotIn('document_id', [6,  10])
                 ->where('performa', 'a')
-                ->when($isPoliceStaff == 'N', function ($query) {
+				->where('rivision_id',$rev)	
+                 ->where('uid', Session::get('Uid'))		   
+                //->when($isPoliceStaff == 'N', function ($query) {
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
                     // If user is not a police staff, exclude document_type = 8
                     return $query->whereNotIn('document_id', [8]);
                 })
@@ -1209,10 +1220,15 @@ class QuartersController extends Controller
                         // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
                         return $query->whereNotIn('document_id', [9]);
                     }
-                )
-                ->count();
-
-//             dd($doc_tobe_submit,'hii<br>',$doc_submitted);
+                )->count();
+                //->get();
+                
+                     $lastQuery = DB::getQueryLog();
+             //print_r($lastQuery);
+        // Get the last query executed
+          $query = end($lastQuery);
+         // dd($query);
+           //  dd($doc_tobe_submit,'hii<br>',$doc_submitted);
             if ($doc_tobe_submit != $doc_submitted) { //dd("test");
 
 
@@ -1350,6 +1366,8 @@ class QuartersController extends Controller
                 //->whereNotIn('document_id', [2, 6, 9, 10, 3, 7])  // Exclude document types
                 ->whereNotIn('document_id', [6,  10])
                 ->where('performa', 'b')
+                ->where('rivision_id',$rev)
+                ->where('uid', Session::get('Uid'))			
                 ->when($isPoliceStaff == 'N', function ($query) {
                     // If user is not a police staff, exclude document_type = 8
                     return $query->whereNotIn('document_id', [8]);
@@ -1901,7 +1919,9 @@ class QuartersController extends Controller
             'email',
             'is_priority',
             'is_ddo_varified',
-            'officecode'
+            'officecode',
+            'a.cardex_no',
+            'a.ddo_code'
 
         ])
             ->join('userschema.users as u', 'u.id', '=', 'a.uid');
@@ -1929,7 +1949,9 @@ class QuartersController extends Controller
             'email',
             'is_priority',
             'is_ddo_varified',
-            'officecode'
+            'officecode',
+             'c.cardex_no',
+            'c.ddo_code'
         ])
             ->join('userschema.users as u', 'u.id', '=', 'c.uid');
           
@@ -1956,7 +1978,9 @@ class QuartersController extends Controller
             'email',
             'is_priority',
             'is_ddo_varified',
-            'officecode'
+            'officecode',
+             'b.cardex_no',
+            'b.ddo_code'
         ])
             ->join('userschema.users as u', 'u.id', '=', 'b.uid')
            
@@ -1986,7 +2010,9 @@ class QuartersController extends Controller
                 'request_date',
                 'is_priority',
                 'is_ddo_varified',
-                'officecode'
+                'officecode',
+                'cardex_no',
+                'ddo_code'
 
             ])
             ->where(function ($query) use ($officecode) {
@@ -1999,7 +2025,9 @@ class QuartersController extends Controller
                     ->where('is_varified',0);
                     //->orderBy('wno') // assuming 'wno' is a column in the database
                     
-            })->orderBy('inward_date','asc');
+            })
+            
+            ->orderBy('inward_date','asc');
 
         // Print the SQL query
       //  dd( $query->toSql());
@@ -2016,7 +2044,9 @@ class QuartersController extends Controller
 
                 return date('d-m-Y', strtotime($date->request_date));
             })
-
+            ->addColumn('cardex_ddo',function($row){
+                return $row->cardex_no."/".$row->ddo_code;
+            })
             ->addColumn('action', function ($row) use (&$cnt) {
                 $cnt++; // increment per row processed
                 if ($cnt !== 1) return ''; // Only show on the first row

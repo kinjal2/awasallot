@@ -184,6 +184,7 @@
                                 <button type="submit" class=" btn btn-primary">
                                     {{ __('Register') }}
                                 </button><br><br>
+                                <span class="text-danger">તમે હાલમાં જે કચેરીમાં ફરજ બજાવો છો તે કચેરી જે તાલુકા/જિલ્લા મા આવતી હોય તે મુજબ ફરજીયાત પસંદ કરવાનુ રહેશે.</span><br>
                                 <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
                                 <input id="name" type="hidden" class="custon-control  custon-control form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" placeholder="Name">
 

@@ -46,6 +46,7 @@
                         <tr>
                             <th>Request Type</th>
                             <th>Quarter Type</th>
+                            <th>Revised Waiting List No</th>
                             <th>Waiting List No</th>
                             <th>Request Date</th>
                             <th>Application Accepted</th>
@@ -109,6 +110,7 @@
         columns: [
             {data: 'requesttype', name: 'requesttype'},
             {data: 'quartertype', name: 'quartertype'},
+            {data: 'r_wno', name: 'r_wno'},
             {data: 'wno', name: 'wno'},
             {data: 'request_date', name: 'request_date'},
             {data: 'is_accepted', name: 'is_accepted'},

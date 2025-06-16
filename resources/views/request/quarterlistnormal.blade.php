@@ -43,6 +43,7 @@
                     <tr>
                       <th>Request Type</th>
                       <th>Quarter <br/>Type</th>
+                      <th>Cardex No. / DDO Code</th>
                       <th>Inward No</th>
                       <th>Inward Date</th>
                       <th>Name</th>
@@ -91,6 +92,7 @@
         columns: [
             {data: 'requesttype'},
             {data: 'quartertype'},
+            {data: 'cardex_ddo'},
             {data: 'inward_no'},
             {data: 'inward_date'},
             {data: 'name'},
