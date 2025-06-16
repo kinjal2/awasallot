@@ -354,7 +354,7 @@ class QuartersController extends Controller
         $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
         //dd($quarterselect);
 
-        DB::enableQueryLog();
+       // DB::enableQueryLog();
         $quarterlist = Tquarterrequestc::select([
             DB::raw("'c' as type"),
             DB::raw("'change' as requesttype"),
@@ -376,7 +376,8 @@ class QuartersController extends Controller
             'rivision_id',
             'is_ddo_varified',
             'ddo_remarks',
-            'is_varified'
+            'is_varified',
+            'r_wno'
 
         ])
             ->where('is_allotted', '=', 0)
@@ -404,7 +405,8 @@ class QuartersController extends Controller
             'rivision_id',
             'is_ddo_varified',
             'ddo_remarks',
-            'is_varified'
+            'is_varified',
+            'r_wno'
         ])
             ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
@@ -433,7 +435,8 @@ class QuartersController extends Controller
             'rivision_id',
             'is_ddo_varified',
             'ddo_remarks',
-            'is_varified'
+            'is_varified',
+            'r_wno'
         ])
             ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)

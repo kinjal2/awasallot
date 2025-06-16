@@ -183,7 +183,7 @@ return Datatables::of($users)
         return $editor->process(request());
     }*/
     public function reset(Request $request, $field)
-{
+{  //dd($request);
     $uid = $request->input('uid');
     $fieldType = $field; // This parameter is passed from the route
 
