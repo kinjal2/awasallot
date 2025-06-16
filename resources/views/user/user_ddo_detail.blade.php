@@ -39,13 +39,27 @@
             <input type="hidden" id="page" name="page" value="{{ (   !empty($page)) ? $page : '' }}" />
             <div class="card-body">
             <div class="row">
-               <div class="col-md-4">
+               
+                 <div class="col-md-4">
                   <div class="form-group">
                      <label for="cardex_no">{{ __('Cardex No') }}</label>
-                     <input type="text" class="form-control @error('cardex_no') is-invalid @enderror" name="cardex_no" id="cardex_no" value="{{ session('cardex_no') }}" @if(!empty($cardex_no)) readonly @endif required autofocus>
-                     @error('cardex_no')
-                     <div class="invalid-feedback">{{ $message }}</div>
-                     @enderror
+                     <input type="hidden" value="{{ Session::get('dcode') }}" name="dcode" id="dcode">
+                      @if(empty($cardex_no))
+                        <x-select 
+                           name="cardex_no"
+                           :options="['null' => __('common.select')]"
+                           :selected="old('cardex_no', '')"
+                           class="custon-control form-control select2"
+                           id="cardex_no"
+                        />
+
+                        @error('cardex_no')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                         @else
+                        <input type="text" class="form-control" value="{{ $cardex_no }}" readonly>
+                     @endif
+                    
                   </div>
                </div>
                <div class="col-md-4">
@@ -111,7 +125,7 @@
 
       //	$('#pancard').val(window.btoa(str));
    });
-
+   
 
 
 
@@ -142,16 +156,18 @@
       }
    });
 
-   $('#cardex_no').on('blur', function() {
+   $('#cardex_no').on('change', function() {
     var cardexNo = $(this).val();
+    var dcode = $('#dcode').val(); // Get the fixed value
     var csrfToken = $('#cardexForm input[name="_token"]').val();
-
+     // alert(cardexNo);
     if (cardexNo) {
         $.ajax({
             url: "{{ route('ddo.getDDOCode') }}", // Your route to fetch data
             type: 'POST', // Change to POST
             data: {
                 cardex_no: cardexNo,
+                dcode:dcode,
                 _token: csrfToken // Include CSRF token here
             },
             success: function(data) { //alert(data);
@@ -179,6 +195,49 @@
     } else {
         // $('#ddo_code').hide(); // Hide dropdown if input is empty
     }
+});
+</script>
+<script>
+$(document).ready(function () {
+    // When the dropdown/input with ID #yourInputID changes
+   
+         var dcode = $('#dcode').val(); // Get the fixed value
+        var csrfToken = $('#cardexForm input[name="_token"]').val();
+
+     //   alert(dcode); // For debugging
+
+        $.ajax({
+            url: "{{ route('ddo.getCardexNo') }}",
+            type: 'POST',
+            data: {
+                dcode: dcode,
+                _token: csrfToken
+            },
+            success: function(data) {
+                console.log(data);
+                const cardex_no = $('#cardex_no');
+                cardex_no.empty();
+
+                if (Array.isArray(data) && data.length > 0) {
+            cardex_no.append(`<option value="">-- Select Cardex --</option>`);
+            data.forEach(function(item) {
+                cardex_no.append(
+                    `<option value="${item}">${item}</option>`
+                );
+            });
+        } else {
+            alert('Invalid Data.');
+        }
+            },
+            error: function(xhr) {
+                console.error('Error fetching data:', xhr.responseText);
+                if (xhr.status === 401) {
+                    alert('You are not authenticated. Please log in.');
+                    window.location.href = '/login';
+                }
+            }
+        });
+   
 });
 </script>
 

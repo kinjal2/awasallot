@@ -262,6 +262,8 @@ Route::prefix('user')->group(function () {
     
     
     Route::post('/getDDOCode',[QuartersController::class,'getDDOCode'])->name('ddo.getDDOCode');
+
+    Route::post('/getCardexNo',[QuartersController::class,'getCardexNo'])->name('ddo.getCardexNo');
     
     
 
@@ -337,6 +339,7 @@ Route::post('getremarks', ['as' => 'quarter.list.getremarks', 'uses' => 'Quarter
 Route::get('/test',function(){
     echo "test";
 })->name('test');
+
 
 
  
