@@ -209,6 +209,7 @@ Route::prefix('user')->group(function () {
     Route::post('resetpassword', 'UserController@resetpassword')->name('resetpassword');
     Route::post('resetname', 'UserController@resetname')->name('resetname');
     Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
+    Route::post('/resetdesignation', 'UserController@resetdesignation')->name('resetdesignation');
   
     Route::post('/salarySlabDetails', [ProfileController::class, 'getSalarySlabDetails'])->name('salarySlabDetails');
     

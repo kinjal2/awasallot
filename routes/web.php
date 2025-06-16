@@ -109,9 +109,7 @@ Route::post('/home', 'HomeController@index')->name('home');
 });
 
 // Admin Dashboard
-
-
-    Route::middleware(['role:admin','check.host','session.timeout'])->group(function () {
+     Route::middleware(['role:admin','check.host','session.timeout'])->group(function () {
     Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
     Route::get('user', [ 'as' => 'user', 'uses' => 'UserController@index']);
   //  Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
@@ -136,7 +134,7 @@ Route::post('/home', 'HomeController@index')->name('home');
   Route::get('quarterlistnormal', [ 'as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
   Route::post('waiting-list', [ 'as' => 'waitinglist.data','uses' => 'ReportsController@getWaitingList']);
   Route::post('getdocumentdata', [ 'as' => 'getdocumentdata','uses' => 'ReportsController@getdocumentdata']);
- Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
+   Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
 	Route::resource('quarterlistpriority', 'QuartersPriorityController');
 	 Route::get('allotmentlist', ['as' => 'allotment.list', 'uses' => 'ReportsController@allotmentlist']);
     Route::get('vacantlist', ['as' => 'vacant.list', 'uses' => 'ReportsController@vacantlist']);
@@ -171,10 +169,11 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
     Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
     Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
+    Route::post('/reset/{field}', 'UserController@reset')->name('reset');
+
 });
 
-
-
+ 
 
 
 
@@ -254,8 +253,10 @@ Route::prefix('ddo')->group(function () {
 Route::prefix('user')->group(function () {
     Route::get('list', 'UserController@index')->name('user');
     Route::post('list', 'UserController@getList')->name('user.list');
+   
     Route::post('resetpassword', 'UserController@resetpassword')->name('resetpassword');
     Route::post('resetname', 'UserController@resetname')->name('resetname');
+    Route::post('/resetdesignation', 'UserController@resetdesignation')->name('resetdesignation');
     Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
   
     Route::post('/salarySlabDetails', [ProfileController::class, 'getSalarySlabDetails'])->name('salarySlabDetails');

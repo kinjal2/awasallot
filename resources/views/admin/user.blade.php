@@ -67,41 +67,47 @@
         </div>
         </div>
         </div>
-        <div class="modal" id="reset_modal" data-url="{{ url('/reset') }}">
+<div class="modal" id="reset_modal" data-url="{{ url('/reset') }}">
     <div class="modal-dialog">
         <div class="modal-content pop_up_design">
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Reset</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <!-- Modal body -->
-            <form method="POST" >
-    @csrf
-    <input type="hidden" name="field_type" id="field_type" value="" />
-    <input type="hidden" name="uid" id="uid" value="" />
-    <div class="modal-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="form-group">
-                    <label for="field_value">New Value <span class="error">*</span></label>
-                    <input type="text" name="field_value" id="field_value" class="form-control required" />
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal footer -->
-    <div class="modal-footer">
-        <input type="submit" value="Submit" class="btn btn-success" />
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close Modal</button>
-    </div>
-</form>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
+            </div>
+
+            <!-- Modal body -->
+            <form method="POST" id="resetForm">
+                @csrf
+                <input type="hidden" name="field_type" id="field_type" value="" />
+                <input type="hidden" name="uid" id="uid" value="" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="field_value">New Value <span class="error">*</span></label>
+                                <input type="text" name="field_value" id="field_value" class="form-control required" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <input type="submit" value="Submit" class="btn btn-success" />
+                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close Modal</button>
+
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.6/jquery.inputmask.min.js"></script>
+
+
+
+
 @endsection
 @push('page-ready-script')
 console.log('page is ready');
@@ -160,38 +166,34 @@ $('#userlist tfoot th').each( function () {
             }
         });
     });  
-	  // Open reset modal and set values
-    $(document).on('click', '.reset_password', function() {
-    //$('.reset_password').click(function() {
-     
-        var fieldType = 'password';
-        var actionUrl = "{{ url('/reset') }}/" + fieldType;
-        setModalContent('Reset Password', actionUrl, $(this).data('uid'), fieldType);
-    });
+	var baseUrl = "{{ url('/reset') }}";
 
-    $(document).on('click', '.change_name', function() { 
-        var fieldType = 'name';
-        var actionUrl = "{{ url('/reset') }}/" + fieldType;
-        setModalContent('Change Name', actionUrl, $(this).data('uid'), fieldType);
-    });
+$(document).on('click', '.reset_password, .change_name, .change_designation, .change_office, .change_birthdate', function() {
+    var fieldType = '';
+    var modalTitle = '';
 
-    $(document).on('click', '.change_designation', function() {  
-        var fieldType = 'designation';
-        var actionUrl = "{{ url('/reset') }}/" + fieldType;
-        setModalContent('Change Designation', actionUrl, $(this).data('uid'), fieldType);
-    });
-    $(document).on('click', '.change_office', function() {  
-        var fieldType = 'office';
-        var actionUrl = "{{ url('/reset') }}/" + fieldType;
-        setModalContent('Change Office', actionUrl, $(this).data('uid'), fieldType);
-    });
-    $(document).on('click', '.change_birthdate', function() {  
-        var fieldType = 'date_of_birth';
-        var actionUrl = "{{ url('/reset') }}/" + fieldType;
-  
-        setModalContent('Change Date Of Birth', actionUrl, $(this).data('uid'), fieldType);
-        
-    });
+    if ($(this).hasClass('reset_password')) {
+        fieldType = 'password';
+        modalTitle = 'Reset Password';
+    } else if ($(this).hasClass('change_name')) {
+        fieldType = 'name';
+        modalTitle = 'Change Name';
+    } else if ($(this).hasClass('change_designation')) {
+        fieldType = 'designation';
+        modalTitle = 'Change Designation';
+    } else if ($(this).hasClass('change_office')) {
+        fieldType = 'office';
+        modalTitle = 'Change Office';
+    } else if ($(this).hasClass('change_birthdate')) {
+        fieldType = 'date_of_birth';
+        modalTitle = 'Change Date Of Birth';
+    }
+
+    var actionUrl = baseUrl + "/" + fieldType;
+
+    setModalContent(modalTitle, actionUrl, $(this).data('uid'), fieldType);
+});
+
   
   function setModalContent(title, actionUrl, uid, fieldType) { 
         $('#reset_modal').modal('show');
@@ -205,7 +207,9 @@ $('#userlist tfoot th').each( function () {
         $('#field_value').inputmask('datetime', {
             inputFormat: "yyyy-mm-dd",
             placeholder: "YYYY-MM-DD",
-            showMaskOnHover: false
+            showMaskOnHover: false,
+            min: "1900-01-01",
+            max: "2200-12-31"
         });
     }  else {
         // Destroy input mask if not 'date_of_birth'
