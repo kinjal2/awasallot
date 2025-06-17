@@ -696,6 +696,7 @@ class QuartersController extends Controller
         $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name','is_file_admin_verified'])
             ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
             ->where('request_id', '=', $requestid)
+            ->where('rivision_id', '=', $rivision_id)
             ->get();
 
 

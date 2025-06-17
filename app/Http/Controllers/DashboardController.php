@@ -223,10 +223,10 @@ class DashboardController extends Controller
                 return redirect('updateoldprofile');
             }
             Session::put('dcode',$usermaster->dcode);
-            if($usermaster->dcode != 6){
+            if($usermaster->dcode != 6 && $usermaster->dcode != 41){
                 Session::put('q_officecode', 28084);
             }
-            else{
+            else {
                 Session::put('q_officecode', 28083);
             }
             if($usermaster->cardex_no !=0 )
