@@ -26,6 +26,7 @@ use Mpdf\Mpdf;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 use App\Couchdb\Couchdb;
+use Illuminate\Http\UploadedFile;
 
 use stdClass;
 
@@ -533,94 +534,23 @@ class QuartersController extends Controller
             ->make(true);
         
     }
-    public function generate_pdf($request_id, $revision_id, $performa)
-
-    {       // Decode the query parameters if necessary
-        
+     public function generate_pdf($request_id, $revision_id, $performa)
+    {
         $uid = Session::get('Uid');
         $requestid = base64_decode($request_id);
         $type = base64_decode($performa);
         $rivision_id = base64_decode($revision_id);
-        if($type==='a')
-        {
-        $requestModel = new Tquarterrequesta();
-        }
-        else if($type==='b')
-        {
+
+        // Model decide karo based on type
+        if ($type === 'a') {
+            $requestModel = new Tquarterrequesta();
+        } else if ($type === 'b') {
             $requestModel = new Tquarterrequestb();
         }
-        $data = $requestModel->getFormattedRequestData($requestid, $rivision_id);
-        //dd( $data);
-        if ($data !== null && isset($data['user_id'])) {
-            // Compare the $uid with $data['user_id']
-            if ($uid !== $data['user_id']) {
-                abort(403, "You do not have permission to access this user's data.");
-            }
-        } else {
-            // Handle the case where $data is null or doesn't have the 'user_id' key
-            abort(403, "User data is not available.");
-        }
-        $imageData = generateImage($uid);
-        // Assign the image data to the data array to be passed to the view
-       
-        $data['imageData'] = $imageData;
-        $officecode = Session::get('officecode');
-        $officecode = getOfficeByCode($officecode);
-        $data['officesname'] = isset($officecode[0]->officesnameguj) ? $officecode[0]->officesnameguj : null;
 
-        try {
-           
-             // Define the path to the font directory
-            $fontDir = base_path('resources/fonts/'); // Ensure this folder exists
-            // Adding custom font directory and font data
-            $mpdf = new Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'fontDir' => $fontDir,  // Specify the fonts directory
-                'fontdata' => [
-                    "shruti" => [
-					'R' => "shruti.ttf",
-					'B' => "shrutib.ttf",
-					/*'I' => "shruti.ttf",
-					'BI' => "shruti.ttf",*/
-					'useOTL' => 0xFF,
-					'useKashida' => 75,
-				],
-                ],
-                'default_font' => 'shruti',  // Set the default font
-            ]);
-
-            // Convert uid to string to set as watermark
-           $uid = (string) $uid;
-            $mpdf->SetWatermarkText($uid);
-            $mpdf->showWatermarkText = true;
-
-
-            //  $mpdf->SetWatermarkText($uid);
-            // $mpdf->showWatermarkText = true;
-
-            // Load HTML view and render it
-            if($type==='a')
-            {
-                $html = view('request/applicationview', $data)->render();
-            }
-            else if($type==='b')
-            {
-                $html = view('request/applicationview_b', $data)->render();
-            }
-
-        
-           
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-
-            // Output PDF to browser
-            $mpdf->Output($uid.'_'.Session::get('Name').'.pdf', 'I');
-        } catch (\Mpdf\MpdfException $e) {
-            echo $e->getMessage();
-        }
+        // Call service here
+        $this->pdfService->generate($requestModel, $requestid, $rivision_id, $type, 'I');
     }
-
    
     public function saveuploaddocument(request $request)
     {
@@ -886,13 +816,14 @@ class QuartersController extends Controller
 
         $officecode = Session::get('officecode');
         $status = $request->status;
-        //dd($status);
+       // dd($request);
         $requestid = $request->requestid;
         $dg_allotment = $request->dg_allotment;
         //$files= $request->input('files');
         //dd($files);
         $rv = $request->rv;
         $dg_request_id = Tquarterrequesta::where('officecode', '=', $officecode)->orderBy('requestid', 'DESC')->value('requestid');
+      
         //dd($dg_request_id );
         $dg_request_id += 1;
 
@@ -968,6 +899,31 @@ class QuartersController extends Controller
                     //dd($request->get('conn_status'));
                     // Insert data into the history table
                     Tquarterequesthistorya::create($t_quarterrequest_a_Data);
+                    $requestModel = new Tquarterrequesta();
+                     $pdfContent = app(\App\Services\PdfGeneratorService::class)->generate(
+                        $requestModel,
+                        $requestid,
+                       $rv,
+                        'a',
+                        'S'  // <-- return as string
+                    );
+
+                        $tempPdfPath = storage_path('app/temp_' . uniqid() . '.pdf');
+                        file_put_contents($tempPdfPath, $pdfContent);
+
+                        // Convert it to UploadedFile instance
+                        $tempUploadedFile = new UploadedFile(
+                        $tempPdfPath,
+                        'form.pdf',
+                        'application/pdf',
+                        null,
+                        true // $test = true allows non-uploaded files
+                        );
+                    $docId = (string)$result->uid . "_" . $requestid . "_" . 6 . "_a_" . $rv;
+
+        //dd($docId);
+        uploadDocuments($docId, $tempUploadedFile,$result->uid);
+        @unlink($tempPdfPath);
                 }
                 Tquarterrequesta::where('requestid', $requestid)
                     ->where('rivision_id', $rv)
@@ -1475,6 +1431,7 @@ class QuartersController extends Controller
         $officecode = Session::get('officecode');
         $status = $request->status;
         $requestid = $request->requestid;
+       
         $dg_allotment = $request->dg_allotment;
         $rv = $request->rv;
         $dg_request_id = Tquarterrequestb::orderBy('requestid', 'DESC')->value('requestid');
@@ -1534,20 +1491,42 @@ class QuartersController extends Controller
               // dd($t_quarterrequest_b);
                 //dd(auth()->user()->id);
                 if ($t_quarterrequest_b) {
-                // Store the current customer details in history before updating
+              
                 $t_quarterrequest_b_Data = $t_quarterrequest_b->toArray();
-               //dd($t_quarterrequest_b_Data);
-              // dd($requestid);
-            //   $t_quarterrequest_b_Data['requestid'] = $requestid;  // make sure this is not null
-            //   $t_quarterrequest_b_Data['quartertype'] = $t_quarterrequest_b->quartertype;  
-            //   $t_quarterrequest_b_Data['uid'] = $result->uid;
-            //   $t_quarterrequest_b_Data['rivision_id']= $rv;
+             
                 $t_quarterrequest_b_Data['created_by'] = auth()->user()->id; // User's ID for created_by
                 $t_quarterrequest_b_Data['updated_by'] = auth()->user()->id;// User's ID for updated_by
                 $t_quarterrequest_b_Data['created_at'] = now(); // Current timestamp for created_at
                 $t_quarterrequest_b_Data['updated_at'] = now(); // Current timestamp for updated_at
                 // Insert data into the history table
                 Tquarterrequesthistoryb::create($t_quarterrequest_b_Data);
+                // $requestModel = new Tquarterrequestb();
+
+                $requestModel = new Tquarterrequestb();
+
+                    $pdfContent = app(\App\Services\PdfGeneratorService::class)->generate(
+                        $requestModel,
+                        $$requestid->requestid,
+                        $$requestid->rivision_id,
+                        'b',
+                        'S'  // <-- return as string
+                    );
+
+                        $tempPdfPath = storage_path('app/temp_' . uniqid() . '.pdf');
+                        file_put_contents($tempPdfPath, $pdfContent);
+
+                        // Convert it to UploadedFile instance
+                        $tempUploadedFile = new UploadedFile(
+                        $tempPdfPath,
+                        'form.pdf',
+                        'application/pdf',
+                        null,
+                        true // $test = true allows non-uploaded files
+                        );
+                     $docId = (string)Session::get('Uid') . "_" . base64_decode($request->request_id) . "_" . $request->document_type . "_" . base64_decode($request->perfoma) . "_" . base64_decode($rv);
+        //dd($docId,$request->file('image'));
+        uploadDocuments($docId, $tempUploadedFile   );
+        @unlink($tempPdfPath);
                 }
 
                 // Update the TQuarterRequestB record
