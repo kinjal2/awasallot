@@ -136,7 +136,7 @@
             type: 'GET',                 // Use GET to fetch data
             success: function(response) {
                 // Handle the response, e.g., populate a form for editing
-                console.log(response);
+               // console.log(response);
 
                 // Example of populating a form (assuming you have inputs with IDs)
             /*    $('#editForm #name').val(response.name);

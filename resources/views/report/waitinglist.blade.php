@@ -210,7 +210,7 @@ table.dataTable tfoot input {
 <script type="text/javascript">
     var visible_columns= false;
     var hide_colunm = ["wno", "quartertype", "tableof","inward_no"];
-    console.log($.inArray( "designation", hide_colunm ));
+  //  console.log($.inArray( "designation", hide_colunm ));
  var table = $('#waitinglist').DataTable({
         processing: true,
         serverSide: true,

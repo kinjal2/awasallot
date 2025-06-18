@@ -46,7 +46,7 @@
         jQuery.noConflict();
 
         jQuery(document).ready(function($) {
-            console.log('jQuery is working.');
+           // console.log('jQuery is working.');
 
             $('#reload').on('click', function() {
                 $.ajax({

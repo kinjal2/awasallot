@@ -150,7 +150,7 @@
                 url: "{{ route('quarter.list.addnewremark') }}",
                 data: formData,
                 success: function(response) {
-                    console.log('Remark added successfully:', response);
+                   // console.log('Remark added successfully:', response);
                     if (response.status === 'success') {
                         // alert(response.message); // or use a toast/snackbar for better UI
                         $('#remark-message').html(`
