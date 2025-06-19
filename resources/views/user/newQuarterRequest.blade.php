@@ -557,7 +557,7 @@ $('#cardex_no').on('blur', function() {
                 _token: csrfToken // Include CSRF token here
             },
             success: function(data) { //alert(data);
-                console.log(data);  // Check the actual response data from the server
+              //  console.log(data);  // Check the actual response data from the server
                 const ddo_code = $('#ddo_code');
                 ddo_code.empty();
 

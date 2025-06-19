@@ -88,7 +88,7 @@ $(document).ready(function() {
             url: "{{ route('phone.reload-captcha') }}", // This should be the route that reloads the captcha
             type: 'GET',
             success: function(response) {
-                console.log(response.captcha_src);
+               // console.log(response.captcha_src);
                 // Update the captcha image source with the new captcha
                 $('#captcha_image').attr('src', response.captcha_src);
             },

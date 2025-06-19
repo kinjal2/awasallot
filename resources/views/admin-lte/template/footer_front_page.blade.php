@@ -31,16 +31,16 @@
    <script>
    
     $(document).ready(function() {
-        console.log($('meta[name="csrf-token"]').attr('content')); 
+      //  console.log($('meta[name="csrf-token"]').attr('content')); 
 
-        console.log("CSRF Token:", $('meta[name="csrf-token"]').attr('content'));
+        //console.log("CSRF Token:", $('meta[name="csrf-token"]').attr('content'));
 
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        console.log("CSRF Token:", $('meta[name="csrf-token"]').attr('content'));
+        //console.log("CSRF Token:", $('meta[name="csrf-token"]').attr('content'));
         $('input.dateformat').datetimepicker({
             format: 'd-m-Y',
             timepicker: false

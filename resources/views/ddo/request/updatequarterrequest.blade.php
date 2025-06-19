@@ -609,50 +609,8 @@
                         }
                     });
                 </script>
-                <!-- <script>
-                    document.getElementById('submit').addEventListener('click', function(event) {
-                        const selectElement = document.getElementById('getpayslip_certificate');
-                        const selectedValue = selectElement.value;
-                        const fileInput = document.getElementById('image');
-                        const file = fileInput.files[0]; // Get the first selected file
-
-                        // Check if a document is selected
-                        if (!selectedValue) {
-                            event.preventDefault(); // Prevent form submission
-                            alert('Please select a document to upload.'); // Show an alert
-                            selectElement.focus(); // Set focus back to the select element
-                            return; // Exit the function
-                        }
-
-                        // Check if a file is selected
-                        if (!file) {
-                            event.preventDefault(); // Prevent form submission
-                            alert('Please upload a file.'); // Show an alert
-                            fileInput.focus(); // Set focus back to the file input
-                            return; // Exit the function
-                        }
-
-                        // Additional file type and size validation can be added here if needed
-                    });
-                </script> -->
-
-
-
                 <script>
-                    // Listen for change events on the select element
-                    //      $('#getpayslip_certificate').on('change', function() {
-
-                    //     var selectedOption = $(this).find('option:selected');
-                    //     var selectedValue = selectedOption.val();
-
-
-                    //     // Remove the selected option from the dropdown
-                    //     if (selectedValue) {
-                    //         selectedOption.remove();
-                    //     }
-                    // });
-
-
+                  
                     $('#submit').on('click', function(event) {
                         event.preventDefault(); // Prevent default form submission
 
@@ -725,32 +683,7 @@
                 <script>
                     document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
-                          // alert("test");
-                         /*   let docId = checkbox.getAttribute('data-doc-id');
-                            let isChecked = checkbox.checked ? 1 : 2; // 1 if checked, 2 if unchecked
-
-                            // AJAX request to update file status
-                            fetch("{{ route('updateFileStatus') }}", {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    },
-                                    body: JSON.stringify({
-                                        doc_id: docId,
-                                        is_file_ddo_verified: isChecked
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log(data.success);
-                                    if (data.success) {
-                                        console.log('File status updated');
-                                    } else {
-                                        console.log('Failed to update status');
-                                    }
-                                });*/
-                                 // Call the toggleSubmitButton function to update button visibility
+                        
                                 toggleSubmitButton();
                         });
                     });

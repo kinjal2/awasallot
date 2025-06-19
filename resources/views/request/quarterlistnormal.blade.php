@@ -52,6 +52,7 @@
                       <th>Email ID</th>
                       <th>Request Date</th>
                       <th>Action</th>
+                      
                     <!--  <th></th>-->
                     </tr>
                   </thead>
@@ -100,7 +101,8 @@
             {data: 'contact_no'},
             {data: 'email'},
             {data: 'request_date'},
-            {data: 'action'},
+             {data: 'action'},
+           
           //  {data: 'delete'},
          ]
     });

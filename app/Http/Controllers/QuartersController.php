@@ -653,8 +653,8 @@ class QuartersController extends Controller
 
         $requestid = base64_decode($requestid);
         $rivision_id = base64_decode($rivision_id);
-        $uid = base64_decode($uid);
-      //  dd($uid);
+		$uid = base64_decode($uid);
+		//  dd($uid);
         $requestModel = new Tquarterrequesta();
         $quarterrequest = $requestModel->getFormattedRequestData($requestid, $rivision_id);
 
@@ -663,7 +663,8 @@ class QuartersController extends Controller
             ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
             ->where('request_id', '=', $requestid)
             ->where('rivision_id', '=', $rivision_id)
-            ->where('uid', '=', $uid)
+			->where('uid', '=', $uid)
+			 ->where('master.file_list.performa', '=', 'a')
             ->get();
   //dd( $this->_viewContent['file_uploaded']);
 
@@ -687,11 +688,12 @@ class QuartersController extends Controller
         $this->_viewContent['page_title'] = "Quarter Edit Details";
         return view('request/updatequarterrequest', $this->_viewContent);
     }
-    public function editquarter_b(request $request, $requestid, $rivision_id)
+    public function editquarter_b(request $request, $requestid, $rivision_id, $uid)
     {
         // dd($requestid, $rv);
         $requestid = base64_decode($requestid);
         $rivision_id = base64_decode($rivision_id);
+		$uid = base64_decode($uid);
         $requestModel = new Tquarterrequestb();
         $quarterrequest = $requestModel->getFormattedRequestData($requestid, $rivision_id);
 
@@ -700,6 +702,7 @@ class QuartersController extends Controller
             ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
             ->where('request_id', '=', $requestid)
             ->where('rivision_id', '=', $rivision_id)
+			->where('uid', '=', $uid)
             ->where('master.file_list.performa', '=', 'b')
             ->get();
 
@@ -1056,7 +1059,7 @@ class QuartersController extends Controller
     }
 
     
-    public function savefinalannexure(request $request)
+    public function savefinalannexure_original(request $request)
     {
         $requestid = $request->requestid;
         $downgrade_requestid = $request->dgr;
@@ -1091,8 +1094,8 @@ class QuartersController extends Controller
                  ->whereIn('document_type', function ($query) use($type) { //added on 12-06-2025
                     $query->select('document_id')  // Select the correct column (document_id)
                         ->from('master.file_list')  
-                       ->whereIn('master.file_list.is_file_ddo_verified', [0,2])       // Correct table name (assuming it's 'filelists')
-                        ->whereIn('master.file_list.is_file_admin_verified', [0,2])       // Correct table name (assuming it's 'filelists')
+                      ->whereIn('master.file_list.is_file_ddo_verified', [0,2])       // Correct table name (assuming it's 'filelists')
+                       ->whereIn('master.file_list.is_file_admin_verified', [0,2])       // Correct table name (assuming it's 'filelists')
                         ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
                         ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
 																								
@@ -1116,8 +1119,9 @@ class QuartersController extends Controller
                         // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
                         return $query->whereNotIn('document_type', [9]);
                     }
-                )->count();
-                // ->get();
+                )
+                //->count();
+                 ->get();
                 
         
             $doc_submitted = Filelist::where('request_id', $requestid)
@@ -1153,7 +1157,7 @@ class QuartersController extends Controller
         // Get the last query executed
           $query = end($lastQuery);
          // dd($query);
-           //  dd($doc_tobe_submit,'hii<br>',$doc_submitted);
+             dd($doc_tobe_submit,'hii<br>',$doc_submitted);
             if ($doc_tobe_submit != $doc_submitted) { //dd("test");
 
 
@@ -1987,38 +1991,82 @@ class QuartersController extends Controller
 
     $cnt = 0;
 
-    return Datatables::of($query)
-        ->addColumn('inward_date', function ($date) {
-            return $date->inward_date ? date('d-m-Y H:i:s', strtotime($date->inward_date)) : 'N/A';
-        })
-        ->addColumn('request_date', function ($date) {
-            return $date->request_date ? date('d-m-Y', strtotime($date->request_date)) : 'N/A';
-        })
-        ->addColumn('cardex_ddo', function ($row) {
-            return $row->cardex_no . "/" . $row->ddo_code;
-        })
-        ->addColumn('action', function ($row) use (&$cnt) {
-            $cnt++;
-            if ($cnt !== 1) return '';
+            // for showing action button on FCFS request for each quarter type 
+            $firstInwardPerQuarterType = DB::table(DB::raw("({$union->toSql()}) as sub")) 
+            ->mergeBindings($union->getQuery())
+            ->select('quartertype', DB::raw('MIN(inward_date) as min_date'))
+            ->where('is_accepted', '=', 1)
+                            ->whereNull('remarks')
+                            //->where('is_varified', '=', 0)
+                            ->where('is_priority', '=', 'N')
+                            ->where('is_ddo_varified', '=', 1)
+                            ->where('officecode', '=', $officecode)
+                            ->where('is_varified',0)
+            ->groupBy('quartertype')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->quartertype => $item->min_date];
+            });
+//dd($firstInwardPerQuarterType);
+        // Print the SQL query
+      //  dd( $query->toSql());
+        //     dd("hello");
+            $cnt=0;
+        return Datatables::of($query)
+            ->addColumn('inward_date', function ($date) {
+                if ($date->inward_date == '')  return 'N/A';
+
+                return date('d-m-Y H:i:s', strtotime($date->inward_date));
+            })
+            ->addColumn('request_date', function ($date) {
+                if ($date->request_date == '')  return 'N/A';
+
+                return date('d-m-Y', strtotime($date->request_date));
+            })
+            ->addColumn('cardex_ddo',function($row){
+                return $row->cardex_no."/".$row->ddo_code;
+            })
+            // ->addColumn('action', function ($row) use (&$cnt) {
+            //     $cnt++; // increment per row processed
+            //     if ($cnt !== 1) return ''; // Only show on the first row
+            //     //  $btn1 =   "edit";
+            //     if ($row->requesttype == 'New') {
+            //         //  $btn1 = '<a href="'.\route('editquarter', $row->requestid).'" class="btn btn-success "><i class="fas fa-edit"></i></a> ';
+            //         $btn1 = '<a href="' . \route('editquarter_a', ['r' =>  base64_encode($row->requestid), 'rv' =>  base64_encode($row->rivision_id)]) . '" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+            //     } else {
+            //         $btn1 = '<a href="' . \route('editquarter_b', ['r' =>  base64_encode($row->requestid), 'rv' =>  base64_encode($row->rivision_id)]) . '" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+            //     }
+            //     return $btn1;
+            // })
+            ->addColumn('action', function ($row) use ($firstInwardPerQuarterType) {
+            if (!isset($firstInwardPerQuarterType[$row->quartertype])) {
+                return '';
+            }
+
+            // Compare current row's inward_date with the earliest for its quartertype
+            if ($row->inward_date !== $firstInwardPerQuarterType[$row->quartertype]) {
+                return '';
+            }
 
             if ($row->requesttype == 'New') {
                 return '<a href="' . \route('editquarter_a', [
                     'r' => base64_encode($row->requestid),
-                    'rv' => base64_encode($row->rivision_id),
-                    'uid' => base64_encode($row->uid)
-                ]) . '" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+                    'rv' => base64_encode($row->rivision_id)
+                ]) . '" class="btn btn-success"><i class="fas fa-edit"></i></a>';
             } else {
                 return '<a href="' . \route('editquarter_b', [
                     'r' => base64_encode($row->requestid),
-                    'rv' => base64_encode($row->rivision_id),
-                    'uid' => base64_encode($row->uid)
-                ]) . '" class="btn btn-success "><i class="fas fa-edit"></i></a>';
+                    'rv' => base64_encode($row->rivision_id)
+                ]) . '" class="btn btn-success"><i class="fas fa-edit"></i></a>';
             }
         })
-        ->rawColumns(['delete', 'action'])
-        ->make(true);
-}
-
+            /* ->addColumn('delete', function($row){
+         $btn1 ='<a href="' . \URL::action('QuartersController@uploaddocument'). "?r=" . base64_encode($row->requestid)."&type=". base64_encode($row->type)."&rev=". base64_encode($row->rivision_id).'" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></a>';
+         return $btn1;
+     })*/
+            ->rawColumns(['delete', 'action'])
+            ->make(true);
+    }
     public function requestchange(Request $request)
     {
         // Step 1: Retrieve user ID from the session
@@ -2587,7 +2635,7 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
         $request_id = base64_decode($_REQUEST['r']);
         $type = base64_decode($_REQUEST['type']);
         $rev = base64_decode($_REQUEST['rev']);
-        
+       //dd($request_id,$type,$rev);
        
         // Fetch user-specific details (only once)
         $user = User::find(Session::get('Uid'));
@@ -2609,21 +2657,23 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
             $this->_viewContent['ddo_remarks_status']=$ddo_remarks;
             $this->_viewContent['admin_remarks_status']=$admin_remarks;
            }
-          // dd($wno['wno']);
-        \DB::enableQueryLog();
+        //  dd($request_id,$type,$rev,$wno['wno'],$ddo_remarks,$admin_remarks);
+       // \DB::enableQueryLog();
         //19-11-2024 to show polics staff ceriticate if user is police staff
        
            if($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] == '' && $wno['wno'] == '')
            {
            
              $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-            ->whereNotIn('document_type', [6, 10]) // Exclude certain document types
-            ->whereNotIn('document_type', function ($query) use($type) {
+            ->whereNotIn('document_type', [6]) // Exclude certain document types
+            ->whereNotIn('document_type', function ($query) use($type,$request_id,$rev) {
                 $query->select('document_id')  // Select the correct column (document_id)
                     ->from('master.file_list')  
                     ->whereIn('master.file_list.is_file_ddo_verified', [0,1])       // Correct table name (assuming it's 'filelists')
                     ->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
                     ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                     ->WHERE('request_id', $request_id)
+                    ->where('rivision_id',$rev)
                     ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
             })
             // Conditionally add the exclusion for document type 8 based on the user's role
@@ -2648,10 +2698,16 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
             )
             ->pluck('document_name', 'document_type');
 
-        
+        // $lastQuery = DB::getQueryLog();
+        //  print_r($lastQuery);
+        // // Get the last query executed
+        //    $query = end($lastQuery);
+
+        // // Print the SQL query and bindings for debugging
+        // dd($query['query'], $query['bindings']);
         $attacheddocument = DB::table('master.file_list')
             ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-             ->whereNotIn('document_id', [6, 10])
+             ->whereNotIn('document_id', [6])
             ->WHERE('uid', Session::get('Uid'))
             ->WHERE('request_id', $request_id)
             ->where('rivision_id',$rev)
@@ -2666,26 +2722,22 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
              ->get();
 
              
-        //  $lastQuery = DB::getQueryLog();
-            // print_r($lastQuery);
-        // Get the last query executed
-        //   $query = end($lastQuery);
-
-        // Print the SQL query and bindings for debugging
-    //    dd($query['query'], $query['bindings']);
-         // dd($document_list);
-        // dd( $attacheddocument );
+          
+         // dd($document_list,$attacheddocument);
+         //dd( $attacheddocument );
            }
            else if($ddo_remarks['ddo_remarks'] != '' && $admin_remarks['remarks'] == '' )
            {
                // dd("hello");
                   $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-                ->whereNotIn('document_type', [6, 10]) // Exclude certain document types
-                ->whereIn('document_type', function ($query) use($type) {
+                ->whereNotIn('document_type', [6]) // Exclude certain document types
+                ->whereIn('document_type', function ($query) use($type,$request_id,$rev) {
                     $query->select('document_id')  // Select the correct column (document_id)
                         ->from('master.file_list')  
                         ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
                         //->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+                         ->WHERE('request_id', $request_id)
+                        ->where('rivision_id',$rev)
                         ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
                         ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
                 })
@@ -2721,7 +2773,7 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
          // dd($document_list);
         $attacheddocument = DB::table('master.file_list')
             ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-             ->whereNotIn('document_id', [6, 10])
+             ->whereNotIn('document_id', [6])
             ->WHERE('uid', Session::get('Uid'))
             ->WHERE('request_id', $request_id)
             ->where('rivision_id',$rev)
@@ -2741,12 +2793,14 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
               // dd($admin_remarks);
                  //dd("hello");
                   $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-                ->whereNotIn('document_type', [6, 10]) // Exclude certain document types
-                ->whereIn('document_type', function ($query) use($type) {
+                ->whereNotIn('document_type', [6]) // Exclude certain document types
+                ->whereIn('document_type', function ($query) use($type,$request_id,$rev) {
                     $query->select('document_id')  // Select the correct column (document_id)
                         ->from('master.file_list')  
                       //  ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
                         ->whereIn('master.file_list.is_file_admin_verified', [0,2])       // Correct table name (assuming it's 'filelists')
+                         ->WHERE('request_id', $request_id)
+                        ->where('rivision_id',$rev)
                         ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
                         ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
                 })
@@ -2783,7 +2837,7 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
         
             $attacheddocument = DB::table('master.file_list')
                 ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-                ->whereNotIn('document_id', [6, 10])
+                ->whereNotIn('document_id', [6])
                 ->WHERE('uid', Session::get('Uid'))
                 ->WHERE('request_id', $request_id)
                 ->where('rivision_id',$rev)
@@ -2803,7 +2857,7 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
                 $document_list="";
                 $attacheddocument = DB::table('master.file_list')
                     ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-                     ->whereNotIn('document_id', [6, 10])
+                     ->whereNotIn('document_id', [6])
                     ->WHERE('uid', Session::get('Uid'))
                     ->WHERE('request_id', $request_id)
                     ->where('rivision_id',$rev)
@@ -2852,5 +2906,639 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
 
         //dd($data);
         return response()->json($data);
+    }
+     public function savefinalannexure(request $request)
+    {
+        $requestid = $request->requestid;
+        $downgrade_requestid = $request->dgr;
+        $rev = $request->rev;
+        $type=$request->type;
+        //dd($request->type);
+        // dd( $rev);
+        //dd(Session::get('Uid'));
+       if($type=='a'){
+         $ddo_remarks=Tquarterrequesta::where('requestid',$requestid)->select('is_ddo_varified','ddo_remarks')->first();
+         $admin_remarks=Tquarterrequesta::where('requestid',$requestid)->select('is_varified','remarks')->first();
+         $wno=Tquarterrequesta::where('requestid',$requestid)->select('wno')->first();
+         
+        }	
+		else if($type=='b'){
+            $ddo_remarks=Tquarterrequestb::where('requestid',$requestid)->select('is_ddo_varified','ddo_remarks')->first();
+            $admin_remarks=Tquarterrequestb::where('requestid',$requestid)->select('is_varified','remarks')->first();
+            $wno=Tquarterrequestb::where('requestid',$requestid)->select('wno')->first();
+          
+           }
+        DB::enableQueryLog();
+        if ($request->type == 'a') {
+            $result = Tquarterrequesta::where('requestid', $requestid)
+                ->first();
+            if ($downgrade_requestid != "") {
+                $downgrade_request = Tquarterrequesta::where('requestid', $requestid)
+                    ->first();
+                $downgrade_quartertype = $downgrade_request->quartertype;
+            }
+
+            $quartertype = $result->quartertype;
+
+            // Get user data for is_police_staff
+            $isPoliceStaff = User::where('id', Session::get('Uid'))->value('is_police_staff');
+            $isFixPayStaff = User::where('id', Session::get('Uid'))->value('is_fix_pay_staff');
+            //dd($isPoliceStaff);
+            //dd($isFixPayStaff);
+            // Count documents where 'performa' contains 'a'
+            //$doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')->whereNotIn('document_type', [2, 6, 9, 10,3,7])->count();
+            $type='a';
+          
+            // Count documents where 'performa' contains 'a' and exclude certain document types --19-11-2024
+           if($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] == '' && $wno['wno'] == '')
+           {
+            //dd("hello");
+            $doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')
+                ->whereNotIn('document_type', [6])  // Exclude document types
+            //     ->whereNotIn('document_type', function ($query) use($type) {
+            //     $query->select('document_id')  // Select the correct column (document_id)
+            //         ->from('master.file_list')  
+            //         ->whereIn('master.file_list.is_file_ddo_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+            //         ->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+            //         ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+            //         ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+            // })
+                //->when($isPoliceStaff == 'N', function ($query) {
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_type', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_type', [9]);
+                    }
+                )
+                ->count();
+                // ->get();
+                     $doc_submitted = Filelist::where('request_id', $requestid)
+                //->whereNotIn('document_id', [2, 6, 9, 10, 3, 7])  // Exclude document types
+                ->whereNotIn('document_id', [6])
+                ->where('performa', 'a')
+				->where('rivision_id',$rev)	
+                 ->where('uid', Session::get('Uid'))		   
+                //->when($isPoliceStaff == 'N', function ($query) {
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_id', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_id', [9]);
+                    }
+                )->count();
+
+				 }
+				  else if($ddo_remarks['ddo_remarks'] != '' && $admin_remarks['remarks'] == '' )
+           {
+            //dd("Test");
+				$doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')
+                ->whereNotIn('document_type', [6])  // Exclude document types
+                ->whereIn('document_type', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                        ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        //->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                //->when($isPoliceStaff == 'N', function ($query) {
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_type', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_type', [9]);
+                    }
+                )
+                ->count();
+                // ->get();
+                 $doc_submitted = Filelist::where('request_id', $requestid)
+                //->whereNotIn('document_id', [2, 6, 9, 10, 3, 7])  // Exclude document types
+                ->whereNotIn('document_id', [6])
+                ->where('performa', 'a')
+				->where('rivision_id',$rev)
+				->whereIn('document_id', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                        ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        //->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                 ->where('uid', Session::get('Uid'))		   
+                //->when($isPoliceStaff == 'N', function ($query) {
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_id', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_id', [9]);
+                    }
+                )->count();
+				 }
+				  else if($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] != '' )
+           {
+				 $doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')
+                ->whereNotIn('document_type', [6])  // Exclude document types
+                ->whereIn('document_type', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                      //  ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        ->whereIn('master.file_list.is_file_admin_verified', [0,2])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_type', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_type', [9]);
+                    }
+                )
+                ->count();
+               //  ->get();
+                 $doc_submitted = Filelist::where('request_id', $requestid)
+                ->whereNotIn('document_id', [6])
+                ->where('performa', 'a')
+				->where('rivision_id',$rev)
+				 ->whereIn('document_id', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                      //  ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        ->whereIn('master.file_list.is_file_admin_verified', [0,2])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                 ->where('uid', Session::get('Uid'))		   
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_id', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_id', [9]);
+                    }
+                )->count();
+				 }
+        
+           
+                
+                 //    $lastQuery = DB::getQueryLog();
+             //print_r($lastQuery);
+        // Get the last query executed
+          //$query = end($lastQuery);
+         // dd($query);
+            // dd("Document to be submit :- ".$doc_tobe_submit,'hii<br>',"Document submitted :- ".$doc_submitted);
+            if ($doc_tobe_submit != $doc_submitted) { //dd("test");
+
+
+                return redirect()->action('QuartersController@uploaddocument', [
+                    'r' => base64_encode($requestid),
+                    'type' => base64_encode($request->type),
+                    'rev' => base64_encode($rev)
+                ])->with('failed', 'Upload All Documents');
+            }
+            try {
+                $inward_no = '';
+                $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                $quartertype = $quartertype; // Define quarter type
+                $downgrade_requestid = $downgrade_requestid; // Get from request
+
+                while (true) {
+                    $inward_no = generateRandomString(5);
+                    $inward_no = "$quartertype/" . date('Y') . "/$uid/$inward_no";
+                    $co = Tquarterrequesta::where('inward_no', $inward_no)->count();
+                    if ($co == 0) break;
+                }
+
+                $data = [
+                    'inward_no' => $inward_no,
+                    'inward_date' => now(),
+                    'is_accepted' => 1,
+                    'is_priority' => 'N',
+                    'is_ddo_varified' =>0,
+                    'ddo_remarks' => null,
+                    'is_varified' => 0,
+                    'remarks' => null
+
+                ];
+
+                $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->update($data);
+
+                // Downgrade Allotment
+                if ($downgrade_requestid != "") {
+                    $inward_no = '';
+                    $downgrade_quartertype =  $downgrade_requestid; // Define downgrade quarter type
+
+                    while (true) {
+                        $inward_no = generateRandomString(5);
+                        $inward_no = "$downgrade_quartertype/" . date('Y') . "/$uid/$inward_no";
+                        $co = Tquarterrequesta::where('inward_no', $inward_no)->count();
+                        if ($co == 0) break;
+                    }
+
+                    $data = [
+                        'inward_no' => $inward_no,
+                        'inward_date' => now(),
+                        'is_accepted' => 1,
+                        'is_priority' => 'N',
+                    ];
+
+                    $respdgr = Tquarterrequesta::where('requestid', $downgrade_requestid)->update($data);
+                }
+
+                if ($resp) {
+                    return redirect()->route('user.quarter.history')->with('smsg', 'Request Submitted Successfully');
+                } else {
+                    $errorMessage = 'Please attach all requested documents then submit your request.';
+                    return redirect()->action('QuartersController@uploaddocument', [
+                        'r' => base64_encode($requestId),
+                        'type' => base64_encode($type),
+                        'rev' => base64_encode($rev)
+                    ])->with('error', $errorMessage);
+                }
+            } catch (\Exception $pe) {
+                //dd($pe->getMessage());
+                // Construct the URL
+                $errorMessage = 'Please attach all requested documents then submit your request.';
+                return redirect()->action('QuartersController@uploaddocument', [
+                    'r' => base64_encode($requestid),
+                    'type' => base64_encode($request->type),
+                    'rev' => base64_encode($rev)
+                ])->with('error', $errorMessage);
+            }
+        }
+        if ($request->type == 'b') {
+            //dd(Session::get('Uid'));
+            $result = Tquarterrequestb::where('requestid', $requestid)
+                ->first();
+            if ($downgrade_requestid != "") {
+                $downgrade_request = Tquarterrequestb::where('requestid', $requestid)
+                    ->first();
+                $downgrade_quartertype = $downgrade_request->quartertype;
+            }
+
+            $quartertype = $result->quartertype;
+
+            // Get user data for is_police_staff
+            $isPoliceStaff = User::where('id', Session::get('Uid'))->value('is_police_staff');
+            $isFixPayStaff = User::where('id', Session::get('Uid'))->value('is_fix_pay_staff');
+            
+            // Count documents where 'performa' contains 'a'
+            //$doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')->whereNotIn('document_type', [2, 6, 9, 10,3,7])->count();
+            $type='b';
+           if($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] == '' && $wno['wno'] == '')
+           {
+            
+            $doc_tobe_submit = Documenttype::where('performa', 'like', '%b%')
+                ->whereNotIn('document_type', [6])  // Exclude document types
+            //     ->whereNotIn('document_type', function ($query) use($type) {
+            //     $query->select('document_id')  // Select the correct column (document_id)
+            //         ->from('master.file_list')  
+            //         ->whereIn('master.file_list.is_file_ddo_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+            //         ->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+            //         ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+            //         ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+            // })
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_type', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_type', [9]);
+                    }
+                )
+                ->count();
+                // ->get();
+                     $doc_submitted = Filelist::where('request_id', $requestid)
+                
+                ->whereNotIn('document_id', [6])
+                ->where('performa', 'b')
+				->where('rivision_id',$rev)	
+                 ->where('uid', Session::get('Uid'))		   
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_id', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_id', [9]);
+                    }
+                )->count();
+
+				 }
+				  else if($ddo_remarks['ddo_remarks'] != '' && $admin_remarks['remarks'] == '' )
+                {
+            
+				$doc_tobe_submit = Documenttype::where('performa', 'like', '%b%')
+                ->whereNotIn('document_type', [6])  // Exclude document types
+                ->whereIn('document_type', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                        ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        //->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_type', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_type', [9]);
+                    }
+                )
+                ->count();
+                
+                 $doc_submitted = Filelist::where('request_id', $requestid)
+                ->whereNotIn('document_id', [6])
+                ->where('performa', 'b')
+				->where('rivision_id',$rev)
+				->whereIn('document_id', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                        ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        //->whereIn('master.file_list.is_file_admin_verified', [0,1])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                 ->where('uid', Session::get('Uid'))		   
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_id', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_id', [9]);
+                    }
+                )->count();
+				 }
+				  else if($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] != '' )
+           {
+				 $doc_tobe_submit = Documenttype::where('performa', 'like', '%b%')
+                ->whereNotIn('document_type', [6])  // Exclude document types
+                ->whereIn('document_type', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                      //  ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        ->whereIn('master.file_list.is_file_admin_verified', [0,2])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_type', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_type', [9]);
+                    }
+                )
+                ->count();
+               //  ->get();
+                 $doc_submitted = Filelist::where('request_id', $requestid)
+                ->whereNotIn('document_id', [6])
+                ->where('performa', 'b')
+				->where('rivision_id',$rev)
+				 ->whereIn('document_id', function ($query) use($type) {
+                    $query->select('document_id')  // Select the correct column (document_id)
+                        ->from('master.file_list')  
+                      //  ->whereIn('master.file_list.is_file_ddo_verified', [2])       // Correct table name (assuming it's 'filelists')
+                        ->whereIn('master.file_list.is_file_admin_verified', [0,2])       // Correct table name (assuming it's 'filelists')
+                        ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                        ->where('uid', Session::get('Uid'));  // Correct the condition for 'uid'
+                })
+                 ->where('uid', Session::get('Uid'))		   
+                ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                    // If user is not a police staff, exclude document_type = 8
+                    return $query->whereNotIn('document_id', [8]);
+                })
+                // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
+                ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
+                    // Only apply this whereNotIn condition if the user is not a police staff
+                    return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                })
+                ->when(
+                    // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
+                    (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                        User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                        User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                    function ($query) {
+                        // Exclude document type 9 for users who are either physically disabled with dis_per <= 60 or is_phy_dis == 'N'
+                        return $query->whereNotIn('document_id', [9]);
+                    }
+                )->count();
+				 }
+        
+           
+                
+                     $lastQuery = DB::getQueryLog();
+             //print_r($lastQuery);
+        // Get the last query executed
+        //   $query = end($lastQuery);
+         // dd($query);
+         //    dd("Document to be submit :- ".$doc_tobe_submit,'hii<br>',"Document submitted :- ".$doc_submitted);
+            
+            if ($doc_tobe_submit != $doc_submitted) { //dd("test");
+
+
+                return redirect()->action('QuartersController@uploaddocument', [
+                    'r' => base64_encode($requestid),
+                    'type' => base64_encode($request->type),
+                    'rev' => base64_encode($rev)
+                ])->with('failed', 'Upload All Documents');
+            }
+            try {
+                $inward_no = '';
+                $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                $quartertype = $quartertype; // Define quarter type
+                $downgrade_requestid = $downgrade_requestid; // Get from request
+
+                while (true) {
+                    $inward_no = generateRandomString(5);
+                    $inward_no = "$quartertype/" . date('Y') . "/$uid/$inward_no";
+                    $co = Tquarterrequestb::where('inward_no', $inward_no)->count();
+                    if ($co == 0) break;
+                }
+
+                $data = [
+                    'inward_no' => $inward_no,
+                    'inward_date' => now(),
+                    'is_accepted' => 1,
+                    'is_priority' => 'N',
+                    'is_ddo_varified' =>0,
+                    'ddo_remarks' => null,
+                    'is_varified' => 0,
+                    'remarks' => null
+                ];
+               
+
+                $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->update($data);
+
+                // Downgrade Allotment
+                if ($downgrade_requestid != "") {
+                    $inward_no = '';
+                    $downgrade_quartertype =  $downgrade_requestid; // Define downgrade quarter type
+
+                    while (true) {
+                        $inward_no = generateRandomString(5);
+                        $inward_no = "$downgrade_quartertype/" . date('Y') . "/$uid/$inward_no";
+                        $co = Tquarterrequestb::where('inward_no', $inward_no)->count();
+                        if ($co == 0) break;
+                    }
+
+                    $data = [
+                        'inward_no' => $inward_no,
+                        'inward_date' => now(),
+                        'is_accepted' => 1,
+                        'is_priority' => 'N',
+                    ];
+
+                    $respdgr = Tquarterrequestb::where('requestid', $downgrade_requestid)->update($data);
+                }
+
+                if ($resp) {
+                    return redirect()->route('user.quarter.history')->with('smsg', 'Request Submitted Successfully');
+                } else {
+                    $errorMessage = 'Please attach all requested documents then submit your request.';
+                    return redirect()->action('QuartersController@uploaddocument', [
+                        'r' => base64_encode($requestId),
+                        'type' => base64_encode($type),
+                        'rev' => base64_encode($rev)
+                    ])->with('error', $errorMessage);
+                }
+            } catch (\Exception $pe) {
+             //   dd($pe->getMessage());
+                // Construct the URL
+                $errorMessage = 'Please attach all requested documents then submit your request.';
+                return redirect()->action('QuartersController@uploaddocument', [
+                    'r' => base64_encode($requestid),
+                    'type' => base64_encode($request->type),
+                    'rev' => base64_encode($rev)
+                ])->with('error', $errorMessage);
+            }
+        }
+       
     }
 }
