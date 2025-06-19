@@ -1650,7 +1650,7 @@ class QuartersController extends Controller
         })
         ->orderBy('inward_date', 'asc');
 
-    $cnt = 0;
+   
 
             // for showing action button on FCFS request for each quarter type 
             $firstInwardPerQuarterType = DB::table(DB::raw("({$union->toSql()}) as sub")) 
@@ -1672,7 +1672,7 @@ class QuartersController extends Controller
         // Print the SQL query
       //  dd( $query->toSql());
         //     dd("hello");
-            $cnt=0;
+            
         return Datatables::of($query)
             ->addColumn('inward_date', function ($date) {
                 if ($date->inward_date == '')  return 'N/A';
