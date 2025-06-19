@@ -644,7 +644,7 @@ if(!function_exists('getDistricts')) {
     {
        
         
-        $district = District::select('dcode', 'name_g', 'name_e')->get();
+        $district = District::select('dcode', 'name_g', 'name_e')->orderBy('name_e')->get();
 
        
        // dd($district);
