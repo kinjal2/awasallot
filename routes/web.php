@@ -120,9 +120,9 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::get('/checkuser', 'UserController@checkuser')->name('checkuser');
     Route::get('quarter-police-document', ['as' => 'quarter.police.document', 'uses' => 'PolicestaffController@index']);
     Route::post('normalquarter-list', ['as' => 'normalquarter-list', 'uses' => 'QuartersController@getNormalquarterList']);
-    Route::get('editquarter_a/{r}/{rv}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
+    Route::get('editquarter_a/{r}/{rv}/{uid}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
    // Route::get('editquarter_a/{r}/{rv}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
-    Route::get('editquarter_b/{r}/{rv}', ['as' => 'editquarter_b', 'uses' => 'QuartersController@editquarter_b']);
+    Route::get('editquarter_b/{r}/{rv}/{uid}', ['as' => 'editquarter_b', 'uses' => 'QuartersController@editquarter_b']);
     Route::post('saveapplication', [ 'as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
     Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);
 
@@ -170,6 +170,7 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
     Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
     Route::post('/reset/{field}', 'UserController@reset')->name('reset');
+    Route::post('upadteremarks', [ 'as' => 'upadteremarks.data','uses' => 'ReportsController@upadteremarks']);
 
 });
 

@@ -798,12 +798,14 @@ if(!function_exists('getRemarks'))
        // $file = $request->file('image');
         // dd($file);
         $MimeType=$file->getClientMimeType();
+        $extension = $file->extension() ?: $file->getClientOriginalExtension() ?: 'pdf';
+
         // Define $path as an array and assign values to its elements
         $path = [
         'id' => $docId,
         'tmp_name' => $file->getRealPath(),
-        'extension' => $file->extension(),
-        'name' => $docId . '.' . $file->extension()
+        'extension' => $extension,
+        'name' => $docId . '.' . $extension
         ];
        // dd($path);
         $fileName = $file->getClientOriginalName();
