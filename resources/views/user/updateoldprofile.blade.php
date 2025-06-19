@@ -149,6 +149,14 @@ $(document).ready(function() {
             taluka: {
                 required: true
             },
+             cardex_no: {
+                required: true,
+                //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
+            },
+             ddo_code: {
+                required: true,
+                //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
+            },
             // captcha: {
             //     required: true
             // }
@@ -161,9 +169,15 @@ $(document).ready(function() {
             taluka: {
                 required: "Please Select Taluka"
             },
-            // captcha: {
-            //     required: "Please enter the captcha"
-            // }
+            cardex_no: {
+                  required: "Please Select Cardex No",
+               
+            },
+             ddo_code: {
+                required: "Please Select DDO Code",
+               
+            },
+            
         }
     });
 });

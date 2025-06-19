@@ -367,10 +367,14 @@ class ProfileController extends Controller
         $rules = [
 			'district' => 'required',
 			'taluka' => 'required',
+            'cardex_no' => 'required',
+            'ddo_code' => 'required'
         ];
         $messages = [
             'district.required' => 'The district field is required.',
-            'taluka.required' => 'The taluka field is required.'
+            'taluka.required' => 'The taluka field is required.',
+            'cardex_no.required' => 'The cardex no field is required.',
+            'ddo_code.required' => 'The ddo code field is required.'
         ];
         $validator =  \Validator::make($request->all(),$rules,$messages);
         if ($validator->fails()) {
