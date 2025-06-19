@@ -136,7 +136,8 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
             {
 
                     $link = 'onclick="show_dialog_desig(' . $row->id . ',' . $row->wno . ",'" . $row->quartertype . "')\"";
-                    return "<a href='#'  ".$link."  class='desig_popup charcher_data btn-remark-custom'>Add Remarks</a>";
+              return "<a href='#' ".$link." class='desig_popup charcher_data btn-remark-custom' style='width: 100px; height: 30px; display: inline-block; text-align: center; line-height: 30px;'>Add Remarks</a>";
+
                     return $row->office_remarks;
             }
             else
@@ -259,7 +260,7 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
             $wno = $request['wno'];
             $quartertype = $request['quartertype'];
             $office_remarks = $request['office_remarks'];
-
+            $officecode = Session::get('officecode');
             // Update for existing user in request table a and b
             $requestA = Tquarterrequesta::where('quartertype', $quartertype)
                 ->where('is_priority', 'N')
@@ -325,7 +326,7 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
                     Log::channel('custom_channel')->info($retirementObj);
                     if ($retirementObj === null) {
                         $quarterTypeInstance = new QuarterType();
-                        $wno = $quarterTypeInstance->getNextRWno($quartertype);
+                        $wno = $quarterTypeInstance->getNextRWno($quartertype,$officecode);
                           // Your Eloquent query executed by using get()
                             // dd(\DB::getQueryLog());
                              //dd($wno);
