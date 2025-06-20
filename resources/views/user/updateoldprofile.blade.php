@@ -78,7 +78,7 @@
                                    
                                     <x-select 
                            name="cardex_no"
-                           :options="['null' => __('common.select')]"
+                           :options="['' => __('common.select')]"
                            :selected="old('cardex_no', '')"
                            class="custon-control form-control select2"
                            id="cardex_no"
@@ -156,10 +156,8 @@ $(document).ready(function() {
              ddo_code: {
                 required: true,
                 //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
-            },
-            // captcha: {
-            //     required: true
-            // }
+            }
+           
         },
         messages: {
             district: {
@@ -170,13 +168,11 @@ $(document).ready(function() {
                 required: "Please Select Taluka"
             },
             cardex_no: {
-                  required: "Please Select Cardex No",
-               
+                  required: "Please Select Cardex No",  
             },
              ddo_code: {
                 required: "Please Select DDO Code",
-               
-            },
+            }
             
         }
     });
