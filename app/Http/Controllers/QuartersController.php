@@ -549,7 +549,8 @@ class QuartersController extends Controller
         }
 
         // Call service here
-        $this->pdfService->generate($requestModel, $requestid, $rivision_id, $type, 'I');
+        $pdfService = app(\App\Services\PdfGeneratorService::class);
+        $pdfService->generate($requestModel, $requestid, $rivision_id, $type, 'I');
     }
    
     public function saveuploaddocument(request $request)
@@ -836,66 +837,72 @@ class QuartersController extends Controller
         //  dd($request->submit_issue);
         //if ($status != 0) {
         if ($request->submit_issue == null) {
-           // dd("submit");
-            try {
+            // dd("submit");
+                try {
 
-                $quarterTypeInstance = new QuarterType();
-                $wno = $quarterTypeInstance->getNextWno($result->quartertype, $officecode);
-                // echo $wno; exit;
-                //dd($wno);
+                    $quarterTypeInstance = new QuarterType();
+                    $wno = $quarterTypeInstance->getNextWno($result->quartertype, $officecode);
+                    // echo $wno; exit;
+                    //dd($wno);
 
-                // Retrieve r_wno value
-               // $rWnoA = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
-               // $rWnoB = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
-                $rWnoA = $quarterTypeInstance->getNextRwno($result->quartertype, $officecode);
-            //    $rWnoB = $quarterTypeInstance->getMaxRwno($result->quartertype, $officecode);
-              //  $rWno = max($rWnoA, $rWnoB) + 1;
-                $rWno=$rWnoA;
-                //dd($rWno);
-                // Update the TQuarterRequestA record
-                $t_quarterrequest_a= Tquarterrequesta::where('requestid', $requestid)
-                ->where('rivision_id', $rv)->where('uid',$result->uid)->first();
-               // dd($t_quarterrequest_a);
-                //dd(auth()->user()->id);
-                if ($t_quarterrequest_a) {
+                    // Retrieve r_wno value
+                // $rWnoA = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
+                // $rWnoB = Tquarterrequesta::getMaxRwno($result->quartertype, $officecode);
+                    $rWnoA = $quarterTypeInstance->getNextRwno($result->quartertype, $officecode);
+                //    $rWnoB = $quarterTypeInstance->getMaxRwno($result->quartertype, $officecode);
+                //  $rWno = max($rWnoA, $rWnoB) + 1;
+                    $rWno=$rWnoA;
+                    //dd($rWno);
+                    // Update the TQuarterRequestA record
+                    $t_quarterrequest_a= Tquarterrequesta::where('requestid', $requestid)
+                    ->where('rivision_id', $rv)->where('uid',$result->uid)->first();
+                // dd($t_quarterrequest_a);
+                    //dd(auth()->user()->id);
+                    if ($t_quarterrequest_a) {
                     // Store the current customer details in history before updating
                     $t_quarterrequest_a_Data = $t_quarterrequest_a->toArray();
                     $t_quarterrequest_a_Data['created_by'] = auth()->user()->id;  // User's ID for created_by
                     $t_quarterrequest_a_Data['updated_by'] = auth()->user()->id;  // User's ID for updated_by
                     $t_quarterrequest_a_Data['created_at'] = now();  // Current timestamp for created_at
                     $t_quarterrequest_a_Data['updated_at'] = now();  // Current timestamp for updated_at
-    
+
                     //dd($request->get('conn_status'));
                     // Insert data into the history table
                     Tquarterequesthistorya::create($t_quarterrequest_a_Data);
                     $requestModel = new Tquarterrequesta();
-                     $pdfContent = app(\App\Services\PdfGeneratorService::class)->generate(
-                        $requestModel,
-                        $requestid,
-                       $rv,
-                        'a',
-                        'S'  // <-- return as string
+                    $pdfContent = app(\App\Services\PdfGeneratorService::class)->generate(
+                    $requestModel,
+                    $requestid,
+                    $rv,
+                    'a',
+                    'S'  // <-- return as string
                     );
-                    dd($pdfContent);
-                       if (empty($pdfContent)) {
-    throw new \Exception("PDF content is empty.");
-}         
-                        $tempPdfPath = storage_path('app/temp_' . uniqid() . '.pdf');
-                        file_put_contents($tempPdfPath, $pdfContent);
+                    if (empty($pdfContent)) {
+                    dd("PDF generation failed or returned empty content");
+                    }
+                    $tempPdfPath = storage_path('app/temp_' . uniqid() . '.pdf');
+                    file_put_contents($tempPdfPath, $pdfContent);
 
-                        // Convert it to UploadedFile instance
-                        $tempUploadedFile = new UploadedFile(
-                        $tempPdfPath,
-                        'form.pdf',
-                        'application/pdf',
-                        null,
-                        true // $test = true allows non-uploaded files
-                        );
+                    // Convert it to UploadedFile instance
+                    $tempUploadedFile = new UploadedFile(
+                    $tempPdfPath,
+                    'form.pdf',
+                    'application/pdf',
+                    null,
+                    true // $test = true allows non-uploaded files
+                    );
                     $docId = (string)$result->uid . "_" . $requestid . "_" . 6 . "_a_" . $rv;
-
-        //dd($docId);
-        uploadDocuments($docId, $tempUploadedFile,$result->uid);
-        @unlink($tempPdfPath);
+                  //  dd( $docId);
+                    uploadDocuments($docId, $tempUploadedFile,$result->uid);
+                    $storagePath = public_path("pdfs/{$result->uid}/");
+                    $fileName = $result->uid . '_applicationform.pdf';
+                    $fullFilePath = $storagePath . $fileName;
+                    if (file_exists($fullFilePath)) {
+                        @unlink($fullFilePath);
+                    }
+                    if (is_dir($storagePath) && count(scandir($storagePath)) <= 2) {
+                        @rmdir($storagePath);
+                    }
                 }
                 Tquarterrequesta::where('requestid', $requestid)
                     ->where('rivision_id', $rv)
