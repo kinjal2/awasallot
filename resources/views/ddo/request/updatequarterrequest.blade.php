@@ -479,24 +479,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="col-12 mt-20 pt-4">
-                                <div class="form-group">
-                                    <!-- <form action="" method="post" name="doc_form" id="doc_form">
-                                        @csrf
-                                        <input type="hidden" name="reqid" id="reqid"
-                                            value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
-                                        <input type="hidden" name="rvid" id="rvid"
-                                            value="{{ isset($quarterrequest['rivision_id']) ? base64_encode($quarterrequest['rivision_id']) : '' }}" />
-                                        <input type="hidden" name="uid" id="uid"
-                                            value="{{ base64_encode($quarterrequest['uid']) }}">
-                                        <input type="hidden" name="qttype" id="qttype"
-                                            value="{{ isset($quarterrequest['quartertype']) ? base64_encode($quarterrequest['quartertype']) : '' }}" /> -->
-
-                                        <!-- <button type="submit" class="btn btn-primary" id="submit_doc" name="submit_doc">Submit Documents</button> -->
-                                    <!-- </form> -->
-                                </div>
-                                <div id="message-container_submitdoc" style="margin-top: 10px;"></div>
-                            </div>
+                            
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -517,28 +500,6 @@
                           
                                 <div class="row">
                                     <div class="col-12">
-                                  
-                                        <!-- <div class="form-group">
-                                            <label for="Name">Status</label>
-                                            <x-select 
-                                                name="status"
-                                                :options="['' => __('common.select')] + getddoupdatestatus()"
-                                                :selected="''"
-                                                class="form-control select2"
-                                                id="status"
-                                            />
-
-
-                                        </div> -->
-                                        <!-- <div class="col-12 yesno_status" >
-
-                                            <div class="form-group">
-                                                <label for="Name">Add Remarks</label>
-                                                <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control">
-                                            </div>
-                                        </div> -->
-                            
-                                       
                                         <div class="col-12" id="remarks">
                                             <div class="form-group">
                                                 <label for="Name">Have Issue?</label>
@@ -548,10 +509,12 @@
                                                 <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control" value="{{ isset($quarterrequest['ddo_remarks']) ? $quarterrequest['ddo_remarks'] : '' }}">
                                             </div>
                                             <div class="form-group">
-
-
+        
+                                                <div id="remark-message" class="mt-2"></div>
+                                                @include(Config::get('app.theme').'.template.severside_message')
+                                                @include(Config::get('app.theme').'.template.validation_errors')
                                                 <button type="submit" class="btn btn-primary" id="submit_issue"
-                                                    name="submit_issue" value="submit_issue">Submit Review & Next</button>
+                                                    name="submit_issue" value="submit_issue" onclick="return validate();">Submit Review & Next</button>
                                             </div>
                                         </div>
                                        
@@ -602,83 +565,29 @@
                             $('.yesno_status').show();
                         }
                     });
-                    $("#ddo_submit_document_a").validate({
-                        rules: {
-                            ddo_remarks: "required",
+                 function validate() {
+                        remarks = $('#ddo_remarks').val().trim();
+                       
+                        if (remarks === '' || remarks === '{"remarks":null}' || remarks === null) {
+                            $('#remark-message').html(`
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Please add remarks before submitting.
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `);
 
+                            setTimeout(() => {
+                                $('#remark-message .alert').alert('close');
+                            }, 3000);
+                            return false; // prevent form submission
                         }
-                    });
+
+                    return true; // allow submission
+                }
                 </script>
                 <script>
-                  
-                    $('#submit').on('click', function(event) {
-                        event.preventDefault(); // Prevent default form submission
-
-                        const selectElement = $('#getpayslip_certificate');
-                        const selectedValue = selectElement.val();
-                        const fileInput = $('#image');
-                        const file = fileInput[0].files[0]; // Get the first selected file
-
-                        // Clear previous messages
-                        $('#message-container').text('').removeClass('alert alert-danger alert-success');
-
-
-                        // Validation checks
-                        if (!selectedValue) {
-                            //alert('Please select a document to upload.');
-                            $('#message-container').addClass('alert alert-danger').text('Please select a document to upload.');
-                            selectElement.focus();
-                            return; // Exit the function
-                        }
-
-                        if (!file) {
-                            //alert('Please upload a file.');
-                            $('#message-container').addClass('alert alert-danger').text('Please select file to upload.');
-                            fileInput.focus();
-                            return; // Exit the function
-                        }
-
-                        // Prepare FormData for AJAX
-                        const formData = new FormData();
-                        formData.append('getpayslip_certificate', selectedValue);
-                        formData.append('image', file);
-                        formData.append('request_id', $('#request_id').val());
-                        formData.append('uid', $('#uid').val());
-                        formData.append('_token', '{{ csrf_token() }}'); // Include CSRF token
-
-                        // AJAX request
-                        $.ajax({
-                            url: "{{ route('ddo.editquarter.a.savedocument') }}", // Update with your route name
-                            type: 'POST',
-                            data: formData,
-                            contentType: false,
-                            processData: false,
-                            success: function(response) {
-                                setTimeout(function() {
-                                    window.location.reload();
-                                }, 2000);
-                                $('#message-container').addClass('alert alert-success').text(
-                                    'File uploaded successfully!');
-
-                                // Optionally, you can redirect or reset the form here
-                            },
-                            error: function(xhr) {
-                                // Handle error response
-                                if (xhr.status === 422) {
-                                    const errors = xhr.responseJSON.errors;
-                                    let errorMessages = '';
-                                    $.each(errors, function(key, value) {
-                                        errorMessages += value[0] + '\n'; // Concatenate error messages
-                                    });
-                                    $('#message-container').addClass('alert alert-danger').text(
-                                        errorMessages); // Show error messages
-                                } else {
-                                    $('#message-container').addClass('alert alert-danger').text(
-                                        'An error occurred. Please try again.');
-                                }
-                            }
-                        });
-                    });
+                    
+                 
                 </script>
                 <script>
                     document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {

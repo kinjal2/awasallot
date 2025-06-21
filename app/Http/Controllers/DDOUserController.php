@@ -44,40 +44,7 @@ class DDOUserController extends Controller
     }
     
    
-    public function geteditquarter_a_old(Request $request, $requestid, $rivision_id)
-    {
-        $requestid = base64_decode($requestid);
-        $rivision_id = base64_decode($rivision_id);
-
-        $requestModel = new TQuarterRequesta();
-        $quarterrequest = $requestModel->getFormattedRequestData($requestid, $rivision_id);
-        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name'])
-            ->join('master.m_document_type as d', 'd.document_type', '=', 'file_list.document_id')
-            ->where('request_id', '=', $requestid)
-            ->get();
-
-
-        $this->_viewContent['quarterrequest1'] = Tquarterrequesta::select([
-            'request_date',
-            'requestid',
-            'quartertype',
-            'inward_no',
-            'inward_date',
-            'rivision_id',
-            'remarks',
-            'is_accepted',
-            'is_allotted',
-            'is_varified',
-            'uid'
-        ])
-            ->where('requestid', '=', $requestid)
-            ->where('uid', '=', $quarterrequest['uid'])
-            ->get();
-        $this->_viewContent['requestid'] = $requestid;
-        $this->_viewContent['quarterrequest'] = (isset($quarterrequest) && isset($quarterrequest)) ? $quarterrequest : '';
-        $this->_viewContent['page_title'] = "Quarter Edit Details";
-        return view('ddo.request.updatequarterrequest', $this->_viewContent);
-    }
+    
     public function savedocument_a(Request $request)
     {
 
@@ -188,9 +155,21 @@ class DDOUserController extends Controller
         $uid = base64_decode($request->uid);
         $qttype = base64_decode($request->qttype);
        // dd($qttype);
-        $ddo_remarks = $request->ddo_remarks;
+       // $ddo_remarks = $request->ddo_remarks;
+
+       
+    //dd($ddo_remarks);
         if (isset($request->submit_issue)) {
             $is_ddo_varified = 2;
+             $validatedData = $request->validate([
+            'ddo_remarks' => 'required',
+        ], [
+            'ddo_remarks.required' => 'Please enter DDO remarks.',
+           
+        ]);
+
+    // Clean input to remove HTML tags
+    $ddo_remarks = strip_tags($validatedData['ddo_remarks']);
         } else {
             $is_ddo_varified = 1;
         }
@@ -255,54 +234,6 @@ class DDOUserController extends Controller
         }
     }
    
-    public function geteditquarter_a_2212025(Request $request, $requestid, $rivision_id)
-    {
-        $requestid = base64_decode($requestid);
-        $rivision_id = base64_decode($rivision_id);
-
-        $requestModel = new TQuarterRequesta();
-        $quarterrequest = $requestModel->getFormattedRequestData($requestid, $rivision_id);
-        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name', 'is_file_ddo_verified'])
-            ->join('master.m_document_type as d', 'd.document_type', '=', 'file_list.document_id')
-            ->where('request_id', '=', $requestid)
-            ->get(); //12-12-2024
-
-
-        $this->_viewContent['quarterrequest1'] = Tquarterrequesta::select([
-            'request_date',
-            'requestid',
-            'quartertype',
-            'inward_no',
-            'inward_date',
-            'rivision_id',
-            'remarks',
-            'is_accepted',
-            'is_allotted',
-            'is_varified',
-            'uid'
-        ])
-
-            ->where('requestid', '=', $requestid)
-            ->where('uid', '=', $quarterrequest['uid'])
-            ->get();
-        //19-11-2024
-        $type = 'a';
-        // DB::enableQueryLog();
-        $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-            ->whereIn('document_type', [10])
-            ->whereNotIn('document_type',  Filelist::WHERE('uid', $quarterrequest['uid'])
-                ->WHERE('request_id', $requestid)->WHERE('performa', $type)
-                ->pluck('document_id'))
-            ->pluck('document_name', 'document_type');
-
-        // $query = DB::getQueryLog();
-        //dd($query);
-        // $this->_viewContent['document_list']=$document_list;
-        $this->_viewContent['requestid'] = $requestid;
-        $this->_viewContent['quarterrequest'] = (isset($quarterrequest) && isset($quarterrequest)) ? $quarterrequest : '';
-        $this->_viewContent['page_title'] = "Quarter Edit Details";
-        return view('ddo.request.updatequarterrequest', $this->_viewContent);
-    }
    
     public function updateFileStatus(Request $request) //13-12-2024
     {
@@ -1025,9 +956,19 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         $uid = base64_decode($request->uid);
         $qttype = base64_decode($request->qttype);
         //dd($qttype);
-        $ddo_remarks = $request->ddo_remarks;
+        //$ddo_remarks = $request->ddo_remarks;
+        
         if (isset($request->submit_issue)) {
             $is_ddo_varified = 2;
+            $validatedData = $request->validate([
+            'ddo_remarks' => 'required',
+        ], [
+            'ddo_remarks.required' => 'Please enter DDO remarks.',
+           
+        ]);
+
+    // Clean input to remove HTML tags
+    $ddo_remarks = strip_tags($validatedData['ddo_remarks']);
         } else {
             $is_ddo_varified = 1;
         }

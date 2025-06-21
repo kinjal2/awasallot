@@ -130,6 +130,8 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
     Route::post('listremarks', ['as' => 'quarter.list.listremarks', 'uses' => 'QuartersController@listremarks']);
     Route::post('addremarks', ['as' => 'quarter.list.addnewremark', 'uses' => 'QuartersController@addnewremarks']);
+    Route::get('remarks', [QuartersController::class, 'listremarks'])->name('quarter.remarks');
+
   //  Route::get('listnormal', ['as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
   Route::get('quarterlistnormal', [ 'as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
   Route::post('waiting-list', [ 'as' => 'waitinglist.data','uses' => 'ReportsController@getWaitingList']);

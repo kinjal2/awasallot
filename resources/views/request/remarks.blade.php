@@ -24,12 +24,14 @@
         <div class="card ">
             <div class="card-header">
                 <h3 class="card-title">Remarks</h3>
-
-
+             
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-
+          
+                @include(Config::get('app.theme').'.template.severside_message')
+                @include(Config::get('app.theme').'.template.validation_errors')
+           
             <div class="card-body">
                 <form action="{{ route('quarter.list.addnewremark') }}" method="POST" id="save_new_remark"
                     name="save_new_remark">
@@ -37,6 +39,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="new_remark">Add New Remark</label>
+                            
                             <input class="form-control" type="text" name="new_remark" id="new_remark"
                                 value="{{ old('new_remark') }}">
                             <input type="submit" value="Add New Remark" class="button btn btn-success mt-4">
@@ -45,14 +48,15 @@
 
                     </div>
                 </form>
+              
                 <form method="POST" name="front_annexurea" id="front_annexurea" action="{{ url('saveremarks') }}"
                     enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="r" id="r" value="{{ $requestid }}" />
-                    <input type="hidden" name="rv" id="rv" value="{{ $rv }}" />
-                    <input type="hidden" name="type" id="type" value="{{ $type }}" />
-                    <input type="hidden" name="remarks_selected" id="remarks_selected" value="{{ $remarks }}" />
-                    <input type="hidden" name="remarks" id="remarks" value="{{ $remarks }}" />
+                    <input type="hidden" name="r" id="r" value="{{ base64_encode($requestid) }}" />
+                    <input type="hidden" name="rv" id="rv" value="{{ base64_encode($rv) }}" />
+                    <input type="hidden" name="type" id="type" value="{{ base64_encode($type) }}" />
+                    <input type="hidden" name="remarks_selected" id="remarks_selected" value="{{ base64_encode($remarks) }}" />
+                    <input type="hidden" name="remarks" id="remarks" value="{{ ($remarks && $remarks != '{"remarks":null}') ? base64_encode($remarks) : '' }}" />
                     <div style="text-align:right;" class="col-md-12">
 
                         <input type="submit" class="button btn btn-success mb-3" value="Save Remarks"
@@ -83,14 +87,6 @@
 
         </div>
     </div>
-
-
-
-
-
-
-
-
     @endsection
     @push('page-ready-script')
 
@@ -141,7 +137,7 @@
             e.preventDefault(); // prevent default form submission
 
             var formData = {
-                new_remark: $('#new_remark').val(),
+                new_remark: btoa($('#new_remark').val()),
                 _token: '{{ csrf_token() }}' // CSRF token for Laravel
             };
 
@@ -177,7 +173,32 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Error submitting remark:', error);
-                    // Optional: Show error messages on the form
+
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        let errorHtml = '<div class="alert alert-danger alert-dismissible fade show" role="alert">';
+                        
+                        $.each(errors, function(key, messages) {
+                            errorHtml += `<div>${messages[0]}</div>`; // show the first error for each field
+                        });
+
+                        errorHtml += `
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
+
+                        $('#remark-message').html(errorHtml);
+
+                        setTimeout(() => {
+                            $('#remark-message .alert').alert('close');
+                        }, 4000);
+                    } else {
+                        $('#remark-message').html(`
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                An unexpected error occurred. Please try again.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        `);
+                    }
                 }
             });
         });
@@ -190,7 +211,7 @@
           remarks += $(this).attr('id') + "," ;
       });
       remarks = remarks.replace(/,$/, ''); // Removes the last comma
-alert(remarks);
+    //alert(remarks);
         $('#remarks').val(remarks);
     }
     </script>
