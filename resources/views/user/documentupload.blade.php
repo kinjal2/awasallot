@@ -106,7 +106,7 @@
                         
                         <div class="alert alert-warning">
                              <button type="button" class="close" data-dismiss="alert">×</button>
-                              Department Remarks : {{$admin_remarks_status['remarks']}}
+                              Department Remarks : <br/> {!! $admin_remarks_list !!}
                     </div>
                     @endif
             @endif
