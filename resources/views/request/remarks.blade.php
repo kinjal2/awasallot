@@ -190,8 +190,30 @@
           remarks += $(this).attr('id') + "," ;
       });
       remarks = remarks.replace(/,$/, ''); // Removes the last comma
-
+alert(remarks);
         $('#remarks').val(remarks);
     }
     </script>
+   <script>
+function validate() {
+    const selectedRemarks = $("input[name='remarksArr[]']:checked").length;
+
+    if (selectedRemarks === 0) {
+        $('#remark-message').html(`
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Please select at least one remark before submitting.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `);
+
+        setTimeout(() => {
+            $('#remark-message .alert').alert('close');
+        }, 3000);
+
+        return false; // Prevent form submission
+    }
+
+    return true; // Allow submission
+}
+</script>
     @endpush
