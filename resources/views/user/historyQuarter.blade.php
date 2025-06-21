@@ -53,8 +53,9 @@
                             <th>Inward No</th>
                             <th>Inward Date</th>
                             <th>Print Application/Attach Documents</th>
-                            <th>Issues</th>
+                            <th>Status</th>
                             <th>DDO Remarks</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +84,46 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="withdrawForm" method="POST">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="withdrawModalLabel">Withdraw Application</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="withdraw_remarks" class="form-label">Withdraw Application Remarks</label>
+            <textarea id="withdraw_remarks" name="withdraw_remarks" class="form-control required" rows="4" required></textarea>
+          </div>
+
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input required" id="agree_rules" name="agree_rules" required>
+            <label class="form-check-label" for="agree_rules">
+              <strong>આથી હુ સરકારી આવાસ અંગેની અરજી પરત લઉ છુ, અને ઉકત અરજી અન્વયે ભવિષ્યમાં કોઇ હકદાવો કરીશ નહિ. જેની હુ સંમતિ આપુ છુ</strong>
+            </label>
+          </div>
+
+          <!-- Hidden Fields -->
+          <input type="hidden" name="requestid" id="modal_requestid">
+          <input type="hidden" name="performa" id="modal_performa">
+          <input type="hidden" name="wait_no" id="modal_wait_no">
+          <input type="hidden" name="quartertype" id="modal_quartertype">
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
             </div><!-- /.card-body -->
         </div><!-- /.card -->
     </div><!-- /.col-md-12 -->
@@ -118,7 +159,7 @@
             {data: 'inward_date', name: 'inward_date'},
             {data: 'action', name: 'action', orderable: true, searchable: true},
             {data: 'issues', name: 'remarks'},
-            //{data: 'ddo_remarks', name: 'remarks'},
+          //  {data: 'ddo_remarks', name: 'remarks'},
              { 
                 data: 'ddo_remarks', 
                 defaultContent: '',
@@ -145,6 +186,7 @@
                     }
                 }
             },
+             {data: 'user_remarks', name: 'user_remarks'},
         ]
     });
 
@@ -152,50 +194,9 @@
       {
          $('#DocumentModal').hide();
       });
-    /* $('body').on('click', '.getdocument', function()
-      {
-          var uid = $(this).attr('data-uid');
-          var type = $(this).attr('data-type');
-          var rivision_id = $(this).attr('data-rivision_id');
-          var requestid = $(this).attr('data-requestid');
-          var remarks=$(this).attr('data-remarks');
-          
-          $.ajax({
-            url: "{{ route('quarter.list.getDDOremarks') }}",
-            method: 'POST',
-            data: {uid:uid,type:type,rivision_id:rivision_id,requestid:requestid,remarks:remarks},
-            success: function(result) {
-            var html = '<ul>';
+ 
 
-            if (result.success === false || !result.data || result.data.length === 0) {
-                html += '<li>' + result.message + '</li>';
-            } else {
-                result.data.forEach(function(item) {
-                    html += '<li>' + item.description + '</li>';
-                });
-            } 
-            
-
-            //html += '</ul>';
-            var html ='';
-            if(remarks == '')
-            {
-              html='No Remarks Found';
-            }
-            else
-            {
-              html=atob(remarks);
-            }
-           
-           // alert(html);
-            $("#viewdata").html(html);
-            $('#DocumentModal').show();
-        
-        
-      }); */
-
-     
-     $('body').on('click', '.getdocument', function()
+ $('body').on('click', '.getdocument', function()
       {
           var uid = $(this).attr('data-uid');
           var type = $(this).attr('data-type');
@@ -223,6 +224,51 @@
         }
           });
       });
+$('body').on('click', '.office_popup', function(event) {
+    event.preventDefault();
+
+    // Extract data from button attributes
+    var t = $(this).data('requestid');
+    var p = $(this).data('requesttype');
+    var w = $(this).data('wno');
+    var q = $(this).data('quartertype');
+
+    // Fill hidden fields in the modal form
+    $('#modal_requestid').val(t);
+    $('#modal_performa').val(p);
+    $('#modal_wait_no').val(w);
+    $('#modal_quartertype').val(q);
+
+    // Show modal using Bootstrap 5
+    let modal = new bootstrap.Modal(document.getElementById('withdrawModal'));
+    modal.show();
+
+    return false;
+});
+
+$('#withdrawForm').on('submit', function(e) {
+        e.preventDefault();
+
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: '{{ route("application.withdraw.details") }}',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                alert('Withdraw submitted successfully.');
+                let modal = bootstrap.Modal.getInstance(document.getElementById('withdrawModal'));
+                modal.hide();
+
+                // Optionally: reload your table
+            },
+            error: function(xhr) {
+                alert('Submission failed!');
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
 </script>
 
 

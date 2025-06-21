@@ -87,6 +87,22 @@
                                         </p>
                                     </div>
                                 </div>
+                                 <div class="row user_details_view">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">હોદ્દો <span>:</span></h6>
+                                </div>
+                                  <div class="col-sm-6">
+                                    <p>  {{ isset($quarterrequest) ? $quarterrequest['designation'] : 'N/A' }} </p>
+                                </div>
+                            </div>
+                                 <div class="row user_details_view">
+                                    <div class="col-sm-6">
+                                    <h6 class="mb-0">કચેરી નું નામ<span>:</span></h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                    <p> {{ isset($quarterrequest) ? $quarterrequest['officename'] : 'N/A' }} </p>
+                                    </div>
+                                </div>
                                     
                                     </div>  
                                     </div>
@@ -118,14 +134,11 @@
                                     <div class="col-sm-6">
                                     <h6 class="mb-0"> જ્યાંથી બદલી થઈ ને આવ્યા હોય /પ્રતિનિયુક્તિ ઉપર આવ્યા હોય ત્યાંનો હોદ્દો અને કચેરી નું નામ<span>:</span></h6>
                                     </div>
-                                    
+                                      <div class="col-sm-6">
+                                    <p>  {{ isset($quarterrequest) ? $quarterrequest['is_dept_head'] : 'N/A' }} </p>
                                 </div>
-                                <div class="row user_details_view">
-                                <div class="col-sm-6">
-                                    <h6 class="mb-0">હોદ્દો <span>:</span></h6>
                                 </div>
-                                
-                            </div>
+                               
                             <div class="row user_details_view">
                                 <div class="col-sm-6">
                                     <h6 class="mb-0">પોતે કચેરી/વિભાગ ના વડા છે કે કેમ?	  <span>:</span></h6>
@@ -138,7 +151,9 @@
                                     <div class="col-sm-6">
                                     <h6 class="mb-0">કચેરી નું નામ<span>:</span></h6>
                                     </div>
-                                   
+                                    <div class="col-sm-6">
+                                    <p>  {{ isset($quarterrequest) ? $quarterrequest['officename'] : 'N/A' }} </p>
+                                </div>
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-6">

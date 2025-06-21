@@ -63,7 +63,7 @@ class Tquarterrequesta extends Model
             'prv_area_name' => $request->prv_area_name,
             'prv_building_no'  => $request->prv_building_no,
             'prv_quarter_type' => $request->prv_quarter_type,
-            'prv_rent' => $request->prv_quarter_type,
+            'prv_rent' => $request->prv_rent,
             'have_old_quarter'=> $request->have_old_quarter,
             'prv_handover'=> $request->prv_handover,
             'old_quarter_details'=> $request->old_quarter_details,
@@ -80,7 +80,7 @@ class Tquarterrequesta extends Model
             'officename' => $request->usermaster->office,
             'officeaddress' => $request->usermaster->office_address,
             'office_phone' => $request->usermaster->office_phone,
-            'old_desg' => $request->old_designation, // Note: use the correct field name
+            'old_designation' => $request->old_designation, // Note: use the correct field name
             'old_office' => $request->old_office,
             'deputation_date' => Carbon::parse($request->deputation_date)->format('d-m-Y'),
             'address' => $request->usermaster->address,
