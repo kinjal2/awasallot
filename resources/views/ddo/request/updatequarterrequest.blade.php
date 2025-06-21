@@ -87,7 +87,22 @@
                                         </p>
                                     </div>
                                 </div>
-                                    
+                                <div class="row user_details_view">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">હોદ્દો <span>:</span></h6>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p> {{ isset($quarterrequest) ? $quarterrequest['designation'] : 'N/A' }} </p>
+                                </div>
+                            </div>
+                                    <div class="row user_details_view">
+                                    <div class="col-sm-6">
+                                    <h6 class="mb-0">કચેરી નું નામ<span>:</span></h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                    <p> {{ isset($quarterrequest) ? $quarterrequest['officename'] : 'N/A' }} </p>
+                                    </div>
+                                </div>
                                     </div>  
                                     </div>
                                 </div>
@@ -119,17 +134,11 @@
                                     <h6 class="mb-0"> જ્યાંથી બદલી થઈ ને આવ્યા હોય /પ્રતિનિયુક્તિ ઉપર આવ્યા હોય ત્યાંનો હોદ્દો અને કચેરી નું નામ<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-6">
-                                    <p> {{ isset($quarterrequest) ? $quarterrequest['old_office'] : 'N/A' }} </p>
+                                    <p> {{ isset($quarterrequest) ? $quarterrequest['old_office']  : 'N/A' }} </p>
+                                     <p> {{ isset($quarterrequest) ?  $quarterrequest['old_designation'] : 'N/A' }} </p>
                                     </div>
                                 </div>
-                                <div class="row user_details_view">
-                                <div class="col-sm-6">
-                                    <h6 class="mb-0">હોદ્દો <span>:</span></h6>
-                                </div>
-                                <div class="col-sm-6">
-                                    <p> {{ isset($quarterrequest) ? $quarterrequest['old_office'] : 'N/A' }} </p>
-                                </div>
-                            </div>
+                                
                             <div class="row user_details_view">
                                 <div class="col-sm-6">
                                     <h6 class="mb-0">પોતે કચેરી/વિભાગ ના વડા છે કે કેમ?	  <span>:</span></h6>
@@ -143,7 +152,7 @@
                                     <h6 class="mb-0">કચેરી નું નામ<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-6">
-                                    <p> {{ isset($quarterrequest) ? $quarterrequest['old_office'] : 'N/A' }} </p>
+                                    <p> {{ isset($quarterrequest) ? $quarterrequest['officename'] : 'N/A' }} </p>
                                     </div>
                                 </div>
                                 <div class="row user_details_view">
@@ -250,7 +259,7 @@
                                     <h6 class="mb-0"> કુલ પગાર રૂ.<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-6">
-                                    <p> Data </p>
+                                    <p> @php  $total = $quarterrequest['basic_pay'] + $quarterrequest['personal_salary'] +  $quarterrequest['special_salary'] +  $quarterrequest['deputation_allowance'] @endphp {{ $total }} </p>
                                     </div>
                                 </div>
                                 </div>  
@@ -277,7 +286,7 @@
                                     <h6 class="mb-0">આ પહેલા ના સ્થ્ળે સરકારશ્રીએ વસવાટ ની સવલત આપી હોય તો <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
-                                    <p> Data </p>
+                                    <p>  </p>
                                     </div>
                                 </div>
                                 <div class="row user_details_view">
@@ -404,13 +413,13 @@
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને
-                                        પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે? <span>:</span></h6>
+                                    <h6 class="mb-0">  જો જાહેરહિતાર્થે બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચલી કક્ષાનું વસવાટ મેળવવા માંગો છો?<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p>  {{ isset($quarterrequest['downgrade_allotment']) ? $quarterrequest['downgrade_allotment'] : 'N/A' }} </p>
                                     </div>
                                 </div>
+                                
                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
                                     <h6 class="mb-0"> સરકારશ્રી મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર પાડે તેનું પાલન કરવા

@@ -27,6 +27,7 @@ use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 use App\Couchdb\Couchdb;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 
 use stdClass;
 
@@ -344,18 +345,12 @@ class QuartersController extends Controller
 
         $basic_pay = Session::get('basic_pay');
         $q_officecode = Session::get('q_officecode');
-        //dd(Session::get('q_officecode'));
-        //dd($uid,$basic_pay);
-
-        //query only for gandhinagar district
-        //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
         
-       
              //query for office for gandhinagara and other district
         $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
         //dd($quarterselect);
 
-       // DB::enableQueryLog();
+       //    DB::enableQueryLog();
         $quarterlist = Tquarterrequestc::select([
             DB::raw("'c' as type"),
             DB::raw("'change' as requesttype"),
@@ -378,7 +373,9 @@ class QuartersController extends Controller
             'is_ddo_varified',
             'ddo_remarks',
             'is_varified',
-            'r_wno'
+            'r_wno',
+            DB::raw("null as is_withdraw"),
+    DB::raw("null as withdraw_remarks"),
 
         ])
             ->where('is_allotted', '=', 0)
@@ -407,7 +404,9 @@ class QuartersController extends Controller
             'is_ddo_varified',
             'ddo_remarks',
             'is_varified',
-            'r_wno'
+            'r_wno',
+             'is_withdraw',
+            'withdraw_remarks',
         ])
             ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
@@ -437,7 +436,9 @@ class QuartersController extends Controller
             'is_ddo_varified',
             'ddo_remarks',
             'is_varified',
-            'r_wno'
+            'r_wno',
+             'is_withdraw',
+            'withdraw_remarks',
         ])
             ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
@@ -446,16 +447,7 @@ class QuartersController extends Controller
             ->union($quarterlist)
             ->union($quarterlist2)
             ->get();
-
-
-
-        // Get the logged queries
-        //$queries = DB::getQueryLog();
-
-        //dd($queries);
-        // You can also log them to Laravel's log file
-        //\// Log::info($queries);
-           // dd($quarterlist3);
+     //   dd(DB::getQueryLog(), $quarterlist);    
         return Datatables::of($quarterlist3)
             ->addIndexColumn()
             ->addColumn('inward_no', function ($row) {
@@ -528,8 +520,31 @@ class QuartersController extends Controller
                 // Return the generated buttons
                 return $btn1;
             })
+           ->addColumn('user_remarks', function ($row) {
+    $isAccepted = strtoupper((string) $row->is_accepted);
 
-            ->rawColumns(['action','issues'])
+    if (in_array($isAccepted, ['1', 'YES'])) {
+        if (!empty($row->is_withdraw)) {
+            return '<strong>Withdraw Remarks:</strong> ' . htmlspecialchars($row->withdraw_remarks);
+        }
+
+        if (!empty($row->wno)) {
+        return '<button type="button"
+            class="btn btn-sm btn-warning office_popup charcher_data"
+            data-requestid="' . base64_encode($row->requestid) . '"
+            data-requesttype="' . $row->requesttype . '"
+            data-wno="' . $row->wno . '"
+            data-quartertype="' . $row->quartertype . '">
+            Withdraw Application
+            </button>';
+
+
+        }
+    }
+
+    return ''; // nothing to show
+})           
+->rawColumns(['action','issues','user_remarks'])
 
             ->make(true);
         
@@ -3211,4 +3226,130 @@ $checkbox = '<input type="checkbox" name="remarksArr[]" id="' . htmlspecialchars
         }
        
     }
+    
+public function getUserWithdrawDetails(Request $request)
+{
+    $validated = $request->validate([
+        'withdraw_remarks' => 'required|string|max:1000',
+        'agree_rules' => 'required|accepted',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+        $requestid = base64_decode($request->input('requestid'));
+        $performa = strip_tags($request->input('performa'));
+        $uid = Session::get('Uid');
+        $wait_no = (int) $request->input('wait_no');
+        $withdraw_remarks = strip_tags($request->input('withdraw_remarks'));
+        $quartertype = strip_tags($request->input('quartertype'));
+
+        // Withdraw logic
+        $targetTable = $performa === 'New'
+            ? 'master.t_quarter_request_a'
+            : 'master.t_quarter_request_b';
+
+        DB::table($targetTable)
+            ->where('requestid', $requestid)
+            ->where('wno', $wait_no)
+            ->where('uid', $uid)
+            ->update([
+                'r_wno' => null,
+                'withdraw_remarks' => $withdraw_remarks,
+                'is_withdraw' => 'Y',
+            ]);
+
+        // Clear r_wno for re-ranking
+        foreach (['a', 'b'] as $type) {
+            $table = $type === 'a' ? 'master.t_quarter_request_a' : 'master.t_quarter_request_b';
+            DB::table($table)
+                ->where('quartertype', $quartertype)
+                ->where('is_priority', 'N')
+                ->whereNotNull('wno')
+                ->update(['r_wno' => null]);
+        }
+
+        // Fetch pending applications
+        $applications = DB::table('master.t_quarter_request_a')
+            ->select('wno', 'uid', 'office_remarks')
+            ->where('quartertype', $quartertype)
+            ->where('is_priority', 'N')
+            ->whereNotNull('wno')
+            ->where('is_withdraw', 'N')
+            ->whereNull('office_remarks')
+            ->whereNull('withdraw_remarks')
+            ->unionAll(
+                DB::table('master.t_quarter_request_b')
+                    ->select('wno', 'uid', 'office_remarks')
+                    ->where('quartertype', $quartertype)
+                    ->where('is_priority', 'N')
+                    ->whereNotNull('wno')
+                    ->where('is_withdraw', 'N')
+                    ->whereNull('office_remarks')
+                    ->whereNull('withdraw_remarks')
+            )
+            ->orderBy('wno')
+            ->get();
+
+        foreach ($applications as $re) {
+            $appUid = $re->uid;
+            $today = now()->toDateString();
+
+            $isRetired = DB::table('userschema.users')
+                ->where('id', $appUid)
+                ->where('date_of_retirement', '<', $today)
+                ->exists();
+
+            if ($isRetired) {
+                foreach (['a', 'b'] as $type) {
+                    $table = $type === 'a' ? 'master.t_quarter_request_a' : 'master.t_quarter_request_b';
+
+                    DB::table($table)
+                        ->where('quartertype', $quartertype)
+                        ->where('uid', $appUid)
+                        ->where('is_priority', 'N')
+                        ->whereNotNull('wno')
+                        ->update(['r_wno' => null]);
+
+                    Log::info("Retired UID $appUid reset r_wno in table $table");
+                }
+            } else {
+                $maxA = DB::table('master.t_quarter_request_a')
+                    ->where('quartertype', $quartertype)
+                    ->where('is_priority', 'N')
+                    ->whereNotNull('wno')
+                    ->max('r_wno');
+
+                $maxB = DB::table('master.t_quarter_request_b')
+                    ->where('quartertype', $quartertype)
+                    ->where('is_priority', 'N')
+                    ->whereNotNull('wno')
+                    ->max('r_wno');
+
+                $new_r_wno = max((int) $maxA, (int) $maxB) + 1;
+
+                foreach (['a', 'b'] as $type) {
+                    $table = $type === 'a' ? 'master.t_quarter_request_a' : 'master.t_quarter_request_b';
+
+                    DB::table($table)
+                        ->where('quartertype', $quartertype)
+                        ->where('wno', $re->wno)
+                        ->where('is_priority', 'N')
+                        ->whereNotNull('wno')
+                        ->update(['r_wno' => $new_r_wno]);
+
+                    Log::info("UID {$re->uid} updated r_wno={$new_r_wno} in $table");
+                }
+            }
+        }
+
+        DB::commit();
+        return response()->json(['status' => 'success', 'message' => 'Application withdrawn successfully.']);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Withdraw error: ' . $e->getMessage());
+        return response()->json(['status' => 'error', 'message' => 'Something went wrong.']);
+    }
+}
+
 }

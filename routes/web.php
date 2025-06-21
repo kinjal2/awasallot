@@ -104,6 +104,8 @@ Route::post('/home', 'HomeController@index')->name('home');
 
     Route::post('request-history', ['uses' => 'QuartersController@requestHistory']);
     Route::post('saveOfficeCode', ['uses' => 'QuartersController@saveOfficeCode']);
+    Route::post('/withdraw/details', [QuartersController::class, 'getUserWithdrawDetails'])->name('application.withdraw.details');
+
 
         
 });

@@ -250,7 +250,7 @@
                                     <h6 class="mb-0"> કુલ પગાર રૂ.<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-6">
-                                    <p> Data </p>
+                                    <p> @php  $total = $quarterrequest['basic_pay'] + $quarterrequest['personal_salary'] +  $quarterrequest['special_salary'] +  $quarterrequest['deputation_allowance'] @endphp {{ $total }}  </p>
                                     </div>
                                 </div>
                                 </div>  
@@ -277,7 +277,7 @@
                                     <h6 class="mb-0">આ પહેલા ના સ્થ્ળે સરકારશ્રીએ વસવાટ ની સવલત આપી હોય તો <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
-                                    <p> Data </p>
+                                    <p>  </p>
                                     </div>
                                 </div>
                                 <div class="row user_details_view">
@@ -402,10 +402,9 @@
                                     <p>  {{ isset($quarterrequest['nearby_house_details']) ? $quarterrequest['nearby_house_details'] : 'N/A' }} </p>
                                     </div>
                                 </div>
-                                <div class="row user_details_view">
+                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને
-                                        પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે? <span>:</span></h6>
+                                    <h6 class="mb-0">  જો જાહેરહિતાર્થે બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચલી કક્ષાનું વસવાટ મેળવવા માંગો છો?<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p>  {{ isset($quarterrequest['downgrade_allotment']) ? $quarterrequest['downgrade_allotment'] : 'N/A' }} </p>
