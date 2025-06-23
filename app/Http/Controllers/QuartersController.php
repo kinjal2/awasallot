@@ -371,8 +371,8 @@ class QuartersController extends Controller
         ])
             ->where('is_allotted', '=', 0)
             ->where('uid', '=', $uid)
-            ->whereNotNull('request_date')
-            ->where('quartertype', '=', ($quarterselect[0]->quartertype));
+            ->whereNotNull('request_date');
+            //->where('quartertype', '=', ($quarterselect[0]->quartertype));
         $quarterlist2 = Tquarterrequestb::select([
             DB::raw("'b' as type"),
             DB::raw("'Higher Category' as requesttype"),
@@ -399,7 +399,7 @@ class QuartersController extends Controller
              'is_withdraw',
             'withdraw_remarks',
         ])
-            ->where('quartertype', '=', ($quarterselect[0]->quartertype))
+            //->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
             ->whereNotNull('request_date')
             ->where('uid', '=', $uid);
@@ -431,7 +431,7 @@ class QuartersController extends Controller
              'is_withdraw',
             'withdraw_remarks',
         ])
-            ->where('quartertype', '=', ($quarterselect[0]->quartertype))
+          //  ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
             ->whereNotNull('request_date')
             ->where('uid', '=', $uid)
@@ -2537,7 +2537,7 @@ class QuartersController extends Controller
             $document_list = "";
             $attacheddocument = DB::table('master.file_list')
                 ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-                ->whereNotIn('document_id', [6])
+              //  ->whereNotIn('document_id', [6])
                 ->WHERE('uid', Session::get('Uid'))
                 ->WHERE('request_id', $request_id)
                 ->where('rivision_id', $rev)
