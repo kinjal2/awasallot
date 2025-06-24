@@ -61,7 +61,7 @@
                             <th>Application Accepted</th>
                             <th>Inward No</th>
                             <th>Inward Date</th>
-                            <th>Print Application/Attach Documents</th>
+                            <th>Preview Application/Attach Documents</th>
                             <th>Status</th>
                             <th>DDO Remarks</th>
                             <th></th>

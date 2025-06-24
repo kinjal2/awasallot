@@ -6,421 +6,261 @@
     <style>
         body {
             font-family: 'ind_gu_1_001';
-           
         }
-        .main{
-            font-size: 18pt; 
-        }
-        .normal{
-            font-size: 12pt; 
-            font-weight: bold; 
-        }
-        table {
-		border-collapse: collapse !important;
-		border-style: solid;
-		border: 1px solid black !important;
-		background:#FFFFFF;
-		font-size: 12px !important;
-		margin: 8px !important;
-		padding:8px !important;
-		text-align:center;
-		width:100% !important;
-	}
-	table.border_zero {
-		border: 0px !important;
-		font-size:13px !important;
-	}
-	td {
-		font-family:ind_gu_1_001;
-		border: 1px solid black;
-		text-align:left;
-		padding:8 !important;
-	}
-    td.border_zero {
-		border: 0px;
-		text-align:left !important; 
-	}
-	tr.border_zero {
-		border: 0px;
-	}	
-	td.title_data {
-		text-align:left !important; 
-		border-style: solid;
-		border: 1px solid black;		
-	}
-    tr {
-		border-style: solid;
-		border: 1px solid black;
-		text-align:center;
-		padding:8 !important;
-	}
-	.mypdf_table 
-{ 
-	width:100%;
-} 
-.gr_th
-{
-	border: 1px solid black;
-	text-align:center;
-	padding:6 !important;
-}
-.appr_gr
-{
-	border: 0.5px solid black; 
-	font-size:14px; 
-	text-align:center;
-}
-.bunchDiv_div
-{ 
-	text-align:left;
-	font-size: 12px;
-	font-weight: bold;
-	width:100%;
-	float:left;
-}
-.hundred_td
-{
-	width:100%; 
-	text-align:left;
-}
-.noborder
-{
-	border:none !important;
-}
-.nopadding
-{
-	padding:none !important;
-}
-.nobottomborder
-{
-	border-bottom:none !important;
-}
-.font_gujarati_color
-{
-	color:blue;
-	font-size: 15px;
-	font-weight:bold !important;
-}
-.extra_padding20TD
-{
-	padding:20px !important;
-}
-.extra_padding15TD
-{
-	padding:15px !important;
-}
-.deputy_fonts_right
-{
-	font-weight:bold;
-	font-size:14px;
-	text-align:right;
-}
-.divisional_fonts_left
-{
-	font-weight:bold;
-	font-size:14px;
-	text-align:left;
-}
-.rectangle 
-{
-	height: 120px;
-	width: 100px;
-	border:1px solid black;
-}
+
 .image-cell {
             text-align: center;
             vertical-align: left;
+        }
+      .page-break {page-break-before: always;}
+      h2 {font-size : 14px; line-height: 1.5; margin: 0;}
+      h3 {font-size : 16px; line-height: 1.5; margin: 0;}
+      h5 {font-size : 13px; line-height: 1.5; margin: 0;}
+      table, th, td {border: 0px;line-height:1.2;border-collapse: collapse;}
+      .border-tbl_bdr{border: 1px solid #cccccc !important;}
+      .border-tbl_bdr_td td{border: 1px solid #003b64 !important; font-size: 12px; padding: 5px;}
+      .border-tbl_bdr_td_left td{border: 1px solid #003b64 !important; font-size: 11px; text-align:left; padding: 3px;}
+      .border-tbl_bdr_td th{border: 1px solid #003b64 !important; font-size: 12px; padding: 5px;}
+      .bg-dark{background:#4e3f2e; color:#fff;}
+      .bg-light{background:#00bbf0; color:#fff;}
+      .bg-light1{background:#dfca11; color:#fff;}
+      .text-red{color:#b0070d;}
+      .text-blue{color:#022869;}
+      .text-center{text-align:center;}
+      .text-left{text-align:left;}
+      .text-right {text-align:right;}
+      .top-right{text-align: right; font-weight: bold;font-size: 14px;}
+      .top-right span{text-transform: uppercase;}
+      .font-12 tr td{font-size: 10px; text-align: center;}
+      .font-13 tr td{font-size: 13px;padding: 10px 5px;}
+      .mt-5{margin-top:10px;}
+      .mt-25{margin-top:25px;}
+      .uppercase{text-transform: uppercase;}
+      .capitazile{text-transform: capitalize !important;}
+      .padd-3 tr td { padding: 7px; vertical-align: top;}
+      .block_head tr {
+    background: #4690ff;
+    color: #ffff;
+}
+.steper tr:nth-child(even) {
+            background-color: rgb(226, 226, 226);
+        }
+.steper_new tr:nth-child(odd) {
+            background-color: rgb(226, 226, 226);
         }
     </style>
     
 </head>
 <body> <meta charset="UTF-8">
     <div class="invoice-box">
-    <table  >
-        <colgroup>
-            <col width="5%" />
-            <col width="35%" />
-            <col width="10%" />
-            <col width="25%" />
-            <col width="10%" />
-            <col width="25%" />
-        </colgroup>
+    <header>
+        <table cellspacing="0" cellpadding="0" style="width:100%; border-bottom: 0px !important;" class="padd-3 font-13 text-b text-center">
+        <tr><td>પરિશિષ્ટ - બ</td></tr>
+        <tr><td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}માં ઉચ્‍ચ કક્ષાની સરકારી વસવાટ મેળવવા માટે સરકારી કર્મચારી કે અધિકારીએ કરવાની અરજી </td></tr>
+        </table>
+    </header>
+    <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b steper border-tbl_bdr">
         <tr>
+            <td style="width:5%; " >1)</td>
+            <td style="width:70%;">નામ(પુરેપુરૂ)</td>
+            <td>:</td>
+            <td>{{$name}}</td>
+        </tr>
         <tr>
-                <th colspan="5" style="text-align: center;">પરિશિષ્‍ટ - બ</th>
-            </tr>
-            <tr>
-                <th colspan="5" style="text-align: center;">{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}માં ઉચ્‍ચ કક્ષાની સરકારી વસવાટ મેળવવા માટે સરકારી કર્મચારી કે અધિકારીએ કરવાની અરજી </th>
-            </tr>
-            <tr>
-                <th></th>
-                <th>&nbsp;ક્વાર્ટર કેટેગરી </th>
-                <td colspan="3">{{$quartertype }}</td>
-            </tr>
-            <tr>
-                <th>1</th>
-                <th>&nbsp;નામ(પુરેપુરૂ)</th>
-                <td colspan="3">
-                {{$name }}
-                </td>
-            </tr>
-					<tr>
-                <th></th>
-                <th> જન્મ તારીખ</th>
-                <td colspan="4">
-                    {{ $date_of_birth }}
-                </td>
-            </tr>
-            <tr>
-                <th>2</th>
-                <th>&nbsp;( અ ) હોદ્દો</th>
-                <td colspan="3">
-                    {{$designation }}
-                
-                </td>
-            </tr>
-            <tr>
-                <th></th>
-                <th>&nbsp;(બ ) પોતે કચેરી/વિભાગ ના વડા છે કે કેમ?</th>
-                <td colspan="3">
-                    {{$is_dept_head != '' ? $is_dept_head =='Y' ? "Yes":"No":"No"; }}
-                </td>
-            </tr>
-            <tr>
-                <th>3</th>
-                <th>&nbsp;કચેરી </th>
-                <td>
-                    {{$officename }}
-                </td>
-		<td>&nbsp;<strong>કચેરી નું સરનામું</strong></td>
-		<td>
-		    {{$officeaddress }}
-		</td>
-            </tr>
-                
-            <tr>
-		<th>4</th>
-                <th>&nbsp;<strong>કચેરી ફોન નંબર</strong></th>
-                <td colspan="3">{{ $officephone }}</td>
-		
-            </tr>
-            <tr>
-                <th>5</th>
-                <th>&nbsp;( અ ) પગાર નો સ્કેલ (વિગતવાર આપવો)  </th>
-                <td colspan="3">
-                    {{$salary_slab }}
-                
-                </td>
-            </tr>
-            <tr>
-                <th></th>
-                <th>&nbsp;( બ ) અરજીની તારીખે મળતો મૂળ પગાર  (As per 7<sup>th</sup> pay)</th>
-                <td colspan="3">
-                    {{$basic_pay }}
-                </td>
-            </tr>
-            <tr>
-                <th></th>
-                <th>&nbsp; (ક) સરકારી નોકરીમાં મૂળ નિમણુંક તારીખ્ </th>
-                <td colspan="3">
-                    {{$appointment_date }}
-                </td>
-            </tr>
-            <tr>
-                <th></th>
-                <th>&nbsp;( ડ ) નિવ્રૂત્તિ ની તારીખ</th>
-                <td colspan="3">
-                    {{$date_of_retirement }}
-                </td>
-            </tr>
-            <tr>
-                <th></th>
-                <th>&nbsp;( ઇ ) જી.પી.એફ. ખાતા નંબર</th>
-                <td colspan="3">
-                    {{$gpfnumber }}
-                </td>
-            </tr>
-            
-    
-            <tr>
-                <Th >6</Th>
-                <th colspan="4">&nbsp;{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}માં અત્યારે જે કક્ષાના વસવાટમાં રહેતા હો તેની માહિતી નીચે પ્રમાણે આપવી.  </th>
-	    </tr>
-	    <tr>
-		<th></th>
-		<th></th>
-                <td><strong>&nbsp;( ક ) વસવાટની કક્ષા </strong></td>
-                <td colspan="2" >
-                    {{$prv_quarter_type }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ખ ) સેકટર નં. </strong></td>
-                <td colspan="2">
-                    {{ $prv_area_name }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ગ ) બ્લોક નં. </strong></td>
-                <td colspan="2">
-                    {{$prv_blockno }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ઘ ) યુનિટ  </strong></td>
-                <td colspan="2">
-                    {{$prv_unitno }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ચ) સકયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.  </strong></td>
-                <td colspan="2">
-                    {{$prv_details; }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( છ ) કઇ તારીખથી સદર વસવાટનો ઉપભોગ કરો છો ? (કબજો લીધા તારીખ)  </strong></td>
-                <td colspan="2">
-                   {{$prv_possession_date }}
-                </td>
-            </tr>
-            
-            <tr>
-                <Th >7</Th>
-                <th colspan="4">&nbsp;અગાઉ ઉચ્ચલ કક્ષાનું વસવાટ ફાળવવામાં આવેલ હતું કે કેમ ?   </th>
-	    </tr>
-	    <tr>
-		<th></th>
-		<th></th>
-                <td><strong>&nbsp;( ક ) વસવાટની કક્ષા </strong></td>
-                <td colspan="2">
-                    {{$hc_quarter_type }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ખ ) સેકટર નં. </strong></td>
-                <td colspan="2">
-                   {{$hc_area }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ગ ) બ્લોક નં. </strong></td>
-                <td colspan="2">
-                    {{$hc_blockno }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ઘ ) યુનિટ  </strong></td>
-                <td colspan="2">
-                    {{$hc_unitno }}
-                </td>
-            </tr>
-            <tr>
-                <Th ></Th>
-                <th ></th>
-                <td><strong>&nbsp;( ચ) કયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.  </strong></td>
-                <td colspan="2">
-                    {{$hc_details }}
-                </td>
-            </tr>
-            
-            <tr>
-                <th>8</th>
-                <th colspan="3">&nbsp;આ સાથે સામેલ રાખેલ ઉચ્ચ કક્ષાનું વસવાટ મેળવવાને લગતી સૂચનાઓ મેં વાંચી છે અને તે તથા સરકારશ્રી વખતો વખત આ અંગે સૂચનાઓ બહાર પાડે તેનું પાલન કરવા હું સંમત છું.</th>
-                <td >
-			હા
-                </td>
-            </tr>
-            <tr>
-                <th>9</th>
-                <th colspan="3"> હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label>
-                </th>
-                <td>હા</td>
-            </tr>
-           
-	</table>
-	<table width="100%" >
-	    <colgroup>
-		<col width="5%" />
-		<col width="15%" />
-		<col width="25%" />
-		<col width="55%" />
-	    </colgroup>
-	    <tr style="height: 60px;">
-                <td colspan="4"></td>
-            </tr>
-	   
-            <tr >
-                <td colspan="4" style="text-align:right;">કર્મચારી/અધિકારી ની સહી</td>
-                
-            </tr>
-	    <tr style="height: 60px;">
-                <td colspan="4"></td>
-            </tr>
-	    <tr>
-		<td></td>
-		<td>સ્થળ</td>
-		<td colspan='2'>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}</td>
-	    </tr>
-	    <tr>
-		<td></td>
-		<td>તારીખ</td>
-		<td colspan="2">{{  $request_date }}</td>
-	    </tr>
-	    <tr style="height: 60px;">
-		<td></td>
-		<td colspan="2">વિભાગ/કચેરીના વડાનો અભિપ્રાય <br /> (આસન-પ માં દર્શાવેલ વિગતો ભરી છે તે અંગે અભિપ્રાય જણાવવો).  </td>
-		<td></td>
-	    </tr>
-			<tr > <td  rowspan="4" class="image-cell">
-                    @if ($imageData)
+            <td></td>
+            <td>ક્વાર્ટર કેટેગરી</td>
+            <td>:</td>
+            <td>{{$quartertype }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td> જન્મ તારીખ</td>
+            <td>:</td>
+            <td>{{ $date_of_birth }}</td>
+        </tr>
+         <tr>
+            <td>2</td>
+            <td>( અ ) હોદ્દો</td>
+            <td>:</td>
+            <td>{{ $designation }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>(બ ) પોતે કચેરી/વિભાગ ના વડા છે કે કેમ?</td>
+            <td>:</td>
+            <td>{{$is_dept_head != '' ? $is_dept_head =='Y' ? "Yes":"No":"No"; }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>(ક) કચેરી</td>
+            <td>:</td>
+            <td>{{$officename }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ડ ) કચેરી નું સરનામું</td>
+            <td>:</td>
+            <td>{{$officeaddress }}</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>કચેરી ફોન નંબર</td>
+            <td>:</td>
+            <td>{{ $officephone }}</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>( અ ) પગાર નો સ્કેલ (વિગતવાર આપવો)</td>
+            <td>:</td>
+            <td>{{$salary_slab }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( બ ) અરજીની તારીખે મળતો મૂળ પગાર  (As per 7<sup>th</sup> pay)</td>
+            <td>:</td>
+            <td> {{$basic_pay }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>(ક) સરકારી નોકરીમાં મૂળ નિમણુંક તારીખ્</td>
+            <td>:</td>
+            <td>{{$appointment_date }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ડ ) નિવ્રૂત્તિ ની તારીખ</td>
+            <td>:</td>
+            <td> {{$date_of_retirement }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ઇ ) જી.પી.એફ. ખાતા નંબર</td>
+            <td>:</td>
+            <td> {{$gpfnumber }}</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td colspan="3">{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}માં અત્યારે જે કક્ષાના વસવાટમાં રહેતા હો તેની માહિતી નીચે પ્રમાણે આપવી.</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ક ) વસવાટની કક્ષા </td>
+            <td>:</td>
+            <td>{{$prv_quarter_type }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ખ ) સેકટર નં.</td>
+            <td>:</td>
+            <td>{{ $prv_area_name }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ગ ) બ્લોક નં.</td>
+            <td>:</td>
+            <td> {{$prv_blockno }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ઘ ) યુનિટ</td>
+            <td>:</td>
+            <td>{{$prv_unitno }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ચ) સકયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.</td>
+            <td>:</td>
+            <td> {{$prv_details; }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( છ ) કઇ તારીખથી સદર વસવાટનો ઉપભોગ કરો છો ? (કબજો લીધા તારીખ)</td>
+            <td>:</td>
+            <td>{{$prv_possession_date }}</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td colspan="3">અગાઉ ઉચ્ચલ કક્ષાનું વસવાટ ફાળવવામાં આવેલ હતું કે કેમ ?</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ક ) વસવાટની કક્ષા</td>
+            <td>:</td>
+            <td>{{$hc_quarter_type }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ખ ) સેકટર નં.</td>
+            <td>:</td>
+            <td>{{$hc_area }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ગ ) બ્લોક નં.</td>
+            <td>:</td>
+            <td>{{$hc_blockno }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ઘ ) યુનિટ </td>
+            <td>:</td>
+            <td> {{$hc_unitno }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>( ચ) કયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.</td>
+            <td>:</td>
+            <td>{{$hc_details }}</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>આ સાથે સામેલ રાખેલ ઉચ્ચ કક્ષાનું વસવાટ મેળવવાને લગતી સૂચનાઓ મેં વાંચી છે અને તે તથા સરકારશ્રી વખતો વખત આ અંગે સૂચનાઓ બહાર પાડે તેનું પાલન કરવા હું સંમત છું.</td>
+            <td>:</td>
+            <td>હા</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label></td>
+            <td>:</td>
+            <td>હા</td>
+        </tr>
+    </table>
+
+     <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b">
+        <tr><td colspan="3" class="text-right">કર્મચારી/અધિકારી ની સહી</td></tr>
+        <tr><td style="width: 10%;">સ્થળ</td><td style="width: 2%;">:<td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}</td></tr>
+        <tr><td>તારીખ</td><td>:</td><td>{{  $request_date }}</td></tr>
+        <tr><td colspan="3" style="padding-top: 30px;">વિભાગ/કચેરીના વડાનો અભિપ્રાય</td></tr>
+        <tr><td colspan="3">esdgdhyrtrj nfrtyjy,m tyu,iu7.h,m</td></tr>
+        <tr><td colspan="3">(આસન-પ માં દર્શાવેલ વિગતો ભરી છે તે અંગે અભિપ્રાય જણાવવો).</td></tr>
+        <tr><td colspan="3">
+            @if ($imageData)
                         <img src="data:image/jpeg;base64,{{ base64_encode($imageData) }}" width="50" height="50" alt="CouchDB Image">
                     @else
                         <p>Image not found</p>
                     @endif
-                </td>/tr>
-	    <tr style="height: 100px;" >
-		<td colspan="4" style="text-align: right;vertical-align: bottom;">(વિભાગ/કચેરીના વડાની સહી અને સિક્કો ) 	</td>
-	    </tr>
-	    <tr>
-		<td colspan="4">
-		    <hr />
-		</td>
-	    </tr>
-	
-	    <tr >
-		<td colspan="4" style="text-align: center"><b>સૂચના</b></td>
-	    </tr>
-	    <tr>
-		<td>૧.</td>
-		<td colspan="3">જે કર્મચારી જેઓ કચેરીના વડા નથી, તેમણે તેમની અરજી તેમના વિભાગ/કચેરીના વડા મારફતે મોકલવી અને જો તેઓ પોતે જ વિભાગ/કચેરીના વડા હોય તો તે બાબત સ્પષ્‍ટ પણે અરજીમાં જણાવવી. </td>
+        </td></tr>
+       <tr><td colspan="3" class="text-right"  style="padding-top: 30px;">(વિભાગ/કચેરીના વડાની સહી અને સિક્કો )</td></tr>
+    </table>
+
+    <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b">
+         <tr><td class="text-center" style="padding-top: 30px;" colspan="3"><h5>સૂચના</h5></td></tr>
+        <tr>
+		<td style="width: 5%;">૧.</td>
+		<td colspan="2">જે કર્મચારી જેઓ કચેરીના વડા નથી, તેમણે તેમની અરજી તેમના વિભાગ/કચેરીના વડા મારફતે મોકલવી અને જો તેઓ પોતે જ વિભાગ/કચેરીના વડા હોય તો તે બાબત સ્પષ્‍ટ પણે અરજીમાં જણાવવી. </td>
 	    </tr>
 	    <tr>
 		<td>૨.</td>
-		<td colspan="3">અરજી મળ્યા પછી ફાળવણી સત્તાધિકારી તે તપાસશે અને જો તે બરાબર માલુમ પડશે તો યોગ્ય પ્રતિક્ષાયાદીમાંથી અરજી મળ્યા તારીખ પ્રમાણે કર્મચારીના નામની નોંધણી કરવામાં આવશે અને તેમને નોંધણી નંબર અને કઇ કક્ષામાં છે, તેની જાણ કરવામાં આવેશે. </td>
+		<td colspan="2">અરજી મળ્યા પછી ફાળવણી સત્તાધિકારી તે તપાસશે અને જો તે બરાબર માલુમ પડશે તો યોગ્ય પ્રતિક્ષાયાદીમાંથી અરજી મળ્યા તારીખ પ્રમાણે કર્મચારીના નામની નોંધણી કરવામાં આવશે અને તેમને નોંધણી નંબર અને કઇ કક્ષામાં છે, તેની જાણ કરવામાં આવેશે. </td>
 	    </tr>
 	    <tr>
 		<td>૩.</td>
-		<td colspan="3">સેકટરની પસંદગી આપવામાં આવશે નહી, વસવાટની ફાળવણી ક્રમ પ્રમાણે કરવામાં આવશે. વસવાટ ફાળવણી વખતે ઉપલબ્ધ સેકટરમાં જે વસવાટ ફાળવવામાં આવે તે તેમણે સ્વીકારવાનું રહેશે અને જો તે સ્વીકારવામાં આવશે નહી તો તેમણે/તેણીનો એક વર્ષ સુધી તે હકક જતો રહેશે. એક વર્ષ પછી તે/તેણી ઉચ્‍ચ કક્ષાના વસવાટ માટે ફરી અરજી કરી શકશે. ઉચ્‍ચ કક્ષાનું વસવાટ મેળવવા માટે ફકત બે જ પ્રયત્નો આપવામાં આવશે.  </td>
+		<td colspan="2">સેકટરની પસંદગી આપવામાં આવશે નહી, વસવાટની ફાળવણી ક્રમ પ્રમાણે કરવામાં આવશે. વસવાટ ફાળવણી વખતે ઉપલબ્ધ સેકટરમાં જે વસવાટ ફાળવવામાં આવે તે તેમણે સ્વીકારવાનું રહેશે અને જો તે સ્વીકારવામાં આવશે નહી તો તેમણે/તેણીનો એક વર્ષ સુધી તે હકક જતો રહેશે. એક વર્ષ પછી તે/તેણી ઉચ્‍ચ કક્ષાના વસવાટ માટે ફરી અરજી કરી શકશે. ઉચ્‍ચ કક્ષાનું વસવાટ મેળવવા માટે ફકત બે જ પ્રયત્નો આપવામાં આવશે.  </td>
 	    </tr>
-	</table>
-	
+
+    </table>
+
+
     </div>
 </body>
 </html>
