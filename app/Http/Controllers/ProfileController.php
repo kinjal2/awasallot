@@ -361,90 +361,72 @@ class ProfileController extends Controller
             $this->_viewContent['page_title']= "Old Profile Verfiy and  Update";
             return view('user/useroldprofile',$this->_viewContent);
     }
-    public function saveOldProfileDetails(Request $request)
-    {
-        //dd($request->all());
-        $rules = [
-			'district' => 'required',
-			'taluka' => 'required',
-            'cardex_no' => 'required',
-            'ddo_code' => 'required'
+   public function saveOrUpdateProfileDetails(Request $request)
+{
+    $rules = [
+        'district' => 'required',
+        'taluka' => 'required',
+        'cardex_no' => 'required',
+        'ddo_code' => 'required'
+    ];
+
+    $messages = [
+        'district.required' => 'The district field is required.',
+        'taluka.required' => 'The taluka field is required.',
+        'cardex_no.required' => 'The cardex no field is required.',
+        'ddo_code.required' => 'The ddo code field is required.'
+    ];
+
+    $validator = \Validator::make($request->all(), $rules, $messages);
+
+    if ($validator->fails()) {
+        return redirect()->route('user.update_old_profile_details')
+            ->withInput()
+            ->withErrors($validator);
+    }
+
+    try {
+        $isAdminUpdate = $request->has('user_id');
+        $uid = $isAdminUpdate ? base64_decode($request->input('user_id')) : Session::get('Uid');
+
+        $cardex_no = $request->input('cardex_no');
+        $ddo_code = $request->input('ddo_code');
+
+        $updateData = [
+            'dcode' => $request->input('district'),
+            'tcode' => $request->input('taluka'),
+            'cardex_no' => $cardex_no,
+            'ddo_code' => $ddo_code
         ];
-        $messages = [
-            'district.required' => 'The district field is required.',
-            'taluka.required' => 'The taluka field is required.',
-            'cardex_no.required' => 'The cardex no field is required.',
-            'ddo_code.required' => 'The ddo code field is required.'
-        ];
-        $validator =  \Validator::make($request->all(),$rules,$messages);
-        if ($validator->fails()) {
-			return redirect('user.update_old_profile_details')
-			->withInput()
-			->withErrors($validator);
-		}
-		else{
-            $data = $request->input();
-            //dd($data);
-            try
-            {
-               $uid=Session::get('Uid');
-               //dd($uid);
-               $cardex_no=$request->input('cardex_no');
-               $ddo_code=$request->input('ddo_code');
-               $resp =\DB::table('userschema.users')
-               ->where('id',$uid)
-                ->update([
-                'dcode' => empty($request->get('district')) ? NULL : $request->get('district'),
-                'tcode' => empty($request->get('taluka')) ? NULL :  $request->get('taluka'),
-                'cardex_no' => $cardex_no,
-                'ddo_code' => $ddo_code,
-                'updated_to_new_awasallot_app' => 2,
+
+        if (!$isAdminUpdate) {
+            $updateData['updated_to_new_awasallot_app'] = 2;
+        }
+
+        $resp = \DB::table('userschema.users')->where('id', $uid)->update($updateData);
+
+        foreach ([Tquarterrequesta::class, Tquarterrequestb::class, Tquarterrequestc::class] as $model) {
+            $requests = $model::select('requestid')->where('uid', $uid)->get();
+            foreach ($requests as $row) {
+                $model::where('requestid', $row->requestid)->update([
+                    'cardex_no' => $cardex_no,
+                    'ddo_code' => $ddo_code
                 ]);
-                $tquarterrequest_a = Tquarterrequesta::select('requestid')->where('uid', $uid)->get();
-                if (!$tquarterrequest_a->isEmpty()) {
-                        foreach ($tquarterrequest_a as $row) {
-                        Tquarterrequesta::where('requestid', $row->requestid)->update([
-                            'cardex_no' => $cardex_no,
-                            'ddo_code' => $ddo_code
-                        ]);
-                    }
-                }
-             
-                $tquarterrequest_b = Tquarterrequestb::select('requestid')->where('uid', $uid)->get();
-                if (!$tquarterrequest_b->isEmpty()) {
-                        foreach ($tquarterrequest_b as $row) {
-                        Tquarterrequestb::where('requestid', $row->requestid)->update([
-                            'cardex_no' => $cardex_no,
-                            'ddo_code' => $ddo_code
-                        ]);
-                    }
-                }
-               
-                $tquarterrequest_c = Tquarterrequestc::select('requestid')->where('uid', $uid)->get();
-                if (!$tquarterrequest_c->isEmpty()) {
-                        foreach ($tquarterrequest_c as $row) {
-                        Tquarterrequestc::where('requestid', $row->requestid)->update([
-                            'cardex_no' => $cardex_no,
-                            'ddo_code' => $ddo_code
-                        ]);
-                    }
-                }
-                
-                if($resp)
-                {
-                    return redirect()->route('user.dashboard.userdashboard')->with('success', ("Profile Updated Successfully"));
-                }
-                else
-                {
-                    return redirect()->back();
-                }
-            }
-            catch(Exception $e)
-            {
-                dd($e->getmessage());
             }
         }
+
+        if ($resp) {
+            return $isAdminUpdate
+                ? redirect()->route('user')->with('success', 'Details Updated Successfully')
+                : redirect()->route('user.dashboard.userdashboard')->with('success', 'Profile Updated Successfully');
+        } else {
+            return redirect()->back();
+        }
+
+    } catch (\Exception $e) {
+        dd($e->getMessage());
     }
+}
     public function getTalukasByDistrict(Request $request)
     {
 

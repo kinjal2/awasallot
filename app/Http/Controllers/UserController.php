@@ -87,6 +87,9 @@ return Datatables::of($users)
     ->addColumn('date_of_birth_link', function($row){
         return '<a href="#"  data-toggle="modal" class="change_birthdate" data-uid='.$row->id.'>'.$row->date_of_birth.'</a>';
     })
+   ->addColumn('ddocardex', function($row){
+    return $row->cardex_no . '/' . $row->ddo_code;
+})
     ->addColumn('changedetails', function($row) {
     return '<button type="button" class="btn btn-sm btn-primary changedetails-btn" 
                 data-id="'.base64_encode($row->id).'" 
@@ -97,7 +100,7 @@ return Datatables::of($users)
                 Change Details
             </button>';
 })
-    ->rawColumns(['action', 'name_link','date_of_birth_link','designation_link','office_link','changedetails'])
+    ->rawColumns(['action', 'name_link','date_of_birth_link','designation_link','office_link','changedetails','ddocardex'])
     ->make(true);
       
     }
