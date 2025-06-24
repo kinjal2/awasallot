@@ -47,7 +47,7 @@ class UserController extends Controller
         'email' => $request->input('email'),
       
     ];
-$users = User::select(['name', 'date_of_birth', 'designation', 'office', 'email', 'id']);
+$users = User::select(['name', 'date_of_birth', 'designation', 'office', 'email', 'id','dcode','tcode','ddo_code','cardex_no']);
   
         // Apply global search
         if ($request->has('search') && $request->input('search')) {
@@ -84,7 +84,20 @@ return Datatables::of($users)
     ->addColumn('date_of_birth_link', function($row){
         return '<a href="#"  data-toggle="modal" class="change_birthdate" data-uid='.$row->id.'>'.$row->date_of_birth.'</a>';
     })
-    ->rawColumns(['action', 'name_link','date_of_birth_link','designation_link','office_link'])
+    ->addColumn('date_of_birth_link', function($row){
+        return '<a href="#"  data-toggle="modal" class="change_birthdate" data-uid='.$row->id.'>'.$row->date_of_birth.'</a>';
+    })
+    ->addColumn('changedetails', function($row) {
+    return '<button type="button" class="btn btn-sm btn-primary changedetails-btn" 
+                data-id="'.base64_encode($row->id).'" 
+                data-dcode="'.base64_encode($row->dcode).'" 
+                data-tcode="'.base64_encode($row->tcode).'" 
+                data-ddo_code="'.base64_encode($row->ddo_code).'" 
+                data-cardex_no="'.base64_encode($row->cardex_no).'">
+                Change Details
+            </button>';
+})
+    ->rawColumns(['action', 'name_link','date_of_birth_link','designation_link','office_link','changedetails'])
     ->make(true);
       
     }
