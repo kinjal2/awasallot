@@ -227,7 +227,7 @@
                                         </div>
                                         <div class="row at_gandhinager sm-block">
                                             <div class="form-group">
-                                                <label>જેની સાતે રહો ચો તેણી સાતે કોઈ સંબધ આને મકાન ની વિગત</label>
+                                                <label>{{ __('request.living_details') }}</label>
                                                 <textarea class="form-control" name="relative_details"
                                                     id="relative_details"></textarea>
                                             </div>
@@ -254,8 +254,7 @@
                                         </div>
                                         <div class="row schedule sm-block">
                                             <div class="form-group">
-                                                <label>સરકારશ્રી મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર પાડે તેનું પાલન કરવા હું
-                                                    સંમત છુ.</label>
+                                                <label>{{ __('request.details')}}</label>
                                                 <textarea class="form-control" name="scst_details" id="scst_details"></textarea>
                                             </div>
                                         </div>
@@ -284,7 +283,7 @@
                                         </div>
                                         <div class="with_parents sm-block">
                                             <div class="form-group">
-                                                <label>વિગત</label>
+                                                <label>{{ __('request.details')}}</label>
                                                 <textarea class="form-control" id="relative_house_details"
                                                     name="relative_house_details"></textarea>
                                             </div>
@@ -312,7 +311,7 @@
                                         </div>
                                         <div class="row limit sm-block">
                                             <div class="form-group">
-                                                <label>વિગત</label>
+                                                <label>{{ __('request.details')}}</label>
                                                 <textarea class="form-control" id="nearby_house_details"
                                                     name="nearby_house_details"></textarea>
                                             </div>

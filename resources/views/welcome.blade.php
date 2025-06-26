@@ -153,6 +153,9 @@ Designed with user convenience in mind, our platform enables quick and efficient
                 <li >
                   <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/ddo.pdf' }}" target="_blank" style="background-color: yellow; color: red; font-weight: bold; padding: 5px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 1s infinite;" target="_blank">View DDO List</a></h4></span>
                 </li>
+                <li >
+                  <span >For Sending SSO Login form, send mail to <span style="color:red;" >itcell.rnb2018@gmail.com </span></span>
+                </li>
                <!-- <li class="shopping">
                   <span class="title">વેબસાઇટ પર રજીસ્ટ્રેશન સમયે અરજદારે પોતાનું પૂરૂ નામ CAPITAL LETTER માં નિમણૂંક હુકમમાં દર્શાવ્યા મુજબનું દર્શાવવુ.</span>
                 </li>

@@ -98,18 +98,18 @@
         </tr>
         <tr>
             <td></td>
-            <td>( ડ ) કચેરી નું સરનામું</td>
+            <td>( ડ )કચેરી નું સરનામું</td>
             <td>:</td>
             <td>{{$officeaddress }}</td>
         </tr>
         <tr>
-            <td>4</td>
+            <td>3</td>
             <td>કચેરી ફોન નંબર</td>
             <td>:</td>
             <td>{{ $officephone }}</td>
         </tr>
         <tr>
-            <td>5</td>
+            <td>4</td>
             <td>( અ ) પગાર નો સ્કેલ (વિગતવાર આપવો)</td>
             <td>:</td>
             <td>{{$salary_slab }}</td>
@@ -139,7 +139,7 @@
             <td> {{$gpfnumber }}</td>
         </tr>
         <tr>
-            <td>6</td>
+            <td>5</td>
             <td colspan="3">{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}માં અત્યારે જે કક્ષાના વસવાટમાં રહેતા હો તેની માહિતી નીચે પ્રમાણે આપવી.</td>
         </tr>
         <tr>
@@ -179,7 +179,7 @@
             <td>{{$prv_possession_date }}</td>
         </tr>
         <tr>
-            <td>7</td>
+            <td>6</td>
             <td colspan="3">અગાઉ ઉચ્ચલ કક્ષાનું વસવાટ ફાળવવામાં આવેલ હતું કે કેમ ?</td>
         </tr>
         <tr>
@@ -213,13 +213,13 @@
             <td>{{$hc_details }}</td>
         </tr>
         <tr>
-            <td>8</td>
+            <td>7</td>
             <td>આ સાથે સામેલ રાખેલ ઉચ્ચ કક્ષાનું વસવાટ મેળવવાને લગતી સૂચનાઓ મેં વાંચી છે અને તે તથા સરકારશ્રી વખતો વખત આ અંગે સૂચનાઓ બહાર પાડે તેનું પાલન કરવા હું સંમત છું.</td>
             <td>:</td>
             <td>હા</td>
         </tr>
         <tr>
-            <td>9</td>
+            <td>8</td>
             <td>હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label></td>
             <td>:</td>
             <td>હા</td>

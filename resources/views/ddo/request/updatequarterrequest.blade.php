@@ -111,13 +111,13 @@
                                 </div>
                                 <div class="row user_details_view1">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0 ms-4">( ક ) ગાંધીનગર ખાતે હાજર થયા તારીખ <span>:</span></h6>
+                                    <h6 class="mb-0 ms-4">( ક ) {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} ખાતે હાજર થયા તારીખ <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['deputation_date'] : 'N/A' }} </p>
                                     </div>
                                 </div>
-<div class="row user_details_view1">
+                                <div class="row user_details_view1">
                                         <div class="col-sm-8">
                                         <h6 class="mb-0 ms-4">( ડ ) વતન નું સરનામું <span>:</span></h6>
                                         </div>
@@ -150,7 +150,7 @@
                                     <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['gpfnumber'] : 'N/A' }} </p>
                                     </div>
                                 </div>
-<div class="row user_details_view1">
+                                <div class="row user_details_view1">
                                     <div class="col-sm-8">
                                     <h6 class="mb-0">3) સરકારી નોકરીમાં મૂળ નિમણુંક તારીખ્<span>:</span></h6>
                                     </div>
@@ -273,7 +273,7 @@
                                 <div class="row user_details_view1">
                                     <div class="col-sm-8">
                                     <!-- <h6 class="mb-0">7) અગાઉ ગાંધીનગર માં મકાન મેળવવા અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ છે? <span>:</span></h6> -->
-                                    <h6 class="mb-0">7) અગાઉ ગાંધીનગર માં મકાન મેળવવા, અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ હોય તો તારીખ, નંબર, બ્લોક વિગેરેની સંદર્ભ માહિતી આપવી.(લાગુ ન પડતુ હોય ત્યાં “ના” લખવુ) <span>:</span></h6>
+                                    <h6 class="mb-0">7) અગાઉ {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} માં મકાન મેળવવા, અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ હોય તો તારીખ, નંબર, બ્લોક વિગેરેની સંદર્ભ માહિતી આપવી.(લાગુ ન પડતુ હોય ત્યાં “ના” લખવુ) <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['have_old_quarter'] : 'N/A' }} </p>
@@ -297,7 +297,7 @@
                                 </div>
                                 <div class="row user_details_view1">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">9) ગાંધીનગર ખાતે જો રહેતા હોય તો કોની સાથે, તેમની સાથે નો સંબંધ અને મકાન ની વિગત <span>:</span></h6>
+                                    <h6 class="mb-0">9) {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} ખાતે જો રહેતા હોય તો કોની સાથે, તેમની સાથે નો સંબંધ અને મકાન ની વિગત <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p class="m-0"> {{ isset($quarterrequest['is_relative']) ? $quarterrequest['is_relative'] : 'N/A' }} </p>
@@ -313,7 +313,7 @@
                                 </div>
                                 <div class="row user_details_view1">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">10) ગાંધીનગર ખાતે માતા/પિતા. પતિ/પત્ની વગેરે લોહી ની સગાઈ જેવા સંબંધીને મકાન ફાળવેલ છે? <span>:</span></h6>
+                                    <h6 class="mb-0">10) {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} ખાતે માતા/પિતા. પતિ/પત્ની વગેરે લોહી ની સગાઈ જેવા સંબંધીને મકાન ફાળવેલ છે? <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p class="m-0"> {{ isset($quarterrequest['is_relative_householder']) ? $quarterrequest['is_relative_householder'] : 'N/A' }} </p>
@@ -329,7 +329,7 @@
                                 </div>
                                 <div class="row user_details_view1">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">11) ગાંધીનગર શહેર ની હદ માં અથવા સચિવાલય થી ૧૦ કિલોમીટર ની હદ માં અથવા ગાંધીનગર ની હદ
+                                    <h6 class="mb-0">11) {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} શહેર ની હદ માં અથવા સચિવાલય થી ૧૦ કિલોમીટર ની હદ માં અથવા {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} ની હદ
                                         માં આવતા ગમડાં માં તેમના પિતા/પતિ/પત્ની કે કુટુંબ ના કોઈપણ સભ્યને નામે રહેણાંકનું
                                         મકાન છે? <span>:</span></h6>
                                     </div>
@@ -347,7 +347,7 @@
                                 </div>
                                 <div class="row user_details_view1">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">12) જો જાહેરહિતાર્થે બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચલી કક્ષાનું વસવાટ મેળવવા માંગો છો?<span>:</span></h6>
+                                    <h6 class="mb-0">12) જો જાહેરહિતાર્થે બદલી થઈ ને {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચલી કક્ષાનું વસવાટ મેળવવા માંગો છો?<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p class="m-0">  {{ isset($quarterrequest['downgrade_allotment']) ? $quarterrequest['downgrade_allotment'] : 'N/A' }} </p>
@@ -370,10 +370,10 @@
                                     <p class="m-0"> હા </p>
                                     </div>
                                 </div> 
-                                <div class="row user_details_view1">
+                                <div class="row mt-3">
                                     <div class="col-sm-12">
                                 
-                                    <h6 class="mb-0">15)  હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">-------</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે. </h6>
+                                    <h6 class="mb-0">15)  હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none; "><b>{{ isset($quarterrequest) ? $quarterrequest['name'] : 'N/A' }}</b></span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે. </h6>
                                     </div>
                                 </div> 
                                  <!-- <div class="row user_details_view">

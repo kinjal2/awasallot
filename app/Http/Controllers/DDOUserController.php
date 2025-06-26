@@ -947,7 +947,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     public function submitdocument_b(Request $request)
     {
         $files= $request->input('files');
-      //dd($request->all());
+     // dd($request->all());
       //  dd($request->submit_issue);
         // dd($request->reqid);
         //Find the record based on the composite primary key

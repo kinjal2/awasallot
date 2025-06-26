@@ -79,7 +79,8 @@ class DdoUserLoginController extends Controller {
             'ddo_reg_no' => $user->ddo_reg_no,
             'cardex_no'  => $user->cardex_no,
             'ddo_code'   => $user->ddo_code,
-            'officecode' => $user->officecode
+            'officecode' => $user->officecode,
+            'dcode' => $user->dcode
         ]);
 
         // Redirect based on email condition

@@ -101,7 +101,9 @@ class Tquarterrequesta extends Model
             'chioce1'=>$request->chioce1,
             'choice2'=>$request->choice2,
             'choice3'=>$request->choice3,
-            'ddo_remarks'=>$request->ddo_remarks
+            'ddo_remarks'=>$request->ddo_remarks,
+            'is_scst' =>$request->is_scst,
+            'scst_info' => $request->scst_info
         ];
     }
 }

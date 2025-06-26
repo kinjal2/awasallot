@@ -279,7 +279,7 @@
 				
 				<div class="row at_gandhinager">
                   <div class="col-4">
-                    <p class="text-muted"><b>જેની સાતે રહો ચો તેણી સાતે કોઈ સંબધ આને મકાન ની વિગત</b></p>
+                    <p class="text-muted"><b>જેની સાથે રહો છો તેની સાથે કોઈ સંબધ અને મકાન ની વિગત</b></p>
                   </div>
                   <div class="col-8">
                     <textarea class="form-control" style="width:100%" name="relative_details" id="relative_details"></textarea>

@@ -127,7 +127,7 @@ Route::post('/home', 'HomeController@index')->name('home');
     Route::get('editquarter_b/{r}/{rv}/{uid}', ['as' => 'editquarter_b', 'uses' => 'QuartersController@editquarter_b']);
     Route::post('saveapplication', [ 'as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
     Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);
-
+Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
     
     Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
     Route::post('listremarks', ['as' => 'quarter.list.listremarks', 'uses' => 'QuartersController@listremarks']);
@@ -270,6 +270,7 @@ Route::prefix('user')->group(function () {
     Route::post('/getDDOCode',[QuartersController::class,'getDDOCode'])->name('ddo.getDDOCode');
 
     Route::post('/getCardexNo',[QuartersController::class,'getCardexNo'])->name('ddo.getCardexNo');
+    Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
     
     
 

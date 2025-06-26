@@ -139,7 +139,7 @@
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-6">
-                                    <h6 class="mb-0">ગાંધીનગર ખાતે હાજર થયા તારીખ <span>:</span></h6>
+                                    <h6 class="mb-0">{{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} ખાતે હાજર થયા તારીખ <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-6">
                                     <p> {{ isset($quarterrequest) ? $quarterrequest['deputation_date'] : 'N/A' }} </p>
@@ -313,7 +313,7 @@
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">અગાઉ ગાંધીનગર માં મકાન મેળવવા અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ છે? <span>:</span></h6>
+                                    <h6 class="mb-0">અગાઉ {{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} માં મકાન મેળવવા અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ છે? <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p> {{ isset($quarterrequest) ? $quarterrequest['have_old_quarter'] : 'N/A' }} </p>
@@ -345,7 +345,7 @@
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">ગાંધીનગર ખાતે જો રહેતા હોય તો કોની સાથે, તેમની સાથે નો સંબંધ અને મકાન ની વિગત <span>:</span></h6>
+                                    <h6 class="mb-0">{{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} ખાતે જો રહેતા હોય તો કોની સાથે, તેમની સાથે નો સંબંધ અને મકાન ની વિગત <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p> {{ isset($quarterrequest['is_relative']) ? $quarterrequest['is_relative'] : 'N/A' }} </p>
@@ -361,7 +361,7 @@
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">ગાંધીનગર ખાતે માતા/પિતા. પતિ/પત્ની વગેરે લોહી ની સગાઈ જેવા સંબંધીને મકાન ફાળવેલ છે? <span>:</span></h6>
+                                    <h6 class="mb-0">{{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} ખાતે માતા/પિતા. પતિ/પત્ની વગેરે લોહી ની સગાઈ જેવા સંબંધીને મકાન ફાળવેલ છે? <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p> {{ isset($quarterrequest['is_relative_householder']) ? $quarterrequest['is_relative_householder'] : 'N/A' }} </p>
@@ -377,7 +377,7 @@
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">ગાંધીનગર શહેર ની હદ માં અથવા સચિવાલય થી ૧૦ કિલોમીટર ની હદ માં અથવા ગાંધીનગર ની હદ
+                                    <h6 class="mb-0">{{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} શહેર ની હદ માં અથવા સચિવાલય થી ૧૦ કિલોમીટર ની હદ માં અથવા {{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} ની હદ
                                         માં આવતા ગમડાં માં તેમના પિતા/પતિ/પત્ની કે કુટુંબ ના કોઈપણ સભ્યને નામે રહેણાંકનું
                                         મકાન છે? <span>:</span></h6>
                                     </div>
@@ -395,7 +395,7 @@
                                 </div>
                                 <div class="row user_details_view">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને
+                                    <h6 class="mb-0">જો બદલી થઈ ને {{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને
                                         પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે? <span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">

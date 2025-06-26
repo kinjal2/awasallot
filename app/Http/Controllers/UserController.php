@@ -129,6 +129,7 @@ return Datatables::of($users)
     return redirect('home');
      }
 	 public function designationselection(Request $request){ //dd($request);
+     //   dd($request->all());
         $officedesignation = $request->get('officedesignation');
        $tempval = explode(':',$officedesignation);
      // dd($tempval);

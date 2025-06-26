@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Response;
 use App\Couchdb\Couchdb;
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
+use App\DDOCode;
 
 
 
@@ -57,6 +58,9 @@ class FileDownloadController extends Controller
             }
         }
     }
+    public function updatepassword()
+    {
 
+    }
  
 }

@@ -302,7 +302,8 @@ class QuartersController extends Controller
                 $Tquarterrequesta->prv_rent = empty($request->get('prv_rent')) ? NULL : $request->get('prv_rent');
                 $Tquarterrequesta->prv_handover = empty($request->get('prv_handover')) ? NULL : $request->get('prv_handover');
                 $Tquarterrequesta->have_old_quarter = empty($request->get('have_old_quarter_yn')) ? NULL : $request->get('have_old_quarter_yn');
-                $Tquarterrequesta->is_scst = empty($request->get('is_scst')) ? NULL : $request->get('is_scst');
+                $Tquarterrequesta->old_quarter_details = empty($request->get('old_quarter_details')) ? NULL : $request->get('old_quarter_details');
+                $Tquarterrequesta->is_scst = empty($request->get('is_stsc_yn')) ? NULL : $request->get('is_stsc_yn');
                 $Tquarterrequesta->scst_info = empty($request->get('scst_details')) ? NULL : $request->get('scst_details');
                 $Tquarterrequesta->is_relative = empty($request->get('is_relative')) ? NULL : $request->get('is_relative');
                 $Tquarterrequesta->relative_details = empty($request->get('relative_details')) ? NULL : $request->get('relative_details');
@@ -551,6 +552,7 @@ class QuartersController extends Controller
         if ($type === 'a') {
             $requestModel = new Tquarterrequesta();
         } else if ($type === 'b') {
+            
             $requestModel = new Tquarterrequestb();
         }
 
