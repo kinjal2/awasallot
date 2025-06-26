@@ -68,115 +68,119 @@ Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])->na
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/home', 'HomeController@index')->name('home');
 // Dashboard Routes user 
- Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent_clickjacking','check.session','session.timeout'])->group(function () {   
-    Route::get('userdashboard', ['uses' => 'DashboardController@userdashboard', 'as' => 'user.dashboard.userdashboard']);
-    Route::get('profile', ['as' => 'user.profile', 'uses' => 'ProfileController@index']);
-    Route::get('quartersuser', ['as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
-    Route::get('quarterschange', ['as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
-    Route::get('quartershistory', ['as' => 'user.quarter.history', 'uses' => 'QuartersController@index']);
-    Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);
-    Route::get('updateoldprofile', [ 'as' => 'user.update_old_profile_details', 'uses' => 'ProfileController@updateOldProfileDetails']);
-    Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOldProfileDetails']);
-    Route::post('updateolduserprofiledetails',[ProfileController::class ,'updateolduserprofiledetails'])->name('updateolduserprofiledetails');
-    
-    Route::get('useroldprofile', [ProfileController::class, 'viewuseroldprofile'])->name('user.oldprofile');
+    Route::middleware(['verifiedphone', 'verified','role:user','check.host','prevent_clickjacking','check.session','session.timeout'])->group(function () {   
+        Route::get('userdashboard', ['uses' => 'DashboardController@userdashboard', 'as' => 'user.dashboard.userdashboard']);
+        Route::get('profile', ['as' => 'user.profile', 'uses' => 'ProfileController@index']);
+        Route::get('quartersuser', ['as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
+        Route::get('quarterschange', ['as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
+        Route::get('quartershistory', ['as' => 'user.quarter.history', 'uses' => 'QuartersController@index']);
+        Route::get('ddo_details', [ 'as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);
+        Route::get('updateoldprofile', [ 'as' => 'user.update_old_profile_details', 'uses' => 'ProfileController@updateOldProfileDetails']);
+       // Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOldProfileDetails']);
+       Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
 
-    Route::post('gettalukasbydistrict', [ProfileController::class, 'getTalukasByDistrict'])->name('getTalukasByDistrict');
+        Route::post('updateolduserprofiledetails',[ProfileController::class ,'updateolduserprofiledetails'])->name('updateolduserprofiledetails');
+        
+        Route::get('useroldprofile', [ProfileController::class, 'viewuseroldprofile'])->name('user.oldprofile');
 
-    
-    Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);
-    Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
-    Route::post('saveHigherCategoryReq', ['uses' => 'QuartersController@saveHigherCategoryReq']);
-    Route::get('quarterschange', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
-
-    Route::get('quarters', [ 'as' => 'quarters', 'uses' => 'QuartersController@index']);
-    
-   
-   
-    
-    Route::get('uploaddocument/:any', ['uses' => 'QuartersController@uploaddocument']);
-    Route::post('saveuploaddocument', ['uses' => 'QuartersController@saveuploaddocument']);
-    Route::post('/get-document-url', [ 'as' => 'quarter.list.showDocument', 'uses' => 'QuartersController@showDocument']);
-    Route::post('deletedoc', ['uses' => 'QuartersController@deletedoc']);
-    Route::post('savefinalannexure',['as'=>'quarter.final.annexure','uses'=>'QuartersController@savefinalAnnexure']);
-    Route::get('userallotmentlist', [UserQuartersallotmentController::class, 'index'])->name('userallotmentlist.index');
-    Route::post('getListallot', [UserQuartersallotmentController::class, 'getList'])->name('getListallot');
-
-    Route::post('request-history', ['uses' => 'QuartersController@requestHistory']);
-    Route::post('saveOfficeCode', ['uses' => 'QuartersController@saveOfficeCode']);
-    Route::post('/withdraw/details', [QuartersController::class, 'getUserWithdrawDetails'])->name('application.withdraw.details');
-
+        Route::post('gettalukasbydistrict', [ProfileController::class, 'getTalukasByDistrict'])->name('getTalukasByDistrict');
 
         
-});
+        Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);
+        Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
+        Route::post('saveHigherCategoryReq', ['uses' => 'QuartersController@saveHigherCategoryReq']);
+        Route::get('quarterschange', [ 'as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
 
-// Admin Dashboard
-     Route::middleware(['role:admin','check.host','session.timeout'])->group(function () {
-    Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
-    Route::get('user', [ 'as' => 'user', 'uses' => 'UserController@index']);
-  //  Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
-    Route::post('get-quarter-type/', [DashboardController::class, 'getQuarterType'])->name('getQuarterType');
-    Route::post('get-area/', [DashboardController::class, 'getAreaWiseQurtCnt'])->name('getArea');
-    Route::post('get-quarter-total/', [DashboardController::class, 'getQuarterTotalList'])->name('getQuarterList');
-    Route::post('/designationselection', 'UserController@designationselection')->name('designationselection');
-    Route::get('/checkuser', 'UserController@checkuser')->name('checkuser');
-    Route::get('quarter-police-document', ['as' => 'quarter.police.document', 'uses' => 'PolicestaffController@index']);
-    Route::post('normalquarter-list', ['as' => 'normalquarter-list', 'uses' => 'QuartersController@getNormalquarterList']);
-    Route::get('editquarter_a/{r}/{rv}/{uid}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
-   // Route::get('editquarter_a/{r}/{rv}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
-    Route::get('editquarter_b/{r}/{rv}/{uid}', ['as' => 'editquarter_b', 'uses' => 'QuartersController@editquarter_b']);
-    Route::post('saveapplication', [ 'as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
-    Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);
-Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
+        Route::get('quarters', [ 'as' => 'quarters', 'uses' => 'QuartersController@index']);
+        
     
-    Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
-    Route::post('listremarks', ['as' => 'quarter.list.listremarks', 'uses' => 'QuartersController@listremarks']);
-    Route::post('addremarks', ['as' => 'quarter.list.addnewremark', 'uses' => 'QuartersController@addnewremarks']);
-    Route::get('remarks', [QuartersController::class, 'listremarks'])->name('quarter.remarks');
+    
+        
+        Route::get('uploaddocument/:any', ['uses' => 'QuartersController@uploaddocument']);
+        Route::post('saveuploaddocument', ['uses' => 'QuartersController@saveuploaddocument']);
+        Route::post('/get-document-url', [ 'as' => 'quarter.list.showDocument', 'uses' => 'QuartersController@showDocument']);
+        Route::post('deletedoc', ['uses' => 'QuartersController@deletedoc']);
+        Route::post('savefinalannexure',['as'=>'quarter.final.annexure','uses'=>'QuartersController@savefinalAnnexure']);
+        Route::get('userallotmentlist', [UserQuartersallotmentController::class, 'index'])->name('userallotmentlist.index');
+        Route::post('getListallot', [UserQuartersallotmentController::class, 'getList'])->name('getListallot');
 
-  //  Route::get('listnormal', ['as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
-  Route::get('quarterlistnormal', [ 'as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
-  Route::post('waiting-list', [ 'as' => 'waitinglist.data','uses' => 'ReportsController@getWaitingList']);
-  Route::post('getdocumentdata', [ 'as' => 'getdocumentdata','uses' => 'ReportsController@getdocumentdata']);
-   Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
-	Route::resource('quarterlistpriority', 'QuartersPriorityController');
-	 Route::get('allotmentlist', ['as' => 'allotment.list', 'uses' => 'ReportsController@allotmentlist']);
-    Route::get('vacantlist', ['as' => 'vacant.list', 'uses' => 'ReportsController@vacantlist']);
-    Route::get('quarteroccupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
-	
-	Route::post('allotment-list', ['as' => 'allotment-list', 'uses' => 'ReportsController@getAllotmentList']);
-	Route::post('vacant-list', ['as' => 'vacant-list', 'uses' => 'ReportsController@getVacantList']);
-
-	Route::post('vacant_quarter', ['as' => 'vacant_quarter', 'uses' => 'ReportsController@vacant_quarter']);
+        Route::post('request-history', ['uses' => 'QuartersController@requestHistory']);
+        Route::post('saveOfficeCode', ['uses' => 'QuartersController@saveOfficeCode']);
+        Route::post('/withdraw/details', [QuartersController::class, 'getUserWithdrawDetails'])->name('application.withdraw.details');
 
 
-	Route::get('quarter-occupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
-	Route::post('quarteroccupancylist', ['as' => 'quarter.occupancy.list', 'uses' => 'ReportsController@getquarteroccupancy']);
-	Route::post('policestaff-data', [ 'as' => 'policestaff.data','uses' => 'PolicestaffController@getpolicedocumentList']);
-	Route::get('editquarter_police_a/{r}/{rv}/{performa}', ['as' => 'editquarter_police_a', 'uses' => 'PolicestaffController@editquarter_a']);
-	//area
-    Route::get('masterarea', ['uses' => 'AreaController@index', 'as' => 'masterarea.index']);
-    Route::post('getList','AreaController@getList');
-    Route::resource('masterarea', 'AreaController');
-    //Route::delete('masterarea/{id}', [AreaController::class, 'destroy'])->name('masterarea.destroy');
-    //Route::get('masterarea/{id}/edit', [AreaController::class, 'edit'])->name('masterarea.edit');
-    Route::get('/addNewArea',[AreaController::class,'addNewArea'])->name('masterarea.addNewArea');
-    Route::post('/addNewArea',[AreaController::class,'store'])->name('masterarea.store');
-    Route::get('/editArea/{id}/edit',[AreaController::class,'editArea'])->name('masterarea.editArea');
-    Route::post('/editArea',[AreaController::class,'store'])->name('masterarea.store');
+            
+    });
 
-    Route::get('admin-quarters-rejected', [QuartersController::class, 'admin_quartersRejected'])->name('request.rejected');
-    Route::post('admin-quarters-rejected-list', [QuartersController::class, 'admin_getRejectedQuarterList'])->name('request.rejectedquarter-list');
+        // Admin Dashboard
+        Route::middleware(['role:admin','check.host','session.timeout'])->group(function () {
+        Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
+        Route::get('user', [ 'as' => 'user', 'uses' => 'UserController@index']);
+        //  Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
+        Route::post('get-quarter-type/', [DashboardController::class, 'getQuarterType'])->name('getQuarterType');
+        Route::post('get-area/', [DashboardController::class, 'getAreaWiseQurtCnt'])->name('getArea');
+        Route::post('get-quarter-total/', [DashboardController::class, 'getQuarterTotalList'])->name('getQuarterList');
+        Route::post('/designationselection', 'UserController@designationselection')->name('designationselection');
+        Route::get('/checkuser', 'UserController@checkuser')->name('checkuser');
+        Route::get('quarter-police-document', ['as' => 'quarter.police.document', 'uses' => 'PolicestaffController@index']);
+        Route::post('normalquarter-list', ['as' => 'normalquarter-list', 'uses' => 'QuartersController@getNormalquarterList']);
+        Route::get('editquarter_a/{r}/{rv}/{uid}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
+        // Route::get('editquarter_a/{r}/{rv}', ['as' => 'editquarter_a', 'uses' => 'QuartersController@editquarter_a']);
+        Route::get('editquarter_b/{r}/{rv}/{uid}', ['as' => 'editquarter_b', 'uses' => 'QuartersController@editquarter_b']);
+        Route::post('saveapplication', [ 'as' => 'quarter.list.saveapplication', 'uses' => 'QuartersController@saveapplication']);
+        Route::post('saveapplication_b', [ 'as' => 'quarter.list.saveapplication_b', 'uses' => 'QuartersController@saveapplication_b']);
 
-    // Other admin-specific routes
-    Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
-    Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
-    Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
-    Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
-    Route::post('/reset/{field}', 'UserController@reset')->name('reset');
-    Route::post('upadteremarks', [ 'as' => 'upadteremarks.data','uses' => 'ReportsController@upadteremarks']);
+        
+        Route::post('saveremarks', ['as' => 'quarter.list.saveremarks', 'uses' => 'QuartersController@saveremarks']);
+        Route::post('listremarks', ['as' => 'quarter.list.listremarks', 'uses' => 'QuartersController@listremarks']);
+        Route::post('addremarks', ['as' => 'quarter.list.addnewremark', 'uses' => 'QuartersController@addnewremarks']);
+        Route::get('remarks', [QuartersController::class, 'listremarks'])->name('quarter.remarks');
 
-});
+        //  Route::get('listnormal', ['as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
+        Route::get('quarterlistnormal', [ 'as' => 'quarter.list.normal', 'uses' => 'QuartersController@quarterlistnormal']);
+        Route::post('waiting-list', [ 'as' => 'waitinglist.data','uses' => 'ReportsController@getWaitingList']);
+        Route::post('getdocumentdata', [ 'as' => 'getdocumentdata','uses' => 'ReportsController@getdocumentdata']);
+        Route::get('quarterlistpriority',['QuartersPriorityController@index','as'=>'quarterlistpriority.index']);
+        Route::resource('quarterlistpriority', 'QuartersPriorityController');
+        Route::get('allotmentlist', ['as' => 'allotment.list', 'uses' => 'ReportsController@allotmentlist']);
+        Route::get('vacantlist', ['as' => 'vacant.list', 'uses' => 'ReportsController@vacantlist']);
+        Route::get('quarteroccupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
+        
+        Route::post('allotment-list', ['as' => 'allotment-list', 'uses' => 'ReportsController@getAllotmentList']);
+        Route::post('vacant-list', ['as' => 'vacant-list', 'uses' => 'ReportsController@getVacantList']);
+
+        Route::post('vacant_quarter', ['as' => 'vacant_quarter', 'uses' => 'ReportsController@vacant_quarter']);
+
+
+        Route::get('quarter-occupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
+        Route::post('quarteroccupancylist', ['as' => 'quarter.occupancy.list', 'uses' => 'ReportsController@getquarteroccupancy']);
+        Route::post('policestaff-data', [ 'as' => 'policestaff.data','uses' => 'PolicestaffController@getpolicedocumentList']);
+        Route::get('editquarter_police_a/{r}/{rv}/{performa}', ['as' => 'editquarter_police_a', 'uses' => 'PolicestaffController@editquarter_a']);
+        //area
+        Route::get('masterarea', ['uses' => 'AreaController@index', 'as' => 'masterarea.index']);
+        Route::post('getList','AreaController@getList');
+        Route::resource('masterarea', 'AreaController');
+        //Route::delete('masterarea/{id}', [AreaController::class, 'destroy'])->name('masterarea.destroy');
+        //Route::get('masterarea/{id}/edit', [AreaController::class, 'edit'])->name('masterarea.edit');
+        Route::get('/addNewArea',[AreaController::class,'addNewArea'])->name('masterarea.addNewArea');
+        Route::post('/addNewArea',[AreaController::class,'store'])->name('masterarea.store');
+        Route::get('/editArea/{id}/edit',[AreaController::class,'editArea'])->name('masterarea.editArea');
+        Route::post('/editArea',[AreaController::class,'store'])->name('masterarea.store');
+
+        Route::get('admin-quarters-rejected', [QuartersController::class, 'admin_quartersRejected'])->name('request.rejected');
+        Route::post('admin-quarters-rejected-list', [QuartersController::class, 'admin_getRejectedQuarterList'])->name('request.rejectedquarter-list');
+
+        // Other admin-specific routes
+        Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
+        Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
+        Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
+        Route::post('ddo/add', [DDOController::class, 'addNewD  DOStore'])->name('ddo.store');
+        Route::post('/reset/{field}', 'UserController@reset')->name('reset');
+        Route::post('upadteremarks', [ 'as' => 'upadteremarks.data','uses' => 'ReportsController@upadteremarks']);
+        //Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'UserController@updateUserDdoDetails']);
+        Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
+
+    });
 
  
 

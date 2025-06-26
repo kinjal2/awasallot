@@ -3336,10 +3336,16 @@ class QuartersController extends Controller
             }
 
             DB::commit();
+            $message = base64_encode('Application withdrawn successfully.');
+
+            session()->flash('success', $message);
             return response()->json(['status' => 'success', 'message' => 'Application withdrawn successfully.']);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Withdraw error: ' . $e->getMessage());
+            $message = base64_encode('Something went wrong.');
+
+            session()->flash('failed', $message);
             return response()->json(['status' => 'error', 'message' => 'Something went wrong.']);
         }
     }
