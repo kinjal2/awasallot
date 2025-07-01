@@ -83,8 +83,7 @@ Route::post('/home', 'HomeController@index')->name('home');
         
         Route::get('useroldprofile', [ProfileController::class, 'viewuseroldprofile'])->name('user.oldprofile');
 
-        Route::post('gettalukasbydistrict', [ProfileController::class, 'getTalukasByDistrict'])->name('getTalukasByDistrict');
-
+      
         
         Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);
         Route::get('quartershigher', [ 'as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
@@ -111,7 +110,7 @@ Route::post('/home', 'HomeController@index')->name('home');
 
             
     });
-
+      
         // Admin Dashboard
         Route::middleware(['role:admin','check.host','session.timeout'])->group(function () {
         Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
@@ -273,7 +272,7 @@ Route::prefix('user')->group(function () {
     
     Route::post('/getDDOCode',[QuartersController::class,'getDDOCode'])->name('ddo.getDDOCode');
 
-    Route::post('/getCardexNo',[QuartersController::class,'getCardexNo'])->name('ddo.getCardexNo');
+   
     Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
     
     
@@ -324,6 +323,13 @@ Route::get('/government_document', function () {
 });
 
 Route::post('/gettalukabydistrict', [RegisterController::class, 'getTalukaByDistrict'])->name('getTalukaByDistrict');
+
+
+
+
+Route::post('gettalukasbydistrict', [ProfileController::class, 'getTalukasByDistrict'])->name('getTalukasByDistrict');
+Route::post('/getCardexNo',[QuartersController::class,'getCardexNo'])->name('ddo.getCardexNo');
+
 Route::get('reload-captcha', 'Auth\RegisterController@reloadCaptcha')->name('reload-captcha');
 Route::get('/ddo/reload-captcha', 'Auth\RegisterController@reloadCaptcha')->name('ddo.reload-captcha');
 Route::get('/phone/reload-captcha', 'CaptchaController@reloadCaptcha')->name('phone.reload-captcha');
