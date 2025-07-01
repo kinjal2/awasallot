@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\District;
 use App\Taluka;
+use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
@@ -123,6 +124,8 @@ protected function create(array $data)
                     'dcode' => htmlentities(strip_tags($data['district'])),
                     'tcode' => htmlentities(strip_tags($data['taluka'])),
                     'from_old_awasallot_app' => 0,
+                    'email_verified_at' => Carbon::now()
+
             ]);
 
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);

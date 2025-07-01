@@ -152,7 +152,7 @@
                                 </div>
                                 <div class="row user_details_view1">
                                     <div class="col-sm-8">
-                                    <h6 class="mb-0">3) સરકારી નોકરીમાં મૂળ નિમણુંક તારીખ્<span>:</span></h6>
+                                    <h6 class="mb-0">3) સરકારી નોકરીમાં મૂળ નિમણુંક તારીખ<span>:</span></h6>
                                     </div>
                                     <div class="col-sm-4">
                                     <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['appointment_date'] : 'N/A' }} </p>
