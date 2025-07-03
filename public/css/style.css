@@ -568,17 +568,17 @@ section {
 }
 
 .section-title h2 {
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0;
-  line-height: 1px;
-  margin: 0 0 5px 0;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #aaaaaa;
-  font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 0;
+    line-height: 1px;
+    margin: 0 0 5px 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ef6603;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
 }
-
 .section-title h2::after {
   content: "";
   width: 120px;
@@ -587,7 +587,9 @@ section {
   background: #fd9042;
   margin: 4px 10px;
 }
-
+section#contact {
+    background: #f9f9f9;
+}
 .section-title p {
   margin: 0;
   margin: 0;
@@ -597,7 +599,24 @@ section {
   font-family: "Poppins", sans-serif;
   color: #2a2c39;
 }
-
+.uw-widget-custom-trigger {
+    border: none;
+    border-radius: 70px;
+    bottom: 59px !important;
+    /* height: 50px !important;
+    max-width: 50px !important; */
+    /* padding: 9px !important; */
+    background-color: #4e545a !important;
+}
+.uwaw button:focus, .uwaw button:hover {
+    border-color: #ef6603 !important;
+    outline-color: #ef6603 !important;
+    background-color: #ef660314 !important;
+}
+.second-panel {
+    background-color: #ef6603 !important;
+}
+.blink_text{background-color: yellow; color: red; font-weight: bold; padding: 8px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 2s infinite; display: block; border: 2px solid;}
 /*--------------------------------------------------------------
 # About
 --------------------------------------------------------------*/
@@ -623,7 +642,7 @@ section {
 }
 
 .about .content ul li {
-  padding-left: 28px;
+  padding-left: 5px;
   position: relative;
 }
 

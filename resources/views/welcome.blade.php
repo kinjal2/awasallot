@@ -31,12 +31,56 @@
             opacity: 1;
         }
     }
+    .accessibility-toolbar {
+    background: #dfbfa7;
+    padding: 6px 12px;
+    font-size: 14px;
+    text-align: right;
+    border-top: 4px solid #ef6603;
+}
+    .accessibility-toolbar a {
+        text-decoration: none;
+        font-weight: bold;
+        margin-right: 10px;
+        color: #000;
+    }
+    .accessibility-toolbar a:hover {
+        text-decoration: underline;
+    }
+    .btn_top_icon {
+    border: 2px solid #ffffff;
+    padding: 0 6px;
+    font-weight: 600;
+    background: #ef6603;
+    color: #fff;
+}
+    .btn_top_icon:hover {
+    border: 2px solid #ef6603;
+    padding: 0 6px;
+    font-weight: 600;
+    background: #fff;
+    color: #000;
+}
   </style>
 </head>
 <body>
+  <!-- ✅ Accessibility Toolbar -->
+ <div> 
   <!-- ======= Header ======= -->
-  <header id="header" class="fixed-top d-flex align-items-center  header-transparent ">
-    <div class="container-fluid d-flex align-items-center justify-content-between px-5_new">
+  <header id="header" class="fixed-top align-items-center  header-transparent">
+    <div class="accessibility-toolbar">
+      <!-- <a href="#" id="increasetext" onclick="adjustTextSize('increase')">A+</a>
+      <a href="#" id="decreasetext" onclick="adjustTextSize('decrease')">A-</a>
+      <a href="#" id="resettext" onclick="adjustTextSize('reset')">A</a>
+      <a href="#main-content">Skip to main content</a>
+      <a href="#" onclick="activateScreenReader()">Access screen reader</a> -->
+      <a href="#information" > Skip to Main Content</a>
+       <button id="btn-decrease" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A-</button>
+          <button id="btn-orig" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A</button>
+          <button id="btn-increase" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A+</button>
+          
+  </div>
+    <div class="container-fluid d-flex align-items-center justify-content-between px-5_new py-2" id="content">
         <div class="logo">
             <h1><a href="index.html"><img src="{{ URL::asset('/images/logo.png') }}"></a></h1>
         </div>
@@ -72,8 +116,9 @@
         <!-- .navbar -->
     </div>
   </header><!-- End Header -->
+  
   <!-- ======= Hero Section ======= -->
-  <section id="hero" class="d-flex flex-column justify-content-end align-items-center">
+  <section id="hero"  class="d-flex flex-column justify-content-end align-items-center">
     <div id="heroCarousel" data-bs-interval="5000" class="container carousel carousel-fade" data-bs-ride="carousel">
       <div class="carousel-item active">
         <div class="carousel-container">
@@ -104,7 +149,7 @@ Designed with user convenience in mind, our platform enables quick and efficient
   </section><!-- End Hero -->
 
 
-  <main id="main">
+  <main id="main content">
     <!-- ======= About Section =======-->
     <section id="about" class="about">
       <div class="container">
@@ -134,7 +179,7 @@ Designed with user convenience in mind, our platform enables quick and efficient
     <!-- End About Section -->
 
     <!-- ======= Information Section ======= -->
-    <section id="contact" class="contact">
+    <section id="information" class="contact">
       <div class="container">
         <div class="section-title" data-aos="zoom-out">
           <h2>સૂચના</h2>
@@ -145,13 +190,13 @@ Designed with user convenience in mind, our platform enables quick and efficient
             <div id="letest-news">
               <ul class="list">
                  <li >
-                  <span class="title"><h4><a   href="#" target="_blank" style="background-color: yellow; color: red; font-weight: bold; padding: 5px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 1s infinite;" target="_blank">User Guidelines</a></h4></span>
+                  <span class="title"><h4><a href="#" target="_blank" class="blink_text">User Guidelines</a></h4></span>
                 </li>
                 <li >
-                  <span class="title"><h4><a   href="#" target="_blank" style="background-color: yellow; color: red; font-weight: bold; padding: 5px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 1s infinite;" target="_blank">DDO Guidelines</a></h4></span>
+                  <span class="title"><h4><a href="#" target="_blank" class="blink_text">DDO Guidelines</a></h4></span>
                 </li>
                 <li >
-                  <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/ddo.pdf' }}" target="_blank" style="background-color: yellow; color: red; font-weight: bold; padding: 5px 10px; margin-top: 10px; border-radius: 5px; text-decoration: none; animation: blink 1s infinite;" target="_blank">View DDO List</a></h4></span>
+                  <span class="title"><h4><a href="{{ url(config('app.asset_url'),'/').'/downloads/ddo.pdf' }}" target="_blank" class="blink_text">View DDO List</a></h4></span>
                 </li>
                 <li >
                   <span >For Sending SSO Login form, send mail to <span style="color:red;" >itcell.rnb2018@gmail.com </span></span>
@@ -245,6 +290,8 @@ Designed with user convenience in mind, our platform enables quick and efficient
       </div>
     </div>
   </footer>
+
+  </div>
   <!-- End Footer -->
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <!-- jQuery -->
@@ -253,7 +300,53 @@ Designed with user convenience in mind, our platform enables quick and efficient
     <script src="{{ URL::asset('/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ URL::asset(Config::get('app.theme_path').'/dist/js/adminlte.min.js') }}"></script>
+                             
      <!-- Template Main JS File -->
     <script src="{{ URL::asset('/js/main.js') }}"></script>
+    <script src="https://cdn.ux4g.gov.in/accessibility-beta-v1.15/accessibility-widget.js" defer></script>
+
+  <!-- ✅ Accessibility JS -->
+    <script>
+  var $affectedElements = $("p, h1, h2, h3, h4, h5, h6, a, span, .disclaimer_text, .last-btm-foot, .b-footer-credit, li, .title");
+
+  // Store original font sizes
+  $affectedElements.each(function(){
+    var $this = $(this);
+    $this.data("orig-size", parseInt($this.css("font-size")));
+  });
+
+  let fontChangeSteps = 0; // Tracks net changes from original
+  const maxSteps = 4;
+
+  $("#btn-increase").click(function(){
+    if (fontChangeSteps < maxSteps) {
+      changeFontSize(1);
+      fontChangeSteps++;
+    }
+  });
+
+  $("#btn-decrease").click(function(){
+    if (fontChangeSteps > -maxSteps) {
+      changeFontSize(-1);
+      fontChangeSteps--;
+    }
+  });
+
+  $("#btn-orig").click(function(){
+    $affectedElements.each(function(){
+      var $this = $(this);
+      $this.css("font-size", $this.data("orig-size") + "px");
+    });
+    fontChangeSteps = 0;
+  });
+
+  function changeFontSize(direction){
+    $affectedElements.each(function(){
+      var $this = $(this);
+      let currentSize = parseInt($this.css("font-size"));
+      $this.css("font-size", (currentSize + direction) + "px");
+    });
+  }
+</script>
 </body>
 </html>

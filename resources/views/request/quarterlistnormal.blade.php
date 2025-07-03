@@ -80,7 +80,7 @@
  var table = $('#normalquarterlist').DataTable({ 
         processing: true,
         serverSide: true,
-       
+        lengthMenu: [[ 25, 50, 100, -1], [ 25, 50, 100, "All"]],
         ajax: {
           headers: {
           'X-CSRF-TOKEN': '{{ csrf_token() }}',
