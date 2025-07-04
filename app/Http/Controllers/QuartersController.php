@@ -119,7 +119,7 @@ class QuartersController extends Controller
             $quarterrequestcheck = $quarterrequesta->count();
             if ($quarterrequestcheck > 0) {
                 if ($request_id != null) {
-                     if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'ddo') {
+                     if (isset($_REQUEST['edit_type']) && base64_decode($_REQUEST['edit_type']) == 'ddo') {
                         $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
                     } else {
                         $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
@@ -186,7 +186,7 @@ class QuartersController extends Controller
             // dd($quarterrequestcheck);
             if ($quarterrequestcheck > 0) {
                 if ($request_id != null) {
-                    if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'ddo') {
+                    if (isset($_REQUEST['edit_type']) && base64_decode($_REQUEST['edit_type']) == 'ddo') {
                         $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
                     } else {
                         $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
