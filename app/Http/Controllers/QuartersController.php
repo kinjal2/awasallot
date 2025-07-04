@@ -126,6 +126,17 @@ class QuartersController extends Controller
                     }
                     //$quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
                     if ($quarterrequesta != null) {
+                         $this->_viewContent['users'] = User::find($uid); 
+                         $this->_viewContent['imageData'] = generateImage($uid);
+                         $attacheddocument = DB::table('master.file_list')
+                        ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
+                        ->WHERE('uid', Session::get('Uid'))
+                        ->WHERE('document_id', 9)
+                        ->select('rev_id', 'doc_id', 'document_name')
+                        ->first();
+
+                        //dd($attacheddocument);
+                        $this->_viewContent['attacheddocument'] = $attacheddocument;
                         $this->_viewContent['page_title'] = "Quarter Request";
                         $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                         $this->_viewContent['name'] = Session::get('Name');
@@ -192,6 +203,17 @@ class QuartersController extends Controller
                         $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
                     }
                     if ($quarterrequestb != null) {
+                        $this->_viewContent['users'] = User::find($uid); 
+                         $this->_viewContent['imageData'] = generateImage($uid);
+                         $attacheddocument = DB::table('master.file_list')
+                        ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
+                        ->WHERE('uid', Session::get('Uid'))
+                        ->WHERE('document_id', 9)
+                        ->select('rev_id', 'doc_id', 'document_name')
+                        ->first();
+
+                        //dd($attacheddocument);
+                        $this->_viewContent['attacheddocument'] = $attacheddocument;
                         $this->_viewContent['page_title'] = "Higher Category";
                         $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                         $this->_viewContent['name'] = Session::get('Name');
@@ -210,8 +232,7 @@ class QuartersController extends Controller
     }
     public function saveHigherCategoryReq(Request $request)
     {
-        //dd($request->get('prv_area'));
-        //dd($request->all());
+       
         $rules = [
             'quartertype' => 'required|string',
             'prv_quarter_type' => 'required|string',

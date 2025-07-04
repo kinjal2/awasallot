@@ -60,7 +60,7 @@
 
                         <div class="col-6 form-group relative mb-3">
                         <label for="birthdate" class="col-md-4 col-form-label text-md-right">{{ __('Birth Date') }}&nbsp;<span class="text-danger">*</span></label>
-                        <input id="birthdate" type="text" class=" custon-control form-control dateformat  @error('birthdate') is-invalid @enderror" name="birthdate" value="{{ old('birthdate') }}" required  autofocus>
+                        <input id="birthdate" type="text" class=" custon-control form-control dateformat  @error('birthdate') is-invalid @enderror" name="birthdate" value="{{ old('birthdate') }}" required   readonly autofocus>
                         <i class="bi bi-cake2 form-icon"></i>
                         @error('birthdate')
                                     <span class="invalid-feedback" role="alert">
