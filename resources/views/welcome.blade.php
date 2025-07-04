@@ -16,6 +16,7 @@
   <link href="{{ URL::asset('/css/bootstrap-icons.css') }}" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="{{ URL::asset('/css/style.css') }}" rel="stylesheet">
+  <link href="{{ URL::asset('/css/accessibility-widget.css') }}" rel="stylesheet">																			  
    <!-- Styles -->
     </style>
               
@@ -80,7 +81,7 @@
           <button id="btn-increase" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A+</button>
           
   </div>
-    <div class="container-fluid d-flex align-items-center justify-content-between px-5_new py-2" id="content">
+     <div class="container-fluid d-flex align-items-center justify-content-between px-5_new py-2">
         <div class="logo">
             <h1><a href="index.html"><img src="{{ URL::asset('/images/logo.png') }}"></a></h1>
         </div>
@@ -149,7 +150,7 @@ Designed with user convenience in mind, our platform enables quick and efficient
   </section><!-- End Hero -->
 
 
-  <main id="main content">
+   <main id="main">
     <!-- ======= About Section =======-->
     <section id="about" class="about">
       <div class="container">
@@ -179,24 +180,27 @@ Designed with user convenience in mind, our platform enables quick and efficient
     <!-- End About Section -->
 
     <!-- ======= Information Section ======= -->
-    <section id="information" class="contact">
+    <section id="contact" class="contact">
       <div class="container">
         <div class="section-title" data-aos="zoom-out">
           <h2>સૂચના</h2>
           <p>Information</p>
         </div>
         <div class="row">
-           <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
+            <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
             <div id="letest-news">
               <ul class="list">
                  <li >
-                  <span class="title"><h4><a href="#" target="_blank" class="blink_text">User Guidelines</a></h4></span>
+                   <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/UserRegistration.pdf' }}" target="_blank" class="blink_text" target="_blank">User Registration</a></h4></span>
                 </li>
                 <li >
-                  <span class="title"><h4><a href="#" target="_blank" class="blink_text">DDO Guidelines</a></h4></span>
+                 <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/Userlogin.pdf' }}" target="_blank" class="blink_text" target="_blank">User Guidelines</a></h4></span>
                 </li>
-                <li >
-                  <span class="title"><h4><a href="{{ url(config('app.asset_url'),'/').'/downloads/ddo.pdf' }}" target="_blank" class="blink_text">View DDO List</a></h4></span>
+				 <li >
+                  <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/DDOLogin.pdf' }}" target="_blank" class="blink_text" target="_blank">DDO Guidelines</a></h4></span>
+                </li> 
+               <li >
+                  <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/ddo.pdf' }}" target="_blank" class="blink_text" target="_blank">View DDO Registration Number</a></h4></span>
                 </li>
                 <li >
                   <span >For Sending SSO Login form, send mail to <span style="color:red;" >itcell.rnb2018@gmail.com </span></span>
@@ -295,7 +299,7 @@ Designed with user convenience in mind, our platform enables quick and efficient
   <!-- End Footer -->
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <!-- jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ URL::asset('/js/jquery.min.js') }}"></script>></script>
     <!-- Bootstrap 4 -->
     <script src="{{ URL::asset('/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
@@ -303,7 +307,7 @@ Designed with user convenience in mind, our platform enables quick and efficient
                              
      <!-- Template Main JS File -->
     <script src="{{ URL::asset('/js/main.js') }}"></script>
-    <script src="https://cdn.ux4g.gov.in/accessibility-beta-v1.15/accessibility-widget.js" defer></script>
+   <script src="{{ URL::asset('/js/accessibility-widget.js') }}" ></script>
 
   <!-- ✅ Accessibility JS -->
     <script>

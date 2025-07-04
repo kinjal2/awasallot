@@ -37,6 +37,16 @@
                             <input type="hidden" id="cardex_no" name="cardex_no" value="{{session('cardex_no')}}" />
                             <input type="hidden" id="ddo_code" name="ddo_code" value="{{session('ddo_code')}}" />
                             <input type="hidden" id="page" name="page" value="new_request" />
+                              @if( isset($quarterequesta['requestid']) && !empty($quarterequesta['requestid']))
+                                <input type="hidden" id="requestid" name="requestid" value="{{$quarterequesta['requestid']}}" />
+                                <input type="hidden" id="option" name="option" value="edit" />
+                                 @if(  $quarterequesta['app_admin']==1)
+                                    <input type="hidden" id="edit_type" name="edit_type" value="app_admin" />
+                                    @endif
+                                    @if( $quarterequesta['app_ddo']==1)
+                                    <input type="hidden" id="edit_type" name="edit_type" value="app_ddo" />
+                                    @endif
+                             @endif
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <div class="lg-block">
@@ -45,7 +55,7 @@
                                             <x-select 
                                                 name="quartertype"
                                                 :options="[null => __('common.select')] + getBasicPay()"
-                                                :selected="old('quartertype', '')"
+                                                :selected="$quarterequesta['quartertype'] ?? null"
                                                 class="form-control"
                                                 id="quartertype"
                                             />
@@ -58,7 +68,7 @@
                                             <label class="question_bg mb-3">{{ __('request.deputation_date', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ] ) }}</label>
                                             <div class="input-group date dateformat" id="deputation_date"
                                                 data-target-input="nearest">
-                                                <input type="text" value="" name="deputation_date"
+                                                <input type="text" value="{{$quarterequesta['deputation_date'] ?? null }}" name="deputation_date"
                                                     class="form-control datetimepicker-input" data-target="#deputation_date" />
                                                 <div class="input-group-append" data-target="#deputation_date"
                                                     data-toggle="datetimepicker">
@@ -78,12 +88,12 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="icheck-primary d-inline px-3">
-                                                <input type="radio" id="deputation_y" name="deputation_yn" value="Y">
+                                                <input type="radio" id="deputation_y" name="deputation_yn" value="Y" @if (!empty($quarterequesta['old_designation']) || !empty($quarterequesta['old_office']) ) checked @endif>
                                                 <label for="deputation_y">{{ __('common.yes') }}
                                                 </label>
                                             </div>
                                             <div class="icheck-primary d-inline">
-                                                <input type="radio" id="deputation_n" name="deputation_yn" value="N">
+                                                <input type="radio" id="deputation_n" name="deputation_yn" value="N" @if (empty($quarterequesta['old_designation']) && empty($quarterequesta['old_office']) ) checked @endif>
                                                 <label for="deputation_n">{{ __('common.no') }}
                                                 </label>
                                             </div>
@@ -93,14 +103,14 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="Office">{{ __('common.designation') }}</label>
-                                                    <input class="form-control" name="old_desg" id="old_desg" type="text"
+                                                    <input class="form-control" name="old_desg" id="old_desg" type="text" value="{{$quarterequesta['old_designation'] ?? null }}"
                                                         style="width:100%">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="Office">{{ __('request.office_name') }}</label>
-                                                    <input class="form-control" type="text" name="old_office" id="old_office"
+                                                    <input class="form-control" type="text" name="old_office" id="old_office"  value="{{$quarterequesta['old_office'] ?? null }}"
                                                         style="width:100%">
                                                 </div>
                                             </div>
@@ -114,12 +124,12 @@
                                         </div>
                                         <div class="form-group clearfix">
                                             <div class="icheck-primary d-inline px-3">
-                                                <input type="radio" id="old_allocation_y" name="old_allocation_yn" value="Y">
+                                                <input type="radio" id="old_allocation_y" name="old_allocation_yn" value="Y" @if (!empty($quarterequesta['prv_rent']) || !empty($quarterequesta['prv_building_no'])  || !empty($quarterequesta['prv_area_name']) || !empty($quarterequesta['prv_quarter_type']) || !empty($quarterequesta['prv_handover'])) checked @endif>
                                                 <label for="old_allocation_y">{{ __('common.yes') }}
                                                 </label>
                                             </div>
                                             <div class="icheck-primary d-inline">
-                                                <input type="radio" id="old_allocation_n" name="old_allocation_yn" value="N">
+                                                <input type="radio" id="old_allocation_n" name="old_allocation_yn" value="N" @if (empty($quarterequesta['prv_rent']) && empty($quarterequesta['prv_building_no']) && empty($quarterequesta['prv_area_name'])  && empty($quarterequesta['prv_quarter_type']) && empty($quarterequesta['prv_handover'])) checked @endif>
                                                 <label for="old_allocation_n">{{ __('common.no') }}
                                                 </label>
                                             </div>
@@ -129,20 +139,20 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>{{ __('request.monthly_rate')}}</label>
-                                                    <input class="form-control" name="prv_rent" id="prv_rent" type="text">
+                                                    <input class="form-control" name="prv_rent" id="prv_rent" type="text" value="{{$quarterequesta['prv_rent'] ?? null }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>{{ __('request.quarter_number_habitar')}}</label>
-                                                    <input class="form-control" name="prv_building_no" id="prv_building_no"
+                                                    <input class="form-control" name="prv_building_no" id="prv_building_no" value="{{$quarterequesta['prv_building_no'] ?? null }}"
                                                         type="text">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>{{ __('request.colony _name')}}</label>
-                                                    <input class="form-control" type="text" name="prv_area_name"
+                                                    <input class="form-control" type="text" name="prv_area_name" value="{{$quarterequesta['prv_area_name'] ?? null }}"
                                                         id="prv_area_name" style="width:100%">
                                                 </div>
                                             </div>
@@ -152,7 +162,7 @@
                                                     <x-select 
                                                     name="prv_quarter_type"
                                                     :options="[null => __('common.select')] + getBasicPay()"
-                                                    :selected="old('prv_quarter_type', '')"
+                                                    :selected="$quarterequesta['prv_quarter_type'] ?? null"
                                                     class="form-control"
                                                     id="prv_quarter_type"
                                                 />
@@ -165,7 +175,7 @@
                                                     <x-select 
                                                         name="prv_handover"
                                                         :options="getYesNo()"
-                                                        :selected="old('prv_handover', '')"
+                                                        :selected="$quarterequesta['prv_handover'] ?? null"
                                                         class="form-control"
                                                         id="prv_handover"
                                                     />
@@ -181,13 +191,13 @@
                                             <label class="question_bg mb-3">{{ __('request.beforeallot', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ] )}} </label>
                                             <div class="form-group">
                                                 <div class="icheck-primary d-inline p-3">
-                                                    <input type="radio" id="have_old_quarter_y" name="have_old_quarter_yn"
+                                                    <input type="radio" id="have_old_quarter_y" name="have_old_quarter_yn"  @if (!empty($quarterequesta['have_old_quarter']) && $quarterequesta['have_old_quarter']=='Y' ) checked @endif
                                                         value="Y">
                                                     <label for="have_old_quarter_y">{{ __('common.yes') }}
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-inline">
-                                                    <input type="radio" id="have_old_quarter_n" name="have_old_quarter_yn"
+                                                    <input type="radio" id="have_old_quarter_n" name="have_old_quarter_yn" @if (!empty($quarterequesta['have_old_quarter']) && $quarterequesta['have_old_quarter']=='N' ) checked @endif
                                                         value="N">
                                                     <label for="have_old_quarter_n">{{ __('common.no') }}
                                                     </label>
@@ -200,8 +210,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>{{ __('request.details')}}</label>
-                                                    <textarea class="form-control" name="old_quarter_details"
-                                                        id="old_quarter_details"></textarea>
+                                                    <textarea class="form-control" name="old_quarter_details" 
+                                                        id="old_quarter_details">{{$quarterequesta['old_quarter_details'] ?? null }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -213,12 +223,12 @@
                                             <label class="question_bg mb-3">{{ __('request.lives', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                             <div class="form-group clearfix">
                                                 <div class="icheck-primary d-inline p-3">
-                                                    <input type="radio" id="is_relative_y" name="is_relative_yn" value="Y">
+                                                    <input type="radio" id="is_relative_y" name="is_relative_yn" value="Y" @if (!empty($quarterequesta['is_relative']) && $quarterequesta['is_relative']=='Y' ) checked @endif>
                                                     <label for="is_relative_y">{{ __('common.yes') }}
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-inline">
-                                                    <input type="radio" id="is_relative_n" name="is_relative_yn" value="N">
+                                                    <input type="radio" id="is_relative_n" name="is_relative_yn" value="N"  @if (!empty($quarterequesta['is_relative']) && $quarterequesta['is_relative']=='N' ) checked @endif>
                                                     <label for="is_relative_n">{{ __('common.no') }}
                                                     </label>
                                                 </div>
@@ -229,7 +239,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('request.living_details') }}</label>
                                                 <textarea class="form-control" name="relative_details"
-                                                    id="relative_details"></textarea>
+                                                    id="relative_details">{{$quarterequesta['relative_details'] ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -240,12 +250,12 @@
                                             <label class="question_bg mb-3">{{ __('request.schedualcast', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                             <div class="form-group clearfix">
                                                 <div class="icheck-primary d-inline p-3">
-                                                    <input type="radio" id="is_stsc_y" name="is_stsc_yn" value="Y">
+                                                    <input type="radio" id="is_stsc_y" name="is_stsc_yn" value="Y" @if (!empty($quarterequesta['is_scst']) && $quarterequesta['is_scst']=='Y' ) checked @endif>
                                                     <label for="is_stsc_y">{{ __('common.yes') }}
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-inline">
-                                                    <input type="radio" id="is_stsc_n" name="is_stsc_yn" value="N">
+                                                    <input type="radio" id="is_stsc_n" name="is_stsc_yn" value="N" @if (!empty($quarterequesta['is_scst']) && $quarterequesta['is_scst']=='N' ) checked @endif>
                                                     <label for="is_stsc_n">{{ __('common.no') }}
                                                     </label>
                                                 </div>
@@ -255,7 +265,7 @@
                                         <div class="row schedule sm-block">
                                             <div class="form-group">
                                                 <label>{{ __('request.details')}}</label>
-                                                <textarea class="form-control" name="scst_details" id="scst_details"></textarea>
+                                                <textarea class="form-control" name="scst_details" id="scst_details">{{$quarterequesta['scst_info'] ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -266,13 +276,13 @@
                                             <label class="question_bg mb-3">{{ __('request.relative', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                             <div class="form-group clearfix">
                                                 <div class="icheck-primary d-inline p-3">
-                                                    <input type="radio" id="is_relative_house_y" name="is_relative_house_yn"
+                                                    <input type="radio" id="is_relative_house_y" name="is_relative_house_yn"  @if (!empty($quarterequesta['is_relative_householder']) && $quarterequesta['is_relative_householder']=='Y' ) checked @endif
                                                         value="Y">
                                                     <label for="is_relative_house_y">{{ __('common.yes') }}
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-inline">
-                                                    <input type="radio" id="is_relative_house_n" name="is_relative_house_yn"
+                                                    <input type="radio" id="is_relative_house_n" name="is_relative_house_yn"  @if (!empty($quarterequesta['is_relative_householder']) && $quarterequesta['is_relative_householder']=='N' ) checked @endif
                                                         value="N">
                                                     <label for="is_relative_house_n">{{ __('common.no') }}
                                                     </label>
@@ -285,7 +295,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('request.details')}}</label>
                                                 <textarea class="form-control" id="relative_house_details"
-                                                    name="relative_house_details"></textarea>
+                                                    name="relative_house_details">{{$quarterequesta['relative_house_details'] ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -295,13 +305,13 @@
                                         <label class="question_bg mb-3">{{ __('request.rearea', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
                                         <div class="form-group clearfix">
                                             <div class="icheck-primary d-inline p-3">
-                                                <input type="radio" id="have_house_nearby_y" name="have_house_nearby_yn"
+                                                <input type="radio" id="have_house_nearby_y" name="have_house_nearby_yn" @if (!empty($quarterequesta['have_house_nearby']) && $quarterequesta['have_house_nearby']=='Y' ) checked @endif
                                                     value="Y">
                                                 <label for="have_house_nearby_y">{{ __('common.yes') }}
                                                 </label>
                                             </div>
                                             <div class="icheck-primary d-inline">
-                                                <input type="radio" id="have_house_nearby_n" name="have_house_nearby_yn"
+                                                <input type="radio" id="have_house_nearby_n" name="have_house_nearby_yn"  @if (!empty($quarterequesta['have_house_nearby']) && $quarterequesta['have_house_nearby']=='N' ) checked @endif
                                                     value="N">
                                                 <label for="have_house_nearby_n">{{ __('common.no') }}
                                                 </label>
@@ -313,7 +323,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('request.details')}}</label>
                                                 <textarea class="form-control" id="nearby_house_details"
-                                                    name="nearby_house_details"></textarea>
+                                                    name="nearby_house_details">{{$quarterequesta['nearby_house_details'] ?? null }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -327,11 +337,11 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="mb-4 pb-2">Choice 1</label>
-                                               
+                                                
                                                    <x-select 
                                                         name="choice1"
                                                         :options="[null => __('common.select')] + qCategoryAreaMapping($quartertype)"
-                                                        selected=""
+                                                        :selected="$quarterequesta['choice1'] ?? null"
                                                         id="choice1"
                                                         class="form-control"
                                                         onchange="updateChoiceOptions()"
@@ -345,7 +355,7 @@
                                                     <x-select 
                                                         name="choice2"
                                                         :options="[null => __('common.select')] + qCategoryAreaMapping($quartertype)"
-                                                        :selected="''"
+                                                        :selected="$quarterequesta['choice2'] ?? null"
                                                         id="choice2"
                                                         class="form-control"
                                                         onchange="updateChoiceOptions()"
@@ -359,7 +369,7 @@
                                                     <x-select 
                                                         name="choice3"
                                                         :options="[null => __('common.select')] + qCategoryAreaMapping($quartertype)"
-                                                        :selected="''"
+                                                        :selected="$quarterequesta['choice3'] ?? null"
                                                         id="choice3"
                                                         class="form-control"
                                                         onchange="updateChoiceOptions()"
@@ -378,10 +388,12 @@
                                             <x-select 
                                         name="downgrade_allotment"
                                         :options="getYesNo()"
-                                        :selected="old('downgrade_allotment', '')"
+                                        :selected="$quarterequesta['downgrade_allotment']"
                                         class="form-control"
                                         id="downgrade_allotment"
                                     />
+                                   
+                                                                        
 
                                         </div>
                                     </div>
@@ -435,13 +447,57 @@
     });
     $(document).ready(function() {
         updateChoiceOptions();
-        $('.transfer').hide();
-        $('.place').hide();
-        $('.house').hide();
-        $('.at_gandhinager').hide();
-        $('.schedule').hide();
-        $('.with_parents').hide();
-        $('.limit').hide();
+       // $('.transfer').hide();
+       // Initial show/hide on page load
+        var deputationValue = $('input[name=deputation_yn]:checked').val();
+        if (deputationValue === 'Y') {
+            $('.transfer').show();
+        } else {
+            $('.transfer').hide();
+        }
+         var allocationValue = $('input[name=old_allocation_yn]:checked').val();
+        if (allocationValue === 'Y') {
+            $('.place').show();
+        } else {
+            $('.place').hide();
+        }
+         var have_old_quarter_Value = $('input[name=have_old_quarter_yn]:checked').val();
+        if (have_old_quarter_Value === 'Y') {
+            $('.house').show();
+        } else {
+            $('.house').hide();
+        }
+         var is_relativeValue = $('input[name=is_relative_yn]:checked').val();
+        if (is_relativeValue === 'Y') {
+            $('.at_gandhinager').show();
+        } else {
+            $('.at_gandhinager').hide();
+        }
+          var is_scstValue = $('input[name=is_stsc_yn]:checked').val();
+        if (is_scstValue === 'Y') {
+            $('.schedule').show();
+        } else {
+            $('.schedule').hide();
+        }
+           
+            var is_relative_houseValue = $('input[name=is_relative_house_yn]:checked').val();
+        if (is_relative_houseValue === 'Y') {
+            $('.with_parents').show();
+        } else {
+            $('.with_parents').hide();
+        }
+         var have_house_near_byValue = $('input[name=have_house_nearby_yn]:checked').val();
+        if (have_house_near_byValue === 'Y') {
+            $('.limit').show();
+        } else {
+            $('.limit').hide();
+        }
+       // $('.place').hide();
+        //$('.house').hide();
+        //$('.at_gandhinager').hide();
+      //  $('.schedule').hide();
+       // $('.with_parents').hide();
+       // $('.limit').hide();
         $('input[name=deputation_yn][type=radio]').change(function() {
             if (this.value == 'Y') {
                 $('.transfer').show();

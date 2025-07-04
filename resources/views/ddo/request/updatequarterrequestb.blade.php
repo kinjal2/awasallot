@@ -267,7 +267,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="row user_details_view1">
-                                                            <div class="col-sm-10">
+                                                            <div class="col-sm-8">
                                                                 <h6 class="mb-0 ms-4">( ચ) કયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.<span>:</span></h6>
                                                             </div>
                                                             <div class="col-sm-4">
@@ -335,8 +335,18 @@
 
                                                 <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]" name="files[{{ $file->doc_id }}]" {{ $file->is_file_admin_verified == 1 ? 'checked' : $issue=1 }} />
                                             </td>
+
                                         </tr>
                                         @endforeach
+                                        <tr>
+                                            <td>Is Application Form Correct?</td>
+                                            <td></td>
+                                            <td>
+
+                                                <input class="file-checkbox" type="checkbox" id="app_ddo_checkbox" name="app_ddo_checkbox" value="1">
+
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <div class="col-12 mt-20 pt-4">
@@ -365,16 +375,19 @@
 
                         <div class="row">
                             <div class="col-12">
-                                
+
+
 
                                 <div class="col-12" id="remarks">
-                                            <div class="form-group">
-                                                <label for="Name">Have Issue?</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="Name">Add Remarks</label>
-                                                <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control" value="{{ isset($quarterrequest['ddo_remarks']) ? $quarterrequest['ddo_remarks'] : '' }}">
-                                            </div>
+
+
+                                    <div class="form-group">
+                                        <label for="Name">Have Issue?</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Name">Add Remarks</label>
+                                        <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control" value="{{ isset($quarterrequest['ddo_remarks']) ? $quarterrequest['ddo_remarks'] : '' }}">
+                                    </div>
                                     <div class="form-group">
 
                                         <div id="remark-message" class="mt-2"></div>
@@ -391,6 +404,7 @@
                                             name="submit_doc" style="display: none;">Verified & Next</button>
                                     </div>
                                     <div>
+                                        <input type="hidden" name="app_ddo" id="app_ddo" value="1">
                                         <input type="hidden" name="reqid" id="reqid"
                                             value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
                                         <input type="hidden" name="rvid" id="rvid"
@@ -417,18 +431,17 @@
                 </div>
 
 
+
                 @endsection
                 @push('page-ready-script')
                 @endpush
                 @push('footer-script')
                 <script type="text/javascript">
-                   
-
                     function validate() {
-                     //   alert("hello");
+                        //   alert("hello");
                         //isChecked = $('#ddo_app_status').is(':checked');
                         remarks = $('#ddo_remarks').val()?.trim();
-                       // alert(remarks);
+                        // alert(remarks);
                         if (remarks === '' || remarks === null || remarks === '{"remarks":null}') {
                             $('#remark-message').html(`
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -446,10 +459,10 @@
                     }
                 </script>
                 <script>
-                   document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
+                    document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
                         checkbox.addEventListener('change', function() {
-                        
-                                toggleSubmitButton();
+
+                            toggleSubmitButton();
                         });
                     });
 
@@ -471,7 +484,7 @@
                             submitButton.style.display = 'inline'; // Show button
                             remakrs.style.display = 'none';
                         } else {
-                           
+
                             submitButton.style.display = 'none'; // Hide button
                             remakrs.style.display = 'inline';
                         }
@@ -479,5 +492,11 @@
                     $(document).ready(function() {
                         toggleSubmitButton(); // Call the toggleSubmitButton function
                     });
-                    </script>
+                </script>
+            <script>
+                document.getElementById('app_ddo_checkbox').addEventListener('change', function() {
+                    // When checked, set value to 0; when unchecked, set to 1
+                    document.getElementById('app_ddo').value = this.checked ? '0' : '1';
+                });
+            </script>
                 @endpush

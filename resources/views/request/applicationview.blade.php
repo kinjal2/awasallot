@@ -238,7 +238,7 @@
       <td>7)</td>
       <td>અગાઉ {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} માં મકાન મેળવવા, અરજી કરવા માં આવી છે અથવા મકાન ફાળવેલ હોય તો તારીખ, નંબર, બ્લોક વિગેરેની સંદર્ભ માહિતી આપવી.(લાગુ ન પડતુ હોય ત્યાં “ના” લખવુ)</td>
       <td>:</td>
-      <td>{{$have_old_quarter}} {{$old_quarter_details}}</td>
+      <td>{{ $have_old_quarter == 'Y' ? $old_quarter_details : 'N' }}</td>
     </tr>
     <!-- <tr>
       <td></td>
@@ -250,7 +250,7 @@
       <td>8)</td>
       <td> શિડ્યુલ કાસ્ટ અથવા શિડ્યુલ ટ્રાઈબલના કર્મચારી હોય તો તેમણે વિગત આપવી તથા કચેરી નાં વડાનું પ્રમાણપત્ર આ સાથે સામેલ કરવું</td>
       <td>:</td>
-      <td>{{  $is_scst }} {{ $scst_info}}</td>
+      <td>{{  $is_scst == 'Y' ? $scst_info : 'N'}}</td>
     </tr>
     <!-- <tr>
       <td></td>
@@ -270,7 +270,7 @@
       <td>10)</td>
       <td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} ખાતે માતા/પિતા. પતિ/પત્ની વિગેરે લોહી ની સગાઈ જેવા જે સંબંધીને મકાન ફાળવેલ છે કે કેમ? જો હા, તો તેની વિગત જેવી કે નામ, સેકટર, બ્લોક નાંબર વિગેરે</td>
       <td>:</td>
-      <td>{{$is_relative_householder}} {{$relative_house_details}}</td>
+      <td>{{$is_relative_householder == 'Y' ? $relative_house_details : 'N'}}</td>
     </tr>
     <!-- <tr>
       <td></td>
@@ -281,7 +281,7 @@
       <td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} શહેર ની હદમાં અથવા સચિવાલયથી ૧૦ કિલોમીટરની હદ માં અથવા {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} શહેરની હદમાં જુના ગામડાઓમાં 
 રહેઠાણ તેમની અથવા તેમના પિતા/પતિ/પત્ની કે કુટુંબ ના કોઈપણ સભ્યને નામે રહેણાંક નું મકાન છે? જો હા, તો તેમનો સાથેનો સંબંધ(સગાઈ) અને મકાન ક્યાં છે તે જણાવવુ.</td>
       <td>:</td>
-      <td>{{$have_house_nearby}} {{$nearby_house_details}}</td>
+      <td>{{$have_house_nearby == 'Y' ? $nearby_house_details : 'N'}}</td>
     </tr>
     <!-- <tr>
       <td></td>
@@ -311,7 +311,7 @@
       
     </tr>
   </table>
-  <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b mt-25">
+  <!-- <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b mt-25">
     <tr>
       <td>તા. {{-- $requestdate --}}</td>
       <td class="text-right"><b>કર્મચારી/અધિકારી ની સહી</b></td>
@@ -322,7 +322,7 @@
   </table>
 
   <table cellspacing="0" cellpadding="0" style="width:100%;" class="padd-3 font-13 text-b mt-25">
-    </table>
+    </table> -->
 
 
 

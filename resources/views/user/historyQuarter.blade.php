@@ -32,7 +32,7 @@
             <!-- form start -->
             <div class="card-body">
                <div id="flash-message" class="alert alert-success d-none" role="alert"></div>
-                //Display the message if it exists 
+                
                 @if(session('message'))
                 <?php
                 $message = base64_decode(session('message')); // Decode the message

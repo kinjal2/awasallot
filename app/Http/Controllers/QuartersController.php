@@ -111,8 +111,28 @@ class QuartersController extends Controller
             //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
             $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
             $quarterrequesta = Tquarterrequesta::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->get();
+            if (isset($_REQUEST['requestid'])) {
+                $request_id = base64_decode($_REQUEST['requestid']);
+            } else {
+                $request_id = null;
+            }
             $quarterrequestcheck = $quarterrequesta->count();
             if ($quarterrequestcheck > 0) {
+                if ($request_id != null) {
+                     if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'ddo') {
+                        $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
+                    } else {
+                        $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
+                    }
+                    //$quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
+                    if ($quarterrequesta != null) {
+                        $this->_viewContent['page_title'] = "Quarter Request";
+                        $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
+                        $this->_viewContent['name'] = Session::get('Name');
+                        $this->_viewContent['quarterequesta'] = $quarterrequesta;
+                        return view('user/newQuarterRequest', $this->_viewContent);
+                    }
+                }
                 return redirect('userdashboard')->with('message', "You have been registered for a new quarter request.");
             } else {
                 $this->_viewContent['page_title'] = "Quarter Request";
@@ -124,6 +144,7 @@ class QuartersController extends Controller
     }
     public function requesthighercategory()
     {
+
         $uid = Session::get('Uid');
         $basic_pay = Session::get('basic_pay');
         $q_officecode = Session::get('q_officecode');
@@ -155,9 +176,29 @@ class QuartersController extends Controller
             //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
             $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
             $quarterrequesta = Tquarterrequestb::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->get();
+            if (isset($_REQUEST['requestid'])) {
+                $request_id = base64_decode($_REQUEST['requestid']);
+            } else {
+                $request_id = null;
+            }
+
             $quarterrequestcheck = $quarterrequesta->count();
             // dd($quarterrequestcheck);
             if ($quarterrequestcheck > 0) {
+                if ($request_id != null) {
+                    if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'ddo') {
+                        $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
+                    } else {
+                        $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
+                    }
+                    if ($quarterrequestb != null) {
+                        $this->_viewContent['page_title'] = "Higher Category";
+                        $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
+                        $this->_viewContent['name'] = Session::get('Name');
+                        $this->_viewContent['quarterequestb'] = $quarterrequestb;
+                        return view('user/higherCategoryQuarterRequest', $this->_viewContent);
+                    }
+                }
                 return redirect('userdashboard')->with('message', "You have been registered for a higher category quarter request.");
             } else {
                 $this->_viewContent['page_title'] = "Higher Category";
@@ -169,7 +210,8 @@ class QuartersController extends Controller
     }
     public function saveHigherCategoryReq(Request $request)
     {
-
+        //dd($request->get('prv_area'));
+        //dd($request->all());
         $rules = [
             'quartertype' => 'required|string',
             'prv_quarter_type' => 'required|string',
@@ -196,14 +238,18 @@ class QuartersController extends Controller
                 ->withInput()
                 ->withErrors($validator);
         } else {
-            $data = $request->input();
+            // $data = $request->input();
             //  dd($data);
-            $prv_possession_date = Carbon::createFromFormat('d-m-Y', $request->get('prv_possession_date'));
-            $request_id = Tquarterrequestb::max('requestid');
-            if (!$request_id)
-                $request_id = 0;
-            $request_id += 1;
-            try {
+            //$prv_possession_date = Carbon::createFromFormat('d-m-Y', $request->get('prv_possession_date'));
+            if (isset($_REQUEST['requestid']) && $_REQUEST['option'] == 'edit') {
+                $request_id = $_REQUEST['requestid'];
+            } else {
+                $request_id = Tquarterrequestb::max('requestid');
+                if (!$request_id)
+                    $request_id = 0;
+                $request_id += 1;
+            }
+            /* try {
                 $uid = Session::get('Uid');
                 $officecode = Session::get('officecode');
                 $Tquarterrequestb = new Tquarterrequestb;
@@ -238,6 +284,104 @@ class QuartersController extends Controller
                 return redirect()->back()->withErrors('message', 'IT WORKS!');
             } catch (Exception $e) {
                 return redirect('insert')->with('failed', "operation failed");
+            }*/
+            try {
+                $uid         = Session::get('Uid');
+                // dd($uid);
+                $officecode  = Session::get('officecode');
+                $cardex_no   = Session::get('cardex_no');
+                $ddo_code    = Session::get('ddo_code');
+
+                // Format possession date if available
+                $prv_possession_date = $request->get('prv_possession_date')
+                    ? Carbon::parse($request->get('prv_possession_date'))->format('Y-m-d')
+                    : null;
+
+                $match = [
+                    'requestid'    => (int)$request_id,
+                    'rivision_id'  => 0,
+                    'uid'          => $uid,
+                ];
+
+                $data = [
+                    'quartertype'         => $request->get('quartertype') ?? null,
+                    'prv_quarter_type'    => $request->get('prv_quarter_type') ?? null,
+                    'prv_area'            => $request->get('prv_area') ?? null,
+                    'prv_blockno'         => $request->get('prv_blockno') ?? null,
+                    'prv_unitno'          => $request->get('prv_unitno') ?? null,
+                    'prv_details'         => $request->get('prv_allotment_details') ?? null,
+                    'prv_possession_date' => $prv_possession_date,
+                    'is_hc'               => $request->get('have_hc_quarter_yn') === 'Y' ? 1 : 0,
+                    'hc_quarter_type'     => $request->get('hc_quarter_type') ?? null,
+                    'hc_area'             => $request->get('hc_area') ?? null,
+                    'hc_blockno'          => $request->get('hc_blockno') ?? null,
+                    'hc_unitno'           => $request->get('hc_unitno') ?? null,
+                    'hc_details'          => $request->get('hc_allotment_details') ?? null,
+                    'request_date'        => now()->format('Y-m-d'),
+                    'cardex_no'           => $cardex_no,
+                    'ddo_code'            => $ddo_code,
+                    'officecode'          => $officecode,
+                    'choice1'             => $request->get('choice1') ?? null,
+                    'choice2'             => $request->get('choice2') ?? null,
+                    'choice3'             => $request->get('choice3') ?? null,
+                ];
+
+                // dd($match);
+                //dd($data);
+                //Tquarterrequestb::updateOrCreate($match, $data);
+                $model = Tquarterrequestb::updateOrCreate($match, $data);
+                //\Log::info('Tquarterrequestb updated or created:', $model->toArray());
+
+                if (isset($_REQUEST['requestid']) && $_REQUEST['option'] == 'edit') {
+                    $request_id = $_REQUEST['requestid'];
+                    $inward_no = '';
+                    $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                    $quartertype = $request->get('quartertype'); // Define quarter type
+                    //$downgrade_requestid = $downgrade_requestid; // Get from request
+
+                    while (true) {
+                        $inward_no = generateRandomString(5);
+                        $inward_no = "$quartertype/" . date('Y') . "/$uid/$inward_no";
+                        $co = Tquarterrequestb::where('inward_no', $inward_no)->count();
+                        if ($co == 0) break;
+                    }
+                    if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'app_ddo') {
+                        $data = [
+                            'inward_no' => $inward_no,
+                            'inward_date' => now(),
+                            'is_accepted' => 1,
+                            'is_priority' => 'N',
+                            'is_ddo_varified' => 0,
+                            'ddo_remarks' => null,
+                            'is_varified' => 0,
+                            'remarks' => null,
+                            'app_ddo' => 0
+                        ];
+                    } else {
+                        $data = [
+                            'inward_no' => $inward_no,
+                            'inward_date' => now(),
+                            'is_accepted' => 1,
+                            'is_priority' => 'N',
+                            'is_ddo_varified' => 0,
+                            'ddo_remarks' => null,
+                            'is_varified' => 0,
+                            'remarks' => null,
+                            'app_admin' => 0
+                        ];
+                    }
+
+
+                    $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->update($data);
+                    // return redirect()->back()->withErrors('message', 'Updated Successfully');
+                    //  dd("hello");
+                    return redirect()->route('user.quarter.history')->withErrors('message', 'Updated Successfully');
+                }
+
+                return redirect()->back()->with('message', 'Updated Successfully');
+            } catch (Exception $e) {
+                dd($e->getMessage());
+                return redirect('insert')->with('failed', "Operation failed: " . $e->getMessage());
             }
         }
     }
@@ -279,16 +423,24 @@ class QuartersController extends Controller
                 ->withInput()
                 ->withErrors($validator);
         } else {
-            $data = $request->input();
+
+            // $data = $request->input();
             // dd($data);
             $officecode = Session::get('officecode');
             //dd($officecode);
-            $deputation_date = Carbon::createFromFormat('d-m-Y', $request->get('deputation_date'));
-            $request_id = Tquarterrequesta::max('requestid');
-            if (!$request_id)
-                $request_id = 0;
-            $request_id += 1;
-            try {
+            //$deputation_date = Carbon::createFromFormat('d-m-Y', $request->get('deputation_date'));
+            if (isset($_REQUEST['requestid']) && $_REQUEST['option'] == 'edit') {
+
+                $request_id = $_REQUEST['requestid'];
+            } else {
+
+                $request_id = Tquarterrequesta::max('requestid');
+                if (!$request_id)
+                    $request_id = 0;
+                $request_id += 1;
+            }
+
+            /*try {
                 $uid = Session::get('Uid');
                 $Tquarterrequesta = new Tquarterrequesta;
                 $Tquarterrequesta->requestid = $request_id;
@@ -305,11 +457,11 @@ class QuartersController extends Controller
                 $Tquarterrequesta->old_quarter_details = empty($request->get('old_quarter_details')) ? NULL : $request->get('old_quarter_details');
                 $Tquarterrequesta->is_scst = empty($request->get('is_stsc_yn')) ? NULL : $request->get('is_stsc_yn');
                 $Tquarterrequesta->scst_info = empty($request->get('scst_details')) ? NULL : $request->get('scst_details');
-                $Tquarterrequesta->is_relative = empty($request->get('is_relative')) ? NULL : $request->get('is_relative');
+                $Tquarterrequesta->is_relative = empty($request->get('is_relative_yn')) ? NULL : $request->get('is_relative_yn');
                 $Tquarterrequesta->relative_details = empty($request->get('relative_details')) ? NULL : $request->get('relative_details');
-                $Tquarterrequesta->is_relative_householder = empty($request->get('is_relative_house')) ? NULL : $request->get('is_relative_house');
+                $Tquarterrequesta->is_relative_householder = empty($request->get('is_relative_house_yn')) ? NULL : $request->get('is_relative_house_yn');
                 $Tquarterrequesta->relative_house_details = empty($request->get('relative_house_details')) ? NULL : $request->get('relative_house_details');
-                $Tquarterrequesta->have_house_nearby = empty($request->get('have_house_nearby')) ? NULL : $request->get('have_house_nearby');
+                $Tquarterrequesta->have_house_nearby = empty($request->get('have_house_nearby_yn')) ? NULL : $request->get('have_house_nearby_yn');
                 $Tquarterrequesta->nearby_house_details = empty($request->get('nearby_house_details')) ? NULL : $request->get('nearby_house_details');
                 $Tquarterrequesta->downgrade_allotment = empty($request->get('downgrade_allotment')) ? NULL : $request->get('downgrade_allotment');
                 $Tquarterrequesta->request_date = date('Y-m-d');
@@ -326,6 +478,110 @@ class QuartersController extends Controller
                 $Tquarterrequesta->save();
                 //session()->forget(['cardex_no', 'ddo_code']);
                 return redirect('quartersuser')->with('Success', "Data Saved Successfully");
+            } */
+            try {
+                $uid         = Session::get('Uid');
+                // dd($uid);
+                $officecode  = Session::get('officecode');
+                $cardex_no   = Session::get('cardex_no');
+                $ddo_code    = Session::get('ddo_code');
+
+                // Format possession date if available
+
+
+                $match = [
+                    'requestid'    => (int)$request_id,
+                    /* rivision_id'  => 0,
+                    'uid'          => $uid,*/
+                ];
+
+                $data = [
+                    'quartertype' => $request->get('quartertype') ?: null,
+                    'old_designation' => $request->get('old_desg') ?: null,
+                    'old_office' => $request->get('old_office') ?: null,
+                    'deputation_date' => $request->get('deputation_date') ? Carbon::parse($request->get('deputation_date'))->format('Y-m-d') : null,
+                    'prv_area_name' => $request->get('prv_area_name') ?: null,
+                    'prv_building_no' => $request->get('prv_building_no') ?: null,
+                    'prv_quarter_type' => $request->get('prv_quarter_type') ?: null,
+                    'prv_rent' => $request->get('prv_rent') ?: null,
+                    'prv_handover' => $request->get('prv_handover') ?: null,
+                    'have_old_quarter' => $request->get('have_old_quarter_yn') ?: null,
+                    'old_quarter_details' => $request->get('old_quarter_details') ?: null,
+                    'is_scst' => $request->get('is_stsc_yn') ?: null,
+                    'scst_info' => $request->get('scst_details') ?: null,
+                    'is_relative' => $request->get('is_relative_yn') ?: null,
+                    'relative_details' => $request->get('relative_details') ?: null,
+                    'is_relative_householder' => $request->get('is_relative_house_yn') ?: null,
+                    'relative_house_details' => $request->get('relative_house_details') ?: null,
+                    'have_house_nearby' => $request->get('have_house_nearby_yn') ?: null,
+                    'nearby_house_details' => $request->get('nearby_house_details') ?: null,
+                    'downgrade_allotment' => $request->get('downgrade_allotment') ?: null,
+                    'request_date' => now()->format('Y-m-d'),
+                    'is_downgrade_request' => 0,
+                    'is_priority' => 'N',
+                    'uid' => $uid,
+                    'officecode' => $officecode,
+                    'choice1' => $request->get('choice1'),
+                    'choice2' => $request->get('choice2'),
+                    'choice3' => $request->get('choice3'),
+                    'cardex_no' => session('cardex_no'),
+                    'ddo_code' => session('ddo_code'),
+                ];
+
+
+
+                $model = Tquarterrequesta::updateOrCreate($match, $data);
+                //\Log::info('Tquarterrequesta updated or created:', $model->toArray());
+
+                if (isset($_REQUEST['requestid']) && $_REQUEST['option'] == 'edit') {
+                    $request_id = $_REQUEST['requestid'];
+                    $inward_no = '';
+                    $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                    $quartertype = $request->get('quartertype'); // Define quarter type
+                    //$downgrade_requestid = $downgrade_requestid; // Get from request
+
+                    while (true) {
+                        $inward_no = generateRandomString(5);
+                        $inward_no = "$quartertype/" . date('Y') . "/$uid/$inward_no";
+                        $co = Tquarterrequesta::where('inward_no', $inward_no)->count();
+                        if ($co == 0) break;
+                    }
+                    if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'app_ddo') {
+                    $data = [
+                        'inward_no' => $inward_no,
+                        'inward_date' => now(),
+                        'is_accepted' => 1,
+                        'is_priority' => 'N',
+                        'is_ddo_varified' => 0,
+                        'ddo_remarks' => null,
+                        'is_varified' => 0,
+                        'remarks' => null,
+                        'app_ddo' => 0
+                    ];
+                }
+                else
+                {
+                    $data = [
+                        'inward_no' => $inward_no,
+                        'inward_date' => now(),
+                        'is_accepted' => 1,
+                        'is_priority' => 'N',
+                        'is_ddo_varified' => 0,
+                        'ddo_remarks' => null,
+                        'is_varified' => 0,
+                        'remarks' => null,
+                        'app_admin' => 0
+                    ];
+                }
+
+
+                    $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->update($data);
+                    // return redirect()->back()->withErrors('message', 'Updated Successfully');
+                    //  dd("hello");
+                    return redirect()->route('user.quarter.history')->withErrors('message', 'Updated Successfully');
+                }
+
+                return redirect()->back()->with('message', 'Updated Successfully');
             } catch (Exception $e) {
                 return redirect('insert')->with('failed', "operation failed");
             }
@@ -368,12 +624,14 @@ class QuartersController extends Controller
             'r_wno',
             DB::raw("null as is_withdraw"),
             DB::raw("null as withdraw_remarks"),
+            'app_ddo',
+            'app_admin'
 
         ])
             ->where('is_allotted', '=', 0)
             ->where('uid', '=', $uid)
             ->whereNotNull('request_date');
-            //->where('quartertype', '=', ($quarterselect[0]->quartertype));
+        //->where('quartertype', '=', ($quarterselect[0]->quartertype));
         $quarterlist2 = Tquarterrequestb::select([
             DB::raw("'b' as type"),
             DB::raw("'Higher Category' as requesttype"),
@@ -399,6 +657,8 @@ class QuartersController extends Controller
             'r_wno',
             'is_withdraw',
             'withdraw_remarks',
+            'app_ddo',
+            'app_admin'
         ])
             //->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
@@ -431,8 +691,10 @@ class QuartersController extends Controller
             'r_wno',
             'is_withdraw',
             'withdraw_remarks',
+            'app_ddo',
+            'app_admin'
         ])
-          //  ->where('quartertype', '=', ($quarterselect[0]->quartertype))
+            //  ->where('quartertype', '=', ($quarterselect[0]->quartertype))
             ->where('is_allotted', '=', 0)
             ->whereNotNull('request_date')
             ->where('uid', '=', $uid)
@@ -508,6 +770,42 @@ class QuartersController extends Controller
                 <i class="fa fa-upload" aria-hidden="true" alt="Upload Documents"></i>
             </a>';
 
+                if ($row->app_ddo == 1) {
+                    if ($row->type == 'b') {
+                        $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requesthighercategory') .
+                            "?requestid=" . base64_encode($row->requestid) .
+                            "&edit_type=" . base64_encode('ddo') .
+                            '" class="btn btn-primary btn-sm">
+                <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
+            </a>';
+                    }
+                    if ($row->type == 'a') {
+                        $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requestnewquarter') .
+                            "?requestid=" . base64_encode($row->requestid) .
+                            "&edit_type=" . base64_encode('ddo') .
+                            '" class="btn btn-primary btn-sm">
+                <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
+            </a>';
+                    }
+                }
+                if ($row->app_admin == 1) {
+                    if ($row->type == 'b') {
+                        $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requesthighercategory') .
+                            "?requestid=" . base64_encode($row->requestid) .
+                            "&edit_type=" . base64_encode('admin') .
+                            '" class="btn btn-primary btn-sm">
+                <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
+            </a>';
+                    }
+                    if ($row->type == 'a') {
+                        $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requestnewquarter') .
+                            "?requestid=" . base64_encode($row->requestid) .
+                            "&edit_type=" . base64_encode('admin') .
+                            '" class="btn btn-primary btn-sm">
+                <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
+            </a>';
+                    }
+                }
 
 
                 /* } */
@@ -552,7 +850,7 @@ class QuartersController extends Controller
         if ($type === 'a') {
             $requestModel = new Tquarterrequesta();
         } else if ($type === 'b') {
-            
+
             $requestModel = new Tquarterrequestb();
         }
 
@@ -1051,7 +1349,7 @@ class QuartersController extends Controller
 
             //  dd($request->adm_remarks,$request->admin_remarks);
             $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rv)
-                ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
+                ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid'), 'app_admin' => 1]);
             if ($result) {
                 $this->_viewContent['requestid'] = $requestid;
                 $this->_viewContent['rv'] = $rv;
@@ -1227,7 +1525,7 @@ class QuartersController extends Controller
             $status = 2;
 
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rv)
-                ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid')]);
+                ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid'), 'app_admin' => 1]);
             if ($result) {
                 //dd($requestid,$rv);
 
@@ -2345,22 +2643,21 @@ class QuartersController extends Controller
             $wno = Tquarterrequestb::where('requestid', $request_id)->select('wno')->first();
             $this->_viewContent['ddo_remarks_status'] = $ddo_remarks;
             $this->_viewContent['admin_remarks_status'] = $admin_remarks;
-            
         }
 
-        $adminremarkslist="";
-            if ($admin_remarks['remarks'] != "") {
+        $adminremarkslist = "";
+        if ($admin_remarks['remarks'] != "") {
 
-                $remarkIds = array_map('intval', explode(',', $admin_remarks['remarks'])); 
-                $descriptions = Remarks::whereIn('remark_id', $remarkIds)
-                    ->pluck('description')  
-                    ->toArray();                        
-                $adminremarkslist = implode(',<br/> ', $descriptions);
-            }
-            $this->_viewContent['admin_remarks_list'] =$adminremarkslist;
-       
+            $remarkIds = array_map('intval', explode(',', $admin_remarks['remarks']));
+            $descriptions = Remarks::whereIn('remark_id', $remarkIds)
+                ->pluck('description')
+                ->toArray();
+            $adminremarkslist = implode(',<br/> ', $descriptions);
+        }
+        $this->_viewContent['admin_remarks_list'] = $adminremarkslist;
+
         // \DB::enableQueryLog();
-       
+
 
         if ($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] == '' && $wno['wno'] == '') {
 
@@ -2549,7 +2846,7 @@ class QuartersController extends Controller
             $document_list = "";
             $attacheddocument = DB::table('master.file_list')
                 ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-              //  ->whereNotIn('document_id', [6])
+                //  ->whereNotIn('document_id', [6])
                 ->WHERE('uid', Session::get('Uid'))
                 ->WHERE('request_id', $request_id)
                 ->where('rivision_id', $rev)

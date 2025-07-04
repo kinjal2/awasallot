@@ -421,7 +421,7 @@
                                             <div class="form-group">
                                                 <label for="Name">Have Issue?</label>
                                             </div>
-                                          
+                                          <input type="hidden" name="app_admin" id="app_admin" value="1">
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-primary" id="submit_issue"
                                                     name="submit_issue" value="submit_issue"> Add Remarks </button>
@@ -487,6 +487,13 @@
                                     </td>
                                 </tr>
                                 @endforeach
+                                 <tr>
+                                            <td>Is Application Form Correct?</td>
+                                            <td></td>
+                                <td>
+                                                <input class="file-checkbox" type="checkbox" id="app_admin_checkbox" name="app_admin_checkbox" value="1">
+                                 </td>
+                                 </tr>
                             </tbody>
                         </table>
                     </div>
@@ -607,5 +614,10 @@
                     });
 
                 </script>
-            
+             <script>
+                    document.getElementById('app_admin_checkbox').addEventListener('change', function() {
+                        // When checked, set value to 0; when unchecked, set to 1
+                        document.getElementById('app_admin').value = this.checked ? '0' : '1';
+                    });
+                </script>
             @endpush

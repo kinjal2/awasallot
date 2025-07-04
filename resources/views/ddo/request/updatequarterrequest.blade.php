@@ -440,6 +440,15 @@
                                         </td>
                                     </tr>
                                     @endforeach
+                                     <tr>
+                                            <td>Is Application Form Correct?</td>
+                                            <td></td>
+                                            <td>
+
+                                                <input class="file-checkbox" type="checkbox" id="app_ddo_checkbox" name="app_ddo_checkbox" value="1">
+
+                                            </td>
+                                        </tr>
                                 </tbody>
                             </table>
                             <div class="col-12 mt-20 pt-4">
@@ -493,6 +502,7 @@
                                                     name="submit_doc" style="display: none;">Verified & Next</button>
                                             </div>
                                             <div >
+                                                <input type="hidden" name="app_ddo" id="app_ddo" value="1">
                                                 <input type="hidden" name="reqid" id="reqid"
                                                     value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
                                                 <input type="hidden" name="rvid" id="rvid"
@@ -586,5 +596,11 @@
                         toggleSubmitButton(); // Call the toggleSubmitButton function
                     });
 
+                </script>
+                  <script>
+                    document.getElementById('app_ddo_checkbox').addEventListener('change', function() {
+                        // When checked, set value to 0; when unchecked, set to 1
+                        document.getElementById('app_ddo').value = this.checked ? '0' : '1';
+                    });
                 </script>
                 @endpush

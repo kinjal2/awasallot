@@ -32,7 +32,8 @@ return array(
     'presentaddressdata'=>'Information about the type of residence you are currently living in at :location',//Information about the type of residence you are currently living in and the location
     'area_choice'=>'In which area do you want to get the government quarter? (If possible, it will be allocated)',
     'ddo_details'=>'DDO Inforamtion',
-    'living_details'=>'Any relationship with the person you live with and details of the house.'
+    'living_details'=>'Any relationship with the person you live with and details of the house.',
+    'higher_allotment' => 'Was a higher standard of accommodation previously allocated ? '
     
     
 );

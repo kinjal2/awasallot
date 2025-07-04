@@ -154,6 +154,7 @@ class DDOUserController extends Controller
         $rivision_id = base64_decode($request->rvid);
         $uid = base64_decode($request->uid);
         $qttype = base64_decode($request->qttype);
+         $app_ddo=$request->app_ddo;
        // dd($qttype);
        // $ddo_remarks = $request->ddo_remarks;
 
@@ -217,6 +218,7 @@ class DDOUserController extends Controller
                 ->update([
                     'is_ddo_varified' => $is_ddo_varified,
                     'ddo_remarks' => $ddo_remarks,  // Assuming $remarks is a variable that contains the remark data
+                     'app_ddo' => $app_ddo
                 ]);
 
             if ($updated) {
@@ -290,6 +292,7 @@ class DDOUserController extends Controller
         $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name','is_file_ddo_verified'])
         ->join('master.m_document_type as d', 'd.document_type', '=', 'file_list.document_id')
         ->where('request_id', '=', $requestid)
+         ->where('rivision_id',$rivision_id)
         ->where('uid','=',$quarterrequest['uid'])
         ->get(); //12-12-2024
 
@@ -716,6 +719,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name','is_file_ddo_verified'])
         ->join('master.m_document_type as d', 'd.document_type', '=', 'file_list.document_id')
         ->where('request_id', '=', $requestid)
+        ->where('rivision_id',$rivision_id)
         ->where('uid','=',$quarterrequest['uid'])
         ->get(); //12-12-2024
 
@@ -733,6 +737,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
             ->whereIn('document_type', [10])
             ->whereNotIn('document_type', Filelist::WHERE('uid', $quarterrequest['uid'])
             ->WHERE('request_id', $requestid)->WHERE('performa', $type)
+            
             ->pluck('document_id'))
             ->pluck('document_name', 'document_type');
             
@@ -947,7 +952,8 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     public function submitdocument_b(Request $request)
     {
         $files= $request->input('files');
-     // dd($request->all());
+     //   dd($request->app_ddo);
+     //dd($request->all());
       //  dd($request->submit_issue);
         // dd($request->reqid);
         //Find the record based on the composite primary key
@@ -955,6 +961,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
         $rivision_id = base64_decode($request->rvid);
         $uid = base64_decode($request->uid);
         $qttype = base64_decode($request->qttype);
+        $app_ddo=$request->app_ddo;
         //dd($qttype);
         //$ddo_remarks = $request->ddo_remarks;
         
@@ -1016,6 +1023,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
                 ->update([
                     'is_ddo_varified' => $is_ddo_varified,
                     'ddo_remarks' => $ddo_remarks,  // Assuming $remarks is a variable that contains the remark data
+                    'app_ddo' => $app_ddo
                 ]);
 
             if ($updated) {

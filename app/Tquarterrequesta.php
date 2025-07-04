@@ -10,9 +10,73 @@ class Tquarterrequesta extends Model
     //
     use MaxRwnoTrait;
     protected $table ='master.t_quarter_request_a';
+    protected $primaryKey = 'requestid';
+   // protected $primaryKey = ['quartertype', 'requestid','uid','rivision_id'];
+  //  protected $fillable = ['requestid', 'wno', 'wno_flag', 'random_no', 'quartertype', 'uid', 'old_office', 'deputation_date', 'prv_area_name', 'prv_building_no', 'prv_quarter_type', 'prv_rent', 'prv_handover', 'prv_requestid', 'have_old_quarter', 'old_quarter_details', 'is_scst', 'scst_info', 'is_relative', 'relative_details', 'is_relative_householder', 'relative_house_details', 'have_house_nearby', 'nearby_house_details', 'downgrade_allotment', 'remarks', 'request_date', 'officecode', 'inward_no', 'is_accepted', 'inward_date', 'is_allotted', 'qaid', 'updatedby', 'updatedon','old_designation', 'is_varified', 'is_priority','dgrid', 'rivision_id', 'reference_id', 'reg_inward_no', 'remarks_date', 'is_downgrade_request', 'dg_rivision_id', 'updated_at', 'created_at', 'r_wno', 'office_remarks', 'is_withdraw', 'withdraw_remarks','is_ddo_varified','choice1','choice2','choice3','ddo_remarks','cardex_no','ddo_code'];
+  protected $fillable = [
+    'requestid',
+    'wno',
+    'wno_flag',
+    'random_no',
+    'quartertype',
+    'uid',
+    'old_office',
+    'deputation_date',
+    'prv_area_name',
+    'prv_building_no',
+    'prv_quarter_type',
+    'prv_rent',
+    'prv_handover',
+    'prv_requestid',
+    'have_old_quarter',
+    'old_quarter_details',
+    'is_scst',
+    'scst_info',
+    'is_relative',
+    'relative_details',
+    'is_relative_householder',
+    'relative_house_details',
+    'have_house_nearby',
+    'nearby_house_details',
+    'downgrade_allotment',
+    'remarks',
+    'request_date',
+    'officecode',
+    'inward_no',
+    'is_accepted',
+    'inward_date_original',
+    'is_allotted',
+    'qaid',
+    'updatedby',
+    'updatedon',
+    'old_designation',
+    'is_varified',
+    'is_priority',
+    'dgrid',
+    'rivision_id',
+    'reference_id',
+    'reg_inward_no',
+    'remarks_date',
+    'is_downgrade_request',
+    'dg_rivision_id',
+    'r_wno',
+    'office_remarks',
+    'is_withdraw',
+    'withdraw_remarks',
+    'inward_date',
+    'created_at',
+    'updated_at',
+    'is_ddo_varified',
+    'choice1',
+    'choice2',
+    'choice3',
+    'ddo_remarks',
+    'cardex_no',
+    'ddo_code',
+    'app_ddo',
+    'app_admin',
+];
 
-    protected $primaryKey = ['quartertype', 'requestid','uid','rivision_id'];
-    protected $fillable = ['requestid', 'wno', 'wno_flag', 'random_no', 'quartertype', 'uid', 'old_office', 'deputation_date', 'prv_area_name', 'prv_building_no', 'prv_quarter_type', 'prv_rent', 'prv_handover', 'prv_requestid', 'have_old_quarter', 'old_quarter_details', 'is_scst', 'scst_info', 'is_relative', 'relative_details', 'is_relative_householder', 'relative_house_details', 'have_house_nearby', 'nearby_house_details', 'downgrade_allotment', 'remarks', 'request_date', 'officecode', 'inward_no', 'is_accepted', 'inward_date', 'is_allotted', 'qaid', 'updatedby', 'updatedon','old_designation', 'is_varified', 'is_priority','dgrid', 'rivision_id', 'reference_id', 'reg_inward_no', 'remarks_date', 'is_downgrade_request', 'dg_rivision_id', 'updated_at', 'created_at', 'r_wno', 'office_remarks', 'is_withdraw', 'withdraw_remarks','is_ddo_varified','choice1','choice2','choice3','ddo_remarks','cardex_no','ddo_code'];
     public $incrementing = false;
 
     public function usermaster()
