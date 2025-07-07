@@ -141,11 +141,14 @@ class QuartersController extends Controller
                         $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                         $this->_viewContent['name'] = Session::get('Name');
                         $this->_viewContent['quarterequesta'] = $quarterrequesta;
+                        $this->_viewContent['isEdit'] = true;
+                       // dd( $this->_viewContent['isEdit'] );
                         return view('user/newQuarterRequest', $this->_viewContent);
                     }
                 }
                 return redirect('userdashboard')->with('message', "You have been registered for a new quarter request.");
-            } else {
+            } else { 
+                 $this->_viewContent['isEdit'] = false;
                 $this->_viewContent['page_title'] = "Quarter Request";
                 $this->_viewContent['name'] = Session::get('Name');
                 $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
@@ -195,6 +198,8 @@ class QuartersController extends Controller
 
             $quarterrequestcheck = $quarterrequesta->count();
             // dd($quarterrequestcheck);
+            $this->_viewContent['users'] = User::find($uid); 
+            $this->_viewContent['imageData'] = generateImage($uid);
             if ($quarterrequestcheck > 0) {
                 if ($request_id != null) {
                     if (isset($_REQUEST['edit_type']) && base64_decode($_REQUEST['edit_type']) == 'ddo') {
@@ -203,8 +208,7 @@ class QuartersController extends Controller
                         $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
                     }
                     if ($quarterrequestb != null) {
-                        $this->_viewContent['users'] = User::find($uid); 
-                         $this->_viewContent['imageData'] = generateImage($uid);
+                       
                          $attacheddocument = DB::table('master.file_list')
                         ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
                         ->WHERE('uid', Session::get('Uid'))
@@ -218,11 +222,13 @@ class QuartersController extends Controller
                         $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                         $this->_viewContent['name'] = Session::get('Name');
                         $this->_viewContent['quarterequestb'] = $quarterrequestb;
+                         $this->_viewContent['isEdit'] = ture;
                         return view('user/higherCategoryQuarterRequest', $this->_viewContent);
                     }
                 }
                 return redirect('userdashboard')->with('message', "You have been registered for a higher category quarter request.");
             } else {
+                 $this->_viewContent['isEdit'] = false;
                 $this->_viewContent['page_title'] = "Higher Category";
                 $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                 $this->_viewContent['name'] = Session::get('Name');

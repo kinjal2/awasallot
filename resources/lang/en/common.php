@@ -8,6 +8,7 @@ return [
     'designation'=>'Designation',
     'married' => 'Married',
     'unmarried' => 'Unmarried',
+    'next'=> 'Next',
 
 
 

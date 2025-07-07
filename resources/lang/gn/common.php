@@ -8,5 +8,6 @@ return [
     'designation'=>'હોદ્દો',
     'married' => 'વિવાહિત',
     'unmarried' => 'અવિવાહિત',
+    'next' => 'આગળ',
 
 ];
