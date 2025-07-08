@@ -222,7 +222,7 @@ class QuartersController extends Controller
                         $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                         $this->_viewContent['name'] = Session::get('Name');
                         $this->_viewContent['quarterequestb'] = $quarterrequestb;
-                         $this->_viewContent['isEdit'] = ture;
+                         $this->_viewContent['isEdit'] = true;
                         return view('user/higherCategoryQuarterRequest', $this->_viewContent);
                     }
                 }
@@ -3202,6 +3202,12 @@ class QuartersController extends Controller
 
                 $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->update($data);
 
+                Filelist::where('request_id', $request->input('requestid'))
+                ->where('performa', 'a')
+                ->where('rivision_id', $rev)
+                ->where('uid', $uid)
+                ->update(['is_file_ddo_verified' => 0 , 'is_file_admin_verified' => 0]);
+
                 // Downgrade Allotment
                 if ($downgrade_requestid != "") {
                     $inward_no = '';
@@ -3496,7 +3502,15 @@ class QuartersController extends Controller
                 ];
 
 
+                
                 $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->update($data);
+              
+                Filelist::where('request_id', $request->input('requestid'))
+                ->where('performa', 'b')
+                ->where('rivision_id', $rev)
+                ->where('uid', $uid)
+                ->update(['is_file_ddo_verified' => 0 , 'is_file_admin_verified' => 0]);
+
 
                 // Downgrade Allotment
                 if ($downgrade_requestid != "") {

@@ -8,7 +8,7 @@
             <div class="card box-design">
                 <!-- <div class="card-header login-head">{{ __('Login') }}</div> -->
                 <div class=" login-head text-center  ">
-                    <p class="login-icon py-2">{{ __('Register') }}</p>
+                    <p class="login-icon py-2">{{ __('New User Registration') }}</p>
                     <h4 class="m-0"><b>E-state Managment System</b></h4>
                     <p class="sub-title-form">Goverment of Gujarat</p>
                 </div>
