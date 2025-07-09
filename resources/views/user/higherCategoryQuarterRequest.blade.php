@@ -43,7 +43,19 @@
                         role="tab"
                         aria-controls="history"
                         aria-selected="false">
-                 Higher Category   Request Form
+                 Higher Category Request Form
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {{ session('active_tab') == 'tab2' ? 'active' : '' }}"
+                        id="history-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#upload"
+                        type="button"
+                        role="tab"
+                        aria-controls="upload"
+                        aria-selected="false">
+               Upload Document
                 </button>
             </li>
         </ul>
@@ -61,6 +73,13 @@
                  role="tabpanel"
                  aria-labelledby="history-tab">
                 @include('user.higherqueter_tabview')
+            </div>
+            <div class="tab-pane fade {{ session('active_tab') == 'tab2' ? 'show active' : '' }}"
+                 id="upload"
+                 role="tabpanel"
+                 aria-labelledby="upload-tab">
+                @include('user.documentupload_tabview')
+                
             </div>
         </div>
     @else

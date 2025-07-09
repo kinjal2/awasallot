@@ -74,7 +74,7 @@
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-primary" name="submitBtn" id="submitBtn">Submit</button>&nbsp;
+                            <button type="submit" class="btn btn-primary" name="submitBtn" id="submitBtn">Upload Document</button>&nbsp;
                             <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
                             <input type="hidden" class="form-control" id="request_id" name="request_id"
                                 value="{{ base64_encode($request_id) }}">
@@ -163,7 +163,7 @@
                                 @if($document_list != "")
                                 <table width="100%">
                                     <tr>
-                                        <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit</button></td>
+                                        <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit Document</button></td>
                                     </tr>
                                 </table>
                                 @endif
