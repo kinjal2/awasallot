@@ -18,7 +18,7 @@
   <link href="{{ URL::asset('/css/style.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('/css/accessibility-widget.css') }}" rel="stylesheet">																			  
    <!-- Styles -->
-    </style>
+
               
 <style>
     @keyframes blink {
@@ -86,8 +86,7 @@
             <h1><a href="index.html"><img src="{{ URL::asset('/images/logo.png') }}"></a></h1>
         </div>
         <nav id="navbar" class="navbar">
-          <ul class="navbar-nav navbar-nav ml-auto">
-            
+          <ul class="navbar-nav navbar-nav ml-auto">            
             @if (Route::has('login'))
               <div class="top-right links">
                 @auth
@@ -107,7 +106,6 @@
                    <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata {{ Request::is('government_resolution') ? 'round_btn' : '' }}">Government Resolution</a></li>
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata {{ Request::is('government_document') ? 'round_btn' : '' }}">Download</a></li>
                    <!-- <li class="nav-item d-none d-sm-inline-block "><a href="{{  route('vacant.quarter.form')}}" class="logindata {{ Request::is('checkvacant') ? 'round_btn' : '' }}">Check Vacant</a></li> -->
-                
                 @endauth
               </div>
             @endif
