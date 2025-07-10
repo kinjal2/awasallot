@@ -58,93 +58,95 @@ class PhoneVerificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-   public function verify(Request $request)
+public function verify(Request $request)
 {
-    // Constants for OTP attempts and lockout
     $MAX_ATTEMPTS = 3;
     $LOCKOUT_MINUTES = 30;
 
-    // 1. Validate OTP input
+   // Log::info('OTP verification initiated', ['request_data' => $request->all()]);
+
+    // Validate OTP
     $request->validate([
         'otpnumber' => 'required|numeric|digits:6',
     ]);
 
-    // 2. Retrieve the user from session (set during OTP send)
+    // Get user from session (this must be set in sendOtp())
     $user = session('user');
+
     if (!$user) {
+        //Log::warning('OTP verification failed: User session expired.');
         return redirect()->route('login')->withErrors('Session expired. Please log in again.');
     }
 
-    // 3. Get latest OTP record for the user
+    //Log::info('User from session', ['user_id' => $user->id]);
+
+    // Fetch latest OTP
     $otp = Otp::where('user_id', $user->id)->latest()->first();
-    if (!$otp || now()->greaterThan($otp->expires_at)) {
-        return redirect()->back()->withErrors(['code' => 'The OTP you provided is invalid or has expired.']);
+
+    if (!$otp) {
+      //  Log::warning('No OTP found for user', ['user_id' => $user->id]);
+        return redirect()->back()->withErrors(['otpnumber' => 'OTP not found.']);
     }
 
-    // 4. Check if user is currently blocked due to too many failed attempts
+    if (now()->greaterThan($otp->expires_at)) {
+       // Log::warning('OTP expired', ['user_id' => $user->id, 'expired_at' => $otp->expires_at]);
+        return redirect()->back()->withErrors(['otpnumber' => 'OTP has expired.']);
+    }
+
+    // Lockout check
     if ($otp->blocked_until && now()->lessThan($otp->blocked_until)) {
-        return redirect()->back()->withErrors(['code' => "Too many failed attempts. Please try again after {$LOCKOUT_MINUTES} minutes."]);
-    } elseif ($otp->blocked_until && now()->greaterThanOrEqualTo($otp->blocked_until)) {
-        // Reset attempts and unblock after lockout period
-        $otp->update([
-            'attempts' => 0,
-            'blocked_until' => null,
-        ]);
+       /* Log::warning('User temporarily blocked due to too many attempts', [
+            'user_id' => $user->id,
+            'blocked_until' => $otp->blocked_until
+        ]);*/
+        return redirect()->back()->withErrors(['otpnumber' => 'Too many attempts. Try again later.']);
     }
 
-    // 5. Verify OTP correctness
+    // OTP mismatch
     if ($otp->otp !== $request->otpnumber) {
-        // Increment attempts
         $otp->increment('attempts');
+        /*Log::warning('OTP mismatch', [
+            'user_id' => $user->id,
+            'attempts' => $otp->attempts
+        ]);*/
 
-        // Lock account if max attempts reached
         if ($otp->attempts >= $MAX_ATTEMPTS) {
-            $otp->update([
-                'blocked_until' => now()->addMinutes($LOCKOUT_MINUTES),
-            ]);
-            return redirect()->back()->withErrors(['code' => "Too many failed attempts. Account locked for {$LOCKOUT_MINUTES} minutes."]);
+            $otp->update(['blocked_until' => now()->addMinutes($LOCKOUT_MINUTES)]);
+          /*  Log::error('User blocked due to max attempts', [
+                'user_id' => $user->id,
+                'blocked_until' => $otp->blocked_until
+            ]);*/
+            return redirect()->back()->withErrors(['otpnumber' => "Too many failed attempts. Locked for {$LOCKOUT_MINUTES} minutes."]);
         }
 
-        return redirect()->back()->withErrors(['code' => 'The OTP you provided is incorrect.']);
+        return redirect()->back()->withErrors(['otpnumber' => 'Incorrect OTP.']);
     }
 
-    // 6. Check for existing session conflict - if user logged in elsewhere
-    if ($user->session_status === 1) {
-        $storedSessionId = $user->session_id;
-        $currentSessionId = session('user_session_id');
+    // OTP matched
+    $otp->update([
+        'attempts' => 0,
+        'blocked_until' => null,
+    ]);
+   // Log::info('OTP verified successfully', ['user_id' => $user->id]);
 
-        if ($storedSessionId !== $currentSessionId) {
-            // Invalidate previous session
-            $user->update([
-                'session_status' => 0,
-                'session_id' => null,
-            ]);
+    // Create a unique session ID to track the user's session
+    $newSessionId = (string) Str::uuid();
 
-            Auth::logout();
-            return redirect()->route('login')->withErrors('You were logged out from another device. Please log in again.');
-        }
-    }
-
-    // 7. Generate new session ID and update user record
-    $newSessionId = Str::uuid()->toString();
+    // Update the user session info
     $user->update([
         'session_status' => 1,
         'session_id' => $newSessionId,
     ]);
 
-    // 8. Store new session ID in Laravel session storage
     session(['user_session_id' => $newSessionId]);
 
-    // 9. Log the user in
+    // Log the user in
     Auth::login($user);
 
-    // 10. Optionally call phone verification updated logic here
-    // $this->phoneVerifiedAt($user);
-
-    // 11. Redirect to intended page (home/dashboard)
-    return redirect()->route('home');
-}
    
+   $this->phoneVerifiedAt($user);
+    return redirect()->route('home')->with('status', 'Login successful!');
+}
     public function callToVerify(User $user)
     {
         // Ensure that the user is authenticated
