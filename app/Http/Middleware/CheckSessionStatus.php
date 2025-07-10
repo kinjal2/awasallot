@@ -49,7 +49,7 @@ class CheckSessionStatus
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-                return redirect()->route('login')->withErrors('You were logged out from another device. Please log in again.');
+                return redirect()->route('login')->withErrors('Your session has ended because you logged in from another device.');
         }
     }
 
