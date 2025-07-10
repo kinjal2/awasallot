@@ -58,45 +58,35 @@ class PhoneVerificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function verify(Request $request)
+public function verify(Request $request)
 {
-    //dd($request->all());
-    // Constants
     $MAX_ATTEMPTS = 3;
     $LOCKOUT_MINUTES = 30;
 
-    // 1. Validate OTP
+    // Step 1: Validate OTP input
     $request->validate([
         'otpnumber' => 'required|numeric|digits:6',
     ]);
 
-    // 2. Retrieve user from session or request
-    $user = session('user') ?? $request->user();
+    // Step 2: Retrieve user from session
+    $user = session('user');
     if (!$user) {
         return redirect()->route('login')->withErrors('Session expired. Please log in again.');
     }
 
-    // 3. Get latest OTP record
+    // Step 3: Get latest OTP
     $otp = Otp::where('user_id', $user->id)->latest()->first();
-   //dd($otp);
+
     if (!$otp || now()->greaterThan($otp->expires_at)) {
-        return redirect()->back()->withErrors(['code' => 'The OTP you provided is invalid or has expired.']);
+        return redirect()->back()->withErrors(['code' => 'The OTP has expired or is invalid.']);
     }
 
-    // 4. Handle lockout timer
-    if ($otp->blocked_until) {
-        if (now()->lessThan($otp->blocked_until)) {
-            return redirect()->back()->withErrors(['code' => 'Too many failed attempts. Please try again later.']);
-        }
-
-        // Unblock after lockout period
-        $otp->update([
-            'attempts' => 0,
-            'blocked_until' => null,
-        ]);
+    // Step 4: Lockout check
+    if ($otp->blocked_until && now()->lessThan($otp->blocked_until)) {
+        return redirect()->back()->withErrors(['code' => 'Too many failed attempts. Try again later.']);
     }
 
-    // 5. OTP mismatch
+    // Step 5: OTP mismatch
     if ($otp->otp !== $request->otpnumber) {
         $otp->increment('attempts');
 
@@ -104,88 +94,37 @@ class PhoneVerificationController extends Controller
             $otp->update([
                 'blocked_until' => now()->addMinutes($LOCKOUT_MINUTES),
             ]);
-            return redirect()->back()->withErrors(['code' => "Too many failed attempts. Account locked for {$LOCKOUT_MINUTES} minutes."]);
+            return redirect()->back()->withErrors(['code' => "Too many failed attempts. Locked for {$LOCKOUT_MINUTES} minutes."]);
         }
 
-        return redirect()->back()->withErrors(['code' => 'The OTP you provided is incorrect.']);
+        return redirect()->back()->withErrors(['code' => 'The OTP is incorrect.']);
     }
 
-   
-    //dd($this->phoneVerifiedAt($user));
-   
-    //dd($user->session_status);
-     // 7. Check for existing session conflict
-     if ($user->session_status === 1) {
-        $storedSessionId = $user->session_id;
-        $currentSessionId = session('user_session_id');
+    // Step 6: Successful verification — set session and login
+    $newSessionId = session('pending_session_id') ?? Str::uuid()->toString();
 
-        //dd($currentSessionId,$storedSessionId);
-
-        if ($storedSessionId !== $currentSessionId) {
-          //  dd("not matching");
-            $user->update([
-                'session_status' => 0,
-                'session_id' => null,
-            ]);
-            
-            Auth::logout();
-            return redirect()->route('login')->withErrors('You were logged out from another device. Try again to Login');
-        }
-    }
-
-   // dd("hi");
-    $newSessionId = Str::uuid()->toString();
     $user->update([
         'session_status' => 1,
         'session_id' => $newSessionId,
     ]);
-   // dd($newSessionId);
-    session(['user_session_id' => $newSessionId]);
-    //dd($newSessionId,session('user_session_id'));
-    // 9. Log in user
-    Auth::login($user);
-   // session()->regenerate();
-   // session()->forget('user');
-   // $otp->delete(); // OTP is valid
 
-   /* if (Auth::check()) {*/
-        //dd('User is logged in:', [Auth::user()],Auth::user()->is_admin);
-       // dd(Auth::user()->is_admin);
-    //     if(Auth::check() && Auth::user()->is_admin === true)
-    //     {
-    //       $uid = Auth::user()->id;
-    //      $office_designations = DB::table('user_office_designation')->where('uid', '=', $uid)->where('user_office_designation.active', '=', 1)
-    //                                                   ->select('user_office_designation.officecode','user_office_designation.designationcode','offices.name as officename','designations.name as designation')
-    //                                                   ->leftJoin('offices', 'user_office_designation.officecode', '=', 'offices.id')
-    //                                                   ->leftJoin('designations', 'user_office_designation.designationcode', '=', 'designations.id')
-    //                                                   ->get();
-    //       dd($office_designations);
-    //       return view('checkuser', ['office_designations' => $office_designations]);
-    //     }
-    //     else{
-    //    //  dd("not an  admin");
-    //    session::put('role','user');
-    //       return redirect()->route('user.dashboard.userdashboard');
-    //     }  
-       
-    //     // return  \Redirect::route('user.dashboard.userdashboard');
-    //     return redirect()->route('home')->with('status', 'Your phone was successfully verified!....test');
-    // /*} else {
-    //     dd('Auth check failed');
-    // }*/
-     // 6. Mark phone verified
-     $this->phoneVerifiedAt($user);
-     return redirect()->route('home');
-   // return redirect()->route('home')->with('status', 'Your phone was successfully verified!');
+    session([
+        'user_session_id' => $newSessionId,
+    ]);
+
+    // Cleanup temp session data
+    session()->forget(['pending_session_id', 'user']);
+
+    // Step 7: Login user
+    Auth::login($user);
+
+    // Step 8: (Optional) mark phone/email verified
+    $this->phoneVerifiedAt($user);
+
+    // Step 9: Redirect to home/dashboard
+    return redirect()->route('home');
 }
 
-
-    /**
-     * Generate and send OTP to the user's phone.
-     *
-     * @param  \App\Models\User  $user
-     * @return void
-     */
     public function callToVerify(User $user)
     {
         // Ensure that the user is authenticated

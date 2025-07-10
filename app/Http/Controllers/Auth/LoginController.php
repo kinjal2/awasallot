@@ -2,10 +2,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str; 
 use App\User;
 use App\Otp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 
@@ -28,51 +30,44 @@ class LoginController extends Controller
 
     // Send OTP to the user's phone or email
     public function sendOtp(Request $request)
-    {
+{
+    // Step 1: Validate input
+    $request->validate([
+        'identifier' => 'required', // mobile or email
+        'captcha' => 'required|captcha',
+    ]);
 
-        try {
-            // Validate the mobile number or email and captcha
-            $request->validate([
-                'identifier' => 'required', // Could be email or mobile number
-                'captcha' => 'required|captcha', // Validate CAPTCHA
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Log the validation errors
+    // Step 2: Get user by mobile or email
+    $user = User::where('contact_no', $request->identifier)
+                ->orWhere('email', $request->identifier)
+                ->first();
 
-           // Log::error('Validation errors occurred:', ['context' => $e->errors()]);
-
-            // Optionally, return the error messages to the user
-            return back()->withErrors($e->errors());
-        }
-
-        // Log the request data if validation passes
-        // Log::info('Request Data:', ['context' => $request->all()]);
-
-        // Check if the user exists using either mobile number or email
-        $user = User::where('contact_no', $request->identifier)
-                    ->orWhere('email', $request->identifier)
-                    ->first();
-
-        // Log user data
-        // Log::info('User found:', $user ? $user->toArray() : 'No user found');
-
-        // If no user is found, return with error
-        if (!$user) {
-            return back()->withErrors(['identifier' => 'User not found.']);
-        }
-
-        // Store the user in session
-        session(['user' => $user]);
-
-        // Call the OTP generation method for the user
-        $otp = Otp::generateOtpForUser($user);
-
-        // Send OTP to the user via SMS (or any other communication method you use)
-        Otp::sendOtpToUser($user->contact_no, $otp->otp);
-
-        // Redirect to the OTP verification page with the user ID or other necessary data
-        return redirect()->route('otp.verification.form');
+    if (!$user) {
+        return back()->withErrors(['identifier' => 'User not found.']);
     }
+
+    // Step 3: Invalidate any existing session
+    if ($user->session_status === 1) {
+        $user->update([
+            'session_status' => 0,
+            'session_id' => null,
+        ]);
+    }
+
+    // Step 4: Generate new session ID and store temporarily
+    $newSessionId = Str::uuid()->toString();
+    session([
+        'pending_session_id' => $newSessionId,
+        'user' => $user,
+    ]);
+
+    // Step 5: Generate and send OTP
+    $otp = Otp::generateOtpForUser($user);
+    Otp::sendOtpToUser($user->contact_no, $otp->otp);
+
+    // Step 6: Redirect to OTP form
+    return redirect()->route('otp.verification.form');
+}
 
     public function otpVerification(Request $request)
     {
