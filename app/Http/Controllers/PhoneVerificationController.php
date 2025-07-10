@@ -58,73 +58,93 @@ class PhoneVerificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-public function verify(Request $request)
+   public function verify(Request $request)
 {
+    // Constants for OTP attempts and lockout
     $MAX_ATTEMPTS = 3;
     $LOCKOUT_MINUTES = 30;
 
-    // Step 1: Validate OTP input
+    // 1. Validate OTP input
     $request->validate([
         'otpnumber' => 'required|numeric|digits:6',
     ]);
 
-    // Step 2: Retrieve user from session
+    // 2. Retrieve the user from session (set during OTP send)
     $user = session('user');
     if (!$user) {
         return redirect()->route('login')->withErrors('Session expired. Please log in again.');
     }
 
-    // Step 3: Get latest OTP
+    // 3. Get latest OTP record for the user
     $otp = Otp::where('user_id', $user->id)->latest()->first();
-
     if (!$otp || now()->greaterThan($otp->expires_at)) {
-        return redirect()->back()->withErrors(['code' => 'The OTP has expired or is invalid.']);
+        return redirect()->back()->withErrors(['code' => 'The OTP you provided is invalid or has expired.']);
     }
 
-    // Step 4: Lockout check
+    // 4. Check if user is currently blocked due to too many failed attempts
     if ($otp->blocked_until && now()->lessThan($otp->blocked_until)) {
-        return redirect()->back()->withErrors(['code' => 'Too many failed attempts. Try again later.']);
+        return redirect()->back()->withErrors(['code' => "Too many failed attempts. Please try again after {$LOCKOUT_MINUTES} minutes."]);
+    } elseif ($otp->blocked_until && now()->greaterThanOrEqualTo($otp->blocked_until)) {
+        // Reset attempts and unblock after lockout period
+        $otp->update([
+            'attempts' => 0,
+            'blocked_until' => null,
+        ]);
     }
 
-    // Step 5: OTP mismatch
+    // 5. Verify OTP correctness
     if ($otp->otp !== $request->otpnumber) {
+        // Increment attempts
         $otp->increment('attempts');
 
+        // Lock account if max attempts reached
         if ($otp->attempts >= $MAX_ATTEMPTS) {
             $otp->update([
                 'blocked_until' => now()->addMinutes($LOCKOUT_MINUTES),
             ]);
-            return redirect()->back()->withErrors(['code' => "Too many failed attempts. Locked for {$LOCKOUT_MINUTES} minutes."]);
+            return redirect()->back()->withErrors(['code' => "Too many failed attempts. Account locked for {$LOCKOUT_MINUTES} minutes."]);
         }
 
-        return redirect()->back()->withErrors(['code' => 'The OTP is incorrect.']);
+        return redirect()->back()->withErrors(['code' => 'The OTP you provided is incorrect.']);
     }
 
-    // Step 6: Successful verification — set session and login
-    $newSessionId = session('pending_session_id') ?? Str::uuid()->toString();
+    // 6. Check for existing session conflict - if user logged in elsewhere
+    if ($user->session_status === 1) {
+        $storedSessionId = $user->session_id;
+        $currentSessionId = session('user_session_id');
 
+        if ($storedSessionId !== $currentSessionId) {
+            // Invalidate previous session
+            $user->update([
+                'session_status' => 0,
+                'session_id' => null,
+            ]);
+
+            Auth::logout();
+            return redirect()->route('login')->withErrors('You were logged out from another device. Please log in again.');
+        }
+    }
+
+    // 7. Generate new session ID and update user record
+    $newSessionId = Str::uuid()->toString();
     $user->update([
         'session_status' => 1,
         'session_id' => $newSessionId,
     ]);
 
-    session([
-        'user_session_id' => $newSessionId,
-    ]);
+    // 8. Store new session ID in Laravel session storage
+    session(['user_session_id' => $newSessionId]);
 
-    // Cleanup temp session data
-    session()->forget(['pending_session_id', 'user']);
-
-    // Step 7: Login user
+    // 9. Log the user in
     Auth::login($user);
 
-    // Step 8: (Optional) mark phone/email verified
-    $this->phoneVerifiedAt($user);
+    // 10. Optionally call phone verification updated logic here
+    // $this->phoneVerifiedAt($user);
 
-    // Step 9: Redirect to home/dashboard
+    // 11. Redirect to intended page (home/dashboard)
     return redirect()->route('home');
 }
-
+   
     public function callToVerify(User $user)
     {
         // Ensure that the user is authenticated
