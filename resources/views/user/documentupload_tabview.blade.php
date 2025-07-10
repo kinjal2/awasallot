@@ -1,20 +1,6 @@
   <div class="content">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Document Attachment</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Document Attachment</li>
-                        </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
+       
         <!-- /.content-header -->
         <div class="col-md-12">
             <!-- general form elements -->
@@ -40,6 +26,7 @@
                 <form method="POST" action="{{ url('saveuploaddocument') }}" enctype="multipart/form-data"
                     name="documentupload" id="documentupload">
                     @csrf
+                  
                     <div class="card-body">
                         <div class="row">
                             <div class="col-4">
@@ -160,22 +147,25 @@
                                 <input type="hidden" name="type" value="{{ $type }} " />
                                 <input type="hidden" name="rev" value="{{ $rev }}" />
                                 <input type="hidden" name="dgr" value="{{ isset($dgr) ? $dgr : '' }}" />
-                                @if($document_list != "")
-                                <table width="100%">
-                                    <tr>
-                                        <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit Document</button></td>
-                                    </tr>
-                                </table>
-                                @endif
-                            </form>
+                                <input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
+                                <input type="text" value=" {{ $isEdit }}" id="isEdit" name="isEdit">
+                               
+                           
                         </div>
 
                     </div>
-
+ 
                 </div>
 
             </div>
+            @if($document_list != "")
+                                <table width="100%">
+                                    <tr>
+                                        <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit Document and Save Application</button></td>
+                                    </tr>
+                                </table>
+                                @endif
             <!-- /.card -->
-
+ </form>
         </div>
     </div>

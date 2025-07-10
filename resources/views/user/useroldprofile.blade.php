@@ -22,7 +22,10 @@
       </div>
       <!-- /.container-fluid -->
    </div>
+</div>
    <!-- /.content-header -->
+      <div class="content">
+    
    <div class="col-md-12">
       <!-- general form elements -->
       <div class="card card-head">
@@ -38,7 +41,11 @@
         </div>
     </div>
 
-</div> 
+</div>
+
+@endsection
+
+
 
 @push('page-ready-script')
 

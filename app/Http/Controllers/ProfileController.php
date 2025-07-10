@@ -345,6 +345,7 @@ class ProfileController extends Controller
         $this->_viewContent['users'] = User::find($uid); //
         $this->_viewContent['imageData'] = generateImage($uid);
         $this->_viewContent['page_title'] = "Old Profile Verfiy and  Update";
+        $this->_viewContent['isEdit']=0;
         return view('user/useroldprofile', $this->_viewContent);
     }
     public function saveOrUpdateProfileDetails(Request $request)

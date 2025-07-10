@@ -18,10 +18,12 @@
             </div>
         </div>
     </div>
-
+ 
     @if($isEdit)
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" id="quarterTabs" role="tablist">
+       
+           @if( ($quarterequestb['app_ddo']==1) || ($quarterequestb['app_admin']==1) )
             <li class="nav-item" role="presentation">
                 <button class="nav-link {{ session('active_tab') != 'tab2' ? 'active' : '' }}"
                         id="request-tab"
@@ -46,22 +48,26 @@
                  Higher Category Request Form
                 </button>
             </li>
+            @endif 
+             @if(count($document_list) > 0)
             <li class="nav-item" role="presentation">
-                <button class="nav-link {{ session('active_tab') == 'tab2' ? 'active' : '' }}"
-                        id="history-tab"
+                <button class="nav-link show"
+                        id="upload-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#upload"
                         type="button"
                         role="tab"
                         aria-controls="upload"
                         aria-selected="false">
-               Upload Document
+               Document Attachment
                 </button>
             </li>
+            @endif
         </ul>
 
         <!-- Tab content -->
         <div class="tab-content mt-3" id="quarterTabContent">
+             @if( ($quarterequestb['app_ddo']==1) || ( $quarterequestb['app_admin']==1))
             <div class="tab-pane fade {{ session('active_tab') != 'tab2' ? 'show active' : '' }}"
                  id="request"
                  role="tabpanel"
@@ -74,13 +80,17 @@
                  aria-labelledby="history-tab">
                 @include('user.higherqueter_tabview')
             </div>
-            <div class="tab-pane fade {{ session('active_tab') == 'tab2' ? 'show active' : '' }}"
+            @endif
+           
+             @if(count($document_list) > 0)
+            <div class="tab-pane fade show"
                  id="upload"
                  role="tabpanel"
                  aria-labelledby="upload-tab">
                 @include('user.documentupload_tabview')
                 
             </div>
+            @endif
         </div>
     @else
         {{-- If not edit mode, just show the Request Form directly --}}

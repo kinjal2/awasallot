@@ -220,7 +220,9 @@ class DashboardController extends Controller
             //     $basic_pay=$usermaster->basic_pay;
             //    $quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
             //    dd($quartertype);
-                return redirect('updateoldprofile');
+                return redirect('updateoldprofile')->with(['isEdit' => 0]);
+                
+
             }
             Session::put('dcode',$usermaster->dcode);
             if($usermaster->dcode != 6 && $usermaster->dcode != 41){

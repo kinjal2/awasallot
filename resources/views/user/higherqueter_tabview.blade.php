@@ -32,6 +32,7 @@
                          @if( $quarterequestb['app_ddo']==1)
                         <input type="hidden" id="edit_type" name="edit_type" value="app_ddo" />
                         @endif
+                        <input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
                         @endif
                         <input type="hidden" id="page" name="page" value="higher_request" />
                         <div class=" ">
@@ -253,9 +254,24 @@
                                 </div>
                             </div>
                         </div>
+                         @if( isset($quarterequestb['requestid']) && !empty($quarterequestb['requestid']))
+                        <input type="hidden" id="requestid" name="requestid" value="{{$quarterequestb['requestid']}}" />
+                        <input type="hidden" id="option" name="option" value="edit" />
+                                @if(  $quarterequestb['app_admin']==1)
+                                <input type="hidden" id="edit_type" name="edit_type" value="app_admin" />
+                                @endif
+                                @if( $quarterequestb['app_ddo']==1)
+                                <input type="hidden" id="edit_type" name="edit_type" value="app_ddo" />
+                                @endif
+                                <input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
+                                <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Next</button>
+                        </div>
+                       @else
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
+                         @endif
                     </form>
                 </div>
               <!-- /.card-body -->
