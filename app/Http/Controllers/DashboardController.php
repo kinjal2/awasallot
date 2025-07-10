@@ -202,7 +202,7 @@ class DashboardController extends Controller
     }
     public function userdashboard()
     {
-
+      
         $uid = Auth::user()->id;
 
         //to get ddo info
@@ -217,6 +217,7 @@ class DashboardController extends Controller
              Session::put('Uid', $uid);
             if($usermaster->from_old_awasallot_app === 1  && $usermaster->updated_to_new_awasallot_app === 0)
             {
+               
             //     $basic_pay=$usermaster->basic_pay;
             //    $quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
             //    dd($quartertype);

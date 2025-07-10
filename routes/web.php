@@ -79,7 +79,7 @@ Route::post('/home', 'HomeController@index')->name('home');
        // Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOldProfileDetails']);
        Route::post('saveoldprofile', [ 'as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
 
-        Route::post('updateolduserprofiledetails',[ProfileController::class ,'updateolduserprofiledetails'])->name('updateolduserprofiledetails');
+       //Route::post('updateolduserprofiledetails',[ProfileController::class ,'updateolduserprofiledetails'])->name('updateolduserprofiledetails');
         
         Route::get('useroldprofile', [ProfileController::class, 'viewuseroldprofile'])->name('user.oldprofile');
 

@@ -1,14 +1,24 @@
  @include(Config::get('app.theme').'.template.severside_message')
  @include(Config::get('app.theme').'.template.validation_errors')
  <!-- /.card-header -->
- <!-- form start -->
+ <!-- form start --> 
+  
+   
+      
  <form method="POST" action="{{ url('profiledetails') }}" enctype="multipart/form-data" name='frm' id="frm">
     @csrf
+
     @isset($isEdit)
-    @if($isEdit == true)
-    <input type="hidden" value="request_form" name="request_form" id="request_form">
-    @endif
+      @if($isEdit == true)
+         <input type="hidden" value="request_form" name="request_form" id="request_form">
+      @endif
     @endisset
+
+     @isset($oldprofile)
+         @if($oldprofile == 1)
+            <input type="hidden" value="1" name="oldprofile" id="oldprofile">
+         @endif
+      @endisset
     <div class="card-body">
        <div class="row">
           <div class="col-md-3">
@@ -95,24 +105,6 @@
                    placeholder="Select Marital Status" />
              </div>
           </div>
-          <!-- <div class="row">
-                  <div class="col-md-3">
-                     <div class="form-group">
-                        <label for="exampleInputFile"> {{  __('profile.upload_photo') }}</label>
-                        <div class="input-group">
-                           <div class="custom-file">
-                              <input type="file" class="custom-file-input" id="image" name="image">
-                              <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                           </div>
-                           <div class="input-group-append">
-                              <span class="input-group-text" id="">Upload</span>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-              
-                  
-                  </div> -->
           <div class="col-md-3">
              <div class="form-group">
                 <label for="is_dept_head"> {{ __('profile.is_head') }} <span class="error">*</span></label>
@@ -295,16 +287,6 @@
 
                 </div>
              </div>
-             <!-- <div class="col-md-3" id='dis_per_certi_yes' style="display:none">
-                        <div class="form-group">
-                           <label for="dis_per_certi">{{ __('profile.dis_per_certi') }} <span class="error">*</span></label>
-                           <input type="text" class="form-control" value="{{ isset($users->dis_per_certi)?$users->dis_per_certi:'' }}" id="dis_per_certi" placeholder="Enter..." name="dis_per_certi" readonly>
-                           <input type="file" name="dis_certi" id="dis_certi">
-
-
-                        </div>
-                     </div>-->
-
           </div>
           <div class="row">
              <div class="col-md-3">
@@ -337,7 +319,7 @@
        </div>
        <!-- /.card-body -->
        <div class="mt-4">
-          <button type="submit" class="btn btn-primary"> {{ $isEdit ? __('common.next') : __('common.submit') }}</button>
+          <button type="submit" class="btn btn-primary"> {{ ($isEdit ?? false) ? __('common.next') : __('common.submit') }}</button>
        </div>
        <div class="mt-4">
           <span class="text-danger">Fields marked with * are mandatory to fill. </span>

@@ -48,6 +48,7 @@ class HomeController extends Controller
 
       }
       else{
+       
         return  \Redirect::route('user.dashboard.userdashboard');
 
 
