@@ -134,19 +134,21 @@ class LoginController extends Controller
 
     // Handle user logout
     public function logout(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // Set session_status to 0 on logout (session is inactive)
-        if ($user) {
-            $user->update(['session_status' => 0]); // Reset session status on logout
-        }
+    if ($user) {
+        $user->update([
+            'session_status' => 0,
+            'session_id' => null,
+        ]);
+    }
 
-        // Perform the actual logout
     Auth::logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-        return redirect('/login');
-    }
+    return redirect('/login');
+}
+
 }
