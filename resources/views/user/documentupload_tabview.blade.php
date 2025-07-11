@@ -147,8 +147,9 @@
                                 <input type="hidden" name="type" value="{{ $type }} " />
                                 <input type="hidden" name="rev" value="{{ $rev }}" />
                                 <input type="hidden" name="dgr" value="{{ isset($dgr) ? $dgr : '' }}" />
-                                <input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
-                                <input type="text" value=" {{ $isEdit }}" id="isEdit" name="isEdit">
+                                <input type="hidden" value="{{ count($document_list) }}" id="document_list" name="document_list">
+                                <input type="hidden" value="{{ $isEdit ?? 0 }}" id="isEdit" name="isEdit">
+
                                
                            
                         </div>

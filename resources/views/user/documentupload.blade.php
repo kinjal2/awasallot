@@ -2,7 +2,7 @@
 @section('title', $page_title)
 @section('content')
     <div class="content">
-        @include('user.documentupload_tabbiew.blade.php')
+        @include('user.documentupload_tabview')
     </div>
     <!-- /.content -->
 @endsection

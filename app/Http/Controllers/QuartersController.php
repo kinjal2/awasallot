@@ -3614,7 +3614,7 @@ class QuartersController extends Controller
                 ];
 
 
-                dd($data);
+               
                 $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->update($data);
               
                 Filelist::where('request_id', $request->input('requestid'))

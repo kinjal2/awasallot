@@ -79,7 +79,7 @@ Route::middleware(['verifiedphone', 'verified', 'role:user', 'check.host', 'prev
     Route::post('saveoldprofile', ['as' => 'user.saveoldprofiledetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
     Route::get('useroldprofile', [ProfileController::class, 'viewuseroldprofile'])->name('user.oldprofile');
     Route::post('savenewrequest', ['uses' => 'QuartersController@saveNewRequest']);
-    Route::get('quartershigher/:any', ['as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
+    Route::get('quartershigher/{any?}', ['as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
     Route::post('saveHigherCategoryReq', ['uses' => 'QuartersController@saveHigherCategoryReq']);
     Route::get('quarterschange', ['as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
     Route::get('quarters', ['as' => 'quarters', 'uses' => 'QuartersController@index']);
