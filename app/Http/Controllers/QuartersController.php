@@ -3075,11 +3075,11 @@ class QuartersController extends Controller
         if ($type == 'a') {
             $ddo_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
             $admin_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequesta::where('requestid', $requestid)->select('wno')->first();
+            $wno = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('wno')->first();
         } else if ($type == 'b') {
             $ddo_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
             $admin_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequestb::where('requestid', $requestid)->select('wno')->first();
+            $wno = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('wno')->first();
         }
         DB::enableQueryLog();
         if ($request->type == 'a') {
