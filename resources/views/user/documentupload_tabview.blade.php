@@ -4,7 +4,7 @@
         <!-- /.content-header -->
         <div class="col-md-12">
             <!-- general form elements -->
-             @if($document_list != "")
+             @if(count($document_list) > 0)
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">Upload Document</h3>
@@ -113,7 +113,7 @@
                                     <tr>
                                         <th>Document Type</th>
                                         <th>File</th>
-                                        @if($document_list != "")
+                                        @if(@if(count($document_list) > 0))
                                         <th>Delete</th>
                                         @endif
 
@@ -128,7 +128,7 @@
                                                     data-id="{{ $a->doc_id }}">
                                                     <img src="{{ asset('/images/pdf.png') }}" width="30" height="30">
                                                 </a> </td>
-                                              @if($document_list != "")
+                                              @if(@if(count($document_list) > 0))
                                             <td>
                                                 <a href="javascript:;" class="btn btn btn-danger delete_doc"
                                                     delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}"><i
@@ -159,7 +159,7 @@
                 </div>
 
             </div>
-            @if($document_list != "")
+            @if(@if(count($document_list) > 0))
                                 <table width="100%">
                                     <tr>
                                         <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit Document and Save Application</button></td>
