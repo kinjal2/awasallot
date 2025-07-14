@@ -265,11 +265,15 @@
                                 @endif
                                 <input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
                                 <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">Next</button>
+                                @if(  $document_list->count()  > 0)
+                                <button type="submit" class="btn btn-primary" value="next" name="submit" id="submit">Next</button>
+                                @else
+                                <button type="submit" class="btn btn-primary" value="save" name="submit" id="submit">Save Application</button>
+                                @endif
                         </div>
                        @else
                         <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary" value="submit" name="submit" id="submit">Submit</button>
                         </div>
                          @endif
                     </form>
@@ -468,4 +472,5 @@
         });
     }
 </script>
+
 @endpush

@@ -9,14 +9,14 @@
     @csrf
 
     @isset($isEdit)
-      @if($isEdit == true)
-         <input type="hidden" value="request_form" name="request_form" id="request_form">
+      @if($isEdit == 1)
+         <input type="text" value="request_form" name="request_form" id="request_form">
       @endif
     @endisset
 
      @isset($oldprofile)
          @if($oldprofile == 1)
-            <input type="hidden" value="1" name="oldprofile" id="oldprofile">
+            <input type="text" value="1" name="oldprofile" id="oldprofile">
          @endif
       @endisset
     <div class="card-body">

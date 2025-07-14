@@ -137,7 +137,7 @@
             e.preventDefault(); // prevent default form submission
 
             var formData = {
-                new_remark: btoa($('#new_remark').val()),
+               new_remark: btoa(unescape(encodeURIComponent($('#new_remark').val()))),
                 _token: '{{ csrf_token() }}' // CSRF token for Laravel
             };
 

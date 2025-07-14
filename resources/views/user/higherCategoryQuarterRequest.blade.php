@@ -18,14 +18,18 @@
             </div>
         </div>
     </div>
- 
-    @if($isEdit)
+   @if(session('active_tab'))
+    {{ session('active_tab') }}
+@endif
+
+  {{ $isEdit }}
+    @if( $isEdit == 1)
         <!-- Nav tabs -->
-        <ul class="nav nav-tabs" id="quarterTabs" role="tablist">
+        <ul class="nav nav-tabs " id="quarterTabs" role="tablist" >
        
            @if( ($quarterequestb['app_ddo']==1) || ($quarterequestb['app_admin']==1) )
             <li class="nav-item" role="presentation">
-                <button class="nav-link {{ session('active_tab') != 'tab2' ? 'active' : '' }}"
+                <button class="nav-link   {{ session('active_tab') != 'tab2' || session('active_tab') != 'tab3' ? 'active' : '' }}"
                         id="request-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#request"
@@ -37,7 +41,7 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link {{ session('active_tab') == 'tab2' ? 'active' : '' }}"
+                <button class="nav-link  {{ session('active_tab') == 'tab2' ? 'active' : '' }}"
                         id="history-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#history"
@@ -51,7 +55,7 @@
             @endif 
              @if(count($document_list) > 0)
             <li class="nav-item" role="presentation">
-                <button class="nav-link show"
+                <button class="nav-link  {{ session('active_tab') == 'tab3' ? 'active' : '' }}"
                         id="upload-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#upload"
@@ -68,7 +72,7 @@
         <!-- Tab content -->
         <div class="tab-content mt-3" id="quarterTabContent">
              @if( ($quarterequestb['app_ddo']==1) || ( $quarterequestb['app_admin']==1))
-            <div class="tab-pane fade {{ session('active_tab') != 'tab2' ? 'show active' : '' }}"
+            <div class="tab-pane fade {{ session('active_tab') != 'tab2' || session('active_tab') != 'tab3' ? 'show active' : '' }}"
                  id="request"
                  role="tabpanel"
                  aria-labelledby="request-tab">
@@ -83,7 +87,7 @@
             @endif
            
              @if(count($document_list) > 0)
-            <div class="tab-pane fade show"
+            <div class="tab-pane fade  show {{ session('active_tab') == 'tab3' ? 'show active' : '' }}"
                  id="upload"
                  role="tabpanel"
                  aria-labelledby="upload-tab">
@@ -107,12 +111,22 @@
 @push('footer-script')
 <script src="{{ asset('/bower_components/admin-lte/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
 <script src="{{ asset('/bower_components/admin-lte/plugins/jquery-validation/additional-methods.min.js')}}"></script>
+<script>
+ $(document).ready(function () {
+        $('.disabled-tab').on('click', function (e) {
+            e.preventDefault();            // Prevent link action
+            e.stopImmediatePropagation();  // Stop Bootstrap tab switch
+        });
+    });
+</script>
 <script type="text/javascript">
     $(function() {
         $('.dateformat').datetimepicker({
             format: 'DD-MM-YYYY'
         });
     });
+    
+   
     $(document).ready(function() {
         updateChoiceOptions();
         // Function to toggle the visibility
@@ -605,4 +619,9 @@
     });
 
 </script>
+
+
+
+
+
 @endpush

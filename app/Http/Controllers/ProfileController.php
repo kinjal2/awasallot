@@ -198,7 +198,8 @@ class ProfileController extends Controller
                         Session::put('basic_pay', $request->get('basic_pay'));
                     }
 					if (isset($request->request_form) && $request->request_form == 'request_form') {
-						return redirect()->back()->with('active_tab','tab2');
+                        Session::put('active_tab','tab2');
+						return redirect()->back()->with('active_tab','tab2')->with('isEdit',1);
 					} 
 					else if(isset($request->oldprofile) && $request->oldprofile == 1)
 					{

@@ -292,6 +292,8 @@ class QuartersController extends Controller
                         $this->_viewContent['request_id'] = $request_id;
                         $this->_viewContent['rev'] = $rev;
                          $this->_viewContent['type'] = $type;
+                         $this->_viewContent['active_tab']=base64_decode('active_tab');
+                         Session::put('active_tab','tab1');
                         return view('user/higherCategoryQuarterRequest', $this->_viewContent);
                     }
                 }
@@ -307,7 +309,7 @@ class QuartersController extends Controller
     }
     public function saveHigherCategoryReq(Request $request)
     {
-       
+     
         $rules = [
             'quartertype' => 'required|string',
             'prv_quarter_type' => 'required|string',
@@ -334,8 +336,8 @@ class QuartersController extends Controller
                 ->withInput()
                 ->withErrors($validator);
         } else {
-            // $data = $request->input();
-            //  dd($data);
+             //$data = $request->input();
+             // dd($data);
             //$prv_possession_date = Carbon::createFromFormat('d-m-Y', $request->get('prv_possession_date'));
             if (isset($_REQUEST['requestid']) && $_REQUEST['option'] == 'edit') {
                 $request_id = $_REQUEST['requestid'];
@@ -505,11 +507,22 @@ class QuartersController extends Controller
                        
                     }
 
-
+                   if(isset($_REQUEST['submit']))
+                   {
+                    $submit_type=$_REQUEST['submit'];
+                   }
                     $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->update($data);
                     // return redirect()->back()->withErrors('message', 'Updated Successfully');
                     //  dd("hello");
-                    return redirect()->route('user.quarter.history')->withErrors('message', 'Updated Successfully');
+                    
+                            if($submit_type=="save")
+                            {
+                                return redirect()->route('user.quarter.history')->withErrors('message', 'Updated Successfully');
+                            }
+                            else
+                            {
+                                return redirect()->back()->with('active_tab','tab3');
+                            }
                 }
 
                 return redirect()->back()->with('message', 'Updated Successfully');
@@ -836,7 +849,7 @@ class QuartersController extends Controller
             ->union($quarterlist2)
             ->get();
 
-
+           
 
         // Get the logged queries
         //$queries = DB::getQueryLog();
@@ -903,13 +916,16 @@ class QuartersController extends Controller
                     '" class="btn btn-primary btn-sm">
                 <i class="fa fa-upload" aria-hidden="true" alt="Upload Documents"></i>
             </a>';
-
                 if ($row->is_ddo_varified == 2) {
+                    
+                     $active_tab = ($row->app_ddo == 1) ? 'tab1' : 'tab3';
                     if ($row->type == 'b') {
+                       
                         $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requesthighercategory') .
                             "?requestid=" . base64_encode($row->requestid) .
                             "&rev=" . base64_encode($row->rivision_id) .
                             "&edit_type=" . base64_encode('ddo') .
+                            "&active_tab=" . base64_encode($active_tab) .
                             '" class="btn btn-primary btn-sm">
                 <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
             </a>';
@@ -919,17 +935,28 @@ class QuartersController extends Controller
                             "?requestid=" . base64_encode($row->requestid) .
                             "&rev=" . base64_encode($row->rivision_id) .
                             "&edit_type=" . base64_encode('ddo') .
+                            "&active_tab=" . base64_encode($active_tab) .
                             '" class="btn btn-primary btn-sm">
                 <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
             </a>';
                     }
                 }
                 if ($row->is_varified == 2) {
+                     $active_tab = ($row->app_admin == 1) ? 'tab1' : 'tab3';
+                     if($row->app_ddo==1)
+                        {
+                            $active_tab = 'tab1' ;
+                        }
+                        else
+                        {
+                            $active_tab = 'tab3';
+                        }
                     if ($row->type == 'b') {
                         $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requesthighercategory') .
                             "?requestid=" . base64_encode($row->requestid) .
                             "&rev=" . base64_encode($row->rivision_id) .
                             "&edit_type=" . base64_encode('admin') .
+                            "&active_tab=" . base64_encode($active_tab) .
                             '" class="btn btn-primary btn-sm">
                 <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
             </a>';
@@ -939,6 +966,7 @@ class QuartersController extends Controller
                             "?requestid=" . base64_encode($row->requestid) .
                             "&rev=" . base64_encode($row->rivision_id) .
                             "&edit_type=" . base64_encode('admin') .
+                            "&active_tab=" . base64_encode($active_tab) .
                             '" class="btn btn-primary btn-sm">
                 <i class="fa fa-edit" aria-hidden="true" alt="Edit Application"></i>
             </a>';
@@ -2447,7 +2475,7 @@ class QuartersController extends Controller
     public function addnewremarks(Request $request)
     {
 
-        $new_remarks = base64_decode($request->new_remark);
+       $new_remarks = urldecode(base64_decode($request->new_remark));
 
         $request->validate([
             'new_remark' => 'required',
