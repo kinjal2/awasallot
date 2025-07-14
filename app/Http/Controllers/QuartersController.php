@@ -3009,7 +3009,7 @@ class QuartersController extends Controller
                 ->select('rev_id', 'doc_id', 'document_name')
                 ->get();
         } else if ($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] == '' && $wno['wno'] != '') {
-            $document_list = "";
+            $document_list = [];
             $attacheddocument = DB::table('master.file_list')
                 ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
                 //  ->whereNotIn('document_id', [6])
