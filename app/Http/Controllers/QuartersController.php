@@ -2798,15 +2798,15 @@ class QuartersController extends Controller
 
 
         if ($type == 'a') {
-            $ddo_remarks = Tquarterrequesta::where('requestid', $request_id)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequesta::where('requestid', $request_id)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequesta::where('requestid', $request_id)->select('wno')->first();
+            $ddo_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
+            $wno = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id',$rev)->select('wno')->first();
             $this->_viewContent['ddo_remarks_status'] = $ddo_remarks;
             $this->_viewContent['admin_remarks_status'] = $admin_remarks;
         } else if ($type == 'b') {
-            $ddo_remarks = Tquarterrequestb::where('requestid', $request_id)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequestb::where('requestid', $request_id)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequestb::where('requestid', $request_id)->select('wno')->first();
+            $ddo_remarks = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
+            $wno = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id',$rev)->select('wno')->first();
             $this->_viewContent['ddo_remarks_status'] = $ddo_remarks;
             $this->_viewContent['admin_remarks_status'] = $admin_remarks;
         }
@@ -3101,7 +3101,7 @@ class QuartersController extends Controller
             // Count documents where 'performa' contains 'a'
             //$doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')->whereNotIn('document_type', [2, 6, 9, 10,3,7])->count();
             $type = 'a';
-
+            
             // Count documents where 'performa' contains 'a' and exclude certain document types --19-11-2024
             if ($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] == '' && $wno['wno'] == '') {
                 //dd("hello");
