@@ -3073,17 +3073,17 @@ class QuartersController extends Controller
         // dd( $rev);
         //dd(Session::get('Uid'));
         if ($type == 'a') {
-            $ddo_remarks = Tquarterrequesta::where('requestid', $requestid)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequesta::where('requestid', $requestid)->select('is_varified', 'remarks')->first();
+            $ddo_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
             $wno = Tquarterrequesta::where('requestid', $requestid)->select('wno')->first();
         } else if ($type == 'b') {
-            $ddo_remarks = Tquarterrequestb::where('requestid', $requestid)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequestb::where('requestid', $requestid)->select('is_varified', 'remarks')->first();
+            $ddo_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
             $wno = Tquarterrequestb::where('requestid', $requestid)->select('wno')->first();
         }
         DB::enableQueryLog();
         if ($request->type == 'a') {
-            $result = Tquarterrequesta::where('requestid', $requestid)
+            $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)
                 ->first();
             if ($downgrade_requestid != "") {
                 $downgrade_request = Tquarterrequesta::where('requestid', $requestid)
@@ -3339,7 +3339,7 @@ class QuartersController extends Controller
 
                 ];
 
-                $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->update($data);
+                $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->where('rivision_id',$rev)->update($data);
 
                 Filelist::where('request_id', $request->input('requestid'))
                 ->where('performa', 'a')
@@ -3392,7 +3392,7 @@ class QuartersController extends Controller
         }
         if ($request->type == 'b') {
             //dd(Session::get('Uid'));
-            $result = Tquarterrequestb::where('requestid', $requestid)
+            $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)
                 ->first();
             if ($downgrade_requestid != "") {
                 $downgrade_request = Tquarterrequestb::where('requestid', $requestid)
@@ -3643,7 +3643,7 @@ class QuartersController extends Controller
 
 
                
-                $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->update($data);
+                $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id',$rev)->update($data);
               
                 Filelist::where('request_id', $request->input('requestid'))
                 ->where('performa', 'b')
