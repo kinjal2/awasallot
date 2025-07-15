@@ -148,7 +148,7 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
     Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
     Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
     Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
-    Route::post('ddo/add', [DDOController::class, 'addNewD  DOStore'])->name('ddo.store');
+    Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
     Route::post('/reset/{field}', 'UserController@reset')->name('reset');
     Route::post('upadteremarks', ['as' => 'upadteremarks.data', 'uses' => 'ReportsController@upadteremarks']);
     //Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'UserController@updateUserDdoDetails']);

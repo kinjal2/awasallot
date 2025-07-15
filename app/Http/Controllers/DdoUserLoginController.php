@@ -46,7 +46,7 @@ class DdoUserLoginController extends Controller {
 			'password'   => $password,
 			'captcha'    => $request->captcha
 		], [
-			'ddo_reg_no' => ['required', 'regex:/^SGV\d{6}[A-Z]$/'],
+			'ddo_reg_no' => ['required', 'regex:/^(SGV|OTH)\d{6}[A-Z]$/'],
 			'password'   => ['required'],
 			'captcha'    => ['required', 'captcha'],
 		], [
