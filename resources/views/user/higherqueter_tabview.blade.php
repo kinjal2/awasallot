@@ -171,11 +171,11 @@
                                         <label class="card-title mb-3"> {{ __('request.higher_allotment')}} <span class="error">*</span> &nbsp;</label>
                                         <div class="form-group clearfix">
                                             <div class="icheck-primary d-inline">
-                                                <input type="radio" id="have_hc_quarter_y" name="have_hc_quarter_yn" value="Y" @if (!empty($quarterequestb['is_hc']) && $quarterequestb['is_hc']=='1' ) checked @endif>
+                                                <input type="radio" id="have_hc_quarter_y" name="have_hc_quarter_yn" value="Y"  @if (($quarterequestb['is_hc'] ?? null) == '1') checked @endif>
                                                 <label for="have_hc_quarter_y">{{ __('common.yes') }}</label>
                                             </div> &nbsp;&nbsp;
                                             <div class="icheck-primary d-inline">
-                                                <input type="radio" id="have_hc_quarter_n" name="have_hc_quarter_yn" value="N" @if (!empty($quarterequestb['is_hc']) && $quarterequestb['is_hc']=='0' ) checked @endif>
+                                                <input type="radio" id="have_hc_quarter_n" name="have_hc_quarter_yn" value="N" @if (($quarterequestb['is_hc'] ?? null) == '0') checked @endif>
                                                 <label for="have_hc_quarter_n">{{ __('common.no') }}</label>
                                             </div>
                                             <label id="have_hc_quarter_yn-error" class="error" for="have_hc_quarter_yn"></label>
@@ -255,17 +255,20 @@
                             </div>
                         </div>
                          @if( isset($quarterequestb['requestid']) && !empty($quarterequestb['requestid']))
-                        <input type="hidden" id="requestid" name="requestid" value="{{$quarterequestb['requestid']}}" />
-                        <input type="hidden" id="option" name="option" value="edit" />
+
+                        <input type="text" id="requestid" name="requestid" value="{{$quarterequestb['requestid']}}" />
+                        <input type="text" id="rivision_id" name="rivision_id" value="{{$quarterequestb['rivision_id']}}" />
+                        <input type="text" id="option" name="option" value="edit" />
                                 @if(  $quarterequestb['app_admin']==1)
-                                <input type="hidden" id="edit_type" name="edit_type" value="app_admin" />
+                               app admin <input type="text" id="edit_type" name="edit_type" value="admin" />
                                 @endif
                                 @if( $quarterequestb['app_ddo']==1)
-                                <input type="hidden" id="edit_type" name="edit_type" value="app_ddo" />
+                                app ddo<input type="text" id="edit_type" name="edit_type" value="ddo" />
                                 @endif
-                                <input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
+                                document list<input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
                                 <div class="mt-4">
                                 @if(  $document_list->count()  > 0)
+                                   <input type="hidden" value="{{ $isEdit ?? 0 }}" id="isEdit" name="isEdit">
                                 <button type="submit" class="btn btn-primary" value="next" name="submit" id="submit">Next</button>
                                 @else
                                 <button type="submit" class="btn btn-primary" value="save" name="submit" id="submit">Save Application</button>
