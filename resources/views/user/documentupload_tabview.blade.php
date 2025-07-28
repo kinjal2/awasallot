@@ -1,10 +1,26 @@
   <div class="content">
         <!-- Content Header (Page header) -->
-       
+         @if( ! isset($isEdit))
+         <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">Document Attachment</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Document Attachment</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        @endif
         <!-- /.content-header -->
         <div class="col-md-12">
             <!-- general form elements -->
-             
+             @if(count($document_list) > 0)
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">Upload Document</h3>
@@ -50,8 +66,8 @@
                                     <label for="exampleInputFile">Upload Photo&nbsp;<span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="image" name="image" onchange="updateFileName()">
-                                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                            <input type="file" class="custom-file-input" id="image" name="image" onchange="updateFileName(this)">
+                                            <label class="custom-file-label" for="image">Choose file</label>
                                         </div>
                                     </div>
                                     <span id="image-error" class="error-message text-danger" style="display: none;"></span>
@@ -67,6 +83,9 @@
                                 value="{{ base64_encode($request_id) }}">
                             <input type="hidden" class="form-control" id="perfoma" name="perfoma"
                                 value="{{ base64_encode($type) }}">
+                                @php
+                                    $rev = isset($isEdit) && $isEdit ? ($rev + 1) : $rev;
+                                @endphp
                             <input type="hidden" class="form-control" id="request_rev" name="request_rev"
                                 value="{{ base64_encode($rev) }}">
                         </div>
@@ -74,6 +93,7 @@
                 </form>
                 
             </div>
+           
            
             <!-- /.card -->
             @if(isset($ddo_remarks_status))
@@ -113,32 +133,49 @@
                                     <tr>
                                         <th>Document Type</th>
                                         <th>File</th>
-                                        @if(count($document_list) > 0)
+                                       @if(isset($isEdit) && $isEdit==0)
+                                        <th>Delete</th>
+                                        @endif
+                                          @if($rev==0)
                                         <th>Delete</th>
                                         @endif
 
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                   
                                     @foreach ($attacheddocument as $a)
+                                   
+                                     
+                                   
                                         <tr>
                                             <td>{{ $a->document_name }}</td>
+                                         
                                             <td> <a href="javascript:;" target="_blank" class="btn btn open-document-btn"
                                                     data-id="{{ $a->doc_id }}">
                                                     <img src="{{ asset('/images/pdf.png') }}" width="30" height="30">
                                                 </a> </td>
-                                              @if(count($document_list) > 0)
+                                            @if(isset($isEdit) && $isEdit==0)
                                             <td>
                                                 <a href="javascript:;" class="btn btn btn-danger delete_doc"
-                                                    delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}"><i
+                                                    delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}" data-rivision="{{ $a->rivision_id }}"  data-edit="{{  $isEdit ?? 0  }}"  ><i
                                                         class="fa fa-trash" aria-hidden="true"></i></a>
 
                                             </td>
                                             @endif
+                                            @if($rev==0)
+                                             <td>
+                                                <a href="javascript:;" class="btn btn btn-danger delete_doc"
+                                                    delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}" data-rivision="{{ $a->rivision_id }}"  data-edit="{{  $isEdit ?? 0  }}"  ><i
+                                                        class="fa fa-trash" aria-hidden="true"></i></a>
+
+                                            </td>
+                                            @endif
+
+                                            
                                         </tr>
                                     @endforeach
-
+                                   
                                 </tbody>
                             </table>
                             <form id="final" method="post" action="{{ url('savefinalannexure') }}">
@@ -146,6 +183,7 @@
                                 <input type="hidden" name="requestid" value="{{ $request_id }}" />
                                 <input type="hidden" name="type" value="{{ $type }} " />
                                 <input type="hidden" name="rev" value="{{ $rev }}" />
+                                <input type="text" name="edit_type" value="{{ $edit_type ?? '' }}" />
                                 <input type="hidden" name="dgr" value="{{ isset($dgr) ? $dgr : '' }}" />
                                 <input type="hidden" value="{{ count($document_list) }}" id="document_list" name="document_list">
                                 <input type="hidden" value="{{ $isEdit ?? 0 }}" id="isEdit" name="isEdit">
@@ -159,13 +197,73 @@
                 </div>
 
             </div>
+            @isset($attacheddocument_old)
+             <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title">Old Attached Documents</h3>
+
+                </div>
+                <!-- /.card-header -->
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+
+                            <table class="table table-bordered" id="request_history">
+                                <thead>
+                                    <tr>
+                                        <th>Document Type</th>
+                                        <th>File</th>
+                                       @if(isset($isEdit) && $isEdit==0)
+                                        <th>Delete</th>
+                                        @endif
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   
+                                    @foreach ($attacheddocument_old as $a)
+                                   
+                                     
+                                   
+                                        <tr>
+                                            <td>{{ $a->document_name }}</td>
+                                         
+                                            <td> <a href="javascript:;" target="_blank" class="btn btn open-document-btn"
+                                                    data-id="{{ $a->doc_id }}">
+                                                    <img src="{{ asset('/images/pdf.png') }}" width="30" height="30">
+                                                </a> </td>
+                                            @if(isset($isEdit) && $isEdit==0)
+                                            <td>
+                                                <a href="javascript:;" class="btn btn btn-danger delete_doc"
+                                                    delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}" data-rivision="{{ $a->rivision_id }}"  data-edit="{{  $isEdit ?? 0  }}"  ><i
+                                                        class="fa fa-trash" aria-hidden="true"></i></a>
+
+                                            </td>
+                                            @endif
+
+                                            
+                                        </tr>
+                                    @endforeach
+                                    
+                                </tbody>
+                            </table>
+                     
+                        </div>
+
+                    </div>
+ 
+                </div>
+
+            </div>
+            @endisset
           
                                 <table width="100%">
                                     <tr>
                                         <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit Document and Save Application</button></td>
                                     </tr>
                                 </table>
-                               
+                                
             <!-- /.card -->
  </form>
         </div>
@@ -174,6 +272,8 @@
     @push('page-ready-script')
 @endpush
 @push('footer-script')
+<script src="{{ asset('/bower_components/admin-lte/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
+<script src="{{ asset('/bower_components/admin-lte/plugins/jquery-validation/additional-methods.min.js')}}"></script>
     <script type="text/javascript">
         $(function() {
             // Bootstrap DateTimePicker v4
@@ -182,9 +282,12 @@
             });
         });
 
-        $('body').on('click', '.delete_doc', function() {
+     $('body').on('click', '.delete_doc', function() {
             var pid = $(this).attr('delete-id');
             var id = $(this).attr('data-id');
+            var rivision_id=$(this).attr('data-rivision');
+             var isEdit=$(this).attr('data-edit');
+            
             swal.fire({
                 text: "Are you sure? Want to Remove This Details ",
                 showCancelButton: true,
@@ -196,7 +299,9 @@
                     url: "{{ url('deletedoc') }}",
                     data: {
                         rid: pid,
-                        id: id
+                        id: id,
+                        rivision_id: rivision_id,
+                        isEdit: isEdit
                     },
                     method: "POST",
                     success: function(response) {
@@ -321,12 +426,15 @@
         });
     });
 
-        
-        function updateFileName() {
-            var fileInput = document.getElementById('image');
-            var fileName = fileInput.files[0].name;
-            var fileLabel = fileInput.nextElementSibling;
-            fileLabel.innerText = fileName;
-        }
+     </script>   
+        <script>
+function updateFileName(input) {
+  if (input.files && input.files.length > 0) {
+    var fileName = input.files[0].name;
+    // Use Bootstrap's jQuery to update label text
+    $(input).next('.custom-file-label').html(fileName);
+  }
+}
+
     </script>
 @endpush

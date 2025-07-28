@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Filelist;
-use Session;
 use Carbon\Carbon;
 use App\Couchdb\Couchdb;
 use Illuminate\Http\Request;
@@ -15,6 +14,7 @@ use App\Quarter;
 use App\PayScale;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\District;
 use App\Taluka;
 
@@ -194,12 +194,23 @@ class ProfileController extends Controller
 
                     // Print the queries
                     //dd($queries);
+                    
                     if (!empty($request->get('basic_pay'))) {
                         Session::put('basic_pay', $request->get('basic_pay'));
                     }
 					if (isset($request->request_form) && $request->request_form == 'request_form') {
-                        Session::put('active_tab','tab2');
-						return redirect()->back()->with('active_tab','tab2')->with('isEdit',1);
+                        //dd($request->all());
+                        //dd("hello");
+                        //Session::put('active_tab','tab2');
+                       // dd(Session::get('active_tab'));
+						//  return redirect()->back()->with('active_tab', 'tab2')->with('isEdit', 1);
+                       return redirect()->to(
+                        \URL::action('QuartersController@requesthighercategory') .
+                        "?requestid=" . base64_encode($request->requestid) .
+                        "&rev=" . base64_encode($request->rev) .
+                        "&edit_type=" . base64_encode($request->edit_type) .
+                        "&active_tab=" . base64_encode('tab2')
+                    )->with('isEdit', 1);
 					} 
 					else if(isset($request->oldprofile) && $request->oldprofile == 1)
 					{

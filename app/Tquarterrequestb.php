@@ -200,6 +200,7 @@ class Tquarterrequestb extends Model
                 'prv_quarter_type' => $request->prv_quarter_type,
                 'hc_quarter_type' => $request->hc_quarter_type,
                 'hc_area' => $request->hc_area,
+                
                 'hc_blockno' => $request->hc_blockno,
                 'hc_unitno' => $request->hc_unitno,
                 'hc_details' => $request->hc_details,

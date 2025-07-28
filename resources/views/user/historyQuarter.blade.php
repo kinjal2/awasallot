@@ -207,7 +207,7 @@
                 render: function(data, type, row) {
                     // Only show the column if 'is_accepted' is 1
                     if (row.is_accepted == 'YES') {
-                        if (row.is_ddo_varified == 2) {
+                        if (row.is_ddo_varified == 2 || row.is_ddo_varified == 3) {
                             if (data == null || data == '') {
                                 return 'Having Issue';
                             } else {

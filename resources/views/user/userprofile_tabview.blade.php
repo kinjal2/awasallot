@@ -10,7 +10,11 @@
 
     @isset($isEdit)
       @if($isEdit == 1)
-         <input type="text" value="request_form" name="request_form" id="request_form">
+         <input type="hidden" value="request_form" name="request_form" id="request_form">
+         <input type="hidden" name="requestid" id="request_id" value="{{ $request_id }}">
+         <input type="hidden" name="rev" id="rev" value="{{ $rev }}">
+         <input type="hidden" name="type" id="type" value="{{ $type }}">
+         <input type="hidden" name="edit_type" id="edit_type" value="{{ $edit_type }}">
       @endif
     @endisset
 
@@ -50,8 +54,7 @@
                 <input type="text" value="{{isset($users->designation)?$users->designation:''}}" class="form-control" id="designation" name="designation" placeholder="Designation" readonly>
              </div>
           </div>
-          <div class="col-md-3 avatar-upload_block">
-
+        <div class="col-md-3 avatar-upload_block {{ (isset($isEdit) && $isEdit == 1) ? 'pt-5' : '' }}">
              <div class="avatar-upload">
                 <div class="avatar-edit">
                    <input type='file' id="image" name="image" accept=".png, .jpg, .jpeg" />
@@ -540,51 +543,6 @@
        } else {
           div.style.display = 'none';
        }
-    });
-
-
-
-    //code for physical disablity certificate 9-11-2024
-    $('.open-document-btn').on('click', function(e) {
-       e.preventDefault();
-       let docId = $(this).attr('data-id');
-       // let url = '/get-document-url'; // URL of the Laravel route to get the document URL
-
-       $.ajax({
-          url: "{{ url('get-document-url') }}",
-          type: 'POST',
-          data: {
-             doc_id: docId,
-             _token: '{{ csrf_token() }}' // Include CSRF token
-          },
-          success: function(response) {
-             if (response.status === 'success') {
-                // Open the document in a new tab
-                //window.open(response.document_url, '_blank');
-                const byteCharacters = atob(response.document_url);
-                const byteNumbers = new Uint8Array(byteCharacters.length);
-
-                for (let i = 0; i < byteCharacters.length; i++) {
-                   byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-
-                const blob = new Blob([byteNumbers], {
-                   type: response.contentType
-                });
-
-                // Create a URL for the Blob and open it in a new window
-                const blobUrl = URL.createObjectURL(blob);
-                window.open(blobUrl, '_blank');
-             } else {
-                console.error('Failed to fetch PDF:', data.error);
-             }
-
-
-          },
-          error: function(xhr) {
-             console.error(xhr.responseText);
-          }
-       });
     });
 
 
