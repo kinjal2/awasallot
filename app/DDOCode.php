@@ -28,7 +28,7 @@ class DDOCode extends Model implements AuthenticatableContract
         'password', // Ensure you have a password field if you're using authentication
         'remember_token', // Optional if you're using remember me functionality
         'ddo_office_email_id',
-        'officecode'
+        'officecode','dcode'
     ];
 
     // Define necessary methods for Authenticatable

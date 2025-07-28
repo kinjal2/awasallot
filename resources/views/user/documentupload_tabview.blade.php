@@ -4,7 +4,7 @@
         <!-- /.content-header -->
         <div class="col-md-12">
             <!-- general form elements -->
-             @if(count($document_list) > 0)
+             
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">Upload Document</h3>
@@ -74,7 +74,7 @@
                 </form>
                 
             </div>
-            @endif
+           
             <!-- /.card -->
             @if(isset($ddo_remarks_status))
                     @if($ddo_remarks_status['is_ddo_varified']==2)
@@ -159,13 +159,13 @@
                 </div>
 
             </div>
-            @if(count($document_list) > 0)
+          
                                 <table width="100%">
                                     <tr>
                                         <td> <button type="submit" class="btn btn-primary" id="submitFinalAnnex" name="submitFinalAnnex">Submit Document and Save Application</button></td>
                                     </tr>
                                 </table>
-                                @endif
+                               
             <!-- /.card -->
  </form>
         </div>

@@ -93,44 +93,38 @@
     @endpush
     @push('footer-script')
     <script type="text/javascript">
-    $('#remarkslist').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-
-            url: "{{ route('quarter.list.listremarks') }}",
-            type: 'POST', // Ensure the POST method is used
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            data: function(d) {
+         let selectedRemarks = new Set();
+   $('#remarkslist').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: {
+        url: "{{ route('quarter.list.listremarks') }}",
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        data: function(d) {
             d.r = $('#r').val();
             d.rv = $('#rv').val();
             d.type = $('#type').val();
-            d.remarks_selected = $('#remarks_selected').val(); // This should now work with .val()
+            d.remarks_selected = JSON.stringify({
+                remarks: Array.from(selectedRemarks).join(',')
+            }); // Send selected IDs back to server
         }
-        },
-        columns: [{
-                data: 'checkbox',
-                orderable: false,
-                searchable: false
-            }, //  Checkbox column
-            {
-                data: 'index',
-                name: 'index',
-                orderable: false,
-                searchable: false
-            },
-            {
-                data: 'description',
-                name: 'description'
-            },
+    },
+    columns: [
+        { data: 'checkbox', orderable: false, searchable: false },
+        { data: 'index', name: 'index', orderable: false, searchable: false },
+        { data: 'description', name: 'description' }
+    ],
+    drawCallback: function () {
+        restoreCheckboxes(); // Re-check selected items after page draw
+    }
+});
 
-        ]
-    });
     $(document).ready(function() {
 
-
+       
         // $('#remarkslist').DataTable();
 
         $('#save_new_remark').on('submit', function(e) {
@@ -203,19 +197,29 @@
             });
         });
     });
-
-    function SelectRemarks(obj) {
-      //alert(obj.id);
-        var remarks = "";
-        $("input[name='remarksArr[]']:checked").each(function() {
-          remarks += $(this).attr('id') + "," ;
-      });
-      remarks = remarks.replace(/,$/, ''); // Removes the last comma
-    //alert(remarks);
-        $('#remarks').val(remarks);
+  
+// Handle checkbox click
+function SelectRemarks(obj) {
+    const id = obj.id;
+    if (obj.checked) {
+        selectedRemarks.add(id);
+    } else {
+        selectedRemarks.delete(id);
     }
-    </script>
-   <script>
+
+    // Update hidden input for form
+    $('#remarks').val(Array.from(selectedRemarks).join(','));
+}
+// Restore checkboxes after each draw
+function restoreCheckboxes() {
+    $('.remarks-checkbox').each(function () {
+        const id = this.id;
+        if (selectedRemarks.has(id)) {
+            this.checked = true;
+        }
+    });
+}
+ 
 function validate() {
     const selectedRemarks = $("input[name='remarksArr[]']:checked").length;
 

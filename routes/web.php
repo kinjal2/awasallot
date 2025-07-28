@@ -66,7 +66,7 @@ Auth::routes(['verify' => true]);
 Route::get('/phone/verify', [PhoneVerificationController::class, 'show'])->name('phoneverification.notice');
 Route::post('/phone/verify', [PhoneVerificationController::class, 'verify'])->name('phoneverification.verify');
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/home', 'HomeController@index')->name('home');
+//Route::post('/home', 'HomeController@index')->name('home');
 // Dashboard Routes user 
 Route::middleware(['verifiedphone', 'verified', 'role:user', 'check.host', 'prevent_clickjacking', 'check.session', 'session.timeout'])->group(function () {
     Route::get('userdashboard', ['uses' => 'DashboardController@userdashboard', 'as' => 'user.dashboard.userdashboard']);
@@ -145,10 +145,17 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
     Route::post('admin-quarters-rejected-list', [QuartersController::class, 'admin_getRejectedQuarterList'])->name('request.rejectedquarter-list');
 
     // Other admin-specific routes
-    Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
-    Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
-    Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
-    Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
+    // Fixed routes FIRST
+        Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
+        Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
+
+        Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
+        Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
+
+        Route::get('ddo/edit/{id}', [DDOController::class, 'addNewDDO'])->name('ddo.edit');
+      
+
+
     Route::post('/reset/{field}', 'UserController@reset')->name('reset');
     Route::post('upadteremarks', ['as' => 'upadteremarks.data', 'uses' => 'ReportsController@upadteremarks']);
     //Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'UserController@updateUserDdoDetails']);
@@ -178,7 +185,7 @@ Route::prefix('reports')->group(function () {
     Route::get('waitinglist', ['as' => 'waiting.list', 'uses' => 'ReportsController@waitinglist']);
     Route::get('allotmentlist', ['as' => 'allotment.list', 'uses' => 'ReportsController@allotmentlist']);
     Route::get('vacantlist', ['as' => 'vacant.list', 'uses' => 'ReportsController@vacantlist']);
-    Route::get('quarteroccupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
+   // Route::get('quarteroccupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
 });
 
 // Quarters PDF generation

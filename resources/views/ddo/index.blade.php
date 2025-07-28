@@ -33,13 +33,13 @@
                 <div class="card-body">
                     <a class="btn btn-success mb-3" href="{{ route('ddo.addNewDDO') }}" id="createNewDDO"> Create New
                         DDO</a>
-                    @if (session('success'))
-                        <div id="success" class="alert  alert-light alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
+                    @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
                     @endif
 
                     <div class="table-responsive p-4">
