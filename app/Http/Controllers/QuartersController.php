@@ -2036,7 +2036,7 @@ class QuartersController extends Controller
                 $request= $requestModel->getFormattedRequestData($requestid, $rivision_id);
         }
         //$this->_viewContent['file_uploaded'] 
-       $query  = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name'])
+       $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name'])
             ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
             ->where('request_id', '=', $requestid)
             ->where('rivision_id', '=', $rivision_id)
@@ -3463,7 +3463,7 @@ class QuartersController extends Controller
         }
         if ($request->type == 'b') {
             //dd(Session::get('Uid'));
-        //    dd(($request->all()));
+           // dd(($request->all()));
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rev)
                 ->first();
             if ($downgrade_requestid != "") {
@@ -3713,18 +3713,9 @@ class QuartersController extends Controller
                     'remarks' => null
                 ];
 
-                //  dd($request->all());
-                //  dd($data);
-                 $existing = Tquarterrequestb::where('uid', $uid)
-                                ->where('requestid', $request->requestid)
-                                ->where('rivision_id', $rev)   
-                                ->first();
-                              //  dd($existing);
-                if(!$existing)
-                {
-                    $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($data);
-                }
-                
+                // dd($request->all());
+                // dd($data);
+                $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($data);
                 $old_rivision_id = (int) $rev - 1;
                 //dd($old_rivision_id);
                 $dt = ['is_ddo_varified' => 3];

@@ -1,8 +1,9 @@
 @extends(\Config::get('app.theme').'.master')
 @section('title', $page_title)
 @section('content')
-<style >
-.bg-light-pink {
+
+<style>
+  .bg-light-pink {
     background-color: #FFC0CB; /* Light pink */
 }
 
@@ -16,152 +17,120 @@ table.dataTable tfoot th {
     padding: 8px;
 }
 
+
+td.details-control {
+    background: url('{{ asset('images/details_open.png') }}') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('{{ asset('images/details_close.png') }}') no-repeat center center;
+}
 table.dataTable tfoot input {
     width: 100%;
     box-sizing: border-box;
     font-size: 12px;
     padding: 4px;
 }
+ 
+
 </style>
 
 <div class="content">
- <!-- Content Header (Page header) -->
-<div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Waiting List</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Waiting List</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
+ <div class="content-header">
+  <div class="container-fluid">
+   <div class="row mb-2">
+    <div class="col-sm-6"><h1 class="m-0 text-dark">Waiting List</h1></div>
+    <div class="col-sm-6">
+     <ol class="breadcrumb float-sm-right">
+      <li class="breadcrumb-item"><a href="#">Home</a></li>
+      <li class="breadcrumb-item active">Waiting List</li>
+     </ol>
     </div>
-    <!-- /.content-header -->
-    <div class="col-md-12">
-            <!-- general form elements -->
-            <div class="card card-head ">
-              <div class="card-header">
-                <h3 class="card-title">Waiting List</h3>
-
-
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-
-	<div class="card-body">
-
-
-  <div class="row">
-			<div class="col-4">
-				<div class="form-group">
-				<label for="quartertype">Quarter Type</label>
-        <x-select 
-          name="quartertype" 
-          :options="$quartertype" 
-          :selected="[]" 
-          id="quartertype" 
-          class="form-control select2" 
-          multiple="true" 
-      />
-
-	</div>
+   </div>
   </div>
-  <div class="col-4" style="padding-top: 30px;">
-				<div class="form-group" >
-				<label for="Reset"></label>
-        <input type="button" id="btnReset" class="btn btn-primary" value="Reset" />
-       	</div>
-  </div>
+ </div>
 
+ <div class="col-md-12">
+  <div class="card card-head">
+   <div class="card-header">
+    <h3 class="card-title">Waiting List</h3>
+   </div>
+   <div class="card-body">
 
+    <div class="row">
+     <div class="col-4">
+      <div class="form-group">
+       <label for="quartertype">Quarter Type</label>
+       <x-select 
+         name="quartertype" 
+         :options="$quartertype" 
+         :selected="[]" 
+         id="quartertype" 
+         class="form-control select2" 
+         multiple="true" 
+       />
+      </div>
+     </div>
+     <div class="col-4" style="padding-top: 30px;">
+      <div class="form-group">
+       <input type="button" id="btnReset" class="btn btn-primary" value="Reset" />
+      </div>
+     </div>
+    </div>
 
-
+    <div class="table-responsive p-4">
+     <table id="waitinglist" class="table table-bordered table-hover  dataTable" style="width:100%">
+      <thead>
+       <tr>
+        <th></th> <!-- details-control column -->
+        <th>R-WNo</th>
+        <th>WNO</th>
+        <th>Quarter Type</th>
+        <th>Name</th>
+        <th>Designation</th>
+        <th>Office</th>
+       </tr>
+      </thead>
+      <tfoot>
+       <tr>
+        <th></th>
+        <th>R-WNo</th>
+        <th>WNO</th>
+        <th>Quarter Type</th>
+        <th>Name</th>
+        <th>Designation</th>
+        <th>Office</th>
+       </tr>
+      </tfoot>
+      <tbody></tbody>
+     </table>
+    </div>
 
    </div>
-<div class="table-responsive p-4"  >
-
-			<table class="table table-bordered table-hover custom_table dataTable" id="waitinglist" >
-                  <thead>
-                    <tr>
-                    <th>R Waiting No.</th>
-                    <th>Waiting List No.</th>
-                    <th>Quarter Type</th>
-                    <th>Request Type</th>
-                    <th>Inward No</th>
-                    <th>Inward Date</th>
-                    <th>Name</th>
-                    <th>Designation</th>
-                    <th>Office</th>
-                    <th>Contact No</th>
-                    <th>Email Id</th>
-                    <th>GPF/CPF Number</th>
-                    <th>Retirment Date</th>
-                    <th>Native Address</th>
-                    <th>Action</th>
-                    <th>Remarks </th>
-                    <th>Office Email ID</th>
-                    <th>User Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-
-                  </tbody>
-                  <tfoot >
-                    <tr>
-                    <th >R Waiting No.</th>
-                    <th>Waiting List No.</th>
-                    <th>Quarter Type</th>
-                    <th>Request Type</th>
-                    <th>Inward No</th>
-                    <th>Inward Date</th>
-                    <th>Name</th>
-                    <th>Designation</th>
-                    <th>Office</th>
-                    <th>Contact No</th>
-                    <th>Email Id</th>
-                    <th>GPF/CPF Number</th>
-                    <th>Retirment Date</th>
-                    <th>Native Address</th>
-                    <th>Action</th>
-                    <th>Remarks </th>
-                    <th>Office Email ID</th>
-                    <th>User Remarks</th>
-                   
-                    </tr>
-                    </tfoot>
-                </table>
-		<!-- /.card-body -->
-		</div>
-	</div>
-
-            </div> </div>
-            <!-- /.card -->
-
+  </div>
+ </div>
+</div>
 <!-- Delete Product Modal -->
-<div class="modal" id="DocumentModal">
-    <div class="modal-dialog">
-        <div class="modal-content  pop_up_design">
-            <!-- Modal Header -->
+<!-- View Document Modal -->
+<div class="modal fade" id="DocumentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content pop_up_design">
             <div class="modal-header">
-                <h4 class="modal-title">View Document</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title">View Document</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <!-- Modal body -->
             <div class="modal-body">
                <div id='viewdata'></div>
             </div>
-            <!-- Modal footer -->
             <div class="modal-footer">
-            <button type="button" class="btn btn-danger">Close Modal</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close Modal</button>
             </div>
         </div>
     </div>
 </div>
+
 <!--add Remarks -->
 <div class="modal" id="remarks_modal" >
     <div class="modal-dialog">
@@ -199,85 +168,142 @@ table.dataTable tfoot input {
         </div>
     </div>
 </div>
-
-
 @endsection
-@push('page-ready-script')
 
-@endpush
 @push('footer-script')
+<script>
+function format(rowData) {
+    // This function returns the nested table HTML for the given rowData object
+    return `
+    <table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">
+        <tr>
+            <td>Request Type:</td>
+            <td>${rowData.tableof || ''}</td>
+        </tr>
+        <tr>
+            <td>Inward No:</td>
+            <td>${rowData.inward_no || ''}</td>
+        </tr>
+        <tr>
+            <td>Inward Date:</td>
+            <td>${rowData.inward_date || ''}</td>
+        </tr>
+        <tr>
+            <td>Contact No:</td>
+            <td>${rowData.contact_no || ''}</td>
+        </tr>
+        <tr>
+            <td>Email Id:</td>
+            <td>${rowData.email || ''}</td>
+        </tr>
+        <tr>
+            <td>GPF/CPF Number:</td>
+            <td>${rowData.gpfnumber || ''}</td>
+        </tr>
+        <tr>
+            <td>Retirement Date:</td>
+            <td>${rowData.date_of_retirement || ''}</td>
+        </tr>
+        <tr>
+            <td>Native Address:</td>
+            <td>${rowData.address || ''}</td>
+        </tr>
+        <tr>
+            <td>Action:</td>
+            <td>${rowData.action || ''}</td>
+        </tr>
+        <tr>
+            <td>Remarks:</td>
+            <td>${rowData.office_remarks || ''}</td>
+        </tr>
+        <tr>
+            <td>Office Email ID:</td>
+            <td>${rowData.office_email_id || ''}</td>
+        </tr>
+        <tr>
+            <td>User Remarks:</td>
+            <td>${rowData.withdraw_remarks || ''}</td>
+        </tr>
+    </table>
+    `;
+}
 
-<script type="text/javascript">
-    var visible_columns= false;
-    var hide_colunm = ["wno", "quartertype", "tableof","inward_no"];
-  //  console.log($.inArray( "designation", hide_colunm ));
- var table = $('#waitinglist').DataTable({
+$(document).ready(function() {
+  // Manual test for modal close
+$('#DocumentModal .btn-danger').on('click', function () {
+    // Blur the currently focused element
+    if (document.activeElement) document.activeElement.blur();
+
+    $('#DocumentModal').modal('hide');
+});
+$('#remarks_modal .btn-danger').on('click', function () {
+    // Blur the currently focused element
+    if (document.activeElement) document.activeElement.blur();
+
+    $('#remarks_modal').modal('hide');
+});
+    var table = $('#waitinglist').DataTable({
         processing: true,
         serverSide: true,
-     //    fixedHeader: true,
-      //  scrollY: '800px',    // Optional: vertical scroll height
-       // scrollCollapse: true,
-         // Show dropdown for number of entries per page
-    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-
         ajax: {
-          headers: {
+            headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-             },
-       url: "{{ route('waitinglist.data') }}",
-       type:"POST",
-    data: function (d) {
-                d.quartertype = $('#quartertype').val()
-
+            },
+            url: "{{ route('waitinglist.data') }}",
+            type: "POST",
+            data: function(d) {
+                d.quartertype = $('#quartertype').val();
             }
-  },
+        },
         columns: [
-          {data: 'r_wno', name: 'r_wno',sWidth:'2%'},
-            {data: 'wno', name: 'wno',sWidth:'2%'},
-            {data: 'quartertype',sWidth:'3%', name: 'quartertype' },
-            {data: 'tableof',sWidth:'3%', name: 'tableof'},
-            {data: 'inward_no', sWidth:'3%', name: 'inward_no'},
-            {data: 'inward_date',sWidth:'3%', name: 'inward_date'},
-            {data: 'name', name: 'name'},
-            {data: 'designation', name: 'designation'},
-            {data: 'office', name: 'office'},
-            {data: 'contact_no', name: 'contact_no'},
-            {data: 'email', name: 'email'},
-            {data: 'gpfnumber', name: 'gpfnumber'},
-            {data: 'date_of_retirement', name: 'date_of_retirement'},
-            {data: 'address', name: 'address'},
-            {data: 'action',sWidth:'3%', name: 'action', orderable: true, searchable: true},
-            {data: 'office_remarks', name: 'office_remarks'},
-            {data: 'office_email_id', name: 'office_email_id'},
-            {data: 'withdraw_remarks', name: 'withdraw_remarks'},
+            {
+                className: 'details-control',
+                orderable: false,
+                searchable: false,
+                data: null,
+                defaultContent: ''
+            },
+            { data: 'r_wno', name: 'r_wno' },
+            { data: 'wno', name: 'wno' },
+            { data: 'quartertype', name: 'quartertype' },
+            { data: 'name', name: 'name' },
+            { data: 'designation', name: 'designation' },
+            { data: 'office', name: 'office' }
         ],
-        
-         initComplete: function () {
-        this.api().columns().every(function () {
-            var column = this;
-            var input = $('<input type="text" placeholder="Search ' + $(column.header()).text() + '" style=" width:auto;" />')
-                .appendTo($(column.footer()).empty())
-                .on('keyup change clear', function () {
-                    if (column.search() !== this.value) {
-                        column.search(this.value).draw();
-                    }
-                });
-        });
-    }
+        order: [[1, 'asc']],
+        initComplete: function() {
+            this.api().columns().every(function() {
+                var column = this;
+                if (column.index() === 0) return; // skip details-control column
+                var input = $('<input type="text" placeholder="Search ' + $(column.header()).text() + '" style="width:100%;" />')
+                    .appendTo($(column.footer()).empty())
+                    .on('keyup change clear', function() {
+                        if (column.search() !== this.value) {
+                            column.search(this.value).draw();
+                        }
+                    });
+            });
+        }
     });
-   
-    $('#quartertype').on('change',function (e) {
 
-      table.ajax.reload();
+    // Add event listener for opening and closing details
+    $('#waitinglist tbody').on('click', 'td.details-control', function() {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
 
-     });
-     $('#btnReset').on('click',function (e)
-     {
-       $("#quartertype").val("").trigger("change");
-      });
-      $('body').on('click', '.getdocument', function()
-      {
-          var uid = $(this).attr('data-uid');
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+    $('body').on('click', '.getdocument', function()
+      { 
+           var uid = $(this).attr('data-uid');
           var type = $(this).attr('data-type');
           var rivision_id = $(this).attr('data-rivision_id');
           var requestid = $(this).attr('data-requestid');
@@ -288,22 +314,28 @@ table.dataTable tfoot input {
             success: function(result)
             {
               $("#viewdata").html(result);
-              $('#DocumentModal').show();
+             $('#DocumentModal').modal('show');
 
             }
           });
       });
-      $('body').on('click', '.btn', function()
-      {
-         $('#DocumentModal').hide();
-      });
-     function show_dialog_desig(u,w,q){ // alert("hi");alert(u);alert(w); alert(q);
+    // Quarter type filter change reload
+    $('#quartertype').on('change', function() {
+        table.ajax.reload();
+    });
+
+    // Reset button clears quartertype and reloads table
+    $('#btnReset').on('click', function() {
+        $('#quartertype').val(null).trigger('change');
+        table.ajax.reload();
+    });
+});
+  function show_dialog_desig(u,w,q){ // alert("hi");alert(u);alert(w); alert(q);
       $('#remarks_modal').modal('show');
 			$("#remarks_modal input[name=uid]").val(u);
 			$("#remarks_modal input[name=wno]").val(w);
 			$("#remarks_modal input[name=quartertype]").val(q);
 
 		}
-    </script>
-
+</script>
 @endpush
