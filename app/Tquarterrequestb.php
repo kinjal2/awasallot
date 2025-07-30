@@ -144,16 +144,11 @@ class Tquarterrequestb extends Model
                 'choice3',
                 'ddo_remarks',
                 'prv_area',
-                
-                'prv_quarter_type',
-                
-                'prv_blockno',
+                 'prv_quarter_type',
+                 'prv_blockno',
                 'prv_unitno',
                 'prv_details',
                 'prv_possession_date',
-               
-               
-               
                 
                 'is_hc',
                 'hc_quarter_type',
@@ -177,7 +172,8 @@ class Tquarterrequestb extends Model
                 'ddo_code',
                 'is_accepted',
                 'is_allotted',
-                'qaid'
+                'qaid',
+                'remarks'
 
             ])
             ->where('requestid', $requestid)
@@ -240,7 +236,8 @@ class Tquarterrequestb extends Model
                 'chioce1' => $request->chioce1,
                 'choice2' => $request->choice2,
                 'choice3' => $request->choice3,
-                'ddo_remarks' => $request->ddo_remarks
+                'ddo_remarks' => $request->ddo_remarks,
+                'remarks' => $request->remarks
             ];
         }
 

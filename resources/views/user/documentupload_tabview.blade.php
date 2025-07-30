@@ -94,7 +94,6 @@
                 
             </div>
            
-           
             <!-- /.card -->
             @if(isset($ddo_remarks_status))
                     @if($ddo_remarks_status['is_ddo_varified']==2)

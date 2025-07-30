@@ -349,36 +349,34 @@
     </div>
     <!-- /.card-body -->
 </div>
+<?php if (!empty($remarks) && count($remarks) > 0): ?>
+<div class="card card-danger mt-3">
+    <div class="card-header">
+        <strong>Remarks</strong>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Sr. No.</th>
+                    <th scope="col">Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $co = 1; ?>
+                <?php foreach($remarks as $rem): ?>
+                <tr>
+                    <td><?php echo $co++; ?></td>
+                    <td><?php echo htmlspecialchars($rem->description); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
 
-            <!-- /.card -->
-            <div class="card card-danger">
-              <div class="card-header">
-                <h3 class="card-title">View old version(s)1</h3>
-              </div>
-              <div class="card-body">
-              <div class="row">
-           <div class="col-12">
-           <div class="form-group">
-              @foreach($quarterrequest1 as $request)
-               <label for="Name"> </label>
            
-               <a href="{{ url('/download/'.$request->doc_id)  }}" ><img src="{{ URL::asset('images/archive.png') }}" class="export-icon" /> </i></a>
-              @if($request->rivision_id == 0)
-              {{ "Application" }}
-              @else
-                {{ "Rivision ".$request->rivision_id }}
-                @endif   
-
-                             
-             @endforeach  
-                   </div> 
-                   </div>
-              </div>
-
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
             
         </div>
 
