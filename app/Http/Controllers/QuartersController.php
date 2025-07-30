@@ -280,6 +280,8 @@ class QuartersController extends Controller
                             // $rivision_id += 1;
                             $new_rivision_id = 0;
                         }
+                        // dd($old_rivision_id);
+                        // dd($new_rivision_id);
                         if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev == null) {
                             $request_id = base64_decode($_REQUEST['requestid']);
                             $inward_no = '';
@@ -307,93 +309,115 @@ class QuartersController extends Controller
                             //     $new->rivision_id = $new_rivision_id; // your new revision ID
                             //     $new->inward_no = $inward_no;
                             //     $new->save();
-
-
+                            
+                            // if($_REQUEST['active_tab']=='tab3' && $compare_rev==null)
+                            // {    
                             $existing = Tquarterrequestb::where('uid', $uid)
+                                ->where('requestid', $request_id)
+                                ->where('rivision_id', $old_rivision_id)
+                            
+                                ->first();
+                            // }
+                            // else
+                            // {
+                                // $existing = Tquarterrequestb::where('uid', $uid)
+                                // ->where('requestid', $request_id)
+                                // ->where('rivision_id', $new_rivision_id)
+                                // ->first();
+                            // }
+
+                            // dd($existing,$old_rivision_id,$new_rivision_id);
+                            if ($existing) 
+                            {   
+                                 $new_rev_existing = Tquarterrequestb::where('uid', $uid)
                                 ->where('requestid', $request_id)
                                 ->where('rivision_id', $new_rivision_id)
                                 ->first();
-                           // dd($existing,$old_rivision_id,$new_rivision_id);
-                            if ($existing) {
-                                $dataToCopy = $existing->toArray(); // convert model to array
-                                unset($dataToCopy['id']); // remove primary key to avoid conflict
+                                // dd($new_rev_existing);
+                                if(!$new_rev_existing) 
+                                {
+                                    $dataToCopy = $existing->toArray(); // convert model to array
+                                    unset($dataToCopy['id']); // remove primary key to avoid conflict
 
-                                // override values for new revision
-                                $dataToCopy['requestid'] = $request_id;
-                                $dataToCopy['rivision_id'] = $new_rivision_id;
-                               
-                              //  dd($dataToCopy);
-                                Tquarterrequestb::updateOrCreate(
-                                    [
-                                        'requestid' => $request_id,
-                                        'rivision_id' => $new_rivision_id,
-                                        'uid' => $uid,
-                                        
-                                    ],
-                                    $dataToCopy
-                                );
+                                    // override values for new revision
+                                    $dataToCopy['requestid'] = $request_id;
+                                    $dataToCopy['rivision_id'] = $new_rivision_id;
+                                    $dataToCopy['inward_no']=$inward_no;
+                                    $dataToCopy['inward_date']=now();
+                                    $dataToCopy['ddo_remarks']= null;
+                                //  dd($dataToCopy);
+                                    Tquarterrequestb::updateOrCreate(
+                                        [
+                                            'requestid' => $request_id,
+                                            'rivision_id' => $new_rivision_id,
+                                            'uid' => $uid,
+                                            
+                                        ],
+                                        $dataToCopy
+                                    );
 
-                                // dd($edit_type);
-                                if ($edit_type == 'ddo') {
-                                    //dd("Test");
-                                    // $rev = $_REQUEST['rev'];
-                                    // $edit_type = $_REQUEST['edit_type'];
-                                    $dt = ['is_ddo_varified' => 3];
-                                    $files = Filelist::where('uid', $uid)
-                                        ->where('performa', 'b')
-                                        ->where('rivision_id', $rev)
-                                        ->when($edit_type === 'ddo', function ($query) {
-                                            return $query->where('is_file_ddo_verified', 1);
-                                        })
-                                        ->when($edit_type === 'admin', function ($query) {
-                                            return $query->where('is_file_admin_verified', 1);
-                                        })
-                                        ->get();
-                                    //dd($files);
-                                    try {
-                                        foreach ($files as $file) {
-                                            // Create new record with updated values
-                                            // DB::table('master.file_list')->insert([
-                                            //     'uid'                    => $file->uid,
-                                            //     'file_name'             => $file->file_name,
-                                            //     'rev_id'                => $file->rev_id,
-                                            //     'mimetype'              => $file->mimetype,
-                                            //     'doc_id'                => $file->doc_id,
-                                            //     'performa'              => $file->performa,
-                                            //     'document_id'           => $file->document_id,
-                                            //     'rivision_id'           => $rev + 1, // increment revision
-                                            //     'bk_doc_id'             => $file->bk_doc_id,
-                                            //     'created_at'            => Carbon::now(),
-                                            //     'updated_at'            => Carbon::now(),
-                                            //     'request_id'            => $file->request_id,
-                                            //     'is_file_ddo_verified'  => 0,
-                                            //     'is_file_admin_verified' => 0,
-                                            //     'is_correct'            => $file->is_correct ?? 0,
-                                            // ]);
-                                            FileList::updateOrCreate(
-                                                [
-                                                    'uid' => $file->uid,
-                                                    'doc_id' => $file->doc_id,
-                                                    'request_id' => $file->request_id,
-                                                    'rivision_id' => $rev + 1, // unique keys
-                                                ],
-                                                [
-                                                    'file_name' => $file->file_name,
-                                                    'rev_id' => $file->rev_id,
-                                                    'mimetype' => $file->mimetype,
-                                                    'performa' => $file->performa,
-                                                    'document_id' => $file->document_id,
-                                                    'bk_doc_id' => $file->bk_doc_id,
-                                                    'is_file_ddo_verified' => 0,
-                                                    'is_file_admin_verified' => 0,
-                                                    'is_correct' => $file->is_correct ?? 0,
-                                                    'updated_at' => now(),
-                                                    'created_at' => now(), // optional if you're manually handling timestamps
-                                                ]
-                                            );
+                                    // dd($edit_type);
+                                    if ($edit_type == 'ddo') {
+                                        //dd("Test");
+                                        // $rev = $_REQUEST['rev'];
+                                        // $edit_type = $_REQUEST['edit_type'];
+                                        $dt = ['is_ddo_varified' => 3];
+                                        $files = Filelist::where('uid', $uid)
+                                            ->where('performa', 'b')
+                                            ->where('rivision_id', $rev)
+                                            ->when($edit_type === 'ddo', function ($query) {
+                                                return $query->where('is_file_ddo_verified', 1);
+                                            })
+                                            ->when($edit_type === 'admin', function ($query) {
+                                                return $query->where('is_file_admin_verified', 1);
+                                            })
+                                            ->get();
+                                        //dd($files);
+                                        try {
+                                            foreach ($files as $file) {
+                                                // Create new record with updated values
+                                                // DB::table('master.file_list')->insert([
+                                                //     'uid'                    => $file->uid,
+                                                //     'file_name'             => $file->file_name,
+                                                //     'rev_id'                => $file->rev_id,
+                                                //     'mimetype'              => $file->mimetype,
+                                                //     'doc_id'                => $file->doc_id,
+                                                //     'performa'              => $file->performa,
+                                                //     'document_id'           => $file->document_id,
+                                                //     'rivision_id'           => $rev + 1, // increment revision
+                                                //     'bk_doc_id'             => $file->bk_doc_id,
+                                                //     'created_at'            => Carbon::now(),
+                                                //     'updated_at'            => Carbon::now(),
+                                                //     'request_id'            => $file->request_id,
+                                                //     'is_file_ddo_verified'  => 0,
+                                                //     'is_file_admin_verified' => 0,
+                                                //     'is_correct'            => $file->is_correct ?? 0,
+                                                // ]);
+                                                FileList::updateOrCreate(
+                                                    [
+                                                        'uid' => $file->uid,
+                                                        'doc_id' => $file->doc_id,
+                                                        'request_id' => $file->request_id,
+                                                        'rivision_id' => $rev + 1, // unique keys
+                                                    ],
+                                                    [
+                                                        'file_name' => $file->file_name,
+                                                        'rev_id' => $file->rev_id,
+                                                        'mimetype' => $file->mimetype,
+                                                        'performa' => $file->performa,
+                                                        'document_id' => $file->document_id,
+                                                        'bk_doc_id' => $file->bk_doc_id,
+                                                        'is_file_ddo_verified' => 0,
+                                                        'is_file_admin_verified' => 0,
+                                                        'is_correct' => $file->is_correct ?? 0,
+                                                        'updated_at' => now(),
+                                                        'created_at' => now(), // optional if you're manually handling timestamps
+                                                    ]
+                                                );
+                                            }
+                                        } catch (Exception $e) {
+                                            dd($e->getMessage());
                                         }
-                                    } catch (Exception $e) {
-                                        dd($e->getMessage());
                                     }
                                 }
                             }
@@ -3805,7 +3829,7 @@ class QuartersController extends Controller
         }
         if ($request->type == 'b') {
             //dd(Session::get('Uid'));
-           // dd(($request->all()));
+        //    dd(($request->all()));
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rev)
                 ->first();
             if ($downgrade_requestid != "") {
@@ -4069,9 +4093,18 @@ class QuartersController extends Controller
                     'remarks' => null
                 ];
 
-                // dd($request->all());
-                // dd($data);
-                $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($data);
+                //  dd($request->all());
+                //  dd($data);
+                 $existing = Tquarterrequestb::where('uid', $uid)
+                                ->where('requestid', $request->requestid)
+                                ->where('rivision_id', $rev)   
+                                ->first();
+                              //  dd($existing);
+                if(!$existing)
+                {
+                    $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($data);
+                }
+                
                 $old_rivision_id = (int) $rev - 1;
                 //dd($old_rivision_id);
                 $dt = ['is_ddo_varified' => 3];
@@ -4106,7 +4139,7 @@ class QuartersController extends Controller
                     $respdgr = Tquarterrequestb::where('requestid', $downgrade_requestid)->update($data);
                 }
 
-                if ($resp) {
+                if ($existing || ($resp && $resp > 0)) {
                     return redirect()->route('user.quarter.history')->with('smsg', 'Request Submitted Successfully');
                 } else {
                     $errorMessage = 'Please attach all requested documents then submit your request.';

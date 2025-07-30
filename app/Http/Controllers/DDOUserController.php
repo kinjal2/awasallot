@@ -803,7 +803,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     ->where('a.cardex_no',$cardexNo)
     ->where('d.officecode', $officeCode)// Filter by office_code
     ->where('is_accepted', '=', 1)
-    ->where('is_ddo_varified',2)
+    ->whereIn('is_ddo_varified',[2,3])
     ->orderBy('a.inward_date', 'asc') ; //12-12-2024   //filter by is_accepted
 
 
@@ -844,7 +844,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
     ->where('c.cardex_no',$cardexNo)
     ->where('d.officecode', $officeCode)// Filter by office_code
     ->where('is_accepted', '=', 1)//filter by is_accepted
-    ->where('is_ddo_varified',2)
+    ->whereIn('is_ddo_varified',[2,3])
     ->orderBy('c.inward_date', 'asc') ;   //12-12-2024
 
 $union = DB::table('master.t_quarter_request_b AS b')
@@ -882,7 +882,7 @@ $union = DB::table('master.t_quarter_request_b AS b')
     ->where('b.cardex_no',$cardexNo)
     ->where('d.officecode', $officeCode) // Filter by office_code
     ->where('is_accepted', '=', 1)  //filter by is_accepted
-    ->where('is_ddo_varified',2) //12-12-2024
+    ->whereIn('is_ddo_varified',[2,3])
     ->orderBy('b.inward_date', 'asc') // 
     ->union($first)
     ->union($second);
