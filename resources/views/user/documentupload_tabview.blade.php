@@ -20,7 +20,7 @@
         <!-- /.content-header -->
         <div class="col-md-12">
             <!-- general form elements -->
-             
+             @if(count($document_list) > 0)
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">Upload Document</h3>
@@ -93,6 +93,7 @@
                 </form>
                 
             </div>
+           
            
             <!-- /.card -->
             @if(isset($ddo_remarks_status))
