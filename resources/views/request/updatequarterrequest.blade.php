@@ -512,7 +512,7 @@
                                     @foreach($quarterrequest1 as $request)
                                     <label for="Name"></label>
                                     @php
-                                    $url = url('/viewapplication/'.(base64_encode($request->requestid)).'/'.(base64_encode($request->rivision_id)).'/'.(base64_encode($quarterrequest['quartertype'])));
+                                    $url = url('/viewapplication/'.(base64_encode($request->requestid)).'/'.(base64_encode($request->rivision_id)).'/'.(base64_encode('a')));
                                     @endphp
                                     <a href="{{ $url }}">
                                         <img src="{{ URL::asset('images/archive.png') }}" class="export-icon" />

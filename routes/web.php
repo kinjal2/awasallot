@@ -160,6 +160,7 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
     Route::post('upadteremarks', ['as' => 'upadteremarks.data', 'uses' => 'ReportsController@upadteremarks']);
     //Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'UserController@updateUserDdoDetails']);
     Route::post('updateuserprofile', ['as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
+    Route::get('/viewapplication/{request_id}/{revision_id}/{performa}', [ 'as' => 'quarter.list.viewapplication', 'uses' => 'QuartersController@viewApplication']);
 });
 
 
