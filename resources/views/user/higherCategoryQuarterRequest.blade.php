@@ -54,7 +54,7 @@
                 </button>
             </li>
             @endif 
-            
+            @if($document_tab > 0)
             <li class="nav-item" role="presentation">
                 <button class="nav-link  {{ $active_tab == 'tab3' ? 'active' : '' }}"
                         id="upload-tab"
@@ -67,6 +67,8 @@
                Document Attachment
                 </button>
             </li>
+            @endif
+            
             
         </ul>
 
@@ -87,7 +89,7 @@
             </div>
             @endif
            
-          
+           
             <div class="tab-pane fade  show {{ $active_tab == 'tab3' ? 'show active' : ''  }}"
                  id="upload"
                  role="tabpanel"
@@ -95,7 +97,7 @@
                 @include('user.documentupload_tabview')
                 
             </div>
-        
+           
         </div>
     @else
         {{-- If not edit mode, just show the Request Form directly --}}

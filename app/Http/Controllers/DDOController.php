@@ -56,9 +56,17 @@ class DDOController extends Controller
         $this->_viewContent['ddo'] = $ddo;
     } else {
         // Generate random code only for new DDOs
-        $random_number = rand(100000, 999999);
-        $random_alpha = chr(rand(65, 90));
-        $this->_viewContent['ddo_code'] = 'OTH' . $random_number . $random_alpha;
+        // $random_number = rand(100000, 999999);
+        // $random_alpha = chr(rand(65, 90));
+        // $this->_viewContent['ddo_code'] = 'OTH' . $random_number . $random_alpha;
+
+        do {
+            $random_number = rand(100000, 999999);
+            $random_alpha = chr(rand(65, 90));
+            $ddo_code = 'OTH' . $random_number . $random_alpha;
+        } while (DDOCode::where('ddo_reg_no', $ddo_code)->exists());
+        $this->_viewContent['ddo_code'] = $ddo_code;
+
     }
 
     return view('ddo.addNewDDO', $this->_viewContent);
