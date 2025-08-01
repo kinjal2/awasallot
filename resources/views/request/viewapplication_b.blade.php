@@ -1,6 +1,16 @@
-@extends(\Config::get('app.theme') . '.master')
+@extends(\Config::get('app.theme').'.master')
 @section('title', $page_title)
 @section('content')
+@if(isset($quarterrequest->usermaster) && $quarterrequest->usermaster)
+    @php
+        $usermasterData = $quarterrequest->usermaster;
+    @endphp
+@else
+    @php
+        $usermasterData = null;
+    @endphp
+   
+@endif
 <style>
     .user_details_block .user_details_view {
         width: 100%;
@@ -34,35 +44,35 @@
         top: 25%;
     }
 </style>
-
 <div class="content">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Update Quarter details</h1>
-                </div><!-- /.col -->
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Higher Category Quarter Request </li>
-                    </ol>
-                </div><!-- /.col -->
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
+ <!-- Content Header (Page header) -->
+<div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Update Quarter details</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Quarter Request (Normal)</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
     </div>
     <div class="container-fluid">
         <div class="row">
-            <!-- left column -->
-            <div class="col-md-8">
-                <!-- general form elements -->
-                <div class="card">
-                    <div class="card-header card-new_head text-white">
-                        <h3 class="card-title ">Employee Details </h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="">
+          <!-- left column -->
+          <div class="col-md-7">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                    <h3 class="card-title ">Employee Details - Rivision Id - {{ $quarterrequest['rivision_id'] }}</h3>
+              </div>
+              <!-- /.card-header -->
+             <div class="card-body">
+                <div class="">
                             <div class="">
                                 <div class="widget-signups">
                                     <div class=" usr_hd">
@@ -296,207 +306,100 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
 
-                </div>
+                            <!-- --------------------------------------- -->
+
+
+                        </div>  
             </div>
+			</div>
+			</div>
             <!-- /.card -->
-            <div class="col-md-4">
-                <!-- Form Element sizes -->
-                <div class="card card-success">
-                    <form method="POST" name="ddo_submit_document_b" id="ddo_submit_document_b" action="{{route('ddo.editquarter.b.submitdocument')}}">
-                        @csrf
-                        <!-- /.card -->
-                        <div class="card-success">
-                            <div class="card-header card-new_head text-white">
-                                <h3 class="card-title">Attachments</h3>
-                            </div>
-                            <div class="card-body p-2">
-                                <table class="table table-bordered table-hover table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Document Name</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $issue = 0; ?>
-                                        @foreach ($file_uploaded as $file)
-                                        <tr>
-                                            <td>{{ $file->document_name }}</td>
-                                            <td>
-                                                <a href="{{ url('/download_file/' . $file->doc_id) }}" target="_blank">
-                                                    <img src="{{ URL::asset('images/pdf.png') }}" class="export-icon" style="width: 30px;" />
-                                                </a>
-                                            </td>
-                                            <td>
+            <div class="col-md-5">
+            <!-- Form Element sizes -->
+           
+            <!-- /.card -->
+<div class="card card-success">
+    <div class="card-header">
+        <h3 class="card-title">Attachments</h3>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Document Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($file_uploaded as $file)
+                <tr>
+                    <td>{{ $file->document_name }}</td>
+                    <td>
+                        <a href="{{ url('/download/'.$file->doc_id) }}" target="_blank">
+                            <img src="{{ URL::asset('images/pdf.png') }}" class="export-icon" />
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<?php if (!empty($remarks) && count($remarks) > 0): ?>
+<div class="card card-danger mt-3">
+    <div class="card-header">
+        <strong>Remarks</strong>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover table-striped mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Sr. No.</th>
+                    <th scope="col">Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $co = 1; ?>
+                <?php foreach($remarks as $rem): ?>
+                <tr>
+                    <td><?php echo $co++; ?></td>
+                    <td><?php echo htmlspecialchars($rem->description); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
 
-                                                <input type="checkbox" class="file-checkbox" id="files[{{ $file->doc_id }}]" name="files[{{ $file->doc_id }}]" {{ $file->is_file_admin_verified == 1 ? 'checked' : $issue=1 }} />
-                                            </td>
-
-                                        </tr>
-                                        @endforeach
-                                        <tr>
-                                            <td>Is Application Form Correct?</td>
-                                            <td></td>
-                                            <td>
-
-                                                <input class="file-checkbox" type="checkbox" id="app_ddo_checkbox" name="app_ddo_checkbox" value="1">
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="col-12 mt-20 pt-4">
-                                    <div class="form-group">
-
-                                    </div>
-                                    <div id="message-container_submitdoc" style="margin-top: 10px;"></div>
-                                </div>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-
-
-
-
-                        <!-- /.card -->
-
-
-
-                </div>
-                <div class="card card-success">
-                    <div class="card-header card-new_head text-white">
-                        <h3 class="card-title">Review</h3>
-                    </div>
-                    <div class="card-body p-2">
-
-                        <div class="row">
-                            <div class="col-12">
+           
+            
+        </div>
 
 
 
-                                <div class="col-12" id="remarks">
+@endsection
+@push('page-ready-script')
 
-
-                                    <div class="form-group">
-                                        <label for="Name">Have Issue?</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="Name">Add Remarks</label>
-                                        <input type="text" name="ddo_remarks" id="ddo_remarks" class="form-control" value="{{ isset($quarterrequest['ddo_remarks']) ? $quarterrequest['ddo_remarks'] : '' }}">
-                                    </div>
-                                    <div class="form-group">
-
-                                        <div id="remark-message" class="mt-2"></div>
-                                        @include(Config::get('app.theme').'.template.severside_message')
-                                        @include(Config::get('app.theme').'.template.validation_errors')
-                                        <button type="submit" class="btn btn-primary" id="submit_issue"
-                                            name="submit_issue" value="submit_issue" onclick="return validate();">Submit Review & Next</button>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 ">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary" id="submit_doc"
-                                            name="submit_doc" style="display: none;">Verified & Next</button>
-                                    </div>
-                                    <div>
-                                        <input type="hidden" name="app_ddo" id="app_ddo" value="1">
-                                        <input type="hidden" name="reqid" id="reqid"
-                                            value="{{ isset($requestid) ? base64_encode($requestid) : '' }}" />
-                                        <input type="hidden" name="rvid" id="rvid"
-                                            value="{{ isset($quarterrequest['rivision_id']) ? base64_encode($quarterrequest['rivision_id']) : '' }}" />
-                                        <input type="hidden" name="uid" id="uid"
-                                            value="{{ base64_encode($quarterrequest['uid']) }}">
-                                        <input type="hidden" name="qttype" id="qttype"
-                                            value="{{ isset($quarterrequest['quartertype']) ? base64_encode($quarterrequest['quartertype']) : '' }}" />
-
-
-                                        @if (Session::has('message'))
-                                        <div id="message" style="margin-top: 10px; color: green;">
-                                            {{ Session::get('message') }}
-                                        </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                            </div>
-                            </form>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                </div>
-
-
-
-                @endsection
-                @push('page-ready-script')
-                @endpush
-                @push('footer-script')
-                <script type="text/javascript">
-                    function validate() {
-                        //   alert("hello");
-                        //isChecked = $('#ddo_app_status').is(':checked');
-                        remarks = $('#ddo_remarks').val()?.trim();
-                        // alert(remarks);
-                        if (remarks === '' || remarks === null || remarks === '{"remarks":null}') {
-                            $('#remark-message').html(`
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    Please add remarks .
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            `);
-
-                            setTimeout(() => {
-                                $('#remark-message .alert').alert('close');
-                            }, 3000);
-                            return false; // prevent form submission
-                        }
-                        return true;
-                    }
-                </script>
-                <script>
-                    document.querySelectorAll('.file-checkbox').forEach(function(checkbox) {
-                        checkbox.addEventListener('change', function() {
-
-                            toggleSubmitButton();
-                        });
-                    });
-
-
-                    function toggleSubmitButton() {
-                        //alert("Toggle Submit button");
-                        // Get all checkboxes
-                        const checkboxes = document.querySelectorAll('.file-checkbox');
-
-                        // Check if all checkboxes are checked
-                        const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
-
-                        // Find the submit button
-                        const submitButton = document.getElementById('submit_doc');
-                        var remakrs = document.getElementById('remarks');
-
-                        // Show the submit button if all checkboxes are checked
-                        if (allChecked) {
-                            submitButton.style.display = 'inline'; // Show button
-                            remakrs.style.display = 'none';
-                        } else {
-
-                            submitButton.style.display = 'none'; // Hide button
-                            remakrs.style.display = 'inline';
-                        }
-                    }
-                    $(document).ready(function() {
-                        toggleSubmitButton(); // Call the toggleSubmitButton function
-                    });
-                </script>
-            <script>
-                document.getElementById('app_ddo_checkbox').addEventListener('change', function() {
-                    // When checked, set value to 0; when unchecked, set to 1
-                    document.getElementById('app_ddo').value = this.checked ? '0' : '1';
-                });
-            </script>
-                @endpush
+@endpush
+@push('footer-script')
+<script type="text/javascript">
+$('#status').change(function() { 
+    if (this.value == 1) {
+        $('.yesno_status').show();
+    }
+    else if (this.value == 0) {
+         $('.yesno_status').hide();
+    }
+});
+$("#front_annexurea").validate({
+		    rules : {
+                status		:	"required",
+                dg_allotment: "required",
+			
+		    }
+		});
+</script>
+@endpush

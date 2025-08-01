@@ -1695,6 +1695,7 @@ class QuartersController extends Controller
     }
     public function viewApplication(request $request, $requestid, $rivision_id, $performa)
     {
+       
         if ($performa == 'a') {
             $req_uid = Tquarterrequesta::where('requestid', $requestid)
                 ->select('uid')
@@ -1923,6 +1924,7 @@ class QuartersController extends Controller
         $this->_viewContent['remarks'] = $remarks;
         $this->_viewContent['quarterrequest'] = (isset($request) && isset($request)) ? $request : '';
         $this->_viewContent['page_title'] = " Edit Quarter Details";
+        
         return view('request/viewapplication', $this->_viewContent);
     }
 
