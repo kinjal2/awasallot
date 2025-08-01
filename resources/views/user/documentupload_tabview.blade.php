@@ -165,7 +165,7 @@
                                             @if($rev==0)
                                              <td>
                                                 <a href="javascript:;" class="btn btn btn-danger delete_doc"
-                                                    delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}" data-rivision="{{ $a->rivision_id }}"  data-edit="{{  $isEdit ?? 0  }}"  ><i
+                                                    delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}" data-rivision="{{ $a->rev_id }}"  data-edit="{{  $isEdit ?? 0  }}"  ><i
                                                         class="fa fa-trash" aria-hidden="true"></i></a>
 
                                             </td>

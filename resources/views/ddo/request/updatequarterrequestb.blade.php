@@ -59,7 +59,7 @@
                 <!-- general form elements -->
                 <div class="card">
                     <div class="card-header card-new_head text-white">
-                        <h3 class="card-title ">Employee Details</h3>
+                        <h3 class="card-title ">Employee Details </h3>
                     </div>
                     <div class="card-body">
                         <div class="">

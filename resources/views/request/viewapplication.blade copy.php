@@ -11,39 +11,7 @@
     @endphp
    
 @endif
-<style>
-    .user_details_block .user_details_view {
-        width: 100%;
-    }
 
-    .user_details_view1:nth-child(odd) {
-        background: #ebf2f1 !important;
-        padding: 10px 0;
-        border: 1px solid #e3e2e2;
-        /* border-bottom: none; */
-        width: 100%;
-    }
-
-    .user_details_view1:nth-child(even) {
-        background: rgb(255, 255, 255) !important;
-        padding: 10px 0;
-        border: 1px solid #e3e2e2;
-        /* border-bottom: none; */
-        width: 100%;
-    }
-
-    .user_details_view1 h6 {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .sub_div {
-        position: absolute;
-        right: 2%;
-        top: 25%;
-    }
-</style>
 <div class="content">
  <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -68,7 +36,7 @@
             <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
-                    <h3 class="card-title ">Employee Details - Rivision Id - {{ $quarterrequest['rivision_id'] }}</h3>
+                <h3 class="card-title">New Quarter Request Rivision : 1</h3>
               </div>
               <!-- /.card-header -->
              <div class="card-body">
@@ -320,14 +288,9 @@
                 
                 </td>
             </Tr>
-            <tr>
-                <td>12</td>
-                <td colspan="3">આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.) <br>
-                Choice 1 : {{ getAreaDetailsByCode($choice1) }} <br> Choice 2 : {{ getAreaDetailsByCode($choice2) }} <br> Choice 3 : {{ getAreaDetailsByCode($choice3) }}
-                </td>
-            </tr>
+            
             <Tr>
-                <th>13</th>
+                <th>12</th>
                 <th colspan="3">જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે?</th>
                 <td colspan="2">
                 {{  isset($quarterrequest->downgrade_allotment)?$quarterrequest->downgrade_allotment:'N/A' }} 
@@ -336,12 +299,12 @@
                 
             </Tr>
             <Tr>
-                <th>14</th>
+                <th>13</th>
                 <th colspan="3">સરકારશ્રી મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર પાડે તેનું પાલન કરવા હું સંમત છુ?</th>
                 <td colspan="2">હા</td>
             </Tr>
             <Tr>
-                <th>15</th>
+                <th>14</th>
                 <th colspan= "3">મારી બદલી થાય તો તે અંગે ની જાણ તુરત કરીશ</th>
                 <td colspan="2">હા</td>
             </Tr>
