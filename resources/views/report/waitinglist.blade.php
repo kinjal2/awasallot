@@ -85,10 +85,15 @@ table.dataTable tfoot input {
         <th></th> <!-- details-control column -->
         <th>R-WNo</th>
         <th>WNO</th>
-        <th>Quarter Type</th>
+        <th>QType</th>
         <th>Name</th>
         <th>Designation</th>
         <th>Office</th>
+        <th>Inward Date</th>
+        <th>Retirement Date</th>
+        <th>Remarks</th>
+        
+        
        </tr>
       </thead>
       <tfoot>
@@ -96,10 +101,13 @@ table.dataTable tfoot input {
         <th></th>
         <th>R-WNo</th>
         <th>WNO</th>
-        <th>Quarter Type</th>
+        <th>QType</th>
         <th>Name</th>
         <th>Designation</th>
         <th>Office</th>
+        <th>Inward Date</th>
+        <th>Retirement Date</th>
+        <th>Remarks</th>
        </tr>
       </tfoot>
       <tbody></tbody>
@@ -180,13 +188,10 @@ function format(rowData) {
             <td>Request Type:</td>
             <td>${rowData.tableof || ''}</td>
         </tr>
+        
         <tr>
             <td>Inward No:</td>
             <td>${rowData.inward_no || ''}</td>
-        </tr>
-        <tr>
-            <td>Inward Date:</td>
-            <td>${rowData.inward_date || ''}</td>
         </tr>
         <tr>
             <td>Contact No:</td>
@@ -212,10 +217,7 @@ function format(rowData) {
             <td>Action:</td>
             <td>${rowData.action || ''}</td>
         </tr>
-        <tr>
-            <td>Remarks:</td>
-            <td>${rowData.office_remarks || ''}</td>
-        </tr>
+        
         <tr>
             <td>Office Email ID:</td>
             <td>${rowData.office_email_id || ''}</td>
@@ -263,12 +265,15 @@ $('#remarks_modal .btn-danger').on('click', function () {
                 data: null,
                 defaultContent: ''
             },
-            { data: 'r_wno', name: 'r_wno' },
-            { data: 'wno', name: 'wno' },
-            { data: 'quartertype', name: 'quartertype' },
+           { data: 'r_wno', name: 'r_wno', width: '1%' },
+            { data: 'wno', name: 'wno', width: '2%' },
+            { data: 'quartertype', name: 'quartertype', width: '2%' },
             { data: 'name', name: 'name' },
             { data: 'designation', name: 'designation' },
-            { data: 'office', name: 'office' }
+            { data: 'office', name: 'office' },
+            { data: 'inward_date', name: 'inward_date' },
+            { data: 'date_of_retirement', name: 'date_of_retirement' },
+            { data: 'office_remarks', name: 'office_remarks' }
         ],
         order: [[1, 'asc']],
         initComplete: function() {

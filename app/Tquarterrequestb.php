@@ -233,7 +233,7 @@ class Tquarterrequestb extends Model
                 'totalpay' => $request->usermaster->basic_pay + $request->usermaster->personal_salary + $request->usermaster->special_salary + $request->usermaster->deputation_allowance,
                 'maratial_status' => $request->usermaster->maratial_status,
                 'user_id' => $request->uid,
-                'chioce1' => $request->chioce1,
+                'choice1' => $request->choice1,
                 'choice2' => $request->choice2,
                 'choice3' => $request->choice3,
                 'ddo_remarks' => $request->ddo_remarks,

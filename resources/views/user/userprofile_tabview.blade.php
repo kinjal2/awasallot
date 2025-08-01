@@ -501,8 +501,8 @@
              extension: "pdf",
              accept: "application/pdf",
              "validExt": true
-          }
-          //  "image":{extension: "jpg|jpeg",accept:"image/jpeg|image/pjpeg","validExt":true}
+          },
+         //   "image":{extension: "jpg|jpeg",accept:"image/jpeg|image/pjpeg","validExt":true}
        }
     });
 

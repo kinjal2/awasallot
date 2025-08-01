@@ -162,7 +162,7 @@ class Tquarterrequesta extends Model
             'maratial_status' => $request->usermaster->maratial_status,
             'is_ddo_varified' => $request->is_ddo_varified,
             'user_id'=>$request->uid,
-            'chioce1'=>$request->chioce1,
+            'choice1'=>$request->choice1,
             'choice2'=>$request->choice2,
             'choice3'=>$request->choice3,
             'ddo_remarks'=>$request->ddo_remarks,

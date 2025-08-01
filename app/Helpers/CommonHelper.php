@@ -883,3 +883,42 @@ if (!function_exists('getDistrictByCode')) {
         }
     }
 }
+if (!function_exists('getDistrictByCode')) {
+    function getDistrictByCode($dcode, $lang = null)
+    {
+
+        $locale = App::getLocale(); // Get current app language, e.g., 'en' or 'gu'
+        //dd($locale);
+        $district = District::select('dcode', 'name_g', 'name_e')->where('dcode', $dcode)->first();
+
+        if (!$district) {
+            return ''; // or return 'Unknown'
+        }
+        // dd($district);
+        if ($lang) {
+            if ($lang == 'gn') {
+                return $district->name_g;
+            } else {
+                return $district->name_e;
+            }
+        } else {
+            return $locale === 'gn' ? $district->name_g : $district->name_e;
+        }
+    }
+}
+
+function getAreaDetailsByCode($areacode)
+{
+    $q_officecode = Session::get('q_officecode');
+    if($areacode == -1 )
+    {
+        return  "All of Any";
+    }
+    else
+    {
+    $Area = Area::where('officecode', $q_officecode)  // Apply the 'where' filter first
+        ->where('areacode',$areacode)
+        ->pluck('areaname')->first();  // Then use pluck() to get the specific columns
+    return $Area;
+    }
+}

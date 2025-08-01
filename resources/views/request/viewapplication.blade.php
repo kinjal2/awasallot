@@ -288,9 +288,14 @@
                 
                 </td>
             </Tr>
-            
+            <tr>
+                <td>12</td>
+                <td colspan="3">આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.) <br>
+                Choice 1 : {{ getAreaDetailsByCode($choice1) }} <br> Choice 2 : {{ getAreaDetailsByCode($choice2) }} <br> Choice 3 : {{ getAreaDetailsByCode($choice3) }}
+                </td>
+            </tr>
             <Tr>
-                <th>12</th>
+                <th>13</th>
                 <th colspan="3">જો બદલી થઈ ને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચી કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે?</th>
                 <td colspan="2">
                 {{  isset($quarterrequest->downgrade_allotment)?$quarterrequest->downgrade_allotment:'N/A' }} 
@@ -299,12 +304,12 @@
                 
             </Tr>
             <Tr>
-                <th>13</th>
+                <th>14</th>
                 <th colspan="3">સરકારશ્રી મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર પાડે તેનું પાલન કરવા હું સંમત છુ?</th>
                 <td colspan="2">હા</td>
             </Tr>
             <Tr>
-                <th>14</th>
+                <th>15</th>
                 <th colspan= "3">મારી બદલી થાય તો તે અંગે ની જાણ તુરત કરીશ</th>
                 <td colspan="2">હા</td>
             </Tr>

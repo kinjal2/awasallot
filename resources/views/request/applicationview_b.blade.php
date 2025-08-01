@@ -168,7 +168,7 @@
         </tr>
         <tr>
             <td></td>
-            <td>( ચ) સકયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.</td>
+            <td>( ચ) કયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.</td>
             <td>:</td>
             <td> {{$prv_details; }}</td>
         </tr>
@@ -214,12 +214,18 @@
         </tr>
         <tr>
             <td>7</td>
+            <td>આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.)</td>
+            <td>:</td>
+            <td>Choice 1 : {{ getAreaDetailsByCode($choice1) }} <br> Choice 2 : {{  getAreaDetailsByCode($choice2) }} <br> Choice 3 : {{  getAreaDetailsByCode($choice3) }}</td>
+        </tr>
+        <tr>
+            <td>8</td>
             <td>આ સાથે સામેલ રાખેલ ઉચ્ચ કક્ષાનું વસવાટ મેળવવાને લગતી સૂચનાઓ મેં વાંચી છે અને તે તથા સરકારશ્રી વખતો વખત આ અંગે સૂચનાઓ બહાર પાડે તેનું પાલન કરવા હું સંમત છું.</td>
             <td>:</td>
             <td>હા</td>
         </tr>
         <tr>
-            <td>8</td>
+            <td>9</td>
             <td>હું, &nbsp;<span style="border-bottom: 1px dotted; text-decoration: none;">{{ $name }}</span>  &nbsp;ખાતરીપૂર્વક જાહેર કરૂ છું કે ઉપર જણાવેલ વિગતો મારી જાણ મુજબ સાચી છે અને જો તેમાં કોઇ વિગત ખોટી હશે તો તે અંગે આવાસ ફાળવણીના નિયમો બંધનકર્તા રહેશે.</label></td>
             <td>:</td>
             <td>હા</td>
@@ -231,7 +237,7 @@
         <tr><td style="width: 10%;">સ્થળ</td><td style="width: 2%;">:<td>{{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }}</td></tr>
         <tr><td>તારીખ</td><td>:</td><td>{{  $request_date }}</td></tr>
         <tr><td colspan="3" style="padding-top: 30px;">વિભાગ/કચેરીના વડાનો અભિપ્રાય</td></tr>
-        <tr><td colspan="3">esdgdhyrtrj nfrtyjy,m tyu,iu7.h,m</td></tr>
+        <tr><td colspan="3"></td></tr>
         <tr><td colspan="3">(આસન-પ માં દર્શાવેલ વિગતો ભરી છે તે અંગે અભિપ્રાય જણાવવો).</td></tr>
         <tr><td colspan="3">
             @if ($imageData)
