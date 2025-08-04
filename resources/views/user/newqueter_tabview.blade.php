@@ -392,9 +392,32 @@
                                 </div>
                                
                             </div>
-                            <div class="mt-3">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
+                           @if( isset($quarterequesta['requestid']) && !empty($quarterequesta['requestid']))
+
+                        <input type="hidden" id="requestid" name="requestid" value="{{$quarterequesta['requestid']}}" />
+                        <input type="hidden" id="rivision_id" name="rivision_id" value="{{$quarterequesta['rivision_id']}}" />
+                        <input type="hidden" id="option" name="option" value="edit" />
+                                @if(  $quarterequesta['app_admin']==1)
+                               <input type="hidden" id="edit_type" name="edit_type" value="admin" />
+                                @endif
+                                @if( $quarterequesta['app_ddo']==1)
+                                <input type="hidden" id="edit_type" name="edit_type" value="ddo" />
+                                @endif
+                                <input type="hidden" value="{{ count($document_list) }}" id="document_list" name="document_list">
+                                <div class="mt-4">
+                                @if(  $document_list->count()  > 0)
+                                   <input type="hidden" value="{{ $isEdit ?? 0 }}" id="isEdit" name="isEdit">
+                                <button type="submit" class="btn btn-primary" value="next" name="submit" id="submit">Next</button>
+                                @else
+                                <button type="submit" class="btn btn-primary" value="save" name="submit" id="submit">Save Application</button>
+                                @endif
+                        </div>
+                       @else
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary" value="submit" name="submit" id="submit">Submit</button>
+                        </div>
+                         @endif																				  
+
                         </form>
  @push('footer-script') <script src="{{ URL::asset(Config::get('app.theme_path').'/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
 <script src="{{ URL::asset(Config::get('app.theme_path').'/plugins/jquery-validation/additional-methods.min.js')}}"></script>

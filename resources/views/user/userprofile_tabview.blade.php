@@ -145,7 +145,7 @@
                 <label for="is_police_staff"> {{ __('profile.is_police') }} <span class="error">*</span></label>
                 <x-select
                    name="is_police_staff"
-                   :options="getYesNo()"
+                   :options="['' => 'Select An Option'] + getYesNo()"
                    :selected="$users->is_police_staff ?? ''"
                    class="form-control select2"
                    id="is_police_staff"
@@ -159,7 +159,7 @@
                 <label for="is_fix_pay_staff"> {{ __('profile.is_fix_pay') }} <span class="error">*</span></label>
                 <x-select
                    name="is_fix_pay_staff"
-                   :options="getYesNo()"
+                   :options="['' => 'Select An Option'] + getYesNo()"
                    :selected="$users->is_fix_pay_staff ?? ''"
                    class="form-control select2"
                    id="is_fix_pay_staff"

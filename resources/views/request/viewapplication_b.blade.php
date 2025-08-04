@@ -288,7 +288,7 @@ $usermasterData = null;
                                                             <td>7)</td>
                                                             <td>આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.)</td>
                                                             <td>:</td>
-                                                            <td>Choice 1 : {{ getAreaDetailsByCode($choice1) }} <br> Choice 2 : {{ getAreaDetailsByCode($choice2) }} <br> Choice 3 : {{ getAreaDetailsByCode($choice3) }}</td>
+                                                            <td>Choice 1 : {{ getAreaDetailsByCode($quarterrequest['choice1']) }} <br> Choice 2 : {{ getAreaDetailsByCode($quarterrequest['choice2']) }} <br> Choice 3 : {{ getAreaDetailsByCode($quarterrequest['choice3']) }}</td>
                                                         </tr>
                                                         <div class="row user_details_view1">
                                                             <div class="col-sm-10">
@@ -342,7 +342,7 @@ $usermasterData = null;
                                 <tr>
                                     <td>{{ $file->document_name }}</td>
                                     <td>
-                                        <a href="{{ url('/download/'.$file->doc_id) }}" target="_blank">
+                                        <a href="{{ url('/download_file/'.$file->doc_id) }}" target="_blank">
                                             <img src="{{ URL::asset('images/pdf.png') }}" class="export-icon" />
                                         </a>
                                     </td>

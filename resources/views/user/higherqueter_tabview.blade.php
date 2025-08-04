@@ -32,7 +32,7 @@
                          @if( $quarterequestb['app_ddo']==1)
                         <input type="hidden" id="edit_type" name="edit_type" value="app_ddo" />
                         @endif
-                        <input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
+                        <input type="hidden" value="{{ count($document_list) }}" id="document_list" name="document_list">
                         @endif
                         <input type="hidden" id="page" name="page" value="higher_request" />
                         <div class=" ">
@@ -256,16 +256,16 @@
                         </div>
                          @if( isset($quarterequestb['requestid']) && !empty($quarterequestb['requestid']))
 
-                        <input type="text" id="requestid" name="requestid" value="{{$quarterequestb['requestid']}}" />
-                        <input type="text" id="rivision_id" name="rivision_id" value="{{$quarterequestb['rivision_id']}}" />
-                        <input type="text" id="option" name="option" value="edit" />
+                        <input type="hidden" id="requestid" name="requestid" value="{{$quarterequestb['requestid']}}" />
+                        <input type="hidden" id="rivision_id" name="rivision_id" value="{{$quarterequestb['rivision_id']}}" />
+                        <input type="hidden" id="option" name="option" value="edit" />
                                 @if(  $quarterequestb['app_admin']==1)
-                               app admin <input type="text" id="edit_type" name="edit_type" value="admin" />
+                                    <input type="hidden" id="edit_type" name="edit_type" value="admin" />
                                 @endif
                                 @if( $quarterequestb['app_ddo']==1)
-                                app ddo<input type="text" id="edit_type" name="edit_type" value="ddo" />
+                                <input type="hidden" id="edit_type" name="edit_type" value="ddo" />
                                 @endif
-                                document list<input type="text" value="{{ count($document_list) }}" id="document_list" name="document_list">
+                                <input type="hidden" value="{{ count($document_list) }}" id="document_list" name="document_list">
                                 <div class="mt-4">
                                 @if(  $document_list->count()  > 0)
                                    <input type="hidden" value="{{ $isEdit ?? 0 }}" id="isEdit" name="isEdit">

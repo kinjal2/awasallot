@@ -841,9 +841,9 @@ function uploadDocuments($docId, $file, $uid = null)
             'is_file_ddo_verified'   => 0,
             'is_file_admin_verified' => 0,
         ];
-
+      //  dd($existing);
         // If existing is found and verified by DDO, increment rev and create new
-        if ($existing && $existing->is_file_ddo_verified == 2) {
+        if ($existing && ($existing->is_file_ddo_verified == 2 || $existing->is_file_admin_verified == 2 )) {
             $data['rivision_id'] = (int) $request_rev + 1;
             Filelist::create(array_merge($attributes, $data));
         } else {

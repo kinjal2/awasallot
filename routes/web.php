@@ -71,7 +71,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::middleware(['verifiedphone', 'verified', 'role:user', 'check.host', 'prevent_clickjacking', 'check.session', 'session.timeout'])->group(function () {
     Route::get('userdashboard', ['uses' => 'DashboardController@userdashboard', 'as' => 'user.dashboard.userdashboard']);
     Route::get('profile', ['as' => 'user.profile', 'uses' => 'ProfileController@index']);
-    Route::get('quartersuser/:any', ['as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
+    Route::get('quartersuser/{any?}', ['as' => 'user.Quarters', 'uses' => 'QuartersController@requestnewquarter']);
     Route::get('quarterschange', ['as' => 'user.quarter.change', 'uses' => 'QuartersController@requestchange']);
     Route::get('quartershistory', ['as' => 'user.quarter.history', 'uses' => 'QuartersController@index']);
     Route::get('ddo_details', ['as' => 'user.ddo_details', 'uses' => 'ProfileController@updateDDODetails']);

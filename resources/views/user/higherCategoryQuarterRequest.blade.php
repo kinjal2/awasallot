@@ -23,7 +23,7 @@
 
 
 
-  {{ $isEdit }}
+
     @if( $isEdit == 1)
         <!-- Nav tabs -->
         <ul class="nav nav-tabs " id="quarterTabs" role="tablist" >

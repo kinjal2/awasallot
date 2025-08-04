@@ -108,6 +108,7 @@ class QuartersController extends Controller
             $this->_viewContent['quartertype'] = 'J';
             return view('user/newQuarterRequest', $this->_viewContent);
         } else {
+            //   dd($_REQUEST);
             //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
             $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
             $quarterrequesta = Tquarterrequesta::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->get();
@@ -116,47 +117,449 @@ class QuartersController extends Controller
             } else {
                 $request_id = null;
             }
-            $quarterrequestcheck = $quarterrequesta->count();
-            if ($quarterrequestcheck > 0) {
-                if ($request_id != null) {
-                     if (isset($_REQUEST['edit_type']) && base64_decode($_REQUEST['edit_type']) == 'ddo') {
-                        $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
-                    } else {
-                        $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
-                    }
-                    //$quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
-                    if ($quarterrequesta != null) {
-                         $this->_viewContent['users'] = User::find($uid); 
-                         $this->_viewContent['imageData'] = generateImage($uid);
-                         $attacheddocument = DB::table('master.file_list')
-                        ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
-                        ->WHERE('uid', Session::get('Uid'))
-                        ->WHERE('document_id', 9)
-                        ->select('rev_id', 'doc_id', 'document_name')
-                        ->first();
+            if (isset($_REQUEST['rev'])) {
+                $rev = base64_decode($_REQUEST['rev']);
+            } else {
+                $rev = null;
+            }
 
-                        //dd($attacheddocument);
-                        $this->_viewContent['attacheddocument'] = $attacheddocument;
-                        $this->_viewContent['page_title'] = "Quarter Request";
+            $quarterrequestcheck = $quarterrequesta->count();
+            //dd($quarterrequestcheck);
+            $this->_viewContent['users'] = User::find($uid);
+            $this->_viewContent['imageData'] = generateImage($uid);
+            if ($quarterrequestcheck > 0) {
+                //dd("test");
+                //dd(base64_decode($_REQUEST['edit_type']) );
+                if ($request_id != null) {
+                    if (isset($_REQUEST['edit_type']) && base64_decode($_REQUEST['edit_type']) == 'ddo') {
+                        // $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
+                        $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('rivision_id', '=', $rev)->where('is_ddo_varified', '=', '2')->first();
+                    } else {
+                        //$quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
+                        $quarterrequesta = Tquarterrequesta::where('requestid', '=', $request_id)->where('rivision_id', '=', $rev)->where('is_varified', '=', '2')->first();
+                        $adminremarkslist = "";
+                        if ($quarterrequesta['remarks'] != "") {
+
+                            $remarkIds = array_map('intval', explode(',', $quarterrequesta['remarks']));
+                            $descriptions = Remarks::whereIn('remark_id', $remarkIds)
+                                ->pluck('description')
+                                ->toArray();
+                            $adminremarkslist = implode(',<br/> ', $descriptions);
+                        }
+                        $this->_viewContent['admin_remarks_list'] = $adminremarkslist;
+                    }
+                    if ($quarterrequesta != null) {
+                        $type = 'a';
+                        // Ensure $compare_rev is defined to avoid "undefined variable" error
+                        if (isset($_REQUEST['compare_rev'])) {
+                            $compare_rev = base64_decode($_REQUEST['compare_rev']);
+                        }
+                        $compare_rev = $compare_rev ?? null; // OR: $compare_rev = request()->input('compare_rev', null);
+                        $edit_type = trim(base64_decode($_REQUEST['edit_type']));
+                        // dd($compare_rev);
+                        // Main document list query
+                        // dd($rev,$compare_rev);
+
+
+                        $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
+                            ->whereNotIn('document_type', [6]) // Exclude certain document types
+                            ->whereNotIn('document_type', function ($query) use ($type, $request_id, $rev, $compare_rev, $edit_type) {
+                                $query->select('document_id')
+                                    ->from('master.file_list')
+                                    ->where(function ($query) use ($edit_type) {
+                                        if ($edit_type == 'ddo') {
+
+                                            $query->whereIn('master.file_list.is_file_ddo_verified', [0, 1]);
+                                        } elseif ($edit_type == 'admin') {
+                                            $query->whereIn('master.file_list.is_file_admin_verified', [0, 1]);
+                                        }
+                                        // You can add an else here if needed
+
+
+                                    })
+                                    ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                                    ->where('request_id', $request_id)
+                                    ->where('rivision_id', $compare_rev ?? $rev) // Use $compare_rev if set, else $rev
+                                    ->where('uid', Session::get('Uid'));
+                            })
+                            // Exclude document type 8 if user is NOT police staff
+                            ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                                return $query->whereNotIn('document_type', [8]);
+                            })
+                            // Exclude document type 7 if user is NOT fix pay staff
+                            ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
+                                return $query->whereNotIn('document_type', [7]);
+                            })
+                            // Exclude document type 9 if user is either:
+                            // - Physically disabled with <= 60% disability
+                            // - Not physically disabled at all
+                            ->when(
+                                (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                                    User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                                    User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                                function ($query) {
+                                    return $query->whereNotIn('document_type', [9]);
+                                }
+                            )
+                            ->pluck('document_name', 'document_type');
+                        // dd($document_list);
+                        $document_tab = DB::table('master.file_list')->where('uid', $uid)->where('performa', 'a')->where('rivision_id', $rev)
+                            ->where(function ($query) use ($edit_type) {
+                                if ($edit_type == 'ddo') {
+                                    $query->whereIn('master.file_list.is_file_ddo_verified', [2]);
+                                } elseif ($edit_type == 'admin') {
+                                    $query->whereIn('master.file_list.is_file_admin_verified', [2]);
+                                }
+                                // You can add an else here if needed
+                            })
+                            ->count();
+
+                        if (isset($_REQUEST['rev'])) {
+                            //$rivision_id = $_REQUEST['rev'];
+                            $old_rivision_id = (int) $rev;
+                            $new_rivision_id = (int) $rev + 1;
+                        } else {
+                            // $rivision_id = Tquarterrequestb::where('requestid', $request_id)->max('rivision_id') ?? 0;
+                            // $rivision_id += 1;
+                            $new_rivision_id = 0;
+                        }
+                        // dd($old_rivision_id);
+                        // dd($new_rivision_id);
+                        if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev == null) {
+                            $request_id = base64_decode($_REQUEST['requestid']);
+                            $inward_no = '';
+                            $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                            $quartertype = $quarterrequesta['quartertype']; // Define quarter type
+                            //$downgrade_requestid = $downgrade_requestid; // Get from request
+
+                            while (true) {
+                                $inward_no = generateRandomString(5);
+                                $inward_no = "$quartertype/" . date('Y') . "/$uid/$inward_no";
+                                $co = Tquarterrequesta::where('inward_no', $inward_no)->count();
+                                if ($co == 0) break;
+                            }
+
+                            // dd($old_rivision_id);
+                            $existing = Tquarterrequesta::where('uid', $uid)
+                                ->where('requestid', $request_id)
+                                ->where('rivision_id', $old_rivision_id)
+
+                                ->first();
+
+                            if ($existing) {
+                                //dd($existing);
+
+
+                                $new_rev_existing = Tquarterrequesta::where('uid', $uid)
+                                    ->where('requestid', $request_id)
+                                    ->where('rivision_id', $new_rivision_id)
+                                    ->first();
+                                // dd($new_rev_existing);
+                                if (!$new_rev_existing) {
+                                    $dataToCopy = $existing->toArray(); // convert model to array
+                                    unset($dataToCopy['id']); // remove primary key to avoid conflict
+
+                                    // override values for new revision
+                                    $dataToCopy['requestid'] = $request_id;
+                                    $dataToCopy['rivision_id'] = $new_rivision_id;
+                                    $dataToCopy['inward_no'] = $inward_no;
+                                    $dataToCopy['inward_date'] = now();
+                                    $dataToCopy['ddo_remarks'] = null;
+                                    $dataToCopy['remarks'] = null;
+                                    //  dd($dataToCopy);
+                                    Tquarterrequesta::updateOrCreate(
+                                        [
+                                            'requestid' => $request_id,
+                                            'rivision_id' => $new_rivision_id,
+                                            'uid' => $uid,
+
+                                        ],
+                                        $dataToCopy
+                                    );
+
+                                    /// dd($edit_type);
+                                    $edit_type = trim($edit_type);
+                                    if ($edit_type === 'ddo' || $edit_type === 'admin') {
+                                        //dd("Test");
+                                        // $rev = $_REQUEST['rev'];
+                                        // $edit_type = $_REQUEST['edit_type'];
+                                        // $dt = ['is_ddo_varified' => 3];
+                                        $files = Filelist::where('uid', $uid)
+                                            ->where('performa', 'a')
+                                            ->where('rivision_id', $rev)
+                                            ->when($edit_type == 'ddo', function ($query) {
+                                                return $query->where('is_file_ddo_verified', 1);
+                                            })
+                                            ->when($edit_type == 'admin', function ($query) {
+                                                return $query->where('is_file_admin_verified', 1);
+                                            })
+                                            ->get();
+                                        //  dd($files);
+                                        try {
+                                            foreach ($files as $file) {
+                                                // Create new record with updated values
+                                                // DB::table('master.file_list')->insert([
+                                                //     'uid'                    => $file->uid,
+                                                //     'file_name'             => $file->file_name,
+                                                //     'rev_id'                => $file->rev_id,
+                                                //     'mimetype'              => $file->mimetype,
+                                                //     'doc_id'                => $file->doc_id,
+                                                //     'performa'              => $file->performa,
+                                                //     'document_id'           => $file->document_id,
+                                                //     'rivision_id'           => $rev + 1, // increment revision
+                                                //     'bk_doc_id'             => $file->bk_doc_id,
+                                                //     'created_at'            => Carbon::now(),
+                                                //     'updated_at'            => Carbon::now(),
+                                                //     'request_id'            => $file->request_id,
+                                                //     'is_file_ddo_verified'  => 0,
+                                                //     'is_file_admin_verified' => 0,
+                                                //     'is_correct'            => $file->is_correct ?? 0,
+                                                // ]);
+                                                FileList::updateOrCreate(
+                                                    [
+                                                        'uid' => $file->uid,
+                                                        'doc_id' => $file->doc_id,
+                                                        'request_id' => $file->request_id,
+                                                        'rivision_id' => $rev + 1, // unique keys
+                                                    ],
+                                                    [
+                                                        'file_name' => $file->file_name,
+                                                        'rev_id' => $file->rev_id,
+                                                        'mimetype' => $file->mimetype,
+                                                        'performa' => $file->performa,
+                                                        'document_id' => $file->document_id,
+                                                        'bk_doc_id' => $file->bk_doc_id,
+                                                        'is_file_ddo_verified' => 0,
+                                                        'is_file_admin_verified' => 0,
+                                                        'is_correct' => $file->is_correct ?? 0,
+                                                        'updated_at' => now(),
+                                                        'created_at' => now(), // optional if you're manually handling timestamps
+                                                    ]
+                                                );
+                                            }
+                                        } catch (Exception $e) {
+                                            dd($e->getMessage());
+                                        }
+                                    } else {
+                                        //dd("hi");
+                                    }
+                                    
+                                }
+                                $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
+                                        ->whereNotIn('document_type', [6]) // Exclude certain document types
+                                        ->whereNotIn('document_type', function ($query) use ($type, $request_id, $rev, $compare_rev, $edit_type, $new_rivision_id) {
+                                            $query->select('document_id')
+                                                ->from('master.file_list')
+                                                ->where(function ($query) use ($edit_type, $new_rivision_id) {
+                                                    if ($edit_type == 'ddo') {
+
+                                                        $query->whereIn('master.file_list.is_file_ddo_verified', [0, 1]);
+                                                    } elseif ($edit_type == 'admin') {
+                                                        $query->whereIn('master.file_list.is_file_admin_verified', [0, 1]);
+                                                    }
+                                                    // You can add an else here if needed
+
+
+                                                })
+                                                ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                                                ->where('request_id', $request_id)
+                                                ->where('rivision_id', $new_rivision_id) // Use $compare_rev if set, else $rev
+                                                ->where('uid', Session::get('Uid'));
+                                        })
+                                        // Exclude document type 8 if user is NOT police staff
+                                        ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                                            return $query->whereNotIn('document_type', [8]);
+                                        })
+                                        // Exclude document type 7 if user is NOT fix pay staff
+                                        ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
+                                            return $query->whereNotIn('document_type', [7]);
+                                        })
+                                        // Exclude document type 9 if user is either:
+                                        // - Physically disabled with <= 60% disability
+                                        // - Not physically disabled at all
+                                        ->when(
+                                            (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                                                User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                                                User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                                            function ($query) {
+                                                return $query->whereNotIn('document_type', [9]);
+                                            }
+                                        )
+                                        ->pluck('document_name', 'document_type');
+                            }
+                        }
+                        //  dd($document_list);
+                        $attacheddocument_old = DB::table('master.file_list')
+                            ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
+                            ->whereNotIn('document_id', [6])
+                            ->WHERE('uid', Session::get('Uid'))
+                            ->WHERE('request_id', $request_id)
+                            ->where('rivision_id', $rev)
+                            ->WHERE('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                            ->where(function ($query) use ($edit_type) {
+                                if ($edit_type == 'ddo') {
+                                    $query->whereIn('master.file_list.is_file_ddo_verified', [0, 2]);
+                                } elseif ($edit_type == 'admin') {
+                                    $query->whereIn('master.file_list.is_file_admin_verified', [0, 2]);
+                                }
+                                // You can add an else here if needed
+                            })
+                            ->select('rev_id', 'doc_id', 'document_name', 'rivision_id')
+                            ->get();
+
+                        $attacheddocument = DB::table('master.file_list')
+                            ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
+                            ->whereNotIn('document_id', [6])
+                            ->WHERE('uid', Session::get('Uid'))
+                            ->WHERE('request_id', $request_id)
+                            ->where('rivision_id', $rev + 1)
+                            ->WHERE('master.file_list.performa', 'LIKE', '%a%')
+                            ->where(function ($query) use ($edit_type) {
+                                if ($edit_type == 'ddo') {
+                                    $query->whereIn('master.file_list.is_file_ddo_verified', [0]);
+                                } elseif ($edit_type == 'admin') {
+                                    $query->whereIn('master.file_list.is_file_admin_verified', [0]);
+                                }
+                                // You can add an else here if needed
+                            })
+                            ->select('rev_id', 'doc_id', 'document_name', 'rivision_id')
+                            ->get();
+                        // dd($document_list);
+
+
+                        if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev != null  && $edit_type == 'ddo') {
+                            $dt = ['is_ddo_varified' => 3];
+
+                            if (isset($document_list) && $document_list->count() > 0) {
+                                $data = [
+                                    // 'inward_no' => $inward_no,
+                                    // 'inward_date' => now(),
+                                    'is_accepted' => 1,
+                                    'is_priority' => 'N',
+                                    // 'is_ddo_varified' => 0,
+                                    // 'ddo_remarks' => null,
+                                    // 'is_varified' => 0,
+                                    // 'remarks' => null,
+                                    'app_ddo' => 0
+                                ];
+                            } else {
+
+                                $data = [
+                                    //    'inward_no' => $inward_no,
+                                    //'inward_date' => now(),
+                                    'is_accepted' => 1,
+                                    'is_priority' => 'N',
+                                    'is_ddo_varified' => 0,
+                                    'ddo_remarks' => null,
+                                    'is_varified' => 0,
+                                    'remarks' => null,
+                                    'app_ddo' => 0
+                                ];
+
+                                $resp1 = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $old_rivision_id)->update($dt);
+                            }
+                            //  dd($data,$old_rivision_id,$new_rivision_id);
+                            $resp = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $new_rivision_id)->update($data);
+                        } else if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev != null  && $edit_type == 'admin') {
+
+                            $dt = ['is_varified' => 3];
+                            if (isset($document_list) && $document_list->count() > 0) {
+                                $data = [
+                                    // 'inward_no' => $inward_no,
+                                    // 'inward_date' => now(),
+                                    'is_accepted' => 1,
+                                    'is_priority' => 'N',
+                                    // 'is_ddo_varified' => 0,
+                                    // 'ddo_remarks' => null,
+                                    // 'is_varified' => 0,
+                                    // 'remarks' => null,
+                                    'app_admin' => 0
+                                ];
+                            } else {
+                                $data = [
+                                    // 'inward_no' => $inward_no,
+                                    // 'inward_date' => now(),
+                                    'is_accepted' => 1,
+                                    'is_priority' => 'N',
+                                    'is_ddo_varified' => 0,
+                                    'ddo_remarks' => null,
+                                    'is_varified' => 0,
+                                    'remarks' => null,
+                                    'app_admin' => 0
+                                ];
+
+                                $resp1 = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $old_rivision_id)->update($dt);
+                            }
+                            $resp = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $new_rivision_id)->update($data);
+                        }
+                        // dd($data);
+                        if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev != null) {
+                            // dd($data,$new_rivision_id);
+                            // $resp = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id', $new_rivision_id)->update($data);
+                            $previousUrl = url()->previous();
+
+                            // Parse existing URL
+                            $parsedUrl = parse_url($previousUrl);
+                            parse_str($parsedUrl['query'] ?? '', $queryParams);
+
+                            // Optionally: unset 'compare_rev' if it already exists and you want to ensure it's removed
+                            unset($queryParams['compare_rev']);
+
+                            // Rebuild query string
+                            $queryString = http_build_query($queryParams);
+
+                            // Rebuild full URL
+                            $baseUrl = Str::before($previousUrl, '?');
+                            $finalUrl = $queryString ? $baseUrl . '?' . $queryString : $baseUrl;
+                            // dd($finalUrl);
+                            // Redirect with updated URL and flash data
+                            // return redirect()
+                            //     ->to($finalUrl);
+
+                        }
+
+                        //dd(base64_decode($_REQUEST['active_tab']));
+                        $ddo_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', '=', $rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+                        $admin_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', '=', $rev)->select('is_varified', 'remarks')->first();
+                        $wno = Tquarterrequesta::where('requestid', $request_id)->select('wno')->first();
+                        $this->_viewContent['ddo_remarks_status'] = $ddo_remarks;
+                        $this->_viewContent['admin_remarks_status'] = $admin_remarks;
+                        // dd($rev,$attacheddocument,$document_list,$attacheddocument_old);
+                        // dd($document_list);
+                        $this->_viewContent['document_list'] = $document_list;
+                        $this->_viewContent['document_tab'] = $document_tab;
+                        $this->_viewContent['attacheddocument_old'] = $attacheddocument_old;
+                        $this->_viewContent['page_title'] = "Higher Category";
                         $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
                         $this->_viewContent['name'] = Session::get('Name');
                         $this->_viewContent['quarterequesta'] = $quarterrequesta;
                         $this->_viewContent['isEdit'] = true;
-                       // dd( $this->_viewContent['isEdit'] );
+                        $this->_viewContent['request_id'] = $request_id;
+
+                        $this->_viewContent['rev'] = $rev;
+                        $this->_viewContent['type'] = $type;
+                        $this->_viewContent['edit_type'] = base64_decode($_REQUEST['edit_type']);
+                        //dd( base64_decode($_REQUEST['active_tab']));
+                        $this->_viewContent['active_tab'] = base64_decode($_REQUEST['active_tab']);
+                        $this->_viewContent['attacheddocument'] = $attacheddocument;
+
+                        //Session::put('active_tab','tab1');
+
                         return view('user/newQuarterRequest', $this->_viewContent);
                     }
                 }
                 return redirect('userdashboard')->with('message', "You have been registered for a new quarter request.");
-            } else { 
-                 $this->_viewContent['isEdit'] = false;
+            } else {
+                $this->_viewContent['isEdit'] = false;
                 $this->_viewContent['page_title'] = "Quarter Request";
                 $this->_viewContent['name'] = Session::get('Name');
                 $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
+                $this->_viewContent['quarterequesta'] = $quarterrequesta;
                 return view('user/newQuarterRequest', $this->_viewContent);
             }
         }
     }
-   public function requesthighercategory()
+    public function requesthighercategory()
     {
         //  dd("back");
         $uid = Session::get('Uid');
@@ -169,6 +572,7 @@ class QuartersController extends Controller
         //session(['ddo_code' => $data->ddo_code]);
         $ddo_code = session('ddo_code');
         //dd($officecode,$cardex_no,$ddo_code);
+        
         if ($basic_pay == null) {
             $data = User::select('updated_to_new_awasallot_app')->where('id', $uid)->first(); // to check if old user has completed profile updation or not
             if ($data['updated_to_new_awasallot_app'] == 2) {
@@ -216,7 +620,7 @@ class QuartersController extends Controller
                     } else {
                         //$quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_admin', '=', '1')->first();
                         $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('rivision_id', '=', $rev)->where('is_varified', '=', '2')->first();
-                         $adminremarkslist = "";
+                        $adminremarkslist = "";
                         if ($quarterrequestb['remarks'] != "") {
 
                             $remarkIds = array_map('intval', explode(',', $quarterrequestb['remarks']));
@@ -234,7 +638,7 @@ class QuartersController extends Controller
                             $compare_rev = base64_decode($_REQUEST['compare_rev']);
                         }
                         $compare_rev = $compare_rev ?? null; // OR: $compare_rev = request()->input('compare_rev', null);
-                        $edit_type = base64_decode($_REQUEST['edit_type']);
+                        $edit_type = trim(base64_decode($_REQUEST['edit_type']));
                         // dd($compare_rev);
                         // Main document list query
                         // dd($rev,$compare_rev);
@@ -253,8 +657,8 @@ class QuartersController extends Controller
                                             $query->whereIn('master.file_list.is_file_admin_verified', [0, 1]);
                                         }
                                         // You can add an else here if needed
-                                        
-                                      
+
+
                                     })
                                     ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
                                     ->where('request_id', $request_id)
@@ -292,7 +696,7 @@ class QuartersController extends Controller
                                 // You can add an else here if needed
                             })
                             ->count();
-                            
+
                         if (isset($_REQUEST['rev'])) {
                             //$rivision_id = $_REQUEST['rev'];
                             $old_rivision_id = (int) $rev;
@@ -328,47 +732,47 @@ class QuartersController extends Controller
                             if ($existing) {
 
 
-                                $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
-                            ->whereNotIn('document_type', [6]) // Exclude certain document types
-                            ->whereNotIn('document_type', function ($query) use ($type, $request_id, $rev, $compare_rev, $edit_type,$new_rivision_id) {
-                                $query->select('document_id')
-                                    ->from('master.file_list')
-                                    ->where(function ($query) use ($edit_type,$new_rivision_id) {
-                                        if ($edit_type == 'ddo') {
+                              /*  $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
+                                    ->whereNotIn('document_type', [6]) // Exclude certain document types
+                                    ->whereNotIn('document_type', function ($query) use ($type, $request_id, $rev, $compare_rev, $edit_type, $new_rivision_id) {
+                                        $query->select('document_id')
+                                            ->from('master.file_list')
+                                            ->where(function ($query) use ($edit_type, $new_rivision_id) {
+                                                if ($edit_type == 'ddo') {
 
-                                            $query->whereIn('master.file_list.is_file_ddo_verified', [0, 1]);
-                                        } elseif ($edit_type == 'admin') {
-                                            $query->whereIn('master.file_list.is_file_admin_verified', [0, 1]);
-                                        }
-                                        // You can add an else here if needed
-                                        
-                                      
+                                                    $query->whereIn('master.file_list.is_file_ddo_verified', [0, 1]);
+                                                } elseif ($edit_type == 'admin') {
+                                                    $query->whereIn('master.file_list.is_file_admin_verified', [0, 1]);
+                                                }
+                                                // You can add an else here if needed
+
+
+                                            })
+                                            ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                                            ->where('request_id', $request_id)
+                                            ->where('rivision_id', $new_rivision_id) // Use $compare_rev if set, else $rev
+                                            ->where('uid', Session::get('Uid'));
                                     })
-                                    ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
-                                    ->where('request_id', $request_id)
-                                    ->where('rivision_id', $compare_rev ?? $rev) // Use $compare_rev if set, else $rev
-                                    ->where('uid', Session::get('Uid'));
-                            })
-                            // Exclude document type 8 if user is NOT police staff
-                            ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
-                                return $query->whereNotIn('document_type', [8]);
-                            })
-                            // Exclude document type 7 if user is NOT fix pay staff
-                            ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
-                                return $query->whereNotIn('document_type', [7]);
-                            })
-                            // Exclude document type 9 if user is either:
-                            // - Physically disabled with <= 60% disability
-                            // - Not physically disabled at all
-                            ->when(
-                                (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
-                                    User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
-                                    User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
-                                function ($query) {
-                                    return $query->whereNotIn('document_type', [9]);
-                                }
-                            )
-                            ->pluck('document_name', 'document_type'); 
+                                    // Exclude document type 8 if user is NOT police staff
+                                    ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                                        return $query->whereNotIn('document_type', [8]);
+                                    })
+                                    // Exclude document type 7 if user is NOT fix pay staff
+                                    ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
+                                        return $query->whereNotIn('document_type', [7]);
+                                    })
+                                    // Exclude document type 9 if user is either:
+                                    // - Physically disabled with <= 60% disability
+                                    // - Not physically disabled at all
+                                    ->when(
+                                        (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                                            User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                                            User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                                        function ($query) {
+                                            return $query->whereNotIn('document_type', [9]);
+                                        }
+                                    )
+                                    ->pluck('document_name', 'document_type'); */
 
                                 $new_rev_existing = Tquarterrequestb::where('uid', $uid)
                                     ->where('requestid', $request_id)
@@ -385,6 +789,7 @@ class QuartersController extends Controller
                                     $dataToCopy['inward_no'] = $inward_no;
                                     $dataToCopy['inward_date'] = now();
                                     $dataToCopy['ddo_remarks'] = null;
+                                    $dataToCopy['remarks'] = null;
                                     //  dd($dataToCopy);
                                     Tquarterrequestb::updateOrCreate(
                                         [
@@ -396,23 +801,24 @@ class QuartersController extends Controller
                                         $dataToCopy
                                     );
 
-                                     dd($edit_type);
+                                    /// dd($edit_type);
+                                    $edit_type = trim($edit_type);
                                     if ($edit_type === 'ddo' || $edit_type === 'admin') {
-                                        dd("Test");
+                                        //dd("Test");
                                         // $rev = $_REQUEST['rev'];
                                         // $edit_type = $_REQUEST['edit_type'];
                                         // $dt = ['is_ddo_varified' => 3];
                                         $files = Filelist::where('uid', $uid)
                                             ->where('performa', 'b')
                                             ->where('rivision_id', $rev)
-                                            ->when($edit_type === 'ddo', function ($query) {
+                                            ->when($edit_type == 'ddo', function ($query) {
                                                 return $query->where('is_file_ddo_verified', 1);
                                             })
-                                            ->when($edit_type === 'admin', function ($query) {
+                                            ->when($edit_type == 'admin', function ($query) {
                                                 return $query->where('is_file_admin_verified', 1);
                                             })
                                             ->get();
-                                        //dd($files);
+                                        //  dd($files);
                                         try {
                                             foreach ($files as $file) {
                                                 // Create new record with updated values
@@ -458,16 +864,55 @@ class QuartersController extends Controller
                                         } catch (Exception $e) {
                                             dd($e->getMessage());
                                         }
+                                    } else {
+                                        //dd("hi");
                                     }
-                                     else
-                                {
-                                    dd("hi");
+                                    
                                 }
-                                }
-                               
+                                $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
+                                        ->whereNotIn('document_type', [6]) // Exclude certain document types
+                                        ->whereNotIn('document_type', function ($query) use ($type, $request_id, $rev, $compare_rev, $edit_type, $new_rivision_id) {
+                                            $query->select('document_id')
+                                                ->from('master.file_list')
+                                                ->where(function ($query) use ($edit_type, $new_rivision_id) {
+                                                    if ($edit_type == 'ddo') {
+
+                                                        $query->whereIn('master.file_list.is_file_ddo_verified', [0, 1]);
+                                                    } elseif ($edit_type == 'admin') {
+                                                        $query->whereIn('master.file_list.is_file_admin_verified', [0, 1]);
+                                                    }
+                                                    // You can add an else here if needed
+
+
+                                                })
+                                                ->where('master.file_list.performa', 'LIKE', '%' . $type . '%')
+                                                ->where('request_id', $request_id)
+                                                ->where('rivision_id', $new_rivision_id) // Use $compare_rev if set, else $rev
+                                                ->where('uid', Session::get('Uid'));
+                                        })
+                                        // Exclude document type 8 if user is NOT police staff
+                                        ->when(User::where('id', Session::get('Uid'))->value('is_police_staff') == 'N', function ($query) {
+                                            return $query->whereNotIn('document_type', [8]);
+                                        })
+                                        // Exclude document type 7 if user is NOT fix pay staff
+                                        ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
+                                            return $query->whereNotIn('document_type', [7]);
+                                        })
+                                        // Exclude document type 9 if user is either:
+                                        // - Physically disabled with <= 60% disability
+                                        // - Not physically disabled at all
+                                        ->when(
+                                            (User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'Y' &&
+                                                User::where('id', Session::get('Uid'))->value('dis_per') <= 60) ||
+                                                User::where('id', Session::get('Uid'))->value('is_phy_dis') == 'N',
+                                            function ($query) {
+                                                return $query->whereNotIn('document_type', [9]);
+                                            }
+                                        )
+                                        ->pluck('document_name', 'document_type');
                             }
                         }
-                        
+
                         $attacheddocument_old = DB::table('master.file_list')
                             ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
                             ->whereNotIn('document_id', [6])
@@ -569,6 +1014,7 @@ class QuartersController extends Controller
 
                                 $resp1 = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id', $old_rivision_id)->update($dt);
                             }
+                            $resp = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id', $new_rivision_id)->update($data);
                         }
                         // dd($data);
                         if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev != null) {
@@ -638,7 +1084,7 @@ class QuartersController extends Controller
     }
     public function saveHigherCategoryReq(Request $request)
     {
-     //  dd($request->all());
+        //  dd($request->all());
         $rules = [
             'quartertype' => 'required|string',
             'prv_quarter_type' => 'required|string',
@@ -775,7 +1221,7 @@ class QuartersController extends Controller
                 dd($e->getMessage());
                 return redirect('insert')->with('failed', "operation failed");
             }
-          
+
             try {
                 if (isset($_REQUEST['requestid']) && $_REQUEST['option'] == 'edit') {
                     $request_id = $_REQUEST['requestid'];
@@ -792,10 +1238,10 @@ class QuartersController extends Controller
                     }
                     //dd($_REQUEST['edit_type']);
                     // dd(request()->all());
-                    if (isset($_REQUEST['edit_type']) ) {
-                          $rev = $_REQUEST['rivision_id'];
+                    if (isset($_REQUEST['edit_type'])) {
+                        $rev = $_REQUEST['rivision_id'];
                         $edit_type = $_REQUEST['edit_type'];
-                         $files = Filelist::where('uid', $uid)
+                        $files = Filelist::where('uid', $uid)
                             ->where('performa', 'b')
                             ->where('rivision_id', $rev)
                             ->when($edit_type === 'ddo', function ($query) {
@@ -809,7 +1255,7 @@ class QuartersController extends Controller
 
                         foreach ($files as $file) {
 
-                           
+
                             FileList::updateOrCreate(
                                 [
                                     // These are your unique identifiers for finding existing record
@@ -977,6 +1423,7 @@ class QuartersController extends Controller
     }
     public function saveNewRequest(Request $request)
     {
+
         $rules = [
             'quartertype' => 'required|string',
             'deputation_date' => 'required',
@@ -1001,6 +1448,7 @@ class QuartersController extends Controller
             'downgrade_allotment' => 'required',
             'agree_rules' => 'required',
             'choice1' => 'required',
+
             'choice2' => 'required',
             'choice3' => 'required',
 
@@ -1029,7 +1477,15 @@ class QuartersController extends Controller
                     $request_id = 0;
                 $request_id += 1;
             }
-
+            if (isset($_REQUEST['rivision_id']) && $_REQUEST['option'] == 'edit') {
+                //$rivision_id = $_REQUEST['rev'];
+                $old_rivision_id = (int) $_REQUEST['rivision_id'];
+                $new_rivision_id = (int) $_REQUEST['rivision_id'] + 1;
+            } else {
+                // $rivision_id = Tquarterrequestb::where('requestid', $request_id)->max('rivision_id') ?? 0;
+                // $rivision_id += 1;
+                $new_rivision_id = 0;
+            }
             /*try {
                 $uid = Session::get('Uid');
                 $Tquarterrequesta = new Tquarterrequesta;
@@ -1078,13 +1534,6 @@ class QuartersController extends Controller
 
                 // Format possession date if available
 
-
-                $match = [
-                    'requestid'    => (int)$request_id,
-                    /* rivision_id'  => 0,
-                    'uid'          => $uid,*/
-                ];
-
                 $data = [
                     'quartertype' => $request->get('quartertype') ?: null,
                     'old_designation' => $request->get('old_desg') ?: null,
@@ -1116,12 +1565,20 @@ class QuartersController extends Controller
                     'choice3' => $request->get('choice3'),
                     'cardex_no' => session('cardex_no'),
                     'ddo_code' => session('ddo_code'),
+
+
                 ];
+                $match = ['requestid' => $request_id, 'rivision_id' => $new_rivision_id, 'uid' => $uid];
+                $check = Tquarterrequesta::where($match)->get();
 
+                //dd($check); // Check how many records it's finding
+                Tquarterrequesta::updateOrCreate(
+                    ['requestid' => $request_id, 'rivision_id' => $new_rivision_id, 'uid' => $uid],
+                    $data
+                );
 
-
-                $model = Tquarterrequesta::updateOrCreate($match, $data);
                 //\Log::info('Tquarterrequesta updated or created:', $model->toArray());
+
 
                 if (isset($_REQUEST['requestid']) && $_REQUEST['option'] == 'edit') {
                     $request_id = $_REQUEST['requestid'];
@@ -1136,50 +1593,195 @@ class QuartersController extends Controller
                         $co = Tquarterrequesta::where('inward_no', $inward_no)->count();
                         if ($co == 0) break;
                     }
-                    if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'app_ddo') {
-                    $data = [
-                        'inward_no' => $inward_no,
-                        'inward_date' => now(),
-                        'is_accepted' => 1,
-                        'is_priority' => 'N',
-                        'is_ddo_varified' => 0,
-                        'ddo_remarks' => null,
-                        'is_varified' => 0,
-                        'remarks' => null,
-                        'app_ddo' => 0
-                    ];
-                }
-                else
-                {
-                    $data = [
-                        'inward_no' => $inward_no,
-                        'inward_date' => now(),
-                        'is_accepted' => 1,
-                        'is_priority' => 'N',
-                        'is_ddo_varified' => 0,
-                        'ddo_remarks' => null,
-                        'is_varified' => 0,
-                        'remarks' => null,
-                        'app_admin' => 0
-                    ];
-                }
+                    //dd($_REQUEST['edit_type']);
+                    // dd(request()->all());
+                    if (isset($_REQUEST['edit_type'])) {
+                        $rev = $_REQUEST['rivision_id'];
+                        $edit_type = $_REQUEST['edit_type'];
+                        $files = Filelist::where('uid', $uid)
+                            ->where('performa', 'a')
+                            ->where('rivision_id', $rev)
+                            ->when($edit_type === 'ddo', function ($query) {
+                                return $query->where('is_file_ddo_verified', 1);
+                            })
+                            ->when($edit_type === 'admin', function ($query) {
+                                return $query->where('is_file_admin_verified', 1);
+                            })
+                            ->get();
+                        // dd($files);
+
+                        foreach ($files as $file) {
 
 
-                    $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->update($data);
+                            FileList::updateOrCreate(
+                                [
+                                    // These are your unique identifiers for finding existing record
+                                    'uid' => $file->uid,
+                                    'doc_id' => $file->doc_id,
+                                    'request_id' => $file->request_id,
+                                    'rivision_id' => $rev + 1,
+                                ],
+                                [
+                                    'file_name' => $file->file_name,
+                                    'rev_id' => $file->rev_id,
+                                    'mimetype' => $file->mimetype,
+                                    'performa' => $file->performa,
+                                    'document_id' => $file->document_id,
+                                    'bk_doc_id' => $file->bk_doc_id,
+                                    'is_file_ddo_verified' => 0,
+                                    'is_file_admin_verified' => 0,
+                                    'is_correct' => $file->is_correct ?? 0,
+                                ]
+                            );
+                        }
+                    }
+                    if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'ddo') {
+                        // dd("Test");
+                        $rev = $_REQUEST['rivision_id'];
+                        $edit_type = $_REQUEST['edit_type'];
+                        $dt = ['is_ddo_varified' => 3];
+                        // $files = Filelist::where('uid', $uid)
+                        //     ->where('performa', 'a')
+                        //     ->where('rivision_id', $rev)
+                        //     ->when($edit_type === 'ddo', function ($query) {
+                        //         return $query->where('is_file_ddo_verified', 1);
+                        //     })
+                        //     ->when($edit_type === 'admin', function ($query) {
+                        //         return $query->where('is_file_admin_verified', 1);
+                        //     })
+                        //     ->get();
+                        // // dd($files);
+
+                        // foreach ($files as $file) {
+
+                        //     FileList::updateOrCreate(
+                        //         [
+                        //             // These are your unique identifiers for finding existing record
+                        //             'uid' => $file->uid,
+                        //             'doc_id' => $file->doc_id,
+                        //             'request_id' => $file->request_id,
+                        //             'rivision_id' => $rev + 1,
+                        //         ],
+                        //         [
+                        //             'file_name' => $file->file_name,
+                        //             'rev_id' => $file->rev_id,
+                        //             'mimetype' => $file->mimetype,
+                        //             'performa' => $file->performa,
+                        //             'document_id' => $file->document_id,
+                        //             'bk_doc_id' => $file->bk_doc_id,
+                        //             'is_file_ddo_verified' => 0,
+                        //             'is_file_admin_verified' => 0,
+                        //             'is_correct' => $file->is_correct ?? 0,
+                        //         ]
+                        //     );
+                        // }
+                        // dd($old_rivision_id,$new_rivision_id);
+                        if (isset($_REQUEST['document_list']) && $_REQUEST['document_list'] > 0) {
+                            $dt = ['is_ddo_varified' => 3];
+                            $data1 = [
+                                'inward_no' => $inward_no,
+                                'inward_date' => now(),
+                                'is_accepted' => 1,
+                                'is_priority' => 'N',
+                                // 'is_ddo_varified' => 0,
+                                // 'ddo_remarks' => null,
+                                // 'is_varified' => 0,
+                                // 'remarks' => null,
+                                'app_ddo' => 0
+                            ];
+                        } else {
+
+                            $data1 = [
+                                'inward_no' => $inward_no,
+                                'inward_date' => now(),
+                                'is_accepted' => 1,
+                                'is_priority' => 'N',
+                                'is_ddo_varified' => 0,
+                                'ddo_remarks' => null,
+                                'is_varified' => 0,
+                                'remarks' => null,
+                                'app_ddo' => 0
+                            ];
+                            $resp1 = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $old_rivision_id)->where('uid', $uid)->update($dt);
+                        }
+                    } else if (isset($_REQUEST['edit_type']) && $_REQUEST['edit_type'] == 'admin') {
+                        // dd("hello");
+                        $dt = ['is_varified' => 3];
+                        // dd($dt);
+                        if (isset($_REQUEST['document_list']) && $_REQUEST['document_list'] > 0) {
+                            // dd("hi");
+                            $data1 = [
+                                'inward_no' => $inward_no,
+                                'inward_date' => now(),
+                                'is_accepted' => 1,
+                                'is_priority' => 'N',
+                                // 'is_ddo_varified' => 0,
+                                // 'ddo_remarks' => null,
+                                // 'is_varified' => 0,
+                                // 'remarks' => null,
+                                'app_admin' => 0
+                            ];
+                        } else {
+                            // dd("hello");
+                            $data1 = [
+                                'inward_no' => $inward_no,
+                                'inward_date' => now(),
+                                'is_accepted' => 1,
+                                'is_priority' => 'N',
+                                'is_ddo_varified' => 0,
+                                'ddo_remarks' => null,
+                                'is_varified' => 0,
+                                'remarks' => null,
+                                'app_admin' => 0
+                            ];
+                            // dd($old_rivision_id,$data1);
+                            $resp1 = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $old_rivision_id)->where('uid', $uid)->update($dt);
+                        }
+                    }
+                    //dd($data);
+                    if (isset($_REQUEST['submit'])) {
+                        $submit_type = $_REQUEST['submit'];
+                    }
+                    //dd($data1,$new_rivision_id);
+                    $resp = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $new_rivision_id)->where('uid', $uid)->update($data1);
+
+
                     // return redirect()->back()->withErrors('message', 'Updated Successfully');
-                    //  dd("hello");
-                    return redirect()->route('user.quarter.history')->withErrors('message', 'Updated Successfully');
+                    //   dd("hello");
+
+
+                    if ($submit_type == "save") {
+
+                        return redirect()->route('user.quarter.history')->with('message', base64_encode('Updated Successfully'));
+                    } else if ($submit_type == "next") {
+
+
+
+                        //  dd("hello",$request->requestid,$request->rivision_id,$request->edit_type);
+                        return redirect()->to(
+                            \URL::action('QuartersController@requestnewquarter') .
+                                "?requestid=" . base64_encode($request->requestid) .
+                                "&rev=" . base64_encode($request->rivision_id) .
+                                "&edit_type=" . base64_encode($request->edit_type) . // fixed
+                                "&active_tab=" . base64_encode('tab3')
+                        )->with('isEdit', 1);
+                    }
+                    // else
+                    // {
+                    //     return redirect()->back()->withErrors('message', 'IT WORKS!');
+                    // }
                 }
 
                 return redirect()->back()->with('message', 'Updated Successfully');
             } catch (Exception $e) {
-                return redirect('insert')->with('failed', "operation failed");
+                dd($e->getMessage());
+                return redirect('insert')->with('failed', "Operation failed: " . $e->getMessage());
             }
         }
     }
     public function requestHistory(Request $request)
     {
-          $uid = Session::get('Uid');
+        $uid = Session::get('Uid');
 
         $basic_pay = Session::get('basic_pay');
         $q_officecode = Session::get('q_officecode');
@@ -1190,7 +1792,7 @@ class QuartersController extends Controller
 
 
         //    DB::enableQueryLog();
-         $quarterlist = Tquarterrequestc::select([
+        $quarterlist = Tquarterrequestc::select([
             DB::raw("'c' as type"),
             DB::raw("'change' as requesttype"),
             'quartertype',
@@ -1360,20 +1962,20 @@ class QuartersController extends Controller
                 // Conditional check for the upload button
                 //  if ($row->inward_no == '' &&  $row->is_ddo_varified==2) { // Replace with your own condition
                 /* if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2) || ($row->inward_no != '' &&  $row->is_varified == 2)) {*/
-                 if ( $row->is_ddo_varified == 0 ) {
-                $btn1 .= '<a href="' . \URL::action('QuartersController@uploaddocument') .
-                    "?r=" . base64_encode($row->requestid) .
-                    "&type=" . base64_encode($row->type) .
-                    "&rev=" . base64_encode($row->rivision_id) .
-                    '" class="btn btn-primary btn-sm">
+                if ($row->is_ddo_varified == 0) {
+                    $btn1 .= '<a href="' . \URL::action('QuartersController@uploaddocument') .
+                        "?r=" . base64_encode($row->requestid) .
+                        "&type=" . base64_encode($row->type) .
+                        "&rev=" . base64_encode($row->rivision_id) .
+                        '" class="btn btn-primary btn-sm">
                 <i class="fa fa-upload" aria-hidden="true" alt="Upload Documents"></i>
             </a>';
-                 }
+                }
                 if ($row->is_ddo_varified == 2) {
-                    
-                     $active_tab = ($row->app_ddo == 1) ? 'tab1' : 'tab3';
+
+                    $active_tab = ($row->app_ddo == 1) ? 'tab1' : 'tab3';
                     if ($row->type == 'b') {
-                       
+
                         $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requesthighercategory') .
                             "?requestid=" . base64_encode($row->requestid) .
                             "&rev=" . base64_encode($row->rivision_id) .
@@ -1395,15 +1997,8 @@ class QuartersController extends Controller
                     }
                 }
                 if ($row->is_varified == 2) {
-                     $active_tab = ($row->app_admin == 1) ? 'tab1' : 'tab3';
-                     if($row->app_admin==1)
-                        {
-                            $active_tab = 'tab1' ;
-                        }
-                        else
-                        {
-                            $active_tab = 'tab3';
-                        }
+                    $active_tab = ($row->app_admin == 1) ? 'tab1' : 'tab3';
+
                     if ($row->type == 'b') {
                         $btn1 .=   '&nbsp; <a href="' . \URL::action('QuartersController@requesthighercategory') .
                             "?requestid=" . base64_encode($row->requestid) .
@@ -1480,7 +2075,7 @@ class QuartersController extends Controller
 
     public function saveuploaddocument(request $request)
     {
-         //  dd($request->all());
+        //  dd($request->all());
         $docId = (string)Session::get('Uid') . "_" . base64_decode($request->request_id) . "_" . $request->document_type . "_" . base64_decode($request->perfoma) . "_" . base64_decode($request->request_rev);
         //dd($docId,$request->file('image'));
         uploadDocuments($docId, $request->file('image'));
@@ -2167,8 +2762,8 @@ class QuartersController extends Controller
             return redirect('/quarterlistnormal')->with('success', 'Request Verified Successfully!');
         } else {
             $status = 2;
-            $app_admin=$request->app_admin;
-            
+            $app_admin = $request->app_admin;
+
             $result = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rv)
                 ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid'), 'app_admin' => $app_admin]);
             if ($result) {
@@ -2248,22 +2843,21 @@ class QuartersController extends Controller
         }
     }
     public function viewApplication(request $request, $requestid, $rivision_id, $performa)
-    {  
-        
+    {
+
         $requestid = base64_decode($requestid);
         $rivision_id = base64_decode($rivision_id);
         $performa = base64_decode($performa);
-       // dd($rivision_id);
+        // dd($rivision_id);
         if ($performa == 'a') {
-                $requestModel = new Tquarterrequesta();
-                $request = $requestModel->getFormattedRequestData($requestid, $rivision_id);
-        } else 
-        {  // dd($requestid);
-                $requestModel = new Tquarterrequestb();
-                $request= $requestModel->getFormattedRequestData($requestid, $rivision_id);
+            $requestModel = new Tquarterrequesta();
+            $request = $requestModel->getFormattedRequestData($requestid, $rivision_id);
+        } else {  // dd($requestid);
+            $requestModel = new Tquarterrequestb();
+            $request = $requestModel->getFormattedRequestData($requestid, $rivision_id);
         }
         //$this->_viewContent['file_uploaded'] 
-       $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name'])
+        $this->_viewContent['file_uploaded'] = Filelist::select(['document_id', 'rev_id', 'doc_id', 'document_name'])
             ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
             ->where('request_id', '=', $requestid)
             ->where('rivision_id', '=', $rivision_id)
@@ -2274,34 +2868,31 @@ class QuartersController extends Controller
 
 
 
-            if (!empty($request['remarks'])) {
+        if (!empty($request['remarks'])) {
             // Convert to array if it's a comma-separated string
             $remarkIds = is_array($request['remarks'])
-            ? $request['remarks']
-            : explode(',', $request['remarks']);
+                ? $request['remarks']
+                : explode(',', $request['remarks']);
 
             // Optional: cast to integers
             $remarkIds = array_map('intval', $remarkIds);
 
             $remarks = Remarks::where('rtype', '0')
-            ->whereIn('remark_id', $remarkIds)
-            ->get();
-            } else {
+                ->whereIn('remark_id', $remarkIds)
+                ->get();
+        } else {
             $remarks = collect(); // Empty collection if no remarks provided
-            }
-
-
-            $this->_viewContent['remarks'] = $remarks;
-        
-        $this->_viewContent['quarterrequest'] = (isset($request) && isset($request)) ? $request : '';
-       // dd($this->_viewContent['quarterrequest']);
-        $this->_viewContent['page_title'] = " Edit Quarter Details";
-        if($performa=='a')
-        {
-        return view('request/viewapplication', $this->_viewContent);
         }
-        else
-        {
+
+
+        $this->_viewContent['remarks'] = $remarks;
+
+        $this->_viewContent['quarterrequest'] = (isset($request) && isset($request)) ? $request : '';
+        // dd($this->_viewContent['quarterrequest']);
+        $this->_viewContent['page_title'] = " Edit Quarter Details";
+        if ($performa == 'a') {
+            return view('request/viewapplication', $this->_viewContent);
+        } else {
             return view('request/viewapplication_b', $this->_viewContent);
         }
     }
@@ -2780,7 +3371,7 @@ class QuartersController extends Controller
     public function addnewremarks(Request $request)
     {
 
-       $new_remarks = urldecode(base64_decode($request->new_remark));
+        $new_remarks = urldecode(base64_decode($request->new_remark));
 
         $request->validate([
             'new_remark' => 'required',
@@ -3103,15 +3694,15 @@ class QuartersController extends Controller
 
 
         if ($type == 'a') {
-            $ddo_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id',$rev)->select('wno')->first();
+            $ddo_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $rev)->select('is_varified', 'remarks')->first();
+            $wno = Tquarterrequesta::where('requestid', $request_id)->where('rivision_id', $rev)->select('wno')->first();
             $this->_viewContent['ddo_remarks_status'] = $ddo_remarks;
             $this->_viewContent['admin_remarks_status'] = $admin_remarks;
         } else if ($type == 'b') {
-            $ddo_remarks = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id',$rev)->select('wno')->first();
+            $ddo_remarks = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id', $rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id', $rev)->select('is_varified', 'remarks')->first();
+            $wno = Tquarterrequestb::where('requestid', $request_id)->where('rivision_id', $rev)->select('wno')->first();
             $this->_viewContent['ddo_remarks_status'] = $ddo_remarks;
             $this->_viewContent['admin_remarks_status'] = $admin_remarks;
         }
@@ -3378,17 +3969,19 @@ class QuartersController extends Controller
         // dd( $rev);
         //dd(Session::get('Uid'));
         if ($type == 'a') {
-            $ddo_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)->select('wno')->first();
+            $ddo_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rev)->select('is_varified', 'remarks')->first();
+            $wno = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rev)->select('wno')->first();
         } else if ($type == 'b') {
-            $ddo_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_ddo_varified', 'ddo_remarks')->first();
-            $admin_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('is_varified', 'remarks')->first();
-            $wno = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id',$rev)->select('wno')->first();
+            $ddo_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rev)->select('is_ddo_varified', 'ddo_remarks')->first();
+            $admin_remarks = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rev)->select('is_varified', 'remarks')->first();
+            $wno = Tquarterrequestb::where('requestid', $requestid)->where('rivision_id', $rev)->select('wno')->first();
         }
         DB::enableQueryLog();
         if ($request->type == 'a') {
-            $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id',$rev)
+
+
+            $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rev)
                 ->first();
             if ($downgrade_requestid != "") {
                 $downgrade_request = Tquarterrequesta::where('requestid', $requestid)
@@ -3406,7 +3999,7 @@ class QuartersController extends Controller
             // Count documents where 'performa' contains 'a'
             //$doc_tobe_submit = Documenttype::where('performa', 'like', '%a%')->whereNotIn('document_type', [2, 6, 9, 10,3,7])->count();
             $type = 'a';
-            
+
             // Count documents where 'performa' contains 'a' and exclude certain document types --19-11-2024
             if ($ddo_remarks['ddo_remarks'] == '' && $admin_remarks['remarks'] == '' && $wno['wno'] == '') {
                 //dd("hello");
@@ -3610,15 +4203,30 @@ class QuartersController extends Controller
             //$query = end($lastQuery);
             // dd($query);
             // dd("Document to be submit :- ".$doc_tobe_submit,'hii<br>',"Document submitted :- ".$doc_submitted);
+
             if ($doc_tobe_submit != $doc_submitted) { //dd("test");
 
+                if (isset($request->isEdit) && $request->isEdit == 1) {
+                    $old_rev = $rev - 1;
+                    //dd($old_rev);
+                    return redirect()->to(
+                        \URL::action('QuartersController@requestnewquarter') .
+                            "?requestid=" . base64_encode($request->requestid) .
+                            "&rev=" . base64_encode($old_rev) .
+                            "&edit_type=" . base64_encode($request->edit_type) . // fixed
+                            "&active_tab=" . base64_encode('tab3')
+                    )->with('isEdit', 1)->with('failed', 'Upload All Documents');
+                } else {
 
-                return redirect()->action('QuartersController@uploaddocument', [
-                    'r' => base64_encode($requestid),
-                    'type' => base64_encode($request->type),
-                    'rev' => base64_encode($rev)
-                ])->with('failed', 'Upload All Documents');
+                    return redirect()->action('QuartersController@uploaddocument', [
+                        'r' => base64_encode($requestid),
+                        'type' => base64_encode($request->type),
+                        'rev' => base64_encode($rev)
+                    ])->with('failed', 'Upload All Documents');
+                }
             }
+
+
             try {
                 $inward_no = '';
                 $uid = auth()->id(); // Example: Get user ID, adjust as needed
@@ -3643,14 +4251,31 @@ class QuartersController extends Controller
                     'remarks' => null
 
                 ];
+                //   dd($request->all());
+                //   dd($data);
+                $existing = Tquarterrequesta::where('uid', $uid)
+                    ->where('requestid', $request->requestid)
+                    ->where('rivision_id', $rev)
+                    ->first();
+                // dd($rev,$existing);
+                $edit_type = trim($request->edit_type) ?? null;
+                if ($existing && $rev == 0) {
+                    $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($data);
+                }
+                if ($edit_type != null) {
+                    $old_rivision_id = (int) $rev - 1;
+                    //dd($old_rivision_id);
+                    if ($edit_type == 'ddo') {
+                        $dt = ['is_ddo_varified' => 3];
+                    } else if ($edit_type == 'admin') {
+                        $dt = ['is_varified' => 3];
+                    }
+                    $resp1 = Tquarterrequesta::where('requestid', $request->input('requestid'))->where('rivision_id', $old_rivision_id)->update($dt);
+                }
 
-                $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->where('rivision_id',$rev)->update($data);
 
-                Filelist::where('request_id', $request->input('requestid'))
-                ->where('performa', 'a')
-                ->where('rivision_id', $rev)
-                ->where('uid', $uid)
-                ->update(['is_file_ddo_verified' => 0 , 'is_file_admin_verified' => 0]);
+
+
 
                 // Downgrade Allotment
                 if ($downgrade_requestid != "") {
@@ -3674,7 +4299,7 @@ class QuartersController extends Controller
                     $respdgr = Tquarterrequesta::where('requestid', $downgrade_requestid)->update($data);
                 }
 
-                if ($resp) {
+                if ($existing || ($resp && $resp > 0)) {
                     return redirect()->route('user.quarter.history')->with('smsg', 'Request Submitted Successfully');
                 } else {
                     $errorMessage = 'Please attach all requested documents then submit your request.';
@@ -3933,7 +4558,7 @@ class QuartersController extends Controller
                     ])->with('failed', 'Upload All Documents');
                 }
             }
-            
+
             try {
                 $inward_no = '';
                 $uid = auth()->id(); // Example: Get user ID, adjust as needed
@@ -3965,23 +4590,19 @@ class QuartersController extends Controller
                     ->where('rivision_id', $rev)
                     ->first();
                 // dd($rev,$existing);
-                $edit_type =$request->edit_type ?? null;
+                $edit_type = trim($request->edit_type) ?? null;
                 if ($existing && $rev == 0) {
                     $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($data);
                 }
-                if($edit_type != null)
-                {
-                $old_rivision_id = (int) $rev - 1;
-                //dd($old_rivision_id);
-                if($edit_type=='ddo')
-                {
-                    $dt = ['is_ddo_varified' => 3];
-                }
-                else if($edit_type == 'admin')
-                {
-                    $dt = ['is_varified' => 3];
-                }
-                $resp1 = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $old_rivision_id)->update($dt);
+                if ($edit_type != null) {
+                    $old_rivision_id = (int) $rev - 1;
+                    //dd($old_rivision_id);
+                    if ($edit_type == 'ddo') {
+                        $dt = ['is_ddo_varified' => 3];
+                    } else if ($edit_type == 'admin') {
+                        $dt = ['is_varified' => 3];
+                    }
+                    $resp1 = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $old_rivision_id)->update($dt);
                 }
                 // Filelist::where('request_id', $request->input('requestid'))
                 //     ->where('performa', 'b')

@@ -511,6 +511,7 @@
                                 <div class="form-group">
                                     @foreach($quarterrequest1 as $request)
                                     <label for="Name"></label>
+                                     @if($request->is_varified == 3)
                                     @php
                                     $url = url('/viewapplication/'.(base64_encode($request->requestid)).'/'.(base64_encode($request->rivision_id)).'/'.(base64_encode('a')));
                                     @endphp
@@ -523,6 +524,8 @@
                                     {{ "Application" }}
                                     @else
                                     {{ "Rivision ".$request->rivision_id }}
+                                    @endif
+                                    <br>
                                     @endif
 
 

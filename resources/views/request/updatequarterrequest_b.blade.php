@@ -401,22 +401,23 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     @foreach($quarterrequest1 as $request)
-                                    <label for="Name"></label>
+                                    
+                                    @if($request->is_varified == 3)
                                     @php
-                                    $url = url('/viewapplication/'.(base64_encode($request->requestid)).'/'.(base64_encode($request->rivision_id)).'/'.(base64_encode($quarterrequest['quartertype'])));
+                                  
+                                    $url = url('/viewapplication/'.(base64_encode($request->requestid)).'/'.(base64_encode($request->rivision_id)).'/'.(base64_encode('b')));
+                                    
                                     @endphp
                                     <a href="{{ $url }}">
                                         <img src="{{ URL::asset('images/archive.png') }}" class="export-icon" />
                                     </a>
-
-
-                                    @if($request->rivision_id == 0)
-                                    {{ "Application" }}
+                                      @if($request->rivision_id == 0)
+                                        {{ "Application" }}
                                     @else
-                                    {{ "Rivision ".$request->rivision_id }}
+                                        {{ "Rivision ".$request->rivision_id }}
                                     @endif
-
-
+                                         <br>
+                                    @endif
                                     @endforeach
                                 </div>
                             </div>

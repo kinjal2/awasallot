@@ -23,51 +23,85 @@
         <!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-    <div class="row">
-        <div class=" col-md-12">
-            <div class="card  card-head">
-                <div class="card-header">
-                    <h3 class="card-title"> {{ __('request.request_details') }}</h3>
-                </div>
-                <div class="card-body">
+    @if( $isEdit == 1)
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs " id="quarterTabs" role="tablist" >
+       
+           @if( ($quarterequesta['app_ddo']==1) || ($quarterequesta['app_admin']==1) )
+            <li class="nav-item" role="presentation">
+                <button class="nav-link   {{ $active_tab == 'tab1' ? 'active' : '' }}"
+                        id="request-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#request"
+                        type="button"
+                        role="tab"
+                        aria-controls="request"
+                        aria-selected="true" disabled>
+                    User Details
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link  {{ $active_tab == 'tab2' ? 'active' : '' }}"
+                        id="history-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#history"
+                        type="button"
+                        role="tab"
+                        aria-controls="history"
+                        aria-selected="false" disabled>
+                 Request Form
+                </button>
+            </li>
+            @endif 
+            @if($document_tab > 0)
+            <li class="nav-item" role="presentation">
+                <button class="nav-link  {{ $active_tab == 'tab3' ? 'active' : '' }}"
+                        id="upload-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#upload"
+                        type="button"
+                        role="tab"
+                        aria-controls="upload"
+                        aria-selected="false" disabled>
+               Document Attachment
+                </button>
+            </li>
+            @endif
+            
+            
+        </ul>
 
-  @if($isEdit)
-    <!-- Show Tabs -->
-    <ul class="nav nav-tabs" id="quarterTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link {{ session('active_tab') != 'tab2' ? 'active' : '' }}" id="request-tab" data-bs-toggle="tab" data-bs-target="#request" type="button" role="tab">
-               User Details
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link {{ session('active_tab') == 'tab2' ? 'active' : '' }}" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">
-                Request Form
-            </button>
-        </li>
-    </ul>
-
-    <!-- Tab Contents -->
-    <div class="tab-content mt-3" id="quarterTabContent">
-        <div class="tab-pane fade {{ session('active_tab') != 'tab2' ? 'show active' : '' }}" id="request" role="tabpanel">
-            @include('user.userprofile_tabview')
-        </div>
-
-        <div class="tab-pane fade {{ session('active_tab') == 'tab2' ? 'show active' : '' }}" id="history" role="tabpanel">
-             @include('user.newqueter_tabview')
-        </div>
-    </div>
-@else
-   @include('user.newqueter_tabview') 
-@endif
-                    <!-- </div> -->
-                  </div>
-                </div>
-                <!-- /.card -->
+        <!-- Tab content -->
+        <div class="tab-content mt-3" id="quarterTabContent">
+             @if( ($quarterequesta['app_ddo']==1) || ( $quarterequesta['app_admin']==1))
+            <div class="tab-pane fade {{ $active_tab == 'tab1'  ? 'show active' : ''  }}"
+                 id="request"
+                 role="tabpanel"
+                 aria-labelledby="request-tab">
+                @include('user.userprofile_tabview')
             </div>
+            <div class="tab-pane fade {{ $active_tab == 'tab2' ? 'show active' : ''  }}"
+                 id="history"
+                 role="tabpanel"
+                 aria-labelledby="history-tab">
+                @include('user.newqueter_tabview')
+            </div>
+            @endif
+           
+           
+            <div class="tab-pane fade  show {{ $active_tab == 'tab3' ? 'show active' : ''  }}"
+                 id="upload"
+                 role="tabpanel"
+                 aria-labelledby="upload-tab">
+                @include('user.documentupload_tabview')
+                
+            </div>
+           
         </div>
-    </div>
-
-</div> 
+    @else
+        {{-- If not edit mode, just show the Request Form directly --}}
+        @include('user.newqueter_tabview')
+    @endif
 
 @endsection 
 @push('page-ready-script') 

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\District;
 use App\Taluka;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
@@ -70,7 +71,7 @@ class ProfileController extends Controller
 
         return view('user/userprofile', $this->_viewContent);
     }
-   public function updateprofiledetails(Request $request)
+    public function updateprofiledetails(Request $request)
     {
         // dd($request->all());
         $rules = [
@@ -79,8 +80,8 @@ class ProfileController extends Controller
             'office_email_id' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
             'is_dept_head' => 'required',
             'is_transferable' => 'required',
-			'date_of_birth' => 'required',
-			'appointment_date' => 'required',
+            'date_of_birth' => 'required',
+            'appointment_date' => 'required',
             'date_of_retirement' => 'required',
             'salary_slab' => 'required',
             'grade_pay' => 'required',
@@ -95,7 +96,7 @@ class ProfileController extends Controller
             'is_phy_dis' => 'required',
             'dis_per' => 'nullable|numeric|max:100|regex:/^\d+(\.\d{1,3})?$/'
         ];
-		$messages = [
+        $messages = [
             'name.required' => 'The name field is required.',
             'name.string' => 'The name must be a valid string.',
             'office.required' => 'The office field is required.',
@@ -119,114 +120,135 @@ class ProfileController extends Controller
             'dis_per.numeric' => 'The disability percentage must be a numeric value.',
             'dis_per.regex' => 'The disability percentage must be a valid number (up to three decimal places).',
         ];
-		$validator =  \Validator::make($request->all(), $rules, $messages);
-		 if ($validator->fails()) {
+        $validator =  \Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
             // return redirect('profile')
             //     ->withInput()
             //     ->withErrors($validator);
-             return redirect()->back()
+            return redirect()->back()
                 ->withInput()
                 ->withErrors($validator);
-        }
-		else {
+        } else {
             $data = $request->input();
-			 try {
+            try {
                 $uid = Session::get('Uid');
-				if(isset($request->oldprofile) && $request->oldprofile == 1)
-				{
-					 $basic_pay = $request->get('basic_pay');
-					$q_officecode = Session::get('q_officecode');
-					$quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
-					 if (!$quartertype) {
-                    return redirect()->back()->with('failed', 'Provide correct/updated basic pay details');
-					}	 
-				}
-				  if ($request->hasFile('image')) {
-
-                        $docId = (string)Session::get('Uid') . "_0_photo";
-                        //uploadDocuments($docId,$request);
-                        uploadDocuments($docId, $request->file('image'));
+                if (isset($request->oldprofile) && $request->oldprofile == 1) {
+                    $basic_pay = $request->get('basic_pay');
+                    $q_officecode = Session::get('q_officecode');
+                    $quartertype = Quarter::select('quartertype')->where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
+                    if (!$quartertype) {
+                        return redirect()->back()->with('failed', 'Provide correct/updated basic pay details');
                     }
-					$appointment_date = Carbon::createFromFormat('d-m-Y', $request->get('appointment_date'));
-                    $date_of_retirement = Carbon::createFromFormat('d-m-Y', $request->get('date_of_retirement'));
-                    $date_of_birth = Carbon::createFromFormat('d-m-Y', $request->get('date_of_birth'));
-					// Enable query logging
-                    // DB::enableQueryLog();
-                    $updateData = [
-                            'name' => empty($request->get('name')) ? NULL : $request->get('name'),
-                            'designation' => empty($request->get('designation')) ? NULL :  $request->get('designation'),
-                            'office' => empty($request->get('office')) ? NULL : $request->get('office'),
-                            'office_email_id' => empty($request->get('office_email_id')) ? NULL : $request->get('office_email_id'),
-                            'contact_no' => empty($request->get('contact_no')) ? NULL :  $request->get('contact_no'),
-                            'maratial_status' => empty($request->get('maratial_status')) ? NULL :  $request->get('maratial_status'),
-                            'is_dept_head' => empty($request->get('is_dept_head')) ? NULL :  $request->get('is_dept_head'),
-                            'is_transferable' => empty($request->get('is_transferable')) ? NULL :  $request->get('is_transferable'),
-                            'date_of_birth' => empty($request->get('date_of_birth')) ? NULL :  $date_of_birth->format('Y-m-d'),
-                            'appointment_date' => empty($request->get('appointment_date')) ? NULL :  $appointment_date->format('Y-m-d'),
-                            'date_of_retirement' => empty($request->get('date_of_retirement')) ? NULL :   $date_of_retirement->format('Y-m-d'),
-                            'salary_slab' => empty($request->get('salary_slab')) ? NULL :  $request->get('salary_slab'),
-                            'grade_pay' => empty($request->get('grade_pay')) ? NULL :  $request->get('grade_pay'),
-                            'basic_pay' => empty($request->get('basic_pay')) ? NULL :  $request->get('basic_pay'),
-                            'actual_salary' => empty($request->get('actual_salary')) ? NULL :  $request->get('actual_salary'),
-                            'address' => empty($request->get('address')) ? NULL :  $request->get('address'),
-                            'current_address' => empty($request->get('current_address')) ? NULL :  $request->get('current_address'),
-                            'office_phone' => empty($request->get('office_phone')) ? NULL :  $request->get('office_phone'),
-                            'office_address' => empty($request->get('office_address')) ? NULL :  $request->get('office_address'),
-                            'gpfnumber' => empty($request->get('gpfnumber')) ? NULL :  $request->get('gpfnumber'),
-                            'pancard' => empty($request->get('pancard')) ? NULL :  $request->get('pancard'),
-                            'office_email_id' => empty($request->get('office_email_id')) ? NULL :  $request->get('office_email_id'),
-                            'is_police_staff' => empty($request->get('is_police_staff')) ? NULL :  $request->get('is_police_staff'),
-                            'is_fix_pay_staff' => empty($request->get('is_fix_pay_staff')) ? NULL :  $request->get('is_fix_pay_staff'),
-                            'image' => empty($imageupload) ? NULL : $imageupload,
-                            'is_judge' => empty($request->get('is_judge')) ? "N" :  $request->get('is_judge'),
-                            'is_phy_dis' => empty($request->get('is_phy_dis')) ? NULL :  $request->get('is_phy_dis'),
-                            'dis_per' => ($request->get('is_phy_dis') == 'N') ? 0 : (empty($request->get('dis_per')) ? 0 : $request->get('dis_per')),
-							
-                        ];
-                        if (isset($request->oldprofile) && $request->oldprofile == 1) {
-                            $updateData['updated_to_new_awasallot_app'] = 1;
-                        }
-                        \DB::table('userschema.users')
-                            ->where('id', $uid)
-                            ->update($updateData);
-						// Get the executed queries
-                    //$queries = DB::getQueryLog();
+                }
+                if ($request->hasFile('image')) {
 
-                    // Print the queries
-                    //dd($queries);
-                    
-                    if (!empty($request->get('basic_pay'))) {
-                        Session::put('basic_pay', $request->get('basic_pay'));
-                    }
-					if (isset($request->request_form) && $request->request_form == 'request_form') {
-                        //dd($request->all());
-                        //dd("hello");
-                        //Session::put('active_tab','tab2');
-                       // dd(Session::get('active_tab'));
-						//  return redirect()->back()->with('active_tab', 'tab2')->with('isEdit', 1);
-                       return redirect()->to(
-                        \URL::action('QuartersController@requesthighercategory') .
-                        "?requestid=" . base64_encode($request->requestid) .
-                        "&rev=" . base64_encode($request->rev) .
-                        "&edit_type=" . base64_encode($request->edit_type) .
-                        "&active_tab=" . base64_encode('tab2')
-                    )->with('isEdit', 1);
-					} 
-					else if(isset($request->oldprofile) && $request->oldprofile == 1)
-					{
-						return redirect(route('user.dashboard.userdashboard'))->with('success', "Details Updated successfully");
-					}
-					else {
-						return redirect('profile')->with('success', "Details Updated successfully");
-					}
+                    $docId = (string)Session::get('Uid') . "_0_photo";
+                    //uploadDocuments($docId,$request);
+                    uploadDocuments($docId, $request->file('image'));
+                }
+                $appointment_date = Carbon::createFromFormat('d-m-Y', $request->get('appointment_date'));
+                $date_of_retirement = Carbon::createFromFormat('d-m-Y', $request->get('date_of_retirement'));
+                $date_of_birth = Carbon::createFromFormat('d-m-Y', $request->get('date_of_birth'));
+                // Enable query logging
+                // DB::enableQueryLog();
+                $updateData = [
+                    'name' => empty($request->get('name')) ? NULL : $request->get('name'),
+                    'designation' => empty($request->get('designation')) ? NULL :  $request->get('designation'),
+                    'office' => empty($request->get('office')) ? NULL : $request->get('office'),
+                    'office_email_id' => empty($request->get('office_email_id')) ? NULL : $request->get('office_email_id'),
+                    'contact_no' => empty($request->get('contact_no')) ? NULL :  $request->get('contact_no'),
+                    'maratial_status' => empty($request->get('maratial_status')) ? NULL :  $request->get('maratial_status'),
+                    'is_dept_head' => empty($request->get('is_dept_head')) ? NULL :  $request->get('is_dept_head'),
+                    'is_transferable' => empty($request->get('is_transferable')) ? NULL :  $request->get('is_transferable'),
+                    'date_of_birth' => empty($request->get('date_of_birth')) ? NULL :  $date_of_birth->format('Y-m-d'),
+                    'appointment_date' => empty($request->get('appointment_date')) ? NULL :  $appointment_date->format('Y-m-d'),
+                    'date_of_retirement' => empty($request->get('date_of_retirement')) ? NULL :   $date_of_retirement->format('Y-m-d'),
+                    'salary_slab' => empty($request->get('salary_slab')) ? NULL :  $request->get('salary_slab'),
+                    'grade_pay' => empty($request->get('grade_pay')) ? NULL :  $request->get('grade_pay'),
+                    'basic_pay' => empty($request->get('basic_pay')) ? NULL :  $request->get('basic_pay'),
+                    'actual_salary' => empty($request->get('actual_salary')) ? NULL :  $request->get('actual_salary'),
+                    'address' => empty($request->get('address')) ? NULL :  $request->get('address'),
+                    'current_address' => empty($request->get('current_address')) ? NULL :  $request->get('current_address'),
+                    'office_phone' => empty($request->get('office_phone')) ? NULL :  $request->get('office_phone'),
+                    'office_address' => empty($request->get('office_address')) ? NULL :  $request->get('office_address'),
+                    'gpfnumber' => empty($request->get('gpfnumber')) ? NULL :  $request->get('gpfnumber'),
+                    'pancard' => empty($request->get('pancard')) ? NULL :  $request->get('pancard'),
+                    'office_email_id' => empty($request->get('office_email_id')) ? NULL :  $request->get('office_email_id'),
+                    'is_police_staff' => empty($request->get('is_police_staff')) ? NULL :  $request->get('is_police_staff'),
+                    'is_fix_pay_staff' => empty($request->get('is_fix_pay_staff')) ? NULL :  $request->get('is_fix_pay_staff'),
+                    'image' => empty($imageupload) ? NULL : $imageupload,
+                    'is_judge' => empty($request->get('is_judge')) ? "N" :  $request->get('is_judge'),
+                    'is_phy_dis' => empty($request->get('is_phy_dis')) ? NULL :  $request->get('is_phy_dis'),
+                    'dis_per' => ($request->get('is_phy_dis') == 'N') ? 0 : (empty($request->get('dis_per')) ? 0 : $request->get('dis_per')),
 
-			}
-			 catch (Exception $e) {
+                ];
+                if (isset($request->oldprofile) && $request->oldprofile == 1) {
+                    $updateData['updated_to_new_awasallot_app'] = 1;
+                }
+                \DB::table('userschema.users')
+                    ->where('id', $uid)
+                    ->update($updateData);
+                // Get the executed queries
+                //$queries = DB::getQueryLog();
+
+                // Print the queries
+                //dd($queries);
+
+                if (!empty($request->get('basic_pay'))) {
+                    Session::put('basic_pay', $request->get('basic_pay'));
+                }
+                if (isset($request->request_form) && $request->request_form == 'request_form') {
+                    $previousUrl = url()->previous();
+                    // dd($previousUrl);
+                    // dd($request->all());
+
+                    $previousUrl = url()->previous(); // Get full previous URL
+
+                    // Parse the previous URL
+                    $parsedUrl = parse_url($previousUrl);
+
+                    // Parse query string into array
+                    parse_str($parsedUrl['query'] ?? '', $queryParams);
+
+                    // Modify/add parameters
+                    $queryParams['active_tab'] = base64_encode('tab2');
+
+                    // Rebuild query string
+                    $queryString = http_build_query($queryParams);
+
+                    // Rebuild full URL
+                    $baseUrl = Str::before($previousUrl, '?');
+                    $finalUrl = $baseUrl . '?' . $queryString;
+
+                    // Redirect with updated URL and flash data
+                    return redirect()
+                        ->to($finalUrl)
+                        ->with(['isEdit' => 1]);
+
+
+
+                    //dd("hello");
+                    //Session::put('active_tab','tab2');
+                    // dd(Session::get('active_tab'));
+                    //  return redirect()->back()->with('active_tab', 'tab2')->with('isEdit', 1);
+                    //    return redirect()->to(
+                    //     \URL::action('QuartersController@requesthighercategory') .
+                    //     "?requestid=" . base64_encode($request->requestid) .
+                    //     "&rev=" . base64_encode($request->rev) .
+                    //     "&edit_type=" . base64_encode($request->edit_type) .
+                    //     "&active_tab=" . base64_encode('tab2')
+                    // )->with('isEdit', 1);
+                } else if (isset($request->oldprofile) && $request->oldprofile == 1) {
+                    return redirect(route('user.dashboard.userdashboard'))->with('success', "Details Updated successfully");
+                } else {
+                    return redirect('profile')->with('success', "Details Updated successfully");
+                }
+            } catch (Exception $e) {
                 dd($e->getMessage());
                 return redirect()->back()->with('failed', "operation failed");
             }
-		}
-	}
+        }
+    }
     public function updateprofiledetails_email(Request $request)
     {
         $uid = Session::get('Uid');
@@ -360,8 +382,8 @@ class ProfileController extends Controller
         $this->_viewContent['users'] = User::find($uid); //
         $this->_viewContent['imageData'] = generateImage($uid);
         $this->_viewContent['page_title'] = "Old Profile Verfiy and  Update";
-        $this->_viewContent['isEdit']=0;
-        $this->_viewContent['oldprofile']=1;
+        $this->_viewContent['isEdit'] = 0;
+        $this->_viewContent['oldprofile'] = 1;
         return view('user/useroldprofile', $this->_viewContent);
     }
     public function saveOrUpdateProfileDetails(Request $request)
@@ -417,7 +439,7 @@ class ProfileController extends Controller
                     ]);
                 }
             }
-            
+
             if ($resp) {
                 return $isAdminUpdate
                     ? redirect()->route('user')->with('success', 'Details Updated Successfully')
@@ -444,6 +466,4 @@ class ProfileController extends Controller
 
         return response()->json($talukas);
     }
-
-    
 }

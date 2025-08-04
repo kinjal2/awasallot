@@ -375,7 +375,7 @@
                 <tr>
                     <td>{{ $file->document_name }}</td>
                     <td>
-                        <a href="{{ url('/download/'.$file->doc_id) }}" target="_blank">
+                        <a href="{{ url('/download_file/'.$file->doc_id) }}" target="_blank">
                             <img src="{{ URL::asset('images/pdf.png') }}" class="export-icon" />
                         </a>
                     </td>
