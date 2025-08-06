@@ -910,6 +910,7 @@ if (!function_exists('getDistrictByCode')) {
 function getAreaDetailsByCode($areacode)
 {
     $q_officecode = Session::get('q_officecode');
+   
     if($areacode == -1 )
     {
         return  "All of Any";

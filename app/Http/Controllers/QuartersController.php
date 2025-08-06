@@ -2849,6 +2849,7 @@ class QuartersController extends Controller
         $rivision_id = base64_decode($rivision_id);
         $performa = base64_decode($performa);
         // dd($rivision_id);
+        // dd($requestid,$rivision_id,$performa);
         if ($performa == 'a') {
             $requestModel = new Tquarterrequesta();
             $request = $requestModel->getFormattedRequestData($requestid, $rivision_id);
@@ -2864,10 +2865,6 @@ class QuartersController extends Controller
             ->where('master.file_list.performa', '=', $performa)
             ->get();
         // Print the raw SQL with bindings
-
-
-
-
         if (!empty($request['remarks'])) {
             // Convert to array if it's a comma-separated string
             $remarkIds = is_array($request['remarks'])
@@ -2884,9 +2881,10 @@ class QuartersController extends Controller
             $remarks = collect(); // Empty collection if no remarks provided
         }
 
-
+        
         $this->_viewContent['remarks'] = $remarks;
-
+        // dd($request);
+        // dd($request['choice1']);
         $this->_viewContent['quarterrequest'] = (isset($request) && isset($request)) ? $request : '';
         // dd($this->_viewContent['quarterrequest']);
         $this->_viewContent['page_title'] = " Edit Quarter Details";

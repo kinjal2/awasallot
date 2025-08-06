@@ -98,7 +98,7 @@ class Tquarterrequesta extends Model
                 'office_address', 'is_activated', 'is_profilechange', 'image_contents',
                 'last_login', 'last_ip', 'created_at', 'updated_at', 'is_admin',
                 'otp', 'otp_created_at', 'status', 'is_verified', 'office_email_id',
-                'is_police_staff', 'is_fix_pay_staff', 'police_staff_verify', 'remarks'
+                'is_police_staff', 'is_fix_pay_staff', 'police_staff_verify'
             ]);
         }])
         ->select([
@@ -109,7 +109,7 @@ class Tquarterrequesta extends Model
             'is_relative', 'relative_details',
             'is_relative_householder', 'relative_house_details',
             'have_house_nearby', 'nearby_house_details',
-            'downgrade_allotment', 'request_date', 'inward_no', 'inward_date', 'is_varified','requestid','rivision_id','dgrid','is_ddo_varified','uid','choice1','choice2','choice3','ddo_remarks'
+            'downgrade_allotment', 'request_date', 'inward_no', 'inward_date', 'is_varified','requestid','rivision_id','dgrid','is_ddo_varified','uid','choice1','choice2','choice3','ddo_remarks','remarks'
         ])
         ->where('requestid', $requestid)
         ->where('rivision_id', $rivision_id)
@@ -162,12 +162,13 @@ class Tquarterrequesta extends Model
             'maratial_status' => $request->usermaster->maratial_status,
             'is_ddo_varified' => $request->is_ddo_varified,
             'user_id'=>$request->uid,
-            'choice1'=>$request->choice1,
+            'choice1'=>$request->choice1 ,
             'choice2'=>$request->choice2,
             'choice3'=>$request->choice3,
             'ddo_remarks'=>$request->ddo_remarks,
             'is_scst' =>$request->is_scst,
-            'scst_info' => $request->scst_info
+            'scst_info' => $request->scst_info,
+             'remarks' => $request->remarks
         ];
     }
 }

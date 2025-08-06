@@ -20,7 +20,7 @@
 
      @isset($oldprofile)
          @if($oldprofile == 1)
-            <input type="hidden" value="1" name="oldprofile" id="oldprofile">
+            <input type="text" value="1" name="oldprofile" id="oldprofile">
          @endif
       @endisset
     <div class="card-body">
@@ -57,21 +57,18 @@
         <div class="col-md-3 avatar-upload_block {{ (isset($isEdit) && $isEdit == 1) ? 'pt-5' : '' }}">
              <div class="avatar-upload">
                 <div class="avatar-edit">
-                   <input type='file' id="image" name="image" accept="image/png, image/jpeg, image/jpg" />
+                   <input type='file' id="image" name="image" accept=".png, .jpg, .jpeg" />
                    <label for="image"><i class="fas fa-upload"></i></label>
                 </div>
                 <div class="avatar-preview">
                    @if ($imageData)
                    <div id="imagePreview" style="background-image: url('data:image/jpeg;base64,{{ base64_encode($imageData) }}');"> </div>
                    @else
-                   <div id="imagePreview" style="background-image: url('images/no-image.jpg');"> </div>
+                   <div id="imagePreview" style="background-image: url('{{ asset('images/no-image.jpg') }}')"> </div>
                    @endif
                 </div>
                 <!-- Show file name below the upload button -->
                 <div id="fileNameDisplay" class="file-name"></div>
-                @if(! $imageData)
-                  <div id="imageError" class="text-danger"></div>
-                @endif
              </div>
 
           </div>
@@ -105,7 +102,7 @@
                 <label for="maratial_status">{{ __('profile.maratial_status') }} </label>
                 <x-select
                    name="maratial_status"
-                   :options="['' => 'Select An Option'] + getMaratialstatus()"
+                   :options="getMaratialstatus()"
                    :selected="$users->maratial_status"
                    class="form-control select2"
                    placeholder="Select Marital Status" />
@@ -148,7 +145,7 @@
                 <label for="is_police_staff"> {{ __('profile.is_police') }} <span class="error">*</span></label>
                 <x-select
                    name="is_police_staff"
-                   :options="['' => 'Select An Option'] + getYesNo()"
+                   :options="getYesNo()"
                    :selected="$users->is_police_staff ?? ''"
                    class="form-control select2"
                    id="is_police_staff"
@@ -162,7 +159,7 @@
                 <label for="is_fix_pay_staff"> {{ __('profile.is_fix_pay') }} <span class="error">*</span></label>
                 <x-select
                    name="is_fix_pay_staff"
-                   :options="['' => 'Select An Option'] + getYesNo()"
+                   :options="getYesNo()"
                    :selected="$users->is_fix_pay_staff ?? ''"
                    class="form-control select2"
                    id="is_fix_pay_staff"
@@ -334,15 +331,15 @@
  </form>
 
  @push('footer-script')
+
  <script type="text/javascript">
-   
     $(function() {
        $('#is_phy_dis').trigger('change');
        // Bootstrap DateTimePicker v4
        $('.dateformat').datetimepicker({
           format: 'DD-MM-YYYY'
        });
-    });
+    
     $('.numeric').keypress(function(event) {
        return numF(event);
     });
@@ -350,6 +347,7 @@
        return anFS(event);
     });
    
+
     $.validator.addMethod(
        "indianDate",
        function(value, element) {
@@ -369,7 +367,6 @@
     $.validator.addMethod("pan", function(value, element) {
        return this.optional(element) || /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test(value);
     }, "Invalid PAN No.");
-
     $.validator.addMethod("validExt", function(value, element) {
        if (this.optional(element))
           return true;
@@ -414,49 +411,40 @@
        const basicPay = parseFloat(value);
        return this.optional(element) || basicPay < actualSalary;
     }, "Basic pay must be less than gross salary.");
-      $.validator.addMethod("filesize", function (value, element, param) { console.log("here");
-      if (element.files.length === 0) return true;
-      return element.files[0].size <= param;
-   }, function (param, element) {
-      let kb = (param / 1024).toFixed(1); // Format as "15.0"
-      return "File size must be less than or equal to " + kb + " KB.";
-   });
 
     $("#frm").validate({
-      
-         ignore: [],  // add this line to not ignore hidden fields
        rules: {
-        "maratial_status": "required",
-        "office": "required",
-            "is_dept_head": "required",
+          "maratial_status": "required",
+          "office": "required",
+          "is_dept_head": "required",
           "is_judge": "required",
           "is_phy_dis": "required",
           "is_transferable": "required",
-          "office_email_id": { 
+          "office_email_id": {
              "required": true,
              "validEmail": true,
-          }, 
+          },
           is_police_staff: {
              "required": true,
 
           },
           is_fix_pay_staff: {
              "required": true,
-          }, 
+          },
           "appointment_date": {
              "required": true,
              "indianDate": true
-          }, 
+          },
           "date_of_retirement": {
              "required": true,
              "indianDate": true
-          }, 
+          },
           "salary_slab": "required",
           "grade_pay": {
              "required": true,
-            //"digits": true
+             /*"digits": true*/
           },
-         "actual_salary": {
+          "actual_salary": {
              "required": true,
              "number": true,
 
@@ -467,60 +455,53 @@
              "lessThanActualSalary": true, // Ensure basic pay is less than actual salary
              "salaryRange": true,
           },
-       
+          "personal_salary": {
+             "required": true,
+             "number": true
+          },
+          "special_salary": {
+             "required": true,
+             "number": true
+          },
+          "deputation_allowence": {
+             "required": true,
+             "number": true
+          },
           "address": {
              "required": true,
              "alphanum": true
-          }, 
-         "current_address": {
+          },
+          "current_address": {
              "required": true,
              "alphanum": true
           },
-         "office_address": {
+          "office_address": {
              "required": true,
              "alphanum": true
-          }, 
+          },
           "office_phone": {
              "required": true,
              "digits": true
           },
           "gpfnumber": {
              "alnum": true
-          }, 
+          },
           "pancard": {
              "pan": true
           },
-       "dis_per": {
+          "dis_per": {
              "number": true,
              "max": 100, // Validate that it's not more than 100
              "min": 0,
           },
-          "image": {
-            required: true,
-            extension: "jpg|jpeg|png",
-            filesize: 15360, // 15KB
-        }
-       },
-       messages: {
-        image: {
-            required: "Please select an image.",
-            extension: "Only jpg, jpeg, and png files are allowed.",
-            filesize: "File size must be less than 15 KB."
-        }
-    },
-       errorPlacement: function(error, element) {
-        if (element.attr("name") === "image") {
-             $('#imageError').html(error); // Custom for image
-         } else {
-            error.insertAfter(element); // Default for others
-         }
-    },
-     success: function (label, element) {
-         if ($(element).attr("name") === "image") {
-            $('#imageError').html(''); // Clear custom error
-         }
-      }
-
+          "dis_certi": {
+             extension: "pdf",
+             accept: "application/pdf",
+             "validExt": true
+          }
+          //  "image":{extension: "jpg|jpeg",accept:"image/jpeg|image/pjpeg","validExt":true}
+       }
+       
     });
 
 
@@ -537,10 +518,8 @@
           reader.readAsDataURL(input.files[0]);
        }
     }
-    
-    $("#image").change(function() {
+    $("#imageUpload").change(function() {
        readURL(this);
-        $('#imageError').html('');
     });
     $('#is_phy_dis').change(function() {
        var value = $(this).val();
@@ -617,6 +596,7 @@
        } else {
           fileNameDisplay.textContent = "";
        }
+    });
     });
  </script>
  @endpush

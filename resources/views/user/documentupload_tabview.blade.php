@@ -182,7 +182,7 @@
                                 <input type="hidden" name="requestid" value="{{ $request_id }}" />
                                 <input type="hidden" name="type" value="{{ $type }} " />
                                 <input type="hidden" name="rev" value="{{ $rev }}" />
-                                <input type="hidden" name="edit_type" value="{{ $edit_type ?? '' }}" />
+                            <input type="hidden" name="edit_type" value="{{ $edit_type ?? '' }}" />
                                 <input type="hidden" name="dgr" value="{{ isset($dgr) ? $dgr : '' }}" />
                                 <input type="hidden" value="{{ count($document_list) }}" id="document_list" name="document_list">
                                 <input type="hidden" value="{{ $isEdit ?? 0 }}" id="isEdit" name="isEdit">

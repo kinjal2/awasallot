@@ -187,8 +187,8 @@ $usermasterData = null;
                                                             </div>
                                                         </div>
                                                         <div class="row user_details_view1">
-                                                            <div class="col-sm-12">
-                                                                <h6 class="mb-0">5) {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} માં અત્યારે જે કક્ષાના વસવાટમાં રહેતા હો તેની માહિતી નીચે પ્રમાણે આપવી.</h6>
+                                                            <div class="col-sm-12"> 
+                                                                <h6 class="mb-0">5) {{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} માં અત્યારે જે કક્ષાના વસવાટમાં રહેતા હો તેની માહિતી નીચે પ્રમાણે આપવી.</h6>
                                                             </div>
                                                         </div>
                                                         <div class="row user_details_view1">
@@ -225,7 +225,7 @@ $usermasterData = null;
                                                         </div>
                                                         <div class="row user_details_view1">
                                                             <div class="col-sm-8">
-                                                                <h6 class="mb-0 ms-4">( ચ) સકયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.<span>:</span></h6>
+                                                                <h6 class="mb-0 ms-4">( ચ) કયા નંબર, તારીખના ફાળવણી આદેશથી ઉપરોકત વસવાટ ફાળવવામાં આવેલ હતું.<span>:</span></h6>
                                                             </div>
                                                             <div class="col-sm-4">
                                                                 <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['prv_details'] : 'N/A' }} </p>
@@ -284,12 +284,14 @@ $usermasterData = null;
                                                                 <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['hc_details'] : 'N/A' }} </p>
                                                             </div>
                                                         </div>
-                                                        <tr>
-                                                            <td>7)</td>
-                                                            <td>આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.)</td>
-                                                            <td>:</td>
-                                                            <td>Choice 1 : {{ getAreaDetailsByCode($quarterrequest['choice1']) }} <br> Choice 2 : {{ getAreaDetailsByCode($quarterrequest['choice2']) }} <br> Choice 3 : {{ getAreaDetailsByCode($quarterrequest['choice3']) }}</td>
-                                                        </tr>
+                                                        <div class="row user_details_view1">
+                                                           <div class="col-sm-8">
+                                                            <h6 class="mb-0">7) આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.)<span>:</span></h6>
+                                                           </div>
+                                                            <div class="col-sm-4"> <p class="m-0"> Choice 1 : {{ getAreaDetailsByCode($quarterrequest['choice1']) }} <br> Choice 2 : {{ getAreaDetailsByCode($quarterrequest['choice2']) }} <br> Choice 3 : {{ getAreaDetailsByCode($quarterrequest['choice3']) }}</p>
+                                                            </div>
+                                                        </div>
+                                                        
                                                         <div class="row user_details_view1">
                                                             <div class="col-sm-10">
                                                                 <h6 class="mb-0">8) આ સાથે સામેલ રાખેલ ઉચ્ચ કક્ષાનું વસવાટ મેળવવાને લગતી સૂચનાઓ મેં વાંચી છે અને તે તથા સરકારશ્રી વખતો વખત આ અંગે સૂચનાઓ બહાર પાડે તેનું પાલન કરવા હું સંમત છું.<span>:</span></h6>
