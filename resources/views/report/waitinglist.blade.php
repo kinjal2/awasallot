@@ -77,7 +77,14 @@ table.dataTable tfoot input {
       </div>
      </div>
     </div>
-
+<div class="row mb-3">
+  <div class="col-12 text-right">
+    <form id="exportForm" method="GET" action="{{ route('waitinglist.export') }}">
+      <input type="hidden" name="quartertype" id="export_quartertype" />
+      <button type="submit" class="btn btn-success">Export to Excel</button>
+    </form>
+  </div>
+</div>
     <div class="table-responsive p-4">
      <table id="waitinglist" class="table table-bordered table-hover  dataTable" style="width:100%">
       <thead>
