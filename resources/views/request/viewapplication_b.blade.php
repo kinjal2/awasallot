@@ -288,7 +288,7 @@ $usermasterData = null;
                                                            <div class="col-sm-8">
                                                             <h6 class="mb-0">7) આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.)<span>:</span></h6>
                                                            </div>
-                                                            <div class="col-sm-4"> <p class="m-0"> Choice 1 : {{ getAreaDetailsByCode($quarterrequest['choice1']) }} <br> Choice 2 : {{ getAreaDetailsByCode($quarterrequest['choice2']) }} <br> Choice 3 : {{ getAreaDetailsByCode($quarterrequest['choice3']) }}</p>
+                                                            <div class="col-sm-4"> <p class="m-0"> Choice 1 : {{ isset($quarterrequest['choice1']) ? getAreaDetailsByCode($quarterrequest['choice1']) : 'N/A' }} <br> Choice 2 : {{ isset($quarterrequest['choice2']) ? getAreaDetailsByCode($quarterrequest['choice2']) : 'N/A' }} <br> Choice 3 : {{ isset($quarterrequest['choice3']) ? getAreaDetailsByCode($quarterrequest['choice3']) : 'N/A' }} </p>
                                                             </div>
                                                         </div>
                                                         

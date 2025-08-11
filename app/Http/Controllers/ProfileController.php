@@ -185,9 +185,28 @@ class ProfileController extends Controller
                 if (isset($request->oldprofile) && $request->oldprofile == 1) {
                     $updateData['updated_to_new_awasallot_app'] = 1;
                 }
-                \DB::table('userschema.users')
-                    ->where('id', $uid)
-                    ->update($updateData);
+                // \DB::table('userschema.users')
+                //     ->where('id', $uid)
+                //     ->update($updateData);
+
+                $existingUser = DB::table('userschema.users')->where('id', $uid)->first();
+
+                if ($existingUser) {
+                    // 2️ Convert stdClass to array
+                    $userData = (array) $existingUser;
+
+                    // 3️ Insert into users_history
+                    \DB::table('userschema.users_history')->insert($userData);
+
+                    // 4️ Proceed to update
+                    \DB::table('userschema.users')
+                        ->where('id', $uid)
+                        ->update($updateData);
+                } else {
+                    // Handle case where user not found
+                    return back()->with('error', 'User not found.');
+                }
+
                 // Get the executed queries
                 //$queries = DB::getQueryLog();
 
@@ -225,19 +244,6 @@ class ProfileController extends Controller
                         ->to($finalUrl)
                         ->with(['isEdit' => 1]);
 
-
-
-                    //dd("hello");
-                    //Session::put('active_tab','tab2');
-                    // dd(Session::get('active_tab'));
-                    //  return redirect()->back()->with('active_tab', 'tab2')->with('isEdit', 1);
-                    //    return redirect()->to(
-                    //     \URL::action('QuartersController@requesthighercategory') .
-                    //     "?requestid=" . base64_encode($request->requestid) .
-                    //     "&rev=" . base64_encode($request->rev) .
-                    //     "&edit_type=" . base64_encode($request->edit_type) .
-                    //     "&active_tab=" . base64_encode('tab2')
-                    // )->with('isEdit', 1);
                 } else if (isset($request->oldprofile) && $request->oldprofile == 1) {
                     return redirect(route('user.dashboard.userdashboard'))->with('success', "Details Updated successfully");
                 } else {

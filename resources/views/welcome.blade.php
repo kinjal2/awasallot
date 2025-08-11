@@ -201,6 +201,9 @@ Designed with user convenience in mind, our platform enables quick and efficient
                   <span class="title"><h4><a   href="{{ url(config('app.asset_url'),'/').'/downloads/ddo.pdf' }}" target="_blank" class="blink_text" target="_blank">View DDO Registration Number</a></h4></span>
                 </li>
                 <li >
+                  <span class="title blink_text" ><h4>For Queries like Changes in Application Form, Incorrect Data Selection or DDO Details Update or Password Update,<br> send mail to :- <span style="color:blue;" >awasallot-secpc-gnr@gujarat.gov.in</span> </h4> <br> Please do not send mail to : itcell.rnb2018@gmail.com</span>
+                </li>
+                <li >
                   <span >For Sending SSO Login form, send mail to <span style="color:red;" >itcell.rnb2018@gmail.com </span></span>
                 </li>
                <!-- <li class="shopping">

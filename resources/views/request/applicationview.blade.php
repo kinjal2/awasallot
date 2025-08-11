@@ -215,14 +215,14 @@
         <td></td>
         <td>( બ ) જ્યાંથી બદલી થઈ નેઆવ્યા હોય પ્રતિનિયુક્તિ ઉપર આવ્યા હોય ત્યાંનો હોદ્દો અને કચેરી નું નામ હોદ્દો (બદલી/પ્રતિનિયુક્તિ ના આદેશની પ્રમાણિત નકલ બિડાણ કરવી)</td>
         <td>:</td>
-        <td>{{ $old_designation }}</td>
+        <td>{{ $old_designation }} / {{$old_office}}</td>
       </tr>
       <!-- <tr>
         <td></td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; કચેરી નું નામ</td>
         <td>:</td>
-        <td>{{$old_office}}</td>
-      </tr> -->
+        <td>{{$old_office}}</td> -->
+      </tr> 
       <tr>
         <td></td>
         <td>( ક ) {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn','gn'))) }} ખાતે હાજર થયા તારીખ</td>
@@ -394,18 +394,19 @@
       <td>:</td>
       <td>{{$have_house_nearby == 'Y' ? $nearby_house_details : 'N'}}</td>
     </tr>
-    <tr>
+	 <tr>
       <td>12)</td>
-      <td colspan="3">આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.) <br>
-      Choice 1 : {{ getAreaDetailsByCode($choice1) }} <br> Choice 2 : {{ getAreaDetailsByCode($choice2) }} <br> Choice 3 : {{ getAreaDetailsByCode($choice3) }}
-    </td>
-    </tr>
-    <tr>
-      <td>13)</td>
       <td>જો જાહેરહિતાર્થે બદલી થઈ ને {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode'),'gn'))) }} આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તેમળે ત્યાં સુધી તરત નીચેની કક્ષાનું વસવાટ ફાળવી આપવા વિનંતી છે? </td>
       <td>:</td>
       <td>{{$downgrade_allotment}}</td>
     </tr>
+    <tr>
+      <td>13)</td>
+      <td colspan="3">આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.) <br>
+	  Choice 1 : {{ isset($choice1) ? getAreaDetailsByCode($choice1) : 'N/A' }} <br> Choice 2 : {{ isset($choice2) ? getAreaDetailsByCode($choice2) : 'N/A' }} <br> Choice 3 : {{ isset($choice3) ? getAreaDetailsByCode($choice3) : 'N/A' }} 
+    </td>
+    </tr>
+   
     <tr>
       <td>14)</td>
       <td>સરકારશ્રી વખતોવખત મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર પાડે તેનું પાલન કરવા હું સંમત છું.</td>
