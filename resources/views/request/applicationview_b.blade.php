@@ -216,7 +216,9 @@
             <td>7</td>
             <td>આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.)</td>
             <td>:</td>
-            <td>Choice 1 : {{ getAreaDetailsByCode($choice1) }} <br> Choice 2 : {{  getAreaDetailsByCode($choice2) }} <br> Choice 3 : {{  getAreaDetailsByCode($choice3) }}</td>
+            <td>
+			Choice 1 : {{ isset($choice1) ? getAreaDetailsByCode($choice1) : 'N/A' }} <br> Choice 2 : {{ isset($choice2) ? getAreaDetailsByCode($choice2) : 'N/A' }} <br> Choice 3 : {{ isset($choice3) ? getAreaDetailsByCode($choice3) : 'N/A' }} 
+			</td>
         </tr>
         <tr>
             <td>8</td>

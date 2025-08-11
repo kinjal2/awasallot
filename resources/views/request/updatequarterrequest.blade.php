@@ -348,23 +348,24 @@
                                                                 <p class="m-0"> {{ isset($quarterrequest['nearby_house_details']) ? $quarterrequest['nearby_house_details'] : 'N/A' }} </p>
                                                             </div>
                                                         </div>
-                                                        <div class="row user_details_view1">
+														 <div class="row user_details_view1">
                                                             <div class="col-sm-8">
-                                                                <h6 class="mb-0">12) આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.) <span>:</span></h6>
-                                                            </div>
-                                                            <div class="col-sm-4">
-                                                                 <p class="m-0">
-                                                                    Choice 1 : {{ isset($quarterrequest->choice1) ? getAreaDetailsByCode($quarterrequest->choice1) : 'N/A' }} <br> Choice 2 : {{ isset($quarterrequest->choice2) ? getAreaDetailsByCode($quarterrequest->choice2) : 'N/A' }} <br> Choice 3 : {{ isset($quarterrequest->choice3) ? getAreaDetailsByCode($quarterrequest->choice3) : 'N/A' }} </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row user_details_view1">
-                                                            <div class="col-sm-8">
-                                                                <h6 class="mb-0">13) જો જાહેરહિતાર્થે બદલી થઈ ને {{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચલી કક્ષાનું વસવાટ મેળવવા માંગો છો?<span>:</span></h6>
+                                                                <h6 class="mb-0">12) જો જાહેરહિતાર્થે બદલી થઈ ને {{ ucfirst(strtolower(getDistrictByCode(Session::get('districtcode'),'gn','gn'))) }} આવેલ હોય તો પોતે જે કક્ષા નું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચલી કક્ષાનું વસવાટ મેળવવા માંગો છો?<span>:</span></h6>
                                                             </div>
                                                             <div class="col-sm-4">
                                                                 <p class="m-0"> {{ isset($quarterrequest['downgrade_allotment']) ? $quarterrequest['downgrade_allotment'] : 'N/A' }} </p>
                                                             </div>
                                                         </div>
+                                                        <div class="row user_details_view1">
+                                                            <div class="col-sm-8">
+                                                                <h6 class="mb-0">13) આપ કયા વિસ્તારમાં સરકારી આવાસ મેળવવા ઇચ્છો છો ? (શક્ય હોય તો ફાળવવામાં આવશે.) <span>:</span></h6>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                 <p class="m-0">
+                                                                    Choice 1 : {{ isset($quarterrequest['choice1']) ? getAreaDetailsByCode($quarterrequest['choice1']) : 'N/A' }} <br> Choice 2 : {{ isset($quarterrequest['choice2']) ? getAreaDetailsByCode($quarterrequest['choice2']) : 'N/A' }} <br> Choice 3 : {{ isset($quarterrequest['choice3']) ? getAreaDetailsByCode($quarterrequest['choice3']) : 'N/A' }} </p>
+                                                            </div>
+                                                        </div>
+                                                       
                                                         <div class="row user_details_view1">
                                                             <div class="col-sm-8">
                                                                 <h6 class="mb-0"> 14) સરકારશ્રી મકાન ફાળવણી અંગે જે સૂચનાઓ નિયમો બહાર પાડે તેનું પાલન કરવા

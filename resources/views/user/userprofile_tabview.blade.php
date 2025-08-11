@@ -69,9 +69,9 @@
                 </div>
                 <!-- Show file name below the upload button -->
                 <div id="fileNameDisplay" class="file-name"></div>
-                @if(! $imageData)
+               
                   <div id="imageError" class="text-danger"></div>
-                @endif
+               
              </div>
 
           </div>
@@ -334,6 +334,7 @@
  </form>
 
  @push('footer-script')
+ 
  <script type="text/javascript">
    
     $(function() {
@@ -421,7 +422,7 @@
       let kb = (param / 1024).toFixed(1); // Format as "15.0"
       return "File size must be less than or equal to " + kb + " KB.";
    });
-
+   
     $("#frm").validate({
       
          ignore: [],  // add this line to not ignore hidden fields
@@ -495,11 +496,13 @@
              "max": 100, // Validate that it's not more than 100
              "min": 0,
           },
+           @if (!$imageData)
           "image": {
             required: true,
             extension: "jpg|jpeg|png",
             filesize: 15360, // 15KB
         }
+         @endif
        },
        messages: {
         image: {

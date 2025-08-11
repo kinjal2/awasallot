@@ -266,6 +266,8 @@ class QuartersController extends Controller
                                     $dataToCopy['inward_date'] = now();
                                     $dataToCopy['ddo_remarks'] = null;
                                     $dataToCopy['remarks'] = null;
+                                    $dataToCopy['is_varified']=0;
+                                    $dataToCopy['is_ddo_varified']=0;
                                     //  dd($dataToCopy);
                                     Tquarterrequesta::updateOrCreate(
                                         [
@@ -790,6 +792,8 @@ class QuartersController extends Controller
                                     $dataToCopy['inward_date'] = now();
                                     $dataToCopy['ddo_remarks'] = null;
                                     $dataToCopy['remarks'] = null;
+                                    $dataToCopy['is_varified']=0;
+                                    $dataToCopy['is_ddo_varified']=0;
                                     //  dd($dataToCopy);
                                     Tquarterrequestb::updateOrCreate(
                                         [
@@ -2585,10 +2589,10 @@ class QuartersController extends Controller
         } else {
             //dd("have issue");
             $status = 2;
-
+            $app_admin = $request->app_admin;
             //  dd($request->adm_remarks,$request->admin_remarks);
             $result = Tquarterrequesta::where('requestid', $requestid)->where('rivision_id', $rv)
-                ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid'), 'app_admin' => 1]);
+                ->update(['is_varified' => $status, 'is_accepted' => 1, 'updatedby' => session::get('Uid'), 'app_admin' => $app_admin]);
             if ($result) {
                 $this->_viewContent['requestid'] = $requestid;
                 $this->_viewContent['rv'] = $rv;

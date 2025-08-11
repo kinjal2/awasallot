@@ -163,5 +163,26 @@ User::updateOrCreate(
     $this->notify(new CustomVerifyEmail);
 }
     
+
+ // Relationship to UserHistory
+    public function histories()
+    {
+        return $this->hasMany(UserHistory::class, 'user_id', 'id');
+    }
+
+    // Method to log current state to history
+    public function logHistory()
+    {
+       // Get only the fields that are fillable in UserHistory
+        $historyFields = (new UserHistory)->getFillable();
+
+        // Extract only matching data from current user
+        $historyData = $this->only($historyFields);
+
+        
+
+        // Save history
+        $this->histories()->create($historyData);
+    }
 }
 
