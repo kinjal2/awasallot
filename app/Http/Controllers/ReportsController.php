@@ -46,129 +46,119 @@ class ReportsController extends Controller
 
         return view('report/waitinglist',$this->_viewContent);
     }
-    public function getWaitingList(request $request)
-    {
-        $quartertype = $request->quartertype;
-$officecode = Session::get('officecode');
-//dd($officecode);
-// First query for "New" request type
-$first = Tquarterrequesta::select([
-    DB::raw("'New' as requesttype"),
-    DB::raw("'New' as tableof"),
-    'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
-    'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
-    'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
-])
-->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_a.uid');
+   public function getWaitingList(Request $request)
+{
+    $quartertype = $request->quartertype;
+    $officecode = Session::get('officecode');
 
-// Second query for "Higher Category" request type
-$union = Tquarterrequestb::select([
-    DB::raw("'Higher Category' as requesttype"),
-    DB::raw("'Higher Category' as tableof"),
-    'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
-    'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
-    'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
-])
-->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_b.uid')
-->union($first);
-
-// Main query with conditional whereIn clause
-$query = DB::table(DB::raw("({$union->toSql()}) as x"))
-    ->select([
-        'requesttype', 'tableof', 'requestid', 'wno', 'inward_no', 'inward_date', 'name', 'designation', 
-        'quartertype', 'office', 'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 
-        'is_accepted', 'is_allotted', 'is_varified', 'email', 'id', 'r_wno', 'office_email_id', 'office_remarks', 
-        'withdraw_remarks', 'officecode'
+    // First query for "New" request type
+    $first = Tquarterrequesta::select([
+        DB::raw("'New' as requesttype"),
+        DB::raw("'New' as tableof"),
+        'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
+        'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
+        'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
     ])
-    ->where(function ($query) use ($officecode, $quartertype) {
-        $query->where('is_accepted', '=', 1)
-            ->where('is_allotted', '=', 0)
-            ->where('is_varified', '=', 1);
-          //  ->where('officecode', '=', $officecode);
-        
-        // Add whereIn only if $quartertype is not empty
-        if (!empty($quartertype)) {
-            $query->whereIn('quartertype', $quartertype);
-        }
+    ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_a.uid');
 
-        $query->orderBy('wno');
-    });
-        // Apply global search
-        if ($request->has('search') && $request->input('search')) {
-            $search = $request->input('search');
-            $search= $search['value'];
-            $query->where(function ($query) use ($search) {
-                $query->where('requesttype', 'like', "%$search%")
-                      ->orWhere('tableof', 'like', "%$search%")
-                      ->orWhere('inward_no', 'like', "%$search%")
-                      ->orWhere('name', 'like', "%$search%")
-                      ->orWhere('quartertype', 'like', "%$search%")
-                      ->orWhere('office', 'like', "%$search%")
-                      ->orWhere('date_of_retirement', 'like', "%$search%")
-                      ->orWhere('contact_no', 'like', "%$search%")
-                      ->orWhere('address', 'like', "%$search%")
-                      ->orWhere('office_email_id', 'like', "%$search%")
-                      ->orWhere('email', 'like', "%$search%")
-                      ->orWhere('designation', 'like', "%$search%");
-            });
-        }
-        
-        return Datatables::of($query)
+    // Second query for "Higher Category" request type
+    $union = Tquarterrequestb::select([
+        DB::raw("'Higher Category' as requesttype"),
+        DB::raw("'Higher Category' as tableof"),
+        'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
+        'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
+        'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
+    ])
+    ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_b.uid')
+    ->union($first);
+
+    // Main query
+    $query = DB::table(DB::raw("({$union->toSql()}) as x"))
+        ->select([
+            'requesttype', 'tableof', 'requestid', 'wno', 'inward_no', 'inward_date', 'name', 'designation', 
+            'quartertype', 'office', 'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 
+            'is_accepted', 'is_allotted', 'is_varified', 'email', 'id', 'r_wno', 'office_email_id', 'office_remarks', 
+            'withdraw_remarks', 'officecode'
+        ])
+       ->mergeBindings($union->getQuery())
+        ->where(function ($query) use ($officecode, $quartertype) {
+            $query->where('is_accepted', '=', 1)
+                ->where('is_allotted', '=', 0)
+                ->where('is_varified', '=', 1);
+
+            if (!empty($quartertype)) {
+                $query->whereIn('quartertype', $quartertype);
+            }
+
+            $query->orderBy('wno');
+        });
+
+    // Apply global search (already present)
+    if ($request->has('search') && $request->input('search')) {
+        $search = $request->input('search');
+        $search = $search['value'];
+        $query->where(function ($query) use ($search) {
+            $query->where('requesttype', 'like', "%$search%")
+                ->orWhere('tableof', 'like', "%$search%")
+                ->orWhere('inward_no', 'like', "%$search%")
+                ->orWhere('name', 'like', "%$search%")
+                ->orWhere('quartertype', 'like', "%$search%")
+                ->orWhere('office', 'like', "%$search%")
+                ->orWhere('date_of_retirement', 'like', "%$search%")
+                ->orWhere('contact_no', 'like', "%$search%")
+                ->orWhere('address', 'like', "%$search%")
+                ->orWhere('office_email_id', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('designation', 'like', "%$search%")
+                ->orWhere('office_remarks', 'ilike', "%$search%");
+        });
+    }
+
+    return Datatables::of($query)
         ->addColumn('inward_date', function ($date) {
-            if($date->inward_date=='')  return 'N/A';
-
-            return date('d-m-Y',strtotime($date->inward_date));
+            return $date->inward_date ? date('d-m-Y', strtotime($date->inward_date)) : 'N/A';
         })
         ->addColumn('date_of_retirement', function ($date) {
-            if($date->date_of_retirement=='')  return 'N/A';
-
-            return date('d-m-Y',strtotime($date->date_of_retirement));
+            return $date->date_of_retirement ? date('d-m-Y', strtotime($date->date_of_retirement)) : 'N/A';
         })
-
-        ->addColumn('action', function($data) {
+        ->addColumn('action', function ($data) {
             return '
-                <button type="button" data-uid="'.$data->id.'" data-type="'.$data->tableof.'" data-rivision_id="'.$data->rivision_id.'"  data-requestid="'.$data->requestid.'" data-toggle="modal"  class=" btn-view-custom getdocument" > View</button>';
+                <button type="button" data-uid="' . $data->id . '" data-type="' . $data->tableof . '" data-rivision_id="' . $data->rivision_id . '"  data-requestid="' . $data->requestid . '" data-toggle="modal"  class=" btn-view-custom getdocument" > View</button>';
         })
-        ->addColumn('office_remarks', function($row){
-
-
-            if($row->office_remarks == "" )
-            {
-
-                    $link = 'onclick="show_dialog_desig(' . $row->id . ',' . $row->wno . ",'" . $row->quartertype . "')\"";
-              return "<a href='#' ".$link." class='desig_popup charcher_data btn-remark-custom' style='width: 100px; height: 30px; display: inline-block; text-align: center; line-height: 30px;'>Add Remarks</a>";
-
-                    return $row->office_remarks;
-            }
-            else
-            {
-
+        ->addColumn('office_remarks', function ($row) {
+            if ($row->office_remarks == "") {
+                $link = 'onclick="show_dialog_desig(' . $row->id . ',' . $row->wno . ",'" . $row->quartertype . "')\"";
+                return "<a href='#' {$link} class='desig_popup charcher_data btn-remark-custom' style='width: 100px; height: 30px; display: inline-block; text-align: center; line-height: 30px;'>Add Remarks</a>";
+            } else {
                 return $row->office_remarks;
             }
-
         })
-        ->rawColumns(['action','office_remarks'])
         ->filter(function ($instance) use ($request) {
-            $search = $request->quartertype;
-            if (!empty($search)) {
-                $instance->where(function($w) use($request){
-                    $search = $request->quartertype;
-                    $w->orwhereIn('quartertype', $search);
+            // Column-specific filtering from DataTables
+            $columns = $request->get('columns');
+            foreach ($columns as $column) {
+                $colName = $column['data'];
+                $searchValue = $column['search']['value'];
 
+                if (!empty($searchValue)) {
+                    $instance->where($colName, 'ilike', '%' . $searchValue . '%'); // PostgreSQL
+                }
+            }
 
-                });
+            // Also apply dropdown filter if needed
+            if (!empty($request->quartertype)) {
+                $instance->whereIn('quartertype', $request->quartertype);
             }
         })
         ->setRowClass(function ($row) {
-            if (strtotime($row->date_of_retirement) < strtotime(date('Y-m-d')) || $row->office_remarks != '') {
+            return (strtotime($row->date_of_retirement) < strtotime(date('Y-m-d')) || $row->office_remarks != '')
+                ? 'bg-light-pink'
+                : '';
+        })
+        ->rawColumns(['action', 'office_remarks'])
+        ->make(true);
+}
 
-            return 'bg-light-pink';
-            } else {
-                return '';
-            }
-        })->make(true);
-
-    }
     public function allotmentlist()
     {
         $officecode = Session::get('officecode');

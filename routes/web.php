@@ -18,6 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuartersController;
 use App\Http\Controllers\CaptchaController;
 use App\Http\controllers\UserQuartersallotmentController;
+use App\Http\Controllers\ExcelExportController;
 use App\QuarterType;
 
 /*
@@ -161,6 +162,11 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
     //Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'UserController@updateUserDdoDetails']);
     Route::post('updateuserprofile', ['as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
     Route::get('/viewapplication/{request_id}/{revision_id}/{performa}', [ 'as' => 'quarter.list.viewapplication', 'uses' => 'QuartersController@viewApplication']);
+
+
+    //excel download 
+   Route::get('/export-excel', [ExcelExportController::class, 'export']);
+
 });
 
 

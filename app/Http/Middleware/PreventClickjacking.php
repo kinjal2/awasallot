@@ -16,6 +16,8 @@ class PreventClickjacking
     public function handle($request, Closure $next)
     {
         // Add X-Frame-Options header to prevent clickjacking
-        return $next($request)->header('X-Frame-Options', 'DENY');
+        $response = $next($request);
+        $response->headers->set('X-Frame-Options', 'DENY');
+        return $response;
     }
 }

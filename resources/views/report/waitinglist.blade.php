@@ -91,7 +91,7 @@ table.dataTable tfoot input {
         <th>Office</th>
         <th>Inward Date</th>
         <th>Retirement Date</th>
-        <th>Remarks</th>
+        <th> Remarks</th>
         
         
        </tr>
@@ -107,7 +107,7 @@ table.dataTable tfoot input {
         <th>Office</th>
         <th>Inward Date</th>
         <th>Retirement Date</th>
-        <th>Remarks</th>
+        <th> Remarks</th>
        </tr>
       </tfoot>
       <tbody></tbody>
@@ -247,6 +247,7 @@ $('#remarks_modal .btn-danger').on('click', function () {
     var table = $('#waitinglist').DataTable({
         processing: true,
         serverSide: true,
+       lengthMenu: [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, "All"]],
         ajax: {
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -276,19 +277,21 @@ $('#remarks_modal .btn-danger').on('click', function () {
             { data: 'office_remarks', name: 'office_remarks' }
         ],
         order: [[1, 'asc']],
-        initComplete: function() {
-            this.api().columns().every(function() {
-                var column = this;
-                if (column.index() === 0) return; // skip details-control column
-                var input = $('<input type="text" placeholder="Search ' + $(column.header()).text() + '" style="width:100%;" />')
-                    .appendTo($(column.footer()).empty())
-                    .on('keyup change clear', function() {
-                        if (column.search() !== this.value) {
-                            column.search(this.value).draw();
-                        }
-                    });
+    initComplete: function() {
+    this.api().columns().every(function() {
+        var column = this;
+        if (column.index() === 0) return; // skip details-control column
+        var input = $('<input type="text" placeholder="Search ' + $(column.header()).text() + '" style="width:100%;" />')
+            .appendTo($(column.footer()).empty())
+            .on('keyup change clear', function() {
+               // console.log("Searching column " + $(column.header()).text() + " with value:", this.value);
+                if (column.search() !== this.value) {
+                    column.search(this.value).draw();
+                }
             });
-        }
+    });
+}
+
     });
 
     // Add event listener for opening and closing details
