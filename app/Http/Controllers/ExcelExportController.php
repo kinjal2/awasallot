@@ -90,19 +90,12 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
 
 // quartertype filter;
 if ($quartertype !== null && $quartertype !== '') {
-    if (is_array($quartertype)) {
-        $query->whereIn('quartertype', $quartertype);
-    } else {
-        $query->where('quartertype', $quartertype);
+    if (!is_array($quartertype)) {
+        $quartertype = explode(',', $quartertype);
     }
+    $query->whereIn('quartertype', $quartertype);
 }
-// DEBUG: Print SQL with bindings replaced
-/*$sql = vsprintf(
-    str_replace('?', "'%s'", $query->toSql()),
-    $query->getBindings()
-);
-dd($sql); // stops here so you can check the query
-*/
+
 $query->orderBy('wno');
 
 $results = $query->get();
