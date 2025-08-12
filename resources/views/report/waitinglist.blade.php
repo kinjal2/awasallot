@@ -335,9 +335,15 @@ $('#remarks_modal .btn-danger').on('click', function () {
           });
       });
     // Quarter type filter change reload
-    $('#quartertype').on('change', function() {
-        table.ajax.reload();
-    });
+  $('#quartertype').on('change', function() {
+    var selectedQuarterType = $(this).val(); // get selected value
+    
+    // reload table
+    table.ajax.reload();
+
+    // set the hidden input for export form
+    $('#export_quartertype').val(selectedQuarterType);
+});
 
     // Reset button clears quartertype and reloads table
     $('#btnReset').on('click', function() {

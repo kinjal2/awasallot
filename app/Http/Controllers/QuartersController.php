@@ -2080,6 +2080,16 @@ class QuartersController extends Controller
     public function saveuploaddocument(request $request)
     {
         //  dd($request->all());
+        // Server-side validation
+    $validatedData = $request->validate([
+        'document_type' => 'required',                // Document type is required
+        'image' => 'required|file|mimes:pdf|max:2048', // Required file, PDF only, max size 2048 KB (2MB)
+    ], [
+        'document_type.required' => 'Document Type is required.',
+        'image.required' => 'Select File to Upload.',
+        'image.mimes' => 'Only PDF files are allowed.',
+        'image.max' => 'File size must be less than 2 MB.',
+    ]);
         $docId = (string)Session::get('Uid') . "_" . base64_decode($request->request_id) . "_" . $request->document_type . "_" . base64_decode($request->perfoma) . "_" . base64_decode($request->request_rev);
         //dd($docId,$request->file('image'));
         uploadDocuments($docId, $request->file('image'));
