@@ -165,7 +165,7 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
 
 
     //excel download 
-   Route::get('/export-excel', [ExcelExportController::class, 'export']);
+    Route::get('/waitinglist/export', [ExcelExportController::class, 'exportWaitingListExcel'])->name('waitinglist.export');
 
 });
 

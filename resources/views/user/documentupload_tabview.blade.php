@@ -24,15 +24,6 @@
             <div class="card ">
                 <div class="card-header">
                     <h3 class="card-title">Upload Document</h3>
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div><br />
-                    @endif
                 </div>
                 @include(Config::get('app.theme').'.template.severside_message')
                 @include(Config::get('app.theme').'.template.validation_errors')
@@ -378,6 +369,12 @@
             });
         });
         $(document).ready(function() {
+           $.validator.addMethod('filesize', function (value, element, param) {
+    if (element.files.length == 0) {
+        return true; // No file selected, pass validation here
+    }
+    return element.files[0].size <= param;
+}, 'File size must be less than 2 MB.'); 
         $('#documentupload').validate({
             errorClass: "error-message",
             errorElement: "span",
@@ -395,7 +392,8 @@
             rules: {
                 image: {
                     required: true,
-                    extension: "pdf"
+                    extension: "pdf",
+                    filesize: 2 * 1024 * 1024 // 2 MB in bytes
                 },
                  document_type: {
                     required: true
@@ -404,7 +402,8 @@
             messages: {
                 image: {
                     required: "Select File to Upload.",
-                    extension: "Only PDF files are allowed."
+                    extension: "Only PDF files are allowed.",
+                  
                 },
                 document_type: {
                     required: "Select Document Type"
