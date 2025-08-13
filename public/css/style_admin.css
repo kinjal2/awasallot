@@ -340,3 +340,7 @@ ul#custom-tabs-one-tab li a {
 .card-new_head {
   background-color: #1f2f46 !important;
 }
+table#waitinglist thead tr th {
+    background: #274472;
+    color: #fff;
+}
