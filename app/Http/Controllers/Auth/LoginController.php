@@ -45,6 +45,11 @@ class LoginController extends Controller
     if (!$user) {
         return back()->withErrors(['identifier' => 'User not found.']);
     }
+    
+     if ($user->is_activated ==0)
+     {
+        return back()->withErrors(['identifier' => 'You account is deactivated']);
+     }
 
     // Step 3: Invalidate any existing session
     if ($user->session_status === 1) {
