@@ -1966,7 +1966,7 @@ class QuartersController extends Controller
                 // Conditional check for the upload button
                 //  if ($row->inward_no == '' &&  $row->is_ddo_varified==2) { // Replace with your own condition
                 /* if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2) || ($row->inward_no != '' &&  $row->is_varified == 2)) {*/
-                if ($row->is_ddo_varified == 0) {
+                if ($row->is_ddo_varified == 0 ) {
                     $btn1 .= '<a href="' . \URL::action('QuartersController@uploaddocument') .
                         "?r=" . base64_encode($row->requestid) .
                         "&type=" . base64_encode($row->type) .
@@ -2935,6 +2935,8 @@ class QuartersController extends Controller
             'email',
             'is_priority',
             'is_ddo_varified',
+            'ddo_approved_at',
+            'a.updated_at',
             'officecode',
             'a.cardex_no',
             'a.ddo_code',
@@ -2964,6 +2966,8 @@ class QuartersController extends Controller
             'email',
             'is_priority',
             'is_ddo_varified',
+            'ddo_approved_at',
+            'c.updated_at',
             'officecode',
             'c.cardex_no',
             'c.ddo_code',
@@ -2993,6 +2997,8 @@ class QuartersController extends Controller
             'email',
             'is_priority',
             'is_ddo_varified',
+            'ddo_approved_at',
+            'b.updated_at',
             'officecode',
             'b.cardex_no',
             'b.ddo_code',
@@ -3026,6 +3032,8 @@ class QuartersController extends Controller
                 'request_date',
                 'is_priority',
                 'is_ddo_varified',
+                'ddo_approved_at',
+                'updated_at',
                 'officecode',
                 'cardex_no',
                 'ddo_code',
@@ -3039,14 +3047,19 @@ class QuartersController extends Controller
                     ->where('officecode', '=', $officecode)
                     ->where('is_varified', 0);
             })
-            ->orderBy('inward_date', 'asc');
+          //  ->orderBy('inward_date', 'asc');
+          //->orderBy('ddo_approved_at','asc');
+          ->orderBy('updated_at','asc');
+          //->orderBy('ddo_approved_at','asc');
+          
 
 
 
         // for showing action button on FCFS request for each quarter type 
         $firstInwardPerQuarterType = DB::table(DB::raw("({$union->toSql()}) as sub"))
             ->mergeBindings($union->getQuery())
-            ->select('quartertype', DB::raw('MIN(inward_date) as min_date'))
+           // ->select('quartertype', DB::raw('MIN(inward_date) as min_date'))
+            ->select('quartertype', DB::raw('MIN(updated_at) as min_date'))
             ->where('is_accepted', '=', 1)
             ->whereNull('remarks')
             //->where('is_varified', '=', 0)
@@ -3075,6 +3088,16 @@ class QuartersController extends Controller
 
                 return date('d-m-Y', strtotime($date->request_date));
             })
+            ->addColumn('ddo_approved_at', function ($date) {
+                if ($date->ddo_approved_at == '')  return 'N/A';
+
+                return date('d-m-Y H:i:s', strtotime($date->ddo_approved_at));
+            })
+            ->addColumn('updated_at', function ($date) {
+                if ($date->updated_at == '')  return 'N/A';
+
+                return date('d-m-Y H:i:s', strtotime($date->updated_at));
+            })
             ->addColumn('cardex_ddo', function ($row) {
                 return $row->cardex_no . "/" . $row->ddo_code;
             })
@@ -3096,7 +3119,8 @@ class QuartersController extends Controller
                 }
 
                 // Compare current row's inward_date with the earliest for its quartertype
-                if ($row->inward_date !== $firstInwardPerQuarterType[$row->quartertype]) {
+              //  if ($row->inward_date !== $firstInwardPerQuarterType[$row->quartertype]) {
+                if ($row->updated_at !== $firstInwardPerQuarterType[$row->quartertype]) {
                     return '';
                 }
 

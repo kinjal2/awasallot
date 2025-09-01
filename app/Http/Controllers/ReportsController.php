@@ -150,11 +150,11 @@ class ReportsController extends Controller
                 $instance->whereIn('quartertype', $request->quartertype);
             }
         })
-        ->setRowClass(function ($row) {
-            return (strtotime($row->date_of_retirement) < strtotime(date('Y-m-d')) || $row->office_remarks != '')
-                ? 'bg-light-pink'
-                : '';
-        })
+        // ->setRowClass(function ($row) {
+        //     return (strtotime($row->date_of_retirement) < strtotime(date('Y-m-d')) || $row->office_remarks != '')
+        //         ? 'bg-light-pink'
+        //         : '';
+        // })
         ->rawColumns(['action', 'office_remarks'])
         ->make(true);
 }

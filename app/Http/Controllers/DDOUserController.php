@@ -217,6 +217,7 @@ class DDOUserController extends Controller
                 ->where('quartertype', $qttype)
                 ->update([
                     'is_ddo_varified' => $is_ddo_varified,
+                    'ddo_approved_at' => now(),
                     'ddo_remarks' => $ddo_remarks,  // Assuming $remarks is a variable that contains the remark data
                      'app_ddo' => $app_ddo
                 ]);
@@ -1022,6 +1023,7 @@ $results = DB::table(DB::raw("({$union->toSql()}) as combined"))
                 ->where('quartertype', $qttype)
                 ->update([
                     'is_ddo_varified' => $is_ddo_varified,
+                    'ddo_approved_at' => now(),
                     'ddo_remarks' => $ddo_remarks,  // Assuming $remarks is a variable that contains the remark data
                     'app_ddo' => $app_ddo
                 ]);

@@ -51,6 +51,8 @@
                       <th>Contact No.</th>
                       <th>Email ID</th>
                       <th>Request Date</th>
+                       <th>DDO Approved At</th>
+                        <th>Updated At</th>
                       <th>Action</th>
                       
                     <!--  <th></th>-->
@@ -101,6 +103,8 @@
             {data: 'contact_no'},
             {data: 'email'},
             {data: 'request_date'},
+            {data: 'ddo_approved_at'},
+            {data: 'updated_at'},
              {data: 'action'},
            
           //  {data: 'delete'},

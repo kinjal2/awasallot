@@ -284,6 +284,20 @@ $('#remarks_modal .btn-danger').on('click', function () {
             { data: 'office_remarks', name: 'office_remarks' }
         ],
         order: [[1, 'asc']],
+     createdRow: function (row, data, dataIndex) {
+    var remarks = data.office_remarks || '';
+
+    // Condition 1: retirement date passed
+    var retired = (data.date_of_retirement && new Date(data.date_of_retirement) < new Date());
+
+    // Condition 2: remarks exist (not "Add Remarks")
+    var hasRemarks = (remarks.indexOf('Add Remarks') === -1 && remarks.trim() !== '');
+
+    // Apply pink background if ANY condition is true
+    if (retired || hasRemarks) {
+        $(row).children('td').css('background-color', '#FFC0CB');
+    }
+},
     initComplete: function() {
     this.api().columns().every(function() {
         var column = this;
