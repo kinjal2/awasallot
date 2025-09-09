@@ -167,6 +167,7 @@ console.log('page is ready');
                       }
                   });
     });
+    
  });
 </script>
 @endpush

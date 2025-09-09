@@ -62,6 +62,21 @@
     background: #fff;
     color: #000;
 }
+
+.footer-links {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.footer-links a {
+  color: #ffffff; /* Adjust color to match your design */
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
   </style>
 </head>
 <body>
@@ -176,7 +191,7 @@ Designed with user convenience in mind, our platform enables quick and efficient
       </div>
     </section>
     <!-- End About Section -->
-
+    
     <!-- ======= Information Section ======= -->
     <section id="contact" class="contact">
       <div class="container">
@@ -185,6 +200,23 @@ Designed with user convenience in mind, our platform enables quick and efficient
           <p>Information</p>
         </div>
         <div class="row">
+          
+
+          <!--  Pop-up Modal -->
+          <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content text-center">
+                <div class="modal-body">
+                  <img src="{{ asset('images/VibrantGujaratRegionalSummitsRegistrationBanner.jpg') }}" alt="Alert Image" class="img-fluid mb-3">
+                  
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn-new btn btn-primary btn-md" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
             <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
             <div id="letest-news">
               <ul class="list">
@@ -290,6 +322,11 @@ Designed with user convenience in mind, our platform enables quick and efficient
     <div class="container">
       <h3 class="m-0">Roads & Buildings Department</h3>
       <p class="sublogo">Estate Management System</p>
+      <!-- Links section -->
+    <div class="footer-links">
+      <a href="{{ url('/tc') }}" target="_blank">Terms and Conditions</a> |
+      <a href="{{ url(config('app.asset_url'),'/').'/downloads/privacy.html' }}" target="_blank">Privacy Policy</a>
+    </div>
       <div class="copyright">
         All Rights Reserved &copy; Copyright <strong><span>@ National Informatics Centre,Gujarat.</span></strong>
       </div>
@@ -312,6 +349,14 @@ Designed with user convenience in mind, our platform enables quick and efficient
 
   <!-- ✅ Accessibility JS -->
     <script>
+
+      
+
+    $(document).ready(function() {
+        // Open modal on page load
+        $('#imageModal').modal('show');
+    });
+
   var $affectedElements = $("p, h1, h2, h3, h4, h5, h6, a, span, .disclaimer_text, .last-btm-foot, .b-footer-credit, li, .title");
 
   // Store original font sizes
@@ -352,6 +397,11 @@ Designed with user convenience in mind, our platform enables quick and efficient
       $this.css("font-size", (currentSize + direction) + "px");
     });
   }
+
+  
+   
+
 </script>
+
 </body>
 </html>

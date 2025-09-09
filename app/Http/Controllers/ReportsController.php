@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Session;
 use Yajra\Datatables\Datatables;
@@ -12,9 +10,7 @@ use App\User;
 use App\QuarterType;
 use App\Filelist;
 use Illuminate\Support\Facades\Log;
-
 use Illuminate\Support\Facades\Redirect;
-
 class ReportsController extends Controller
 {
     /**
@@ -26,7 +22,6 @@ class ReportsController extends Controller
     {
         $this->middleware('auth');
     }
-
     /**
      * Show the application dashboard.
      *
@@ -43,14 +38,13 @@ class ReportsController extends Controller
       //  $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->select(['quartertype'])->orderBy('priority')->get();
        // $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->orderBy('priority')->pluck('quartertype','quartertype')->all();
         $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->where('officecode',$officecode)->orderBy('priority')->pluck('quartertype','quartertype')->all();
-
         return view('report/waitinglist',$this->_viewContent);
     }
    public function getWaitingList(Request $request)
 {
     $quartertype = $request->quartertype;
     $officecode = Session::get('officecode');
-
+    //\DB::enableQueryLog();
     // First query for "New" request type
     $first = Tquarterrequesta::select([
         DB::raw("'New' as requesttype"),
@@ -60,7 +54,6 @@ class ReportsController extends Controller
         'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
     ])
     ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_a.uid');
-
     // Second query for "Higher Category" request type
     $union = Tquarterrequestb::select([
         DB::raw("'Higher Category' as requesttype"),
@@ -71,7 +64,6 @@ class ReportsController extends Controller
     ])
     ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_b.uid')
     ->union($first);
-
     // Main query
     $query = DB::table(DB::raw("({$union->toSql()}) as x"))
         ->select([
@@ -85,14 +77,14 @@ class ReportsController extends Controller
             $query->where('is_accepted', '=', 1)
                 ->where('is_allotted', '=', 0)
                 ->where('is_varified', '=', 1);
-
             if (!empty($quartertype)) {
                 $query->whereIn('quartertype', $quartertype);
             }
-
             $query->orderBy('wno');
         });
-
+        // Get the last executed query
+                 //   $query = \DB::getQueryLog();
+                   // dd($query);
     // Apply global search (already present)
     if ($request->has('search') && $request->input('search')) {
         $search = $request->input('search');
@@ -113,7 +105,6 @@ class ReportsController extends Controller
                 ->orWhere('office_remarks', 'ilike', "%$search%");
         });
     }
-
     return Datatables::of($query)
         ->addColumn('inward_date', function ($date) {
             return $date->inward_date ? date('d-m-Y', strtotime($date->inward_date)) : 'N/A';
@@ -139,12 +130,10 @@ class ReportsController extends Controller
             foreach ($columns as $column) {
                 $colName = $column['data'];
                 $searchValue = $column['search']['value'];
-
                 if (!empty($searchValue)) {
                     $instance->where($colName, 'ilike', '%' . $searchValue . '%'); // PostgreSQL
                 }
             }
-
             // Also apply dropdown filter if needed
             if (!empty($request->quartertype)) {
                 $instance->whereIn('quartertype', $request->quartertype);
@@ -158,23 +147,18 @@ class ReportsController extends Controller
         ->rawColumns(['action', 'office_remarks'])
         ->make(true);
 }
-
     public function allotmentlist()
     {
         $officecode = Session::get('officecode');
         $this->_viewContent['page_title'] = "Allotment List";
 //        $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->orderBy('priority')->pluck('quartertype','quartertype')->all();
          $this->_viewContent['quartertype']=DB::table('master.m_quarter_type')->where('officecode',$officecode)->orderBy('priority')->pluck('quartertype','quartertype')->all();
-
         return view('report/allotmentlist',$this->_viewContent);
-
     }
     public function getAllotmentList()
     {
        //   dd($request->quartertype);
      //  dd('hello');
-
-
     }
     public function vacantlist()
     {
@@ -204,13 +188,11 @@ class ReportsController extends Controller
                     $query->whereRaw("quartertype like ?", ["%{$keyword}%"]);
                 })
                 ->make(true);
-
     }
     public function quarteroccupancy(request $request)
     {
         $this->_viewContent['page_title'] = "Quarter Occupay";
         return view('report/quarteroccupay',$this->_viewContent);
-
     }
     public function  getquarteroccupancy()
     {
@@ -218,18 +200,15 @@ class ReportsController extends Controller
         'allotment_date','occupancy_date','image'])
         ->join('master.m_area', 'master.m_area.areacode', '=', 'master.t_quarter_allotment.areacode')
         ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_allotment.uid');
-
         //$data->orderBy('r_wno', 'asc');
         return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('occupancy_date', function ($date) {
                     if($date->occupancy_date=='')  return 'N/A';
-
                     return date('d-m-Y',strtotime($date->occupancy_date));
                 })
                 ->addColumn('allotment_date', function ($date) {
                     if($date->allotment_date=='')  return 'N/A';
-
                     return date('d-m-Y',strtotime($date->allotment_date));
                 })
                 ->addColumn('image', function ($data) {
@@ -241,7 +220,6 @@ class ReportsController extends Controller
                 })
                 ->rawColumns(['image'])
                 ->make(true);
-
     }
     public function upadteremarks(request $request)
     {
@@ -260,7 +238,6 @@ class ReportsController extends Controller
                     'r_wno' => null,
                     'office_remarks' => $office_remarks
                 ]);
-
             $requestB = Tquarterrequestb::where('quartertype', $quartertype)
                 ->where('is_priority', 'N')
                 ->where('uid', $uid)
@@ -269,20 +246,17 @@ class ReportsController extends Controller
                     'r_wno' => null,
                     'office_remarks' => $office_remarks
                 ]);
-
             // Update query for set revise waiting list number null
             DB::transaction(function () use ($quartertype) {
                 Tquarterrequesta::where('quartertype', $quartertype)
                     ->where('is_priority', 'N')
                     ->whereNotNull('wno')
                     ->update(['r_wno' => null]);
-
                 Tquarterrequestb::where('quartertype', $quartertype)
                     ->where('is_priority', 'N')
                     ->whereNotNull('wno')
                     ->update(['r_wno' => null]);
             });
-
             // Select query for the set r_wno
             $requestAObj = DB::table('master.t_quarter_request_a')
                 ->select('wno', 'uid', 'office_remarks')
@@ -327,27 +301,23 @@ class ReportsController extends Controller
                             ->whereNotNull('wno')
                             ->where('wno', $r_wno)
                             ->update(['r_wno' => $wno]);
-
                         TQuarterRequestb::where('quartertype', $quartertype)
                             ->where('is_priority', 'N')
                             ->whereNotNull('wno')
                             ->where('wno', $r_wno)
                             ->update(['r_wno' => $wno]);
-
                     } else {
                         TQuarterRequesta::where('quartertype', $quartertype)
                         ->where('is_priority', 'N')
                         ->whereNotNull('wno')
                         ->where('uid', $uid)
                         ->update(['r_wno' => null]);
-
                     TQuarterRequestb::where('quartertype', $quartertype)
                         ->where('is_priority', 'N')
                         ->whereNotNull('wno')
                         ->where('uid', $uid)
                         ->update(['r_wno' => null]);
                     }
-
                 /*if ($retirementObj->isNotEmpty()) { dd($retirementObj);
                     $uid = $retirementObj['id'];
                     TQuarterRequesta::where('quartertype', $quartertype)
@@ -355,14 +325,11 @@ class ReportsController extends Controller
                         ->whereNotNull('wno')
                         ->where('uid', $uid)
                         ->update(['r_wno' => null]);
-
                     TQuarterRequestb::where('quartertype', $quartertype)
                         ->where('is_priority', 'N')
                         ->whereNotNull('wno')
                         ->where('uid', $uid)
                         ->update(['r_wno' => null]);
-
-
                 } else {
                     // Set rwno
                      // \DB::enableQueryLog(); // Enable query log
@@ -371,22 +338,18 @@ class ReportsController extends Controller
                         // Your Eloquent query executed by using get()
                           // dd(\DB::getQueryLog());
                            //dd($wno);
-
                       TQuarterRequesta::where('quartertype5', $quartertype)
                           ->where('is_priority', 'N')
                           ->whereNotNull('wno')
                           ->where('wno', $r_wno)
                           ->update(['r_wno' => $wno]);
-
                       TQuarterRequestb::where('quartertype5', $quartertype)
                           ->where('is_priority', 'N')
                           ->whereNotNull('wno')
                           ->where('wno', $r_wno)
                           ->update(['r_wno' => $wno]);
-
                 }*/
             }
-
             return Redirect::route('waiting.list')->with('success', 'Watinglist Update Successfully');
         } catch (\Exception $e) {
            // dd($e->getMessage());
@@ -395,7 +358,6 @@ class ReportsController extends Controller
         }
     }
     public function vacant_quarter(request $request){
-
         $data = DB::table('master.m_quarters')
         ->whereIn('building_no',$request->category)
         ->update(['occupay' => 1]);
@@ -421,7 +383,6 @@ class ReportsController extends Controller
         {
             $performa='b';
         }
-
         $first = Filelist::select(['rev_id','doc_id','document_name'])
         ->join('master.m_document_type as  d', 'd.document_type', '=', 'master.file_list.document_id')
         ->Where('uid', '=', $request->uid)
@@ -433,7 +394,6 @@ class ReportsController extends Controller
         $html = '<table border="1" width="100%" class="table"><thead><tr><th>Document Name</th><tr></thead>';
         foreach ($first as $f) {
                 $downloadUrl = route('download_file', ['filename' => $f->doc_id]);
-
                 $html .= '<tr>
                     <td>
                         <a href="' . $downloadUrl . '" 
@@ -447,7 +407,6 @@ class ReportsController extends Controller
             }
         $html .= '</table>';
         echo $html;
-
     }
     public function download(request $request){
       //  dd($request);
@@ -460,5 +419,4 @@ class ReportsController extends Controller
                         'buttons' => ['export'],
                     ]);
     }
-
 }

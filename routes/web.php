@@ -294,6 +294,9 @@ Route::get('/government_resolution', function () {
 Route::get('/government_document', function () {
     return view('government_document');
 });
+Route::get('/tc', function () {
+    return view('tc');
+});
 
 Route::post('/gettalukabydistrict', [RegisterController::class, 'getTalukaByDistrict'])->name('getTalukaByDistrict');
 
