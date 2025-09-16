@@ -15,64 +15,62 @@
   <link href="{{ URL::asset('/css/bootstrap-icons.css') }}" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="{{ URL::asset('/css/style.css') }}" rel="stylesheet">
-   <!-- Styles -->
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <!-- <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"> -->
-    <link rel="stylesheet" href="{{ URL::asset('/css/swiper-bundle.min.css') }}">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"> -->
-    <link rel="stylesheet" href="{{ URL::asset('/css/aos.css') }}">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"> -->
-    <link rel="stylesheet" href="{{ URL::asset('/css/jquery.datetimepicker.min.css') }}">
-
-        <!-- DataTables -->
-         
-        <link rel="stylesheet" href="{!! URL::asset(Config::get('app.theme_path').'/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') !!}">
+  <!-- Styles -->
+  <!-- Fonts -->
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <!-- <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"> -->
+  <link rel="stylesheet" href="{{ URL::asset('/css/swiper-bundle.min.css') }}">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"> -->
+  <link rel="stylesheet" href="{{ URL::asset('/css/aos.css') }}">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"> -->
+  <link rel="stylesheet" href="{{ URL::asset('/css/jquery.datetimepicker.min.css') }}">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{!! URL::asset(Config::get('app.theme_path').'/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') !!}">
   <link rel="stylesheet" href="{!! URL::asset(Config::get('app.theme_path').'/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') !!}">
-
-    </style>
-
+  </style>
 </head>
 <body>
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top d-flex align-items-center  header-transparent ">
     <div class="container-fluid d-flex align-items-center justify-content-between px-5_new">
-        <div class="logo">
-            <h1><a href="index.html"><img src="{{ URL::asset('/images/logo.png') }}"></a></h1>
-        </div>
-        <nav id="navbar" class="navbar">
-          <ul class="navbar-nav navbar-nav ml-auto">
-            @if (Route::has('login'))
-              <div class="top-right links">
-                @auth
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/home') }}" class="logindata">Home</a></li>
-                  @else
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/') }}" class="logindata {{ Request::is('/') ? 'round_btn' : '' }}">Home</a></li>
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('login') }}" class="logindata {{ Request::is('login') ? 'round_btn' : '' }}">Login</a></li>
-                  <!-- @if (Route::has('register'))
+      <div class="logo">
+        <h1><a href="#"><img src="{{ URL::asset('/images/logo.png') }}" alt="Roads &amp; Buildings Department Estate Management System" title="Roads &amp; Buildings Department Estate Management System"></a></h1>
+      </div>
+      <nav id="navbar" class="navbar">
+        <ul class="navbar-nav navbar-nav ml-auto">
+          @if (Route::has('login'))
+          <div class="top-right links">
+            @auth
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/home') }}" class="logindata">Home</a></li>
+            @else
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/') }}" class="logindata {{ Request::is('/') ? 'round_btn' : '' }}">Home</a></li>
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('login') }}" class="logindata {{ Request::is('login') ? 'round_btn' : '' }}">Login</a></li>
+            <!-- @if (Route::has('register'))
                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('register') }}" class="logindata">Register</a></li>
                   @endif -->
-                  @if (Route::has('ddo.login'))
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('ddo.login.form') }}" class="logindata {{ Request::is('ddo/login') ? 'round_btn' : '' }}"> DDO Login</a></li>
-                  @endif
-                  @if (Route::has('register'))
-                  <li class="nav-item d-none d-sm-inline-block"><a href="https://staging5.gujarat.gov.in/SSOtest/SSO.aspx?Rurl={{ route('grasapi') }}" class="logindata"> Department User Login</a></li>
-                  @endif
-                @endauth
-                   <!-- @if (Route::has('ddo/login')) -->
-                   <!-- <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('/ddo/login') }}" class="logindata"> DDO Login</a></li> -->
-                  <!-- @endif -->
-               
-                   <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata {{ Request::is('government_resolution') ? 'round_btn' : '' }}">Government Resolution</a></li>
-                  <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata {{ Request::is('government_document') ? 'round_btn' : '' }}">Download</a></li>
-                   <!-- <li class="nav-item d-none d-sm-inline-block "><a href="{{  route('vacant.quarter.form')}}" class="logindata {{ Request::is('checkvacant') ? 'round_btn' : '' }}">Check Vacant</a></li> -->
-
-              </div>
+            @if (Route::has('ddo.login'))
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('ddo.login.form') }}" class="logindata {{ Request::is('ddo/login') ? 'round_btn' : '' }}"> DDO Login</a></li>
             @endif
-          </ul>
-          <i class="bi bi-list mobile-nav-toggle"></i>
-        </nav>
-        <!-- .navbar -->
+            @if (Route::has('register'))
+            <li class="nav-item d-none d-sm-inline-block"><a href="https://staging5.gujarat.gov.in/SSOtest/SSO.aspx?Rurl={{ route('grasapi') }}" class="logindata"> Department User Login</a></li>
+            @endif
+            @endauth
+            <!-- @if (Route::has('ddo/login')) -->
+            <!-- <li class="nav-item d-none d-sm-inline-block"><a href="{{ route('/ddo/login') }}" class="logindata"> DDO Login</a></li> -->
+            <!-- @endif -->
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/aboutus') }}" class="logindata {{ Request::is('aboutus') ? 'round_btn' : '' }}">About Us</a></li>
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata {{ Request::is('government_resolution') ? 'round_btn' : '' }}">Government Resolution</a></li>
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata {{ Request::is('government_document') ? 'round_btn' : '' }}">Download</a></li>
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/guidelines') }}" class="logindata {{ Request::is('guidelines') ? 'round_btn' : '' }}">Guidelines</a></li>
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/faqs') }}" class="logindata {{ Request::is('faqs') ? 'round_btn' : '' }}">FAQs</a></li>
+            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/contactus') }}" class="logindata {{ Request::is('contactus') ? 'round_btn' : '' }}">Contact Us</a></li>
+            <!-- <li class="nav-item d-none d-sm-inline-block "><a href="{{  route('vacant.quarter.form')}}" class="logindata {{ Request::is('checkvacant') ? 'round_btn' : '' }}">Check Vacant</a></li> -->
+          </div>
+          @endif
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav>
+      <!-- .navbar -->
     </div>
   </header><!-- End Header -->
   <!-- ======= Hero Section ======= -->

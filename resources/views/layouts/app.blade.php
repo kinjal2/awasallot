@@ -55,7 +55,7 @@
     <header id="header" class="fixed-top header-transparent ">
     <nav class="navbar navbar-expand-lg  p-3">
     <div class="container">
-      <a class="navbar-brand logo-brand" href="#"><img class="img-fluid" src="{{ URL::asset('/images/logo.png') }}"></a>
+      <a class="navbar-brand logo-brand" href="#"><img class="img-fluid" src="{{ URL::asset('/images/logo.png') }}" alt="Roads &amp; Buildings Department Estate Management System" title="Roads &amp; Buildings Department Estate Management System"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>

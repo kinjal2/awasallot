@@ -1,16 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Privacy Policy</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
-    h1 { color: #333; }
-    p { margin-bottom: 1em; }
-  </style>
-</head>
-<body>
+<html>
+@include(Config::get('app.theme').'.template.header_front_page')
+     
+<div class="container">
   <h1>Privacy Policy</h1>
   <p>This privacy policy outlines how the Roads & Buildings Department – Estate Management System collects, uses, and protects your personal information.</p>
 
@@ -30,5 +22,10 @@
   <p>We reserve the right to update this policy at any time. Changes will be posted on this page.</p>
 
   <p>Last updated: September 9, 2025</p>
+</div>
+
+  
+  <!-- ======= Footer ======= -->
+    @include(Config::get('app.theme').'.template.footer_welcome')
 </body>
 </html>

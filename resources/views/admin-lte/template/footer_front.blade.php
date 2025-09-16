@@ -3,6 +3,23 @@
     <div class="container">
       <h3 class="m-0">Roads & Buildings Department</h3>
       <p class="sublogo">Estate Management System</p>
+        <div class="footer-links">
+             <a href="{{ url('/') }}">Home</a> |
+            <a href="{{ url('/aboutus') }}" >About Us</a> |
+            <a href="{{ url('/contactus') }}" >Contact Us</a> |
+            <a href="{{ url('/feedback') }}" >Feedback</a> |
+            <a href="{{ url('/sitemap') }}" >Sitemap</a> |
+            <a href="{{ url('/tc') }}" >Terms and Conditions</a> |
+            <a href="{{ url('/privacy') }}" >Privacy Policy</a>
+        </div>
+         <!-- Last Updated -->
+        <div style="margin-top: 10px; font-size: 14px; color: #aaa;">
+            Last Updated On: {{ \Carbon\Carbon::now()->format('F d, Y') }}
+        </div>
+        <!-- Visitor Count -->
+        <div class="visitor-count" style="font-size: 14px; color: #aaa; margin-top: 10px;">
+            Total Visitors: {{ number_format(getVisitorCount()) }}
+        </div>
       <div class="copyright">
         All Rights Reserved &copy; Copyright <strong><span>@ National Informatics Centre,Gujarat.</span></strong>
       </div>
