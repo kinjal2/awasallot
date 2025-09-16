@@ -11,6 +11,7 @@ use App\District;
 use App\Taluka;
 use App\DDOCode;
 use App\Remarks;
+use App\Visitor;
 
 function printLastQuery()
 {
@@ -741,5 +742,22 @@ function getAreaDetailsByCode($areacode)
         ->where('areacode',$areacode)
         ->pluck('areaname')->first();  // Then use pluck() to get the specific columns
     return $Area;
+    }
+}
+if (!function_exists('getVisitorCount')) {
+    function getVisitorCount(){
+    $visitor = Visitor::first();
+    if (!session()->has('counted')) {
+      if (!$visitor) {
+        $visitor = Visitor::create(['count' => 1]);
+      } else {
+        $visitor->increment('count');
+        $visitor->refresh(); // reload the updated count from DB
+      }
+      session(['counted' => true]);
+    }
+    // Ensure we always get the current count
+    $visitorCount = $visitor ? $visitor->count : 1; // default to 1 if just created
+    return $visitorCount;
     }
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\QuartersController;
 use App\Http\Controllers\CaptchaController;
 use App\Http\controllers\UserQuartersallotmentController;
 use App\Http\Controllers\ExcelExportController;
+use App\Http\Controllers\FeedbackController;
 use App\QuarterType;
 
 /*
@@ -42,6 +43,8 @@ Route::get('/send-test-email', function () {
 Route::get('/', function () {
     return view('welcome');
 })->middleware('prevent_clickjacking');
+
+
 
 // Language switch
 Route::get('locale/{locale}', function ($locale) {
@@ -294,7 +297,31 @@ Route::get('/government_resolution', function () {
 Route::get('/government_document', function () {
     return view('government_document');
 });
-
+Route::get('/tc', function () {
+    return view('tc');
+});
+Route::get('/privacy', function () {
+    return view('privacy');
+});
+Route::get('/guidelines', function () {
+    return view('guidelines');
+});
+Route::get('/faqs', function () {
+    return view('faqs');
+});
+Route::get('/aboutus', function () {
+    return view('aboutus');
+});
+Route::get('/contactus', function () {
+    return view('contactus');
+});
+Route::get('/feedback', function () {
+    return view('feedback');
+});
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+Route::get('/sitemap', function () {
+    return view('sitemap');
+});
 Route::post('/gettalukabydistrict', [RegisterController::class, 'getTalukaByDistrict'])->name('getTalukaByDistrict');
 
 
