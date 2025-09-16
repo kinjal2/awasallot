@@ -1067,3 +1067,21 @@ thead.cf th {
   border-color: red;
   box-shadow: 0 0 5px red;
 }
+.common-left ul li {
+    float: left;
+    line-height: 132%;
+    font-size: 65%;
+    font-weight: 600;
+    text-transform: uppercase;
+    height: 36px;
+    padding-top: 6px;
+    padding-right: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.common-left ul{list-style-type: none; margin: 0;}
+.common-left ul li:last-child{border-left: 1px solid #000;}
+.common-left ul li a{padding-left: 10px;}
+
+
