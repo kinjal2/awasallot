@@ -685,7 +685,7 @@ section#contact {
   text-decoration: none;
 }
 .part-1 i {
-  font-size: 40px;
+  font-size: 80px;
   color: #ef6603;
 }
 .single-service{
@@ -697,33 +697,57 @@ section#contact {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding:10px;
+  padding:20px;
   margin-bottom: 30px;
   border: 1px solid #ddd;
+  min-height: 320px;
+  text-align: center;
+}
+.single-service h5
+ {
+    line-height: 1.5;
 }
 .single-service:hover {
   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 button.btn.btn-primary_new:hover {
   padding: 0;
-  font-size: 13px;
+  font-size: 17px;
   background: #ef6603;
   border-radius: 2px;
   padding: 3px 10px;
   color: #fff;
-  float: right;
+  /* float: right; */
   border: 1px solid #ef6603 ;
 }
 button.btn.btn-primary_new {
   padding: 0;
-  font-size: 13px;
+  font-size: 17px;
   /* background: #ef6603; */
   border-radius: 2px;
   padding: 3px 10px;
   color: #ef6603;
-  float: right;
+  /* float: right; */
   border: 1px solid #ef6603;
 }
+  .contact-card {
+      max-width: 700px;
+      margin: auto;
+      border-radius: 15px;
+    }
+    .about-section {
+      max-width: 1000px;
+      margin: auto;
+    }
+    .card {
+      border-radius: 15px;
+    }
+    .feature-list li::before {
+      content: "✔ ";
+      color: #0d6efd;
+      font-weight: bold;
+    }
+   
 /*--------------------------------------------------------------
 # Features
 --------------------------------------------------------------*/
@@ -1083,5 +1107,29 @@ thead.cf th {
 .common-left ul{list-style-type: none; margin: 0;}
 .common-left ul li:last-child{border-left: 1px solid #000;}
 .common-left ul li a{padding-left: 10px;}
+
+.contact-block i {
+    font-size: 60px;
+    color: #ef6603;
+}
+.contact-block p {
+    font-size: 18px;
+}
+.contact-block {
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 35px 0 30px 0;
+}
+form#feedbackForm {
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+.feedback-heading {
+    background: #ef6603;
+    color: #fff;
+    font-size: 28px;
+    padding: 10px;
+    margin: 0;
+}
 
 

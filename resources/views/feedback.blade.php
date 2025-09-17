@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 @include(Config::get('app.theme').'.template.header_front_page')
-<div class="container">
-    <h1>Feedback Form</h1>
+<div class="container  py-5">
+    <h1 class="feedback-heading">Feedback Form</h1>
   @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
@@ -15,7 +15,7 @@
  
         <div class="row">
     <!-- Name -->
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <div class="lg-block">
             <div class="form-group">
                 <label for="name" class="question_bg mb-3">Name:</label>
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Email -->
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <div class="lg-block">
             <div class="form-group">
                 <label for="email" class="question_bg mb-3">Email:</label>
@@ -41,7 +41,7 @@
     </div>
 
     <!-- Mobile -->
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <div class="lg-block">
             <div class="form-group">
                 <label for="phone" class="question_bg mb-3">Mobile Number:</label>
@@ -90,7 +90,7 @@
             <div class="col-md-12 mb-3">
         <div class="lg-block">
             <div class="form-group">
-        <button type="submit" class="btn-new btn btn-primary btn-md mb-5">
+        <button type="submit" class="btn-new btn btn-primary btn-md mt-3">
             Submit Feedback
         </button> </div></div></div>
     </form>
