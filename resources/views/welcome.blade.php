@@ -64,21 +64,39 @@
 </head>
 <body>
   <!-- ✅ Accessibility Toolbar -->
-  <div>
-    <!-- ======= Header ======= -->
-    <header id="header" class="fixed-top align-items-center  header-transparent">
-      <div class="accessibility-toolbar">
-        <!-- <a href="#" id="increasetext" onclick="adjustTextSize('increase')">A+</a>
+ <div> 
+  <!-- ======= Header ======= -->
+  <header id="header" class="fixed-top align-items-center  header-transparent">
+    <div class="row accessibility-toolbar">
+      <!-- <a href="#" id="increasetext" onclick="adjustTextSize('increase')">A+</a>
       <a href="#" id="decreasetext" onclick="adjustTextSize('decrease')">A-</a>
       <a href="#" id="resettext" onclick="adjustTextSize('reset')">A</a>
       <a href="#main-content">Skip to main content</a>
       <a href="#" onclick="activateScreenReader()">Access screen reader</a> -->
-        <a href="#information"> Skip to Main Content</a>
-        <button id="btn-decrease" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A-</button>
-        <button id="btn-orig" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A</button>
-        <button id="btn-increase" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A+</button>
+      <div class="container">
+        <div class="row">
+      <div class="col-md-6">
+
+      <div class="common-left clearfix">
+                            <ul>
+                                <li class="gov-india"><a title="Government of Gujarat,External Link that opens in a new window" href="#" target="_blank"><span title="ગુજરાત સરકાર">ગુજરાત
+                                            સરકાર</span><br>GOVERNMENT OF GUJARAT</a></li>
+                                <li class="ministry"><a title="Ministry / Department Name" href="https://patnagarseva.gujarat.gov.in" target="_self"><span title="test">Roads &amp; Building Department</span> </a></li>
+
+                            </ul>
+                        </div>
       </div>
-      <div class="container-fluid d-flex align-items-center justify-content-between px-5_new py-2">
+      <div class="col-md-6">
+
+      <a href="#information" > Skip to Main Content</a>
+       <button id="btn-decrease" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A-</button>
+          <button id="btn-orig" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A</button>
+          <button id="btn-increase" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A+</button>
+      </div>
+      </div>
+      </div>
+  </div>
+     <div class="container-fluid d-flex align-items-center justify-content-between px-5_new py-2">
         <div class="logo">
           <h1><a href="#"><img src="{{ URL::asset('/images/logo.png') }}" alt="Roads &amp; Buildings Department Estate Management System" title="Roads &amp; Buildings Department Estate Management System"></a></h1>
         </div>

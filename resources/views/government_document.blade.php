@@ -8,7 +8,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">Bahedhari Khat</h6>
+          <h5 class="title mt-2">Bahedhari Khat</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Banhedharikhat.pdf') }}', '_blank')">
             Download
           </button>
@@ -21,7 +21,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">Jamin Khat</h6>
+          <h5 class="title mt-2">Jamin Khat</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Jaminkhat.pdf') }}', '_blank')">
             Download
           </button>
@@ -34,7 +34,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">Pay Certificate</h6>
+          <h5 class="title mt-2">Pay Certificate</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/PayCertificate.pdf') }}', '_blank')">
             Download
           </button>
@@ -47,7 +47,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">Schedule A [Fresh Quarter Request Form]</h6>
+          <h5 class="title mt-2">Schedule A [Fresh Quarter Request Form]</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Schedule_A.pdf') }}', '_blank')">
             Download
           </button>
@@ -60,7 +60,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">Schedule B [Higher Category Quarter Request Form]</h6>
+          <h5 class="title mt-2">Schedule B [Higher Category Quarter Request Form]</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Schedule_B.pdf') }}', '_blank')">
             Download
           </button>
@@ -73,7 +73,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">Schedule B [Change Quarter Request Form]</h6>
+          <h5 class="title mt-2">Schedule B [Change Quarter Request Form]</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Schedule_C.pdf') }}', '_blank')">
             Download
           </button>
@@ -86,7 +86,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">DESIGNATION/D.O.B/NAME OF CORRECTION</h6>
+          <h5 class="title mt-2">DESIGNATION/D.O.B/NAME OF CORRECTION</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/designation_dob.pdf') }}', '_blank')">
             Download
           </button>
@@ -99,7 +99,7 @@
       <div class="single-service">
         <div class="part-1">
           <i class="bi bi-file-earmark-pdf"></i>
-          <h6 class="title mt-2">Police Staff Certificate</h6>
+          <h5 class="title mt-2">Police Staff Certificate</h5>
           <button type="button" class="btn btn-primary_new" onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/police_staff_certificate.pdf') }}', '_blank')">
             Download
           </button>
