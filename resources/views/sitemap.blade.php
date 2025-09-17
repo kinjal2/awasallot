@@ -19,8 +19,6 @@
     <li><a href="{{ url('/sitemap') }}">Sitemap</a></li>
     <li><a href="{{ url('/tc') }}">Terms and Conditions</a></li>
     <li><a href="{{ url('/privacy') }}">Privacy Policy</a></li>
-
-
   </ul>
 </div>
 

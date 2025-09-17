@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
 @include(Config::get('app.theme').'.template.header_front_page')
-        
 <div class="container">
   <div class="row mt-5 min-height_50"> <!-- Added flex-column here -->
-
     <!-- Start Single Service -->
     <div class="col-md-4 col-lg-4 mb-3"> <!-- Adjusted to full width for vertical stacking -->
       <div class="single-service">
@@ -18,7 +16,6 @@
       </div>
     </div>
     <!-- / End Single Service -->
-
      <!-- Start Single Service -->
     <div class="col-md-4 col-lg-4 mb-3"> <!-- Adjusted to full width for vertical stacking -->
       <div class="single-service">
@@ -32,8 +29,6 @@
       </div>
     </div>
     <!-- / End Single Service -->
-
-
      <!-- Start Single Service -->
     <div class="col-md-4 col-lg-4 mb-3"> <!-- Adjusted to full width for vertical stacking -->
       <div class="single-service">
@@ -47,22 +42,8 @@
       </div>
     </div>
     <!-- / End Single Service -->
-
-
-
-
-
-    
   </div>
 </div>
-
-
-
-
-
-
-
-
   </main><!-- End #main -->
   <!-- ======= Footer ======= -->
     @include(Config::get('app.theme').'.template.footer_welcome')

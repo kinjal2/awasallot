@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -19,23 +18,18 @@
   <link href="{{ URL::asset('/css/style.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('/css/accessibility-widget.css') }}" rel="stylesheet">
   <!-- Styles -->
-
-
   <style>
     @keyframes blink {
       0% {
         opacity: 1;
       }
-
       50% {
         opacity: 0;
       }
-
       100% {
         opacity: 1;
       }
     }
-
     .accessibility-toolbar {
       background: #dfbfa7;
       padding: 6px 12px;
@@ -43,18 +37,15 @@
       text-align: right;
       border-top: 4px solid #ef6603;
     }
-
     .accessibility-toolbar a {
       text-decoration: none;
       font-weight: bold;
       margin-right: 10px;
       color: #000;
     }
-
     .accessibility-toolbar a:hover {
       text-decoration: underline;
     }
-
     .btn_top_icon {
       border: 2px solid #ffffff;
       padding: 0 6px;
@@ -62,7 +53,6 @@
       background: #ef6603;
       color: #fff;
     }
-
     .btn_top_icon:hover {
       border: 2px solid #ef6603;
       padding: 0 6px;
@@ -72,7 +62,6 @@
     }
   </style>
 </head>
-
 <body>
   <!-- ✅ Accessibility Toolbar -->
   <div>
@@ -88,7 +77,6 @@
         <button id="btn-decrease" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A-</button>
         <button id="btn-orig" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A</button>
         <button id="btn-increase" class="btn btn-default btn_top_icon " type="button"><i class="fa fa-font" aria-hidden="true"></i>A+</button>
-
       </div>
       <div class="container-fluid d-flex align-items-center justify-content-between px-5_new py-2">
         <div class="logo">
@@ -115,9 +103,7 @@
               <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/aboutus') }}" class="logindata {{ Request::is('aboutus') ? 'round_btn' : '' }}">About Us</a></li>
               <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata {{ Request::is('government_resolution') ? 'round_btn' : '' }}">Government Resolution</a></li>
               <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata {{ Request::is('government_document') ? 'round_btn' : '' }}">Download</a></li>
-              <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/guidelines') }}" class="logindata {{ Request::is('guidelines') ? 'round_btn' : '' }}">Guidelines</a></li>
-              <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/faqs') }}" class="logindata {{ Request::is('faqs') ? 'round_btn' : '' }}">FAQs</a></li>
-              <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/contactus') }}" class="logindata {{ Request::is('contactus') ? 'round_btn' : '' }}">Contact Us</a></li>
+              <li class="nav-item d-none d-sm-inline-block"><a href="#"  onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Guidelines.pdf') }}', '_blank')" class="logindata {{ Request::is('guidelines') ? 'round_btn' : '' }}">Guidelines</a></li>
               <!-- <li class="nav-item d-none d-sm-inline-block "><a href="{{  route('vacant.quarter.form')}}" class="logindata {{ Request::is('checkvacant') ? 'round_btn' : '' }}">Check Vacant</a></li> -->
               @endauth
             </div>
@@ -128,7 +114,6 @@
         <!-- .navbar -->
       </div>
     </header><!-- End Header -->
-
     <!-- ======= Hero Section ======= -->
     <section id="hero" class="d-flex flex-column justify-content-end align-items-center">
       <div id="heroCarousel" data-bs-interval="5000" class="container carousel carousel-fade" data-bs-ride="carousel">
@@ -137,7 +122,6 @@
             <h2 class="animate__animated animate__fadeInDown">Welcome to <span style="color: #ef6603;">Roads & Buildings Department</span></h2>
             <p class="animate__animated fanimate__adeInUp">Welcome to this portal for easy quarter Allocation, Management and Maintenance</p>
             <!-- Welcome to the Quarter Allocation, Management, and Maintenance Portal
-
 This portal provides seamless access to information on residential quarters and various government buildings.
 Designed with user convenience in mind, our platform enables quick and efficient application, allocation, and maintenance of quarters and office spaces. -->
             <!-- <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a> -->
@@ -159,8 +143,6 @@ Designed with user convenience in mind, our platform enables quick and efficient
         </g>
       </svg>
     </section><!-- End Hero -->
-
-
     <main id="main">
       <!-- ======= About Section =======-->
       <section id="about" class="about">
@@ -189,7 +171,6 @@ Designed with user convenience in mind, our platform enables quick and efficient
         </div>
       </section>
       <!-- End About Section -->
-
       <!-- ======= Information Section ======= -->
       <section id="contact" class="contact">
         <div class="container">
@@ -198,15 +179,12 @@ Designed with user convenience in mind, our platform enables quick and efficient
             <p>Information</p>
           </div>
           <div class="row">
-
-
             <!--  Pop-up Modal -->
             <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content text-center">
                   <div class="modal-body">
                     <img src="{{ asset('images/VibrantGujaratRegionalSummitsRegistrationBanner.jpg') }}" alt="Alert Image" class="img-fluid mb-3">
-
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn-new btn btn-primary btn-md" data-bs-dismiss="modal">Close</button>
@@ -214,7 +192,6 @@ Designed with user convenience in mind, our platform enables quick and efficient
                 </div>
               </div>
             </div>
-
             <div class="col-lg-7 mt-5 mt-lg-0" data-aos="fade-right">
               <div id="letest-news">
                 <ul class="list">
@@ -367,23 +344,9 @@ Designed with user convenience in mind, our platform enables quick and efficient
             </div>
           </div>
       </section><!-- End Contact Section -->
-
-
-
-
-
-
-
-
-
-
-
-
-
     </main><!-- End #main -->
     <!-- ======= Footer ======= -->
     @include(Config::get('app.theme').'.template.footer_welcome')
-
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <!-- jQuery -->
     <script src="{{ URL::asset('/js/jquery.min.js') }}"></script>
@@ -392,7 +355,6 @@ Designed with user convenience in mind, our platform enables quick and efficient
     <script src="{{ URL::asset('/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ URL::asset(Config::get('app.theme_path').'/dist/js/adminlte.min.js') }}"></script>
-
     <!-- Template Main JS File -->
     <script src="{{ URL::asset('/js/main.js') }}"></script>
     <script src="{{ URL::asset('/js/accessibility-widget.js') }}"></script>
@@ -402,32 +364,26 @@ Designed with user convenience in mind, our platform enables quick and efficient
         // Open modal on page load
         $('#imageModal').modal('show');
       });
-
       var $affectedElements = $("p, h1, h2, h3, h4, h5, h6, a, span, .disclaimer_text, .last-btm-foot, .b-footer-credit, li, .title");
-
       // Store original font sizes
       $affectedElements.each(function() {
         var $this = $(this);
         $this.data("orig-size", parseInt($this.css("font-size")));
       });
-
       let fontChangeSteps = 0; // Tracks net changes from original
       const maxSteps = 4;
-
       $("#btn-increase").click(function() {
         if (fontChangeSteps < maxSteps) {
           changeFontSize(1);
           fontChangeSteps++;
         }
       });
-
       $("#btn-decrease").click(function() {
         if (fontChangeSteps > -maxSteps) {
           changeFontSize(-1);
           fontChangeSteps--;
         }
       });
-
       $("#btn-orig").click(function() {
         $affectedElements.each(function() {
           var $this = $(this);
@@ -435,7 +391,6 @@ Designed with user convenience in mind, our platform enables quick and efficient
         });
         fontChangeSteps = 0;
       });
-
       function changeFontSize(direction) {
         $affectedElements.each(function() {
           var $this = $(this);
@@ -444,7 +399,5 @@ Designed with user convenience in mind, our platform enables quick and efficient
         });
       }
     </script>
-
 </body>
-
 </html>

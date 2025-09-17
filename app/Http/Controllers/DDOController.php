@@ -75,6 +75,7 @@ class DDOController extends Controller
     // Store or update DDO data
     public function addNewDDOStore(Request $request)
     {
+        //dd($request->all());
         $id = $request->input('id');
         try {
             // Prepare the unique rule for email

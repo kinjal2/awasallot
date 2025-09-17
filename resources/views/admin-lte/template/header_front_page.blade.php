@@ -61,9 +61,7 @@
             <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/aboutus') }}" class="logindata {{ Request::is('aboutus') ? 'round_btn' : '' }}">About Us</a></li>
             <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_resolution') }}" class="logindata {{ Request::is('government_resolution') ? 'round_btn' : '' }}">Government Resolution</a></li>
             <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/government_document') }}" class="logindata {{ Request::is('government_document') ? 'round_btn' : '' }}">Download</a></li>
-            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/guidelines') }}" class="logindata {{ Request::is('guidelines') ? 'round_btn' : '' }}">Guidelines</a></li>
-            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/faqs') }}" class="logindata {{ Request::is('faqs') ? 'round_btn' : '' }}">FAQs</a></li>
-            <li class="nav-item d-none d-sm-inline-block"><a href="{{ url('/contactus') }}" class="logindata {{ Request::is('contactus') ? 'round_btn' : '' }}">Contact Us</a></li>
+            <li class="nav-item d-none d-sm-inline-block"><a href="#"  onclick="window.open('{{ url(rtrim(config('app.asset_url'), '/') . '/downloads/Guidelines.pdf') }}', '_blank')" class="logindata {{ Request::is('guidelines') ? 'round_btn' : '' }}">Guidelines</a></li>
             <!-- <li class="nav-item d-none d-sm-inline-block "><a href="{{  route('vacant.quarter.form')}}" class="logindata {{ Request::is('checkvacant') ? 'round_btn' : '' }}">Check Vacant</a></li> -->
           </div>
           @endif
