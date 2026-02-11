@@ -50,7 +50,8 @@ class DDOController extends Controller
    public function addNewDDO($id = null)
 {
     $this->_viewContent['page_title'] = $id ? "Edit DDO" : "Add New DDO";
-
+    $this->_viewContent['district']=getDistrictsByOfficeCode(Session::get('officecode'));
+    //dd($this->_viewContent['district']);
     if ($id) {
         $ddo = DDOCode::findOrFail($id);
         $this->_viewContent['ddo'] = $ddo;
@@ -65,6 +66,9 @@ class DDOController extends Controller
             $random_alpha = chr(rand(65, 90));
             $ddo_code = 'OTH' . $random_number . $random_alpha;
         } while (DDOCode::where('ddo_reg_no', $ddo_code)->exists());
+       
+       $this->_viewContent['district']=getDistrictsByOfficeCode(Session::get('officecode'));
+       // dd($this->_viewContent['district']);
         $this->_viewContent['ddo_code'] = $ddo_code;
 
     }
@@ -94,7 +98,8 @@ class DDOController extends Controller
                     'ddo_office_email_id' => [
                         'required',
                         'email',
-                        'regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
+                        //'regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
+                       'regex:/^[A-Za-z0-9._%+-]+@(gujarat\.gov\.in|gujgov\.edu\.in|gsbstb\.org|gsrtc\.org)$/i',
                         $uniqueEmailRule, // ✅ Final working string-based unique rule
                     ],
                 ];
@@ -113,7 +118,7 @@ class DDOController extends Controller
                     'ddo_registration_no.regex' => 'DDO Registration No must start with SGV or OTH, followed by 6 digits and end with an uppercase letter.',
                     'ddo_office_email_id.required' => 'Email is required',
                     'ddo_office_email_id.email' => 'Please enter a valid email address',
-                    'ddo_office_email_id.regex' => 'Invalid email. Email must end with @gujarat.gov.in.',
+                    'ddo_office_email_id.regex' => 'Invalid email. Email must end with either @gujarat.gov.in .',
                     'ddo_office_email_id.unique' => 'This email has already been taken',
                 ];
 
@@ -164,7 +169,33 @@ class DDOController extends Controller
 ]);
 
 
-        } catch (\Exception $e) { dd("fdgfd".$e->getMessage());
+        } catch (\Exception $e) { //dd($e->getMessage());
+             return redirect()
+                ->back()
+                ->withInput() // keep previous input
+                ->with('error', 'ERROR: ' . $e->getMessage());
+        }
+    }
+    public function ddoResetPwd(Request $request)
+    {
+        try{
+                $id = $request->input('id');
+                if ($id) {
+                    DDOCode::where('id', $id)->update([
+                        'password' => Hash::make('Admin@1357'),]);
+        //     return response()->json([
+        //     'success' => true,
+        //     'message' => 'Password has been reset successfully',
+        // ]);
+        
+        // ✅ Redirect to EDIT page (GET route)
+        return redirect()
+            ->route('ddo.edit', $id)
+            ->with('success', 'Password has been reset successfully');
+
+                    }
+    }
+catch (\Exception $e) { //dd($e->getMessage());
              return redirect()
                 ->back()
                 ->withInput() // keep previous input

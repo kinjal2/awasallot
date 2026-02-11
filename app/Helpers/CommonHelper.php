@@ -761,3 +761,18 @@ if (!function_exists('getVisitorCount')) {
     return $visitorCount;
     }
 }
+if (!function_exists('getDistrictsByOfficeCode')) {
+    function getDistrictsByOfficeCode($officecode)
+    {
+        if ($officecode) {
+
+            return DDOCode::where('officecode', $officecode)
+                ->distinct()
+                ->pluck('district', 'dcode') // ✅ key = dcode, value = district
+                ->toArray();
+
+        } else {
+            return [];
+        }
+    }
+}

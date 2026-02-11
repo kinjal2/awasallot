@@ -64,7 +64,31 @@ Route::get('/otp-verify', [LoginController::class, 'otpVerification'])->name('ot
 
 
 Route::get('/grasapi', 'RegistrationController@apiLogin')->name('grasapi');
-Auth::routes(['verify' => true]);
+//Auth::routes(['verify' => true]);
+
+
+ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+
+    $user = \App\User::findOrFail($id);
+
+    if (! hash_equals(
+        sha1($user->getEmailForVerification()),
+        $hash
+    )) {
+        abort(403, 'Invalid or expired link');
+    }
+
+    if (! $user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+
+    return redirect('/login')
+        ->with('success', 'Email verified successfully');
+
+})->middleware(['signed', 'throttle:6,1'])
+  ->name('verification.verify');
+
+
 
 // Phone Verification Routes
 Route::get('/phone/verify', [PhoneVerificationController::class, 'show'])->name('phoneverification.notice');
@@ -101,6 +125,8 @@ Route::middleware(['verifiedphone', 'verified', 'role:user', 'check.host', 'prev
 
 // Admin Dashboard
 Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(function () {
+
+   
     Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
     Route::get('user', ['as' => 'user', 'uses' => 'UserController@index']);
     //  Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
@@ -155,8 +181,8 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
 
         Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
         Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
-
-        Route::get('ddo/edit/{id}', [DDOController::class, 'addNewDDO'])->name('ddo.edit');
+         Route::post('ddo/resetpwd', [DDOController::class, 'ddoResetPwd'])->name('ddo.resetpwd');
+        Route::get('ddo/edit/{id}', [DDOController::class, 'addNewDDO'])->name('ddo.edit'); 
       
 
 
@@ -255,6 +281,13 @@ Route::prefix('user')->group(function () {
 
 
     Route::post('updateuserprofile', ['as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
+
+    Route::get('otp', function () {
+        return view('admin.otp',
+        ['page_title' => 'OTP Verification']); // adjust view path
+    })->name('otp');
+
+     Route::post('otp', 'UserController@getOtp')->name('user.getOtp');
 });
 
 // Quarter Type Routes

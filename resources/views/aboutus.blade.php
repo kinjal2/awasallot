@@ -47,7 +47,7 @@
               <!-- <a href="#" class="btn-learn-more">Learn More</a> -->
             </div>
             <div class="col-lg-6 pt-4 pt-lg-0" style="word-spacing: 0em;">
-              <img class="img-responsive" src="http://10.154.3.99/awasallot/public/images/gift-home.jpg" alt="Home" title="Home" style="word-spacing: 0em;">
+              <img class="img-responsive" src="{{ URL::asset('/images/gift-home.jpg') }}" alt="Home" title="Home" style="word-spacing: 0em;">
             </div>
           </div>
         </div>

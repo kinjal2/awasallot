@@ -51,7 +51,14 @@ class ReportsController extends Controller
         DB::raw("'New' as tableof"),
         'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
         'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
-        'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
+        'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode',
+        DB::raw("
+        CASE
+            WHEN is_scst = 'Y' THEN 'Yes'
+            WHEN is_scst = 'N' THEN 'No'
+           
+        END as is_scst
+    ")
     ])
     ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_a.uid');
     // Second query for "Higher Category" request type
@@ -60,7 +67,9 @@ class ReportsController extends Controller
         DB::raw("'Higher Category' as tableof"),
         'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office', 
         'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 'is_accepted', 'is_allotted',
-        'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
+        'is_varified', 'email', 'u.id', 'r_wno', 'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode',
+        DB::raw("'N/A' as is_scst")
+
     ])
     ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_b.uid')
     ->union($first);
@@ -70,7 +79,7 @@ class ReportsController extends Controller
             'requesttype', 'tableof', 'requestid', 'wno', 'inward_no', 'inward_date', 'name', 'designation', 
             'quartertype', 'office', 'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber', 
             'is_accepted', 'is_allotted', 'is_varified', 'email', 'id', 'r_wno', 'office_email_id', 'office_remarks', 
-            'withdraw_remarks', 'officecode'
+            'withdraw_remarks', 'officecode','is_scst'
         ])
        ->mergeBindings($union->getQuery())
         ->where(function ($query) use ($officecode, $quartertype) {
@@ -102,7 +111,8 @@ class ReportsController extends Controller
                 ->orWhere('office_email_id', 'like', "%$search%")
                 ->orWhere('email', 'like', "%$search%")
                 ->orWhere('designation', 'like', "%$search%")
-                ->orWhere('office_remarks', 'ilike', "%$search%");
+                ->orWhere('office_remarks', 'ilike', "%$search%")
+                ->orwhere('is_scst','ilike',"%$search%");
         });
     }
     return Datatables::of($query)
@@ -111,6 +121,9 @@ class ReportsController extends Controller
         })
         ->addColumn('date_of_retirement', function ($date) {
             return $date->date_of_retirement ? date('d-m-Y', strtotime($date->date_of_retirement)) : 'N/A';
+        })
+         ->addColumn('is_scst', function ($row) {
+            return $row->is_scst;
         })
         ->addColumn('action', function ($data) {
             return '

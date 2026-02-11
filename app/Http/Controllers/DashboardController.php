@@ -307,6 +307,7 @@ class DashboardController extends Controller
             $basic_pay = Session::get('basic_pay');
             //dd($basic_pay);
             $this->_viewContent['quarterselect'] = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->first();
+           
             //dd($this->_viewContent['quarterselect']);
             $this->_viewContent['page_title'] = "Dashboard";
             return view('user/dashboard', $this->_viewContent);

@@ -152,15 +152,15 @@ class ProfileController extends Controller
                 // Enable query logging
                 // DB::enableQueryLog();
                 $updateData = [
-                    'name' => empty($request->get('name')) ? NULL : $request->get('name'),
-                    'designation' => empty($request->get('designation')) ? NULL :  $request->get('designation'),
+                    // 'name' => empty($request->get('name')) ? NULL : $request->get('name'),
+                    //'designation' => empty($request->get('designation')) ? NULL :  $request->get('designation'),
                     'office' => empty($request->get('office')) ? NULL : $request->get('office'),
                     'office_email_id' => empty($request->get('office_email_id')) ? NULL : $request->get('office_email_id'),
                     'contact_no' => empty($request->get('contact_no')) ? NULL :  $request->get('contact_no'),
                     'maratial_status' => empty($request->get('maratial_status')) ? NULL :  $request->get('maratial_status'),
                     'is_dept_head' => empty($request->get('is_dept_head')) ? NULL :  $request->get('is_dept_head'),
                     'is_transferable' => empty($request->get('is_transferable')) ? NULL :  $request->get('is_transferable'),
-                    'date_of_birth' => empty($request->get('date_of_birth')) ? NULL :  $date_of_birth->format('Y-m-d'),
+                    //'date_of_birth' => empty($request->get('date_of_birth')) ? NULL :  $date_of_birth->format('Y-m-d'),
                     'appointment_date' => empty($request->get('appointment_date')) ? NULL :  $appointment_date->format('Y-m-d'),
                     'date_of_retirement' => empty($request->get('date_of_retirement')) ? NULL :   $date_of_retirement->format('Y-m-d'),
                     'salary_slab' => empty($request->get('salary_slab')) ? NULL :  $request->get('salary_slab'),
@@ -194,6 +194,11 @@ class ProfileController extends Controller
                 if ($existingUser) {
                     // 2️ Convert stdClass to array
                     $userData = (array) $existingUser;
+
+                    $userData = array_merge($userData, [
+                        'updated_from' => $request->ip(),   // client IP
+                        'updated_by'   => $uid,      // logged-in user id
+                    ]);
 
                     // 3️ Insert into users_history
                     \DB::table('userschema.users_history')->insert($userData);
@@ -243,7 +248,6 @@ class ProfileController extends Controller
                     return redirect()
                         ->to($finalUrl)
                         ->with(['isEdit' => 1]);
-
                 } else if (isset($request->oldprofile) && $request->oldprofile == 1) {
                     return redirect(route('user.dashboard.userdashboard'))->with('success', "Details Updated successfully");
                 } else {
@@ -422,6 +426,26 @@ class ProfileController extends Controller
 
             $cardex_no = $request->input('cardex_no');
             $ddo_code = $request->input('ddo_code');
+
+             $existingUser = \DB::table('userschema.users')->where('id', $uid)->first();
+
+            if ($existingUser) {
+                // 2️ Convert stdClass to array
+                $userData = (array) $existingUser;
+                // dd($userData);
+
+                $userData = array_merge($userData, [
+                    'updated_from' => $request->ip(),   // client IP
+                    'updated_by'   => auth()->id(),      // logged-in user id
+                ]);
+                // dd($userData);
+                // 3️ Insert into users_history
+                    \DB::table('userschema.users_history')->insert($userData);
+
+            } else {
+                // Handle case where user not found
+                return back()->with('error', 'User not found.');
+            }
 
             $updateData = [
                 'dcode' => $request->input('district'),

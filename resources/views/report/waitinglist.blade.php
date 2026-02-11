@@ -100,6 +100,7 @@
                                 <th>Office</th>
                                 <th>Inward Date</th>
                                 <th>Retirement Date</th>
+                                 <th>Is SCST</th>
                                 <th> Remarks</th>
 
 
@@ -116,6 +117,7 @@
                                 <th>Office</th>
                                 <th>Inward Date</th>
                                 <th>Retirement Date</th>
+                                <th>Is SCST</th>
                                 <th> Remarks</th>
                             </tr>
                         </tfoot>
@@ -219,6 +221,10 @@
             <td>${rowData.date_of_retirement || ''}</td>
         </tr>
         <tr>
+            <td>Is SCST:</td>
+            <td>${rowData.is_scst || ''}</td>
+        </tr>
+        <tr>
             <td>Native Address:</td>
             <td>${rowData.address || ''}</td>
         </tr>
@@ -311,6 +317,10 @@
                 {
                     data: 'date_of_retirement',
                     name: 'date_of_retirement'
+                },
+                {
+                    data: 'is_scst',
+                    name: 'is_scst'
                 },
                 {
                     data: 'office_remarks',

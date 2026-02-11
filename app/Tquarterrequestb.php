@@ -82,7 +82,8 @@ class Tquarterrequestb extends Model
         'hc_area',
         'hc_blockno',
         'hc_unitno',
-        'hc_details'
+        'hc_details',
+        'is_ddo_varified',
     ];
     public function usermaster()
     {

@@ -111,7 +111,22 @@ class QuartersController extends Controller
             //   dd($_REQUEST);
             //$quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->get();
             $quarterselect = Quarter::where('bpay_from', '<=', $basic_pay)->where('bpay_to', '>=', $basic_pay)->where('officecode', $q_officecode)->get();
-            $quarterrequesta = Tquarterrequesta::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->get();
+          //  $quarterrequesta = Tquarterrequesta::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->whereNull('office_remarks')->get(); -- original
+            $latest = Tquarterrequesta::where('uid', $uid)
+                    ->where('quartertype', $quarterselect[0]->quartertype)
+                    ->whereNull('office_remarks')
+                    ->orderBy('requestid', 'desc')
+                    ->first();
+               // dd($latest);
+                if ($latest) {
+                    // Step 2: fetch all rows with same requestid
+                    $quarterrequesta = Tquarterrequesta::where('requestid', $latest->requestid)
+                        ->orderBy('rivision_id', 'asc')
+                        ->get();
+                } else {
+                    $quarterrequesta = collect(); // empty
+                }
+               // dd($quarterrequesta);
             if (isset($_REQUEST['requestid'])) {
                 $request_id = base64_decode($_REQUEST['requestid']);
             } else {
@@ -130,6 +145,21 @@ class QuartersController extends Controller
             if ($quarterrequestcheck > 0) {
                 //dd("test");
                 //dd(base64_decode($_REQUEST['edit_type']) );
+           
+                //dd($quarterrequesta_l);
+                $quarterrequesta_w = Tquarterrequesta::where('uid', '=', $uid)->where('quartertype', '=', $quarterselect[0]->quartertype)->wherenotNull('office_remarks')->wherenotnull('withdraw_remarks')->where('requestid',$latest->requestid)->get();
+               // dd($quarterrequesta_w);
+                $quarterrequestcheck_w = $quarterrequesta_w->count();
+                if($quarterrequestcheck_w > 0)
+                {
+                    
+                      $this->_viewContent['isEdit'] = false;
+                        $this->_viewContent['page_title'] = "Quarter Request";
+                        $this->_viewContent['name'] = Session::get('Name');
+                        $this->_viewContent['quartertype'] = $quarterselect[0]->quartertype;
+                        $this->_viewContent['quarterequesta'] = $quarterrequesta;
+                        return view('user/newQuarterRequest', $this->_viewContent);
+                }
                 if ($request_id != null) {
                     if (isset($_REQUEST['edit_type']) && base64_decode($_REQUEST['edit_type']) == 'ddo') {
                         // $quarterrequestb = Tquarterrequestb::where('requestid', '=', $request_id)->where('app_ddo', '=', '1')->first();
@@ -223,12 +253,13 @@ class QuartersController extends Controller
                             // $rivision_id += 1;
                             $new_rivision_id = 0;
                         }
-                        // dd($old_rivision_id);
-                        // dd($new_rivision_id);
+                         //dd($old_rivision_id);
+                         //dd($new_rivision_id);
                         if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev == null) {
                             $request_id = base64_decode($_REQUEST['requestid']);
                             $inward_no = '';
-                            $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                          //  $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                            $uid = Session::get('Uid');
                             $quartertype = $quarterrequesta['quartertype']; // Define quarter type
                             //$downgrade_requestid = $downgrade_requestid; // Get from request
 
@@ -239,7 +270,7 @@ class QuartersController extends Controller
                                 if ($co == 0) break;
                             }
 
-                            // dd($old_rivision_id);
+                           // dd($old_rivision_id);
                             $existing = Tquarterrequesta::where('uid', $uid)
                                 ->where('requestid', $request_id)
                                 ->where('rivision_id', $old_rivision_id)
@@ -247,14 +278,14 @@ class QuartersController extends Controller
                                 ->first();
 
                             if ($existing) {
-                                //dd($existing);
+                               // dd($existing);
 
 
                                 $new_rev_existing = Tquarterrequesta::where('uid', $uid)
                                     ->where('requestid', $request_id)
                                     ->where('rivision_id', $new_rivision_id)
                                     ->first();
-                                // dd($new_rev_existing);
+                               //  dd($new_rev_existing);
                                 if (!$new_rev_existing) {
                                     $dataToCopy = $existing->toArray(); // convert model to array
                                     unset($dataToCopy['id']); // remove primary key to avoid conflict
@@ -266,9 +297,10 @@ class QuartersController extends Controller
                                     $dataToCopy['inward_date'] = now();
                                     $dataToCopy['ddo_remarks'] = null;
                                     $dataToCopy['remarks'] = null;
-                                    $dataToCopy['is_varified']=0;
-                                    $dataToCopy['is_ddo_varified']=0;
-                                    //  dd($dataToCopy);
+                                    $dataToCopy['is_ddo_varified'] = -1;
+                                    $dataToCopy['is_varified'] = -1;
+                                    $dataToCopy['is_accepted']= -1;
+                                        //dd($dataToCopy);
                                     Tquarterrequesta::updateOrCreate(
                                         [
                                             'requestid' => $request_id,
@@ -347,6 +379,7 @@ class QuartersController extends Controller
                                     }
                                     
                                 }
+                               
                                 $document_list = Documenttype::where('performa', 'LIKE', '%' . $type . '%')
                                         ->whereNotIn('document_type', [6]) // Exclude certain document types
                                         ->whereNotIn('document_type', function ($query) use ($type, $request_id, $rev, $compare_rev, $edit_type, $new_rivision_id) {
@@ -713,7 +746,9 @@ class QuartersController extends Controller
                         if (base64_decode($_REQUEST['active_tab']) == 'tab3' && $compare_rev == null) {
                             $request_id = base64_decode($_REQUEST['requestid']);
                             $inward_no = '';
-                            $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                           // $uid = auth()->id(); // Example: Get user ID, adjust as needed
+                           $uid = Session::get('Uid');
+                           //dd($uid);
                             $quartertype = $quarterrequestb['quartertype']; // Define quarter type
                             //$downgrade_requestid = $downgrade_requestid; // Get from request
 
@@ -784,17 +819,22 @@ class QuartersController extends Controller
                                 if (!$new_rev_existing) {
                                     $dataToCopy = $existing->toArray(); // convert model to array
                                     unset($dataToCopy['id']); // remove primary key to avoid conflict
-
-                                    // override values for new revision
+                                    unset($dataToCopy['is_ddo_varified']);
+                                    // override values for new revision     
                                     $dataToCopy['requestid'] = $request_id;
                                     $dataToCopy['rivision_id'] = $new_rivision_id;
                                     $dataToCopy['inward_no'] = $inward_no;
                                     $dataToCopy['inward_date'] = now();
                                     $dataToCopy['ddo_remarks'] = null;
                                     $dataToCopy['remarks'] = null;
-                                    $dataToCopy['is_varified']=0;
-                                    $dataToCopy['is_ddo_varified']=0;
-                                    //  dd($dataToCopy);
+                                   
+                                    
+                                    $dataToCopy['is_accepted'] = -1 ; 
+                                    $dataToCopy['is_ddo_varified'] = -1 ;
+                                    $dataToCopy['is_varified'] = -1 ;
+
+                                    
+                                    // dd($dataToCopy);
                                     Tquarterrequestb::updateOrCreate(
                                         [
                                             'requestid' => $request_id,
@@ -807,6 +847,7 @@ class QuartersController extends Controller
 
                                     /// dd($edit_type);
                                     $edit_type = trim($edit_type);
+                                   // dd($edit_type);
                                     if ($edit_type === 'ddo' || $edit_type === 'admin') {
                                         //dd("Test");
                                         // $rev = $_REQUEST['rev'];
@@ -822,7 +863,7 @@ class QuartersController extends Controller
                                                 return $query->where('is_file_admin_verified', 1);
                                             })
                                             ->get();
-                                        //  dd($files);
+                                       //   dd($files);
                                         try {
                                             foreach ($files as $file) {
                                                 // Create new record with updated values
@@ -916,7 +957,7 @@ class QuartersController extends Controller
                                         ->pluck('document_name', 'document_type');
                             }
                         }
-
+                        //dd($document_list,$rev);
                         $attacheddocument_old = DB::table('master.file_list')
                             ->join('master.m_document_type', 'master.file_list.document_id', '=', 'master.m_document_type.document_type')
                             ->whereNotIn('document_id', [6])
@@ -1209,6 +1250,8 @@ class QuartersController extends Controller
                     'choice1' => $request->get('choice1') ?: null,
                     'choice2' => $request->get('choice2') ?: null,
                     'choice3' => $request->get('choice3') ?: null,
+                    'is_ddo_varified'=> -1,
+                    'is_varified' => -1,        
                 ];
                 $match = ['requestid' => $request_id, 'rivision_id' => $new_rivision_id, 'uid' => $uid];
                 $check = Tquarterrequestb::where($match)->get();
@@ -1328,7 +1371,7 @@ class QuartersController extends Controller
                             $data1 = [
                                 'inward_no' => $inward_no,
                                 'inward_date' => now(),
-                                'is_accepted' => 1,
+                                'is_accepted' => 0,
                                 'is_priority' => 'N',
                                 // 'is_ddo_varified' => 0,
                                 // 'ddo_remarks' => null,
@@ -1360,7 +1403,7 @@ class QuartersController extends Controller
                             $data1 = [
                                 'inward_no' => $inward_no,
                                 'inward_date' => now(),
-                                'is_accepted' => 1,
+                                'is_accepted' => 0,
                                 'is_priority' => 'N',
                                 // 'is_ddo_varified' => 0,
                                 // 'ddo_remarks' => null,
@@ -1490,6 +1533,15 @@ class QuartersController extends Controller
                 // $rivision_id += 1;
                 $new_rivision_id = 0;
             }
+            $data = [];
+            // If "Next" button clicked
+            //dd($_REQUEST['submit']);
+            // if (isset($_REQUEST['submit']) && $_REQUEST['submit'] == "next") {
+            //     //dd("hi");
+            //     $data['is_accepted'] = 0;   // add this only in NEXT case
+            //     // dd($data);
+            // }
+            // dd($data);
             /*try {
                 $uid = Session::get('Uid');
                 $Tquarterrequesta = new Tquarterrequesta;
@@ -1538,7 +1590,7 @@ class QuartersController extends Controller
 
                 // Format possession date if available
 
-                $data = [
+                $data =  [
                     'quartertype' => $request->get('quartertype') ?: null,
                     'old_designation' => $request->get('old_desg') ?: null,
                     'old_office' => $request->get('old_office') ?: null,
@@ -1569,9 +1621,13 @@ class QuartersController extends Controller
                     'choice3' => $request->get('choice3'),
                     'cardex_no' => session('cardex_no'),
                     'ddo_code' => session('ddo_code'),
+                     'is_ddo_varified'=> -1,
+                     'is_varified' => -1,
+                    
 
 
                 ];
+              //  dd($data);
                 $match = ['requestid' => $request_id, 'rivision_id' => $new_rivision_id, 'uid' => $uid];
                 $check = Tquarterrequesta::where($match)->get();
 
@@ -1685,7 +1741,7 @@ class QuartersController extends Controller
                             $data1 = [
                                 'inward_no' => $inward_no,
                                 'inward_date' => now(),
-                                'is_accepted' => 1,
+                                'is_accepted' => 0,
                                 'is_priority' => 'N',
                                 // 'is_ddo_varified' => 0,
                                 // 'ddo_remarks' => null,
@@ -1717,7 +1773,7 @@ class QuartersController extends Controller
                             $data1 = [
                                 'inward_no' => $inward_no,
                                 'inward_date' => now(),
-                                'is_accepted' => 1,
+                                'is_accepted' =>0,
                                 'is_priority' => 'N',
                                 // 'is_ddo_varified' => 0,
                                 // 'ddo_remarks' => null,
@@ -1934,12 +1990,15 @@ class QuartersController extends Controller
             })
             ->addColumn('issues', function ($row) {
 
-                $btn2 = '';
-                if ($row->is_accepted == 'YES') {
+                $btn2 = '-';
+                if ($row->is_accepted == 'YES' && $row->is_ddo_varified==1) {
                     if ($row->remarks == "" && $row->is_varified == 1) {
                         $btn2 = "Verified";
                     } else if ($row->remarks == "" && $row->is_varified == 0) {
                         $btn2 = "Not Verified By Department";
+                    } 
+                    else if ($row->remarks == "" && $row->is_varified == -1) {
+                        $btn2 = "";
                     } else {
                         $btn2 = '<button type="button" data-uid="' . base64_encode($row->uid) . '" data-rivision_id="' . base64_encode($row->rivision_id) . '"data-type="' . base64_encode($row->type) . '"  data-requestid="' . base64_encode($row->requestid) . '"  data-remarks="' . base64_encode($row->remarks) . '" data-toggle="modal"  class=" btn-view-custom getdocument" > View Remarks</button>';
                     }
@@ -1966,7 +2025,7 @@ class QuartersController extends Controller
                 // Conditional check for the upload button
                 //  if ($row->inward_no == '' &&  $row->is_ddo_varified==2) { // Replace with your own condition
                 /* if (($row->inward_no == '' &&  $row->is_ddo_varified == 0) || ($row->inward_no != '' &&  $row->is_ddo_varified == 2) || ($row->inward_no != '' &&  $row->is_varified == 2)) {*/
-                if ($row->is_ddo_varified == 0 ) {
+                if( ($row->is_ddo_varified == 0 ) || ($row->rivision_id == 0 && $row->is_ddo_varified==-1) || ($row->wno) != null)   {
                     $btn1 .= '<a href="' . \URL::action('QuartersController@uploaddocument') .
                         "?r=" . base64_encode($row->requestid) .
                         "&type=" . base64_encode($row->type) .
@@ -2243,7 +2302,7 @@ class QuartersController extends Controller
             ->where('requestid', '=', $requestid)
             ->where('uid', '=', $quarterrequest['uid'])
             ->get();
-
+       
         $this->_viewContent['quarterrequest'] = (isset($quarterrequest) && isset($quarterrequest)) ? $quarterrequest : '';
         $this->_viewContent['page_title'] = "Quarter Edit Details";
         return view('request/updatequarterrequest', $this->_viewContent);
@@ -2509,11 +2568,13 @@ class QuartersController extends Controller
                     //DB::enableQueryLog();
 
                     // Create the record
+                   // dd($result->uid, $result->inward_no);
                     $requestModel = Tquarterrequesta::create([
                         'uid' => $result->uid,
                         'requestid' => $dg_request_id,
                         'quartertype' => $dgQuartertype->quartertype,
                         'inward_no' => $result->inward_no,
+                        'inward_date' =>  now(),
                         'old_designation' => $result->old_designation,
                         'old_office' => $result->old_office,
                         'deputation_date' => $result->deputation_date,
@@ -4306,7 +4367,10 @@ class QuartersController extends Controller
                     } else if ($edit_type == 'admin') {
                         $dt = ['is_varified' => 3];
                     }
+                   
                     $resp1 = Tquarterrequesta::where('requestid', $request->input('requestid'))->where('rivision_id', $old_rivision_id)->update($dt);
+                     $d=['is_accepted' => 1];
+                    $resp = Tquarterrequesta::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($d);
                 }
 
 
@@ -4639,6 +4703,8 @@ class QuartersController extends Controller
                         $dt = ['is_varified' => 3];
                     }
                     $resp1 = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $old_rivision_id)->update($dt);
+                     $d=['is_accepted' => 1];
+                    $resp = Tquarterrequestb::where('requestid', $request->input('requestid'))->where('rivision_id', $rev)->update($d);
                 }
                 // Filelist::where('request_id', $request->input('requestid'))
                 //     ->where('performa', 'b')

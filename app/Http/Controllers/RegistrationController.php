@@ -125,7 +125,7 @@ class RegistrationController extends Controller
             Session::put('is_admin',True);
              return view('ssouserregister');
              }
- 
+             
          }
 
  }

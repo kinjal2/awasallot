@@ -8,6 +8,7 @@ use App\DDOCode;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Validator;
+use Illuminate\Validation\Rule;
 
 class DdoUserLoginController extends Controller {
 
@@ -117,15 +118,21 @@ class DdoUserLoginController extends Controller {
         $user = Auth::guard( 'ddo_users' )->user();
         // Validate the incoming request
         $request->validate( [
-            'ddo_office_email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/|unique:App\DDOCode,ddo_office_email_id,' . $user->id, // Email validation and ensuring uniqueness excluding the current user's email
+            //'ddo_office_email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@(gujarat\.gov\.in|gujgov\.edu\.in)$/,|unique:App\DDOCode,ddo_office_email_id,' . $user->id, // Email validation and ensuring uniqueness excluding the current user's email
             // 'ddo_office_email' => [
             //     'required',
             //     'email',
             //     // Check uniqueness using the DDOCode model and exclude the current user's ID
             //     Rule::unique( ( new DDOCode )->getTable(), 'ddo_office_email_id' )->ignore( $user->id ),
             // ],
+            'ddo_office_email' => [
+    'required',
+    'email',
+    'regex:/^[a-zA-Z0-9._%+\-]+@(gujarat\.gov\.in|gujgov\.edu\.in|gsbstb\.org)$/i',
+    Rule::unique('App\DDOCode', 'ddo_office_email_id')->ignore($user->id),
+],
             'password' => 'required|min:8|confirmed', // Password must be at least 8 characters and must match the 'password_confirmation' field
-        ] ,['ddo_office_email.regex' => 'Invalid email. Email must end with @gujarat.gov.in.']);
+        ] ,['ddo_office_email.regex' => 'Invalid email. Email must end with either @gujarat.gov.in or @gujgov.edu.in  or @gsbstb.org.']);
 
         try {
 

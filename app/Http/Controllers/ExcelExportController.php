@@ -56,7 +56,14 @@ $first = Tquarterrequesta::select([
         'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office',
         'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber',
         'is_accepted', 'is_allotted', 'is_varified', 'email', 'u.id', 'r_wno',
-        'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
+        'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode',
+        DB::raw("
+        CASE
+            WHEN is_scst = 'Y' THEN 'Yes'
+            WHEN is_scst = 'N' THEN 'No'
+           
+        END as is_scst
+    ")
     ])
     ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_a.uid');
 
@@ -67,7 +74,7 @@ $second = Tquarterrequestb::select([
         'requestid', 'wno', 'inward_no', 'inward_date', 'u.name', 'u.designation', 'quartertype', 'office',
         'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber',
         'is_accepted', 'is_allotted', 'is_varified', 'email', 'u.id', 'r_wno',
-        'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode'
+        'office_email_id', 'office_remarks', 'withdraw_remarks', 'officecode',  DB::raw("'N/A' as is_scst")
     ])
     ->join('userschema.users as u', 'u.id', '=', 'master.t_quarter_request_b.uid');
 
@@ -81,7 +88,7 @@ $query = DB::table(DB::raw("({$union->toSql()}) as x"))
         'requesttype', 'tableof', 'requestid', 'wno', 'inward_no', 'inward_date', 'name', 'designation',
         'quartertype', 'office', 'rivision_id', 'date_of_retirement', 'contact_no', 'address', 'gpfnumber',
         'is_accepted', 'is_allotted', 'is_varified', 'email', 'id', 'r_wno', 'office_email_id',
-        'office_remarks', 'withdraw_remarks', 'officecode'
+        'office_remarks', 'withdraw_remarks', 'officecode','is_scst'
     ])
     ->where('officecode', $officecode)
     ->where('is_accepted', 1)

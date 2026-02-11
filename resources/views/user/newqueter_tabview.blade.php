@@ -407,6 +407,7 @@
                                 <div class="mt-4">
                                 @if(  $document_list->count()  > 0)
                                    <input type="hidden" value="{{ $isEdit ?? 0 }}" id="isEdit" name="isEdit">
+                                   
                                 <button type="submit" class="btn btn-primary" value="next" name="submit" id="submit">Next</button>
                                 @else
                                 <button type="submit" class="btn btn-primary" value="save" name="submit" id="submit">Save Application</button>

@@ -27,7 +27,7 @@
         <div class="copyright"> 
     Content ,Business Processes and Business rules owned, maintained and updated by <a class="font-weight-500" href="https://rnb.gujarat.gov.in/" target="_blank">Roads &amp; Buildings Department</a>
         </div>
-  <div class="copyright">Web Portal Designed and Developed by : National Informatics Center , <a href="http://guj.nic.in/" target="_blank"> Gujarat State Center </a>- All Rights Reserved <span>&reg;</span> 2025 &copy; &nbsp; 
+  <div class="copyright">Web Portal Designed and Developed by : National Informatics Center , <a href="http://guj.nic.in/" target="_blank"> Gujarat State Center </a>- All Rights Reserved <span>&reg;</span> {{ date('Y') }} &copy; &nbsp; 
   </div>
   <div class="copyright"><span style="font-size: 0.72rem;"> <span style="color: #f17000">Disclaimer :-</span> This portal is developed and maintained by NIC. NIC not <u> assume any legal liability or responsibility for the accuracy completeness or usefulness of any information.</u></span></div>
     </div>

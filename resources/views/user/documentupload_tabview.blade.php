@@ -145,7 +145,7 @@
                                                     data-id="{{ $a->doc_id }}">
                                                     <img src="{{ asset('/images/pdf.png') }}" width="30" height="30">
                                                 </a> </td>
-                                            @if(isset($isEdit) && $isEdit==0)
+                                            @if(isset($isEdit) && $isEdit==0 )
                                             <td>
                                                 <a href="javascript:;" class="btn btn btn-danger delete_doc"
                                                     delete-id="{{ $a->rev_id }}" data-id="{{ $a->doc_id }}" data-rivision="{{ $a->rivision_id }}"  data-edit="{{  $isEdit ?? 0  }}"  ><i

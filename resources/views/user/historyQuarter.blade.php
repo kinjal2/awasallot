@@ -62,8 +62,9 @@
                             <th>Inward No</th>
                             <th>Inward Date</th>
                             <th>Preview Application/Attach Documents</th>
-                            <th>Status</th>
-                            <th>DDO Remarks</th>
+                             <th>DDO Remarks</th>
+                            <th>Admin Remarks</th>
+                           
                             <th></th>
                         </tr>
                     </thead>
@@ -195,10 +196,7 @@
                 orderable: true,
                 searchable: true
             },
-            {
-                data: 'issues',
-                name: 'remarks'
-            },
+           
             //  {data: 'ddo_remarks', name: 'remarks'},
             {
                 data: 'ddo_remarks',
@@ -219,10 +217,14 @@
                             return 'Not Verified by DDO'; // Show "Not Verified by DDO" if is_ddo_varified == 0
                         }
                     } else {
-                        return ''; // If is_accepted is not 1, return empty string (hide the column)
+                        return '-'; // If is_accepted is not 1, return empty string (hide the column)
                     }
                 }
             },
+             {
+                data: 'issues',
+                name: 'remarks'
+            },      
             {
                 data: 'user_remarks',
                 name: 'user_remarks'

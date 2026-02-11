@@ -81,7 +81,7 @@
                             <ul>
                                 <li class="gov-india"><a title="Government of Gujarat,External Link that opens in a new window" href="#" target="_blank"><span title="ગુજરાત સરકાર">ગુજરાત
                                             સરકાર</span><br>GOVERNMENT OF GUJARAT</a></li>
-                                <li class="ministry"><a title="Ministry / Department Name" href="https://patnagarseva.gujarat.gov.in" target="_self"><span title="test">Roads &amp; Building Department</span> </a></li>
+                                <li class="ministry"><a title="Ministry / Department Name" href="#" target="_self"><span title="test">Roads &amp; Building Department</span> </a></li>
 
                             </ul>
                         </div>
@@ -201,9 +201,13 @@ Designed with user convenience in mind, our platform enables quick and efficient
             <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content text-center">
+                   <div class="modal-body">
+                    <img src="{{ asset('images/RTIWeekBanner.jpeg') }}" alt="Alert Image" class="img-fluid mb-3">
+                  </div>
                   <div class="modal-body">
                     <img src="{{ asset('images/VibrantGujaratRegionalSummitsRegistrationBanner.jpg') }}" alt="Alert Image" class="img-fluid mb-3">
                   </div>
+                 
                   <div class="modal-footer">
                     <button type="button" class="btn-new btn btn-primary btn-md" data-bs-dismiss="modal">Close</button>
                   </div>

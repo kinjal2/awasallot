@@ -33,15 +33,15 @@
     <div class="row">
       <div class="col-md-4 contact-block">
         <i class="bi bi-envelope"></i>
-         <p><a style="color:#4f4f4f" href="mailto:support@gujarat.gov.in">support@gujarat.gov.in</a></p>
+         <p class="text-center px-3"><a style="color:#4f4f4f" href="mailto:awasallot-secpc-gnr@gujarat.gov.in">awasallot-secpc-gnr@gujarat.gov.in</a></p>
       </div>
       <div class="col-md-4 contact-block">
         <i class="bi bi-telephone"></i>
-        <p>+91-79-2325-XXXX</p>
+        <p class="text-center px-3">+91-79-2325-7891</p>
       </div>
       <div class="col-md-4 contact-block">
         <i class="bi bi-geo-alt"></i>
-        <p>Block No. 14, 5th Floor, New Sachivalaya, Gandhinagar - 382010, Gujarat</p>
+        <p class="text-center px-3">Office of the Superintending Engineer, Capital Project Circle, Block No.11, Second Floor, Dr. Jivaraj Maheta Bhavan, Sector 10/A, Gandhinagar - 382010, Gujarat</p>
       </div>
     </div>
   </div>

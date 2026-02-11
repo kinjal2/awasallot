@@ -81,10 +81,9 @@
 @include(Config::get('app.theme').'.template.footer_front_page')
 
 <script>
-     $.validator.addMethod("validEmail", function(value, element) {
-        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/.test(value);
-    }, "Invalid email. Email must end with @gujarat.gov.in.");
-
+    $.validator.addMethod("validEmail", function(value, element) {
+    return this.optional(element) || /^[a-zA-Z0-9._%+-]+@(gujarat\.gov\.in|gujgov\.edu\.in|gsbstb\.org)$/.test(value);
+}, "Invalid email. Email must end with @gujarat.gov.in, @gujgov.edu.in or @gsbstb.org.");
     $(document).ready(function() {
         $('#LoginForm').validate({
             errorClass: "error-message",
