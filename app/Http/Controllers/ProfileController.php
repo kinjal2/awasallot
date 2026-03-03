@@ -78,6 +78,7 @@ class ProfileController extends Controller
             'name' => 'required|string',
             'office' => 'required|string',
             'office_email_id' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
+            'email_id' => 'required|email',
             'is_dept_head' => 'required',
             'is_transferable' => 'required',
             'date_of_birth' => 'required',
@@ -103,6 +104,8 @@ class ProfileController extends Controller
             'office.string' => 'The office must be a valid string.',
             'office_email_id.required' => 'The office email is required',
             'office_email_id.email' => 'The office email must be valid email address',
+            'email_id.required' => 'The  email is required',
+            'email_id.email' => 'The  email must be valid email address',
             'is_dept_head.required' => 'The department head status is required.',
             'is_transferable.required' => 'The transferability status is required.',
             'date_of_birth.required' => 'The Date of Birth is required.',
@@ -148,22 +151,37 @@ class ProfileController extends Controller
                 }
                 $appointment_date = Carbon::createFromFormat('d-m-Y', $request->get('appointment_date'));
                 $date_of_retirement = Carbon::createFromFormat('d-m-Y', $request->get('date_of_retirement'));
-                $date_of_birth = Carbon::createFromFormat('d-m-Y', $request->get('date_of_birth'));
+
+
+                $gradePay = $request->get('grade_pay');
+
+                $salarySlabDetails = null;
+                $salaryDetails = null;
+                if (!empty($gradePay)) {
+
+                    $salarySlabDetails = $this->fetchSalarySlab($gradePay);
+                    // dd($salarySlabDetails);
+                    if ($salarySlabDetails) {
+                        $salaryDetails =
+                            $salarySlabDetails->payscale_from . ' - ' .
+                            $salarySlabDetails->payscale_to;
+                    }
+                }
                 // Enable query logging
                 // DB::enableQueryLog();
                 $updateData = [
-                    // 'name' => empty($request->get('name')) ? NULL : $request->get('name'),
-                    //'designation' => empty($request->get('designation')) ? NULL :  $request->get('designation'),
+
                     'office' => empty($request->get('office')) ? NULL : $request->get('office'),
                     'office_email_id' => empty($request->get('office_email_id')) ? NULL : $request->get('office_email_id'),
                     'contact_no' => empty($request->get('contact_no')) ? NULL :  $request->get('contact_no'),
                     'maratial_status' => empty($request->get('maratial_status')) ? NULL :  $request->get('maratial_status'),
                     'is_dept_head' => empty($request->get('is_dept_head')) ? NULL :  $request->get('is_dept_head'),
                     'is_transferable' => empty($request->get('is_transferable')) ? NULL :  $request->get('is_transferable'),
-                    //'date_of_birth' => empty($request->get('date_of_birth')) ? NULL :  $date_of_birth->format('Y-m-d'),
+
                     'appointment_date' => empty($request->get('appointment_date')) ? NULL :  $appointment_date->format('Y-m-d'),
                     'date_of_retirement' => empty($request->get('date_of_retirement')) ? NULL :   $date_of_retirement->format('Y-m-d'),
-                    'salary_slab' => empty($request->get('salary_slab')) ? NULL :  $request->get('salary_slab'),
+                    // 'salary_slab' => empty($request->get('salary_slab')) ? NULL :  $request->get('salary_slab'),
+                    'salary_slab' => $salaryDetails,
                     'grade_pay' => empty($request->get('grade_pay')) ? NULL :  $request->get('grade_pay'),
                     'basic_pay' => empty($request->get('basic_pay')) ? NULL :  $request->get('basic_pay'),
                     'actual_salary' => empty($request->get('actual_salary')) ? NULL :  $request->get('actual_salary'),
@@ -336,20 +354,47 @@ class ProfileController extends Controller
             }
         }
     }
-    public function getSalarySlabDetails(Request $request)
+    /* public function getSalarySlabDetails($input)
     {
 
-        $payLevel = $request->input('pay_level');
+        // If full Request object is passed
+        if ($input instanceof \Illuminate\Http\Request) {
+            $payLevel = $input->input('pay_level');
+        }
+        // If normal variable (grade_pay) is passed
+        else {
+            $payLevel = $input;
+        }
 
         $salarySlab = PayScale::select('payscale_from', 'payscale_to')->where('level', $payLevel)->first(); // Adjust according to your database structure
 
         if ($salarySlab) {
-
             return compact('salarySlab');
         } else {
             // Return a message if no details found
             return response('No salary slab details found.', 404);
         }
+    }*/
+    public function getSalarySlabDetails(Request $request)
+    {
+        $salarySlab = $this->fetchSalarySlab($request->input('pay_level'));
+        //dd($salarySlab);
+        if ($salarySlab) {
+            return response()->json([
+                'salarySlab' => $salarySlab
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'No salary slab details found.'
+        ], 404);
+    }
+
+    private function fetchSalarySlab($payLevel)
+    {
+        return PayScale::select('payscale_from', 'payscale_to')
+            ->where('level', $payLevel)
+            ->first();
     }
     public function updateDDODetails(Request $request)
     {
@@ -427,7 +472,7 @@ class ProfileController extends Controller
             $cardex_no = $request->input('cardex_no');
             $ddo_code = $request->input('ddo_code');
 
-             $existingUser = \DB::table('userschema.users')->where('id', $uid)->first();
+            $existingUser = \DB::table('userschema.users')->where('id', $uid)->first();
 
             if ($existingUser) {
                 // 2️ Convert stdClass to array
@@ -438,10 +483,18 @@ class ProfileController extends Controller
                     'updated_from' => $request->ip(),   // client IP
                     'updated_by'   => auth()->id(),      // logged-in user id
                 ]);
+                if ($isAdminUpdate) {
+                    $userData = array_merge($userData, [
+                        'updated_by'   => Session::get('officecode'),      // logged-in user id
+                    ]);
+                } else {
+                    $userData = array_merge($userData, [
+                        'updated_by'   => Session::get('Uid'),
+                    ]);     // logged-in user id
+                }
                 // dd($userData);
                 // 3️ Insert into users_history
-                    \DB::table('userschema.users_history')->insert($userData);
-
+                \DB::table('userschema.users_history')->insert($userData);
             } else {
                 // Handle case where user not found
                 return back()->with('error', 'User not found.');

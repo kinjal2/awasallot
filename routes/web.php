@@ -20,7 +20,9 @@ use App\Http\Controllers\CaptchaController;
 use App\Http\controllers\UserQuartersallotmentController;
 use App\Http\Controllers\ExcelExportController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\DrawController;
 use App\QuarterType;
+
 
 /*
 |---------------------------------------------------------------------------
@@ -195,6 +197,11 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
 
     //excel download 
     Route::get('/waitinglist/export', [ExcelExportController::class, 'exportWaitingListExcel'])->name('waitinglist.export');
+
+
+    //draw 
+     Route::get('draw/list', [DrawController::class, 'index'])->name('quarter.draw');
+        Route::post('draw/list', [DrawController::class, 'show_ddolist'])->name('quarter.showlist');
 
 });
 
@@ -389,3 +396,12 @@ Route::post('getremarks', ['as' => 'quarter.list.getremarks', 'uses' => 'Quarter
 Route::get('/test', function () {
     echo "test";
 })->name('test');
+
+
+
+Route::get('/captcha-demo', function () {
+    return view('captcha-demo');
+});
+
+Route::get('/reload-captcha', [CaptchaController::class, 'reloadCaptcha'])
+    ->name('reload-captcha');

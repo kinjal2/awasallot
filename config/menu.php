@@ -204,6 +204,7 @@ return [
 
             ],
             'link' => 'ddo.list',
+            
           /*  'submenu' => ['Add' => [
                     'title' => 'Add New DDO',
                     'icon' => 'fa fa-building',
@@ -213,6 +214,21 @@ return [
                     ],
                     'link' => 'ddo.addNew',
                 ],]*/
+        ],
+         'Quarter Draw'=>[
+            'title'=>'Quarter Draw',
+            'icon'=>'fa fa-user',
+            'permission_route' => 'quarter.draw',
+            'route' => [
+                'draw.list',
+                'draw.showlist',
+                'draw.addNewDDO',
+                'draw.store'
+
+            ],
+            'link' => 'quarter.draw',
+            
+         
         ],
         'Logout' => [
             'title' => 'menus.Logout',

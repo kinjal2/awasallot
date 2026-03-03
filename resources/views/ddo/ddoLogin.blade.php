@@ -14,9 +14,9 @@
                     <p class="sub-title-form">Government of Gujarat</p>
                 </div>
                 @if (session('error'))
-                    <div class="alert alert-danger">
-                        {{ session('error') }}
-                    </div>
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
                 @endif
 
                 <div class="card-body bg-lightwhite p-4">
@@ -27,9 +27,9 @@
                             <input id="ddo_reg_no" type="text" class="custon-control form-control @error('ddo_reg_no') is-invalid @enderror" placeholder="Enter your DDO Registration Number" name="ddo_reg_no" value="{{ old('ddo_reg_no') }}" required autocomplete="off" autofocus>
                             <i class="bi bi-envelope form-icon"></i>
                             @error('ddo_reg_no')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
                             @enderror
                         </div>
 
@@ -38,9 +38,9 @@
                             <input id="password" type="password" class="custon-control form-control @error('password') is-invalid @enderror" placeholder="Enter your Password" name="password" required autocomplete="current-password">
                             <i class="bi bi-lock form-icon"></i>
                             @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
                             @enderror
                         </div>
 
@@ -62,19 +62,19 @@
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                            @enderror
+                                @enderror
                             </div>
 
                         </div>
                         <div class="form-group row relative my-4">
-                                <span class="text-danger">Fields marked with *  are mandatory to fill. </span>
+                            <span class="text-danger">Fields marked with * are mandatory to fill. </span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <button class="btn-new btn btn-primary btn-md" type="submit">{{ __('Login') }}</button>
                             <!-- @if (Route::has('password.request'))
                                 <a class="btn btn-link float-right" href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
                             @endif -->
-                            
+
                         </div>
                     </form>
                 </div>
@@ -86,6 +86,42 @@
 @push('page-ready-script') @endpush @push('footer-script')
 <script>
     $(document).ready(function() {
+        /* code for captcha reloading after expires starts here */
+        let seconds = 60;
+        let timerInterval;
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            seconds = 60;
+
+            timerInterval = setInterval(function() {
+                seconds--;
+
+                if (seconds <= 0) {
+                    clearInterval(timerInterval);
+                    reloadCaptcha();
+                    startTimer();
+                }
+            }, 1000);
+        }
+        $('#reload').on('click', function() {
+            reloadCaptcha();
+            startTimer();
+        });
+
+        function reloadCaptcha() {
+            $.ajax({
+                type: 'GET',
+                url: "{{ route('ddo.reload-captcha') }}",
+                success: function(data) {
+                    $('.captcha span').html(data.captcha);
+                }
+            });
+        }
+        startTimer();
+        /* code for captcha reloading after expires ends here */
+
+        
         $('#LoginForm').validate({
             errorClass: "error-message",
             errorElement: "span",
@@ -103,7 +139,7 @@
             rules: {
                 ddo_reg_no: {
                     required: true,
-                //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
+                    //    pattern: /^SGV\d{6}[A-Z]$/ // Regex for DDO Registration Number format
                 },
                 password: {
                     required: true
@@ -115,7 +151,7 @@
             messages: {
                 ddo_reg_no: {
                     required: "Please enter your DDO Registration Number",
-                  //  pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
+                    //  pattern: "Please enter a valid DDO Registration Number (e.g., SGV089757D)"
                 },
                 password: {
                     required: "Please enter your password"
@@ -125,36 +161,61 @@
                 }
             }
         });
-        $('#reload').on('click', function() {
-            $.ajax({
-                type: 'GET',
-                url: "{{ route('ddo.reload-captcha') }}", // Use the correct route name
-                success: function(data) {
-                    $('.captcha span').html(data.captcha); // Update the captcha image
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error reloading captcha: ' + error);
-                }
-            });
+        // $('#reload').on('click', function() {
+        //     $.ajax({
+        //         type: 'GET',
+        //         url: "{{ route('ddo.reload-captcha') }}", // Use the correct route name
+        //         success: function(data) {
+        //             $('.captcha span').html(data.captcha); // Update the captcha image
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error('Error reloading captcha: ' + error);
+        //         }
+        //     });
+        // });
+
+
+
+        // function reloadCaptcha() {
+        //     $.ajax({
+        //         type: 'GET',
+        //         url: "{{ route('ddo.reload-captcha') }}",
+        //         success: function(data) {
+        //             $('.captcha span').html(data.captcha); // Update the captcha image
+        //             seconds = 60; // reset timer
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error('Error reloading captcha: ', error);
+        //         }
+        //     });
+        // }
+
+        // Manual reload
+        // $('#reload').on('click', function() {
+        //     reloadCaptcha();
+        // });
+
+
+
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const loginForm = document.getElementById("LoginForm");
+
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const passwordField = document.getElementById("password");
+            const ddoRegNoField = document.getElementById("ddo_reg_no");
+            const csrfToken = document.querySelector('input[name="_token"]').value;
+
+            const encodeWithCSRF = (value) => btoa(value + csrfToken);
+
+            passwordField.value = encodeWithCSRF(passwordField.value);
+            ddoRegNoField.value = encodeWithCSRF(ddoRegNoField.value);
+
+            this.submit();
         });
-       
+
+
     });
-    document.addEventListener("DOMContentLoaded", function () {
-    const loginForm = document.getElementById("LoginForm");
-
-    loginForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        const passwordField = document.getElementById("password");
-        const ddoRegNoField = document.getElementById("ddo_reg_no");
-        const csrfToken = document.querySelector('input[name="_token"]').value;
-
-        const encodeWithCSRF = (value) => btoa(value + csrfToken);
-
-        passwordField.value = encodeWithCSRF(passwordField.value);
-        ddoRegNoField.value = encodeWithCSRF(ddoRegNoField.value);
-
-        this.submit();
-    });
-}); 
 </script>

@@ -3439,8 +3439,30 @@ class QuartersController extends Controller
             //  dd($uid);
             // dd($request->page);
             $data = DDOCode::select('officecode', 'cardex_no', 'ddo_code')->where('cardex_no', '=', $request->input('cardex_no'))->where('ddo_code', '=', $request->input('ddo_code'))->first();
-            $updatedata = User::where('id', $uid)
-                ->update(['cardex_no' => $request->input('cardex_no'), 'ddo_code' => $request->input('ddo_code')]);
+            $existingUser = DB::table('userschema.users')->where('id', $uid)->first();
+
+                if ($existingUser) {
+                    // 2️ Convert stdClass to array
+                    $userData = (array) $existingUser;
+
+                    $userData = array_merge($userData, [
+                        'updated_from' => $request->ip(),   // client IP
+                        'updated_by'   => $uid,      // logged-in user id
+                    ]);
+
+                    // 3️ Insert into users_history
+                    \DB::table('userschema.users_history')->insert($userData);
+
+                    // 4️ Proceed to update
+                        $updatedata = User::where('id', $uid)
+                        ->update(['cardex_no' => $request->input('cardex_no'), 'ddo_code' => $request->input('ddo_code')]);
+                } else {
+                    // Handle case where user not found
+                    return back()->with('error', 'User not found.');
+                }
+
+            // $updatedata = User::where('id', $uid)
+            //     ->update(['cardex_no' => $request->input('cardex_no'), 'ddo_code' => $request->input('ddo_code')]);
             //dd($data);
             if (!$data) {
                 // If no data is found, redirect back with an error message

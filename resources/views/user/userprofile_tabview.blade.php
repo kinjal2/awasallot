@@ -437,6 +437,10 @@
              "required": true,
              "validEmail": true,
           }, 
+           "email_id": { 
+             "required": true,
+             "email": true,
+          }, 
           is_police_staff: {
              "required": true,
 
@@ -577,6 +581,7 @@
              url: "{{ route('salarySlabDetails') }}", // Your route URL for fetching details
              method: 'POST',
              data: {
+               _token: "{{ csrf_token() }}",
                 pay_level: payLevel
              },
              success: function(response) {
@@ -586,7 +591,7 @@
 
                 if (salarySlab) {
                    // Create the salary range content
-
+                  
                    if (salarySlab.payscale_to == null) {
                       salarySlab.payscale_to = 'above';
                    }

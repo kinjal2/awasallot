@@ -274,7 +274,8 @@ class UserController extends Controller
 
                 $userData = array_merge($userData, [
                     'updated_from' => $request->ip(),   // client IP
-                    'updated_by'   => auth()->id(),      // logged-in user id
+                    //'updated_by'   => auth()->id(),      // logged-in user id
+                    'updated_by' => Session::get('officecode'),
                 ]);
                 // dd($userData);
                 // 3️ Insert into users_history

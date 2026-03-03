@@ -95,7 +95,7 @@ class Tquarterrequesta extends Model
                 'address', 'maratial_status', 'contact_no', 'pancard',
                 'gpfnumber', 'date_of_retirement', 'date_of_transfer', 'date_of_birth',
                 'image', 'sign', 'current_address', 'office_phone',
-                'office_address', 'is_activated', 'is_profilechange', 'image_contents',
+                'office_address', 'is_activated', 'is_profilechange', 
                 'last_login', 'last_ip', 'created_at', 'updated_at', 'is_admin',
                 'otp', 'otp_created_at', 'status', 'is_verified', 'office_email_id',
                 'is_police_staff', 'is_fix_pay_staff', 'police_staff_verify'

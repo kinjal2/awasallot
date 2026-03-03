@@ -45,7 +45,6 @@ class UserHistory extends Model
         'office_address',
         'is_activated',
         'is_profilechange',
-        'image_contents',
         'last_login',
         'last_ip',
         'created_at',
