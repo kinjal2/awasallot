@@ -69,7 +69,7 @@ Route::get('/grasapi', 'RegistrationController@apiLogin')->name('grasapi');
 //Auth::routes(['verify' => true]);
 
 
- Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
 
     $user = \App\User::findOrFail($id);
 
@@ -86,9 +86,8 @@ Route::get('/grasapi', 'RegistrationController@apiLogin')->name('grasapi');
 
     return redirect('/login')
         ->with('success', 'Email verified successfully');
-
 })->middleware(['signed', 'throttle:6,1'])
-  ->name('verification.verify');
+    ->name('verification.verify');
 
 
 
@@ -128,7 +127,7 @@ Route::middleware(['verifiedphone', 'verified', 'role:user', 'check.host', 'prev
 // Admin Dashboard
 Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(function () {
 
-   
+
     Route::get('admindashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard.admindashboard']);
     Route::get('user', ['as' => 'user', 'uses' => 'UserController@index']);
     //  Route::get('admin-users', [AdminController::class, 'users'])->name('admin.users');
@@ -178,21 +177,21 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
 
     // Other admin-specific routes
     // Fixed routes FIRST
-        Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
-        Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
+    Route::get('ddo/list', [DDOController::class, 'index'])->name('ddo.list');
+    Route::post('ddo/list', [DDOController::class, 'show_ddolist'])->name('ddo.showlist');
 
-        Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
-        Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
-         Route::post('ddo/resetpwd', [DDOController::class, 'ddoResetPwd'])->name('ddo.resetpwd');
-        Route::get('ddo/edit/{id}', [DDOController::class, 'addNewDDO'])->name('ddo.edit'); 
-      
+    Route::get('ddo/add', [DDOController::class, 'addNewDDO'])->name('ddo.addNewDDO');
+    Route::post('ddo/add', [DDOController::class, 'addNewDDOStore'])->name('ddo.store');
+    Route::post('ddo/resetpwd', [DDOController::class, 'ddoResetPwd'])->name('ddo.resetpwd');
+    Route::get('ddo/edit/{id}', [DDOController::class, 'addNewDDO'])->name('ddo.edit');
+
 
 
     Route::post('/reset/{field}', 'UserController@reset')->name('reset');
     Route::post('upadteremarks', ['as' => 'upadteremarks.data', 'uses' => 'ReportsController@upadteremarks']);
     //Route::post('updateuserprofile', [ 'as' => 'admin.updateUserDetails', 'uses' => 'UserController@updateUserDdoDetails']);
     Route::post('updateuserprofile', ['as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
-    Route::get('/viewapplication/{request_id}/{revision_id}/{performa}', [ 'as' => 'quarter.list.viewapplication', 'uses' => 'QuartersController@viewApplication']);
+    Route::get('/viewapplication/{request_id}/{revision_id}/{performa}', ['as' => 'quarter.list.viewapplication', 'uses' => 'QuartersController@viewApplication']);
 
 
     //excel download 
@@ -200,10 +199,52 @@ Route::middleware(['role:admin', 'check.host', 'session.timeout'])->group(functi
 
 
     //draw 
-     Route::get('draw/list', [DrawController::class, 'index'])->name('quarter.draw');
-        Route::post('draw/list', [DrawController::class, 'show_ddolist'])->name('quarter.showlist');
+  /*  Route::get('draw/list', [DrawController::class, 'index'])->name('quarter.draw');
+    Route::post('draw/list', [DrawController::class, 'show_ddolist'])->name('quarter.showlist');
+    /* Route::get('/draw/upload', function () {
+        return view('draw.upload', [
+            'page_title' => 'Draw Upload'
+        ]);
+    });
+    Route::get('draw/upload', [DrawController::class, 'upload'])->name('draw.upload');
+    
+    Route::post('/draw/upload', [DrawController::class, 'uploadExcel'])
+        ->name('draw.upload')
+        ->middleware('auth');
+    Route::post('/draw/run', [DrawController::class, 'runDraw'])
+        ->name('draw.run')
+        ->middleware('auth');
+    Route::get('/draw/full-pdf', [DrawController::class, 'generateFullDrawPdf'])
+        ->name('draw.full.pdf')
+        ->middleware('auth');
+    Route::get('/draw/export-excel', [DrawController::class, 'exportDrawExcel'])
+    ->name('draw.export.excel')
+    ->middleware('auth'); */
+Route::get('/draw', [DrawController::class,'index'])->name('draw.index');
+Route::post('/draw/upload',[DrawController::class,'uploadExcel'])->name('draw.upload');
+Route::post('/draw/verify',[DrawController::class,'verify'])->name('draw.verify');
+Route::post('/draw/run', [DrawController::class,'runDraw'])->name('draw.run');
 
+Route::get('/draw/pdf',[DrawController::class,'generateFullDrawPdf'])->name('draw.full.pdf');
+
+Route::get('/draw/excel',[DrawController::class,'exportDrawExcel'])->name('draw.export.excel');
+Route::post('/draw/verify-preview', [DrawController::class, 'verifyPreview'])
+    ->name('draw.verify.preview');
+Route::post('/draw/verify-confirm', [DrawController::class, 'verifyConfirm'])
+    ->name('draw.verify.confirm');
+ Route::post('/draw/demo', [DrawController::class, 'demoDraw'])
+    ->name('draw.demo');
+
+Route::post('/draw/final', [DrawController::class, 'finalDraw'])
+    ->name('draw.final');
+Route::get('/draw/history',[DrawController::class,'history'])->name('draw.history');
+Route::get('/draw/pdf/{batch}',[DrawController::class,'downloadBatchPdf'])->name('draw.batch.pdf');
+Route::get('/draw/excel/{batch}',[DrawController::class,'downloadBatchExcel'])->name('draw.batch.excel');
+Route::get('/draw/reset',[DrawController::class,'reset'])->name('draw.reset');           
+        
 });
+
+
 
 
 
@@ -228,7 +269,7 @@ Route::prefix('reports')->group(function () {
     Route::get('waitinglist', ['as' => 'waiting.list', 'uses' => 'ReportsController@waitinglist']);
     Route::get('allotmentlist', ['as' => 'allotment.list', 'uses' => 'ReportsController@allotmentlist']);
     Route::get('vacantlist', ['as' => 'vacant.list', 'uses' => 'ReportsController@vacantlist']);
-   // Route::get('quarteroccupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
+    // Route::get('quarteroccupancy', ['as' => 'quarter.occupancy', 'uses' => 'ReportsController@quarteroccupancy']);
 });
 
 // Quarters PDF generation
@@ -290,15 +331,17 @@ Route::prefix('user')->group(function () {
     Route::post('updateuserprofile', ['as' => 'admin.updateUserDetails', 'uses' => 'ProfileController@saveOrUpdateProfileDetails']);
 
     Route::get('otp', function () {
-        return view('admin.otp',
-        ['page_title' => 'OTP Verification']); // adjust view path
+        return view(
+            'admin.otp',
+            ['page_title' => 'OTP Verification']
+        ); // adjust view path
     })->name('otp');
 
-     Route::post('otp', 'UserController@getOtp')->name('user.getOtp');
+    Route::post('otp', 'UserController@getOtp')->name('user.getOtp');
 });
 
 // Quarter Type Routes
-Route::prefix('masterquartertype')->group(function () {
+    Route::prefix('masterquartertype')->group(function () {
     Route::get('/', [QuarterTypeController::class, 'index'])->name('masterquartertype.index');
     Route::post('getList1', 'QuarterTypeController@getList');
     Route::get('edit/{officecode}/{quartertype}/edit', [QuarterTypeController::class, 'editQuarterType'])->name('masterquartertype.editQuarterType');

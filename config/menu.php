@@ -11,7 +11,7 @@ return [
             'link' => 'admin.dashboard.admindashboard',
             'submenu' => []
         ],
-       'Quarters' => [
+        'Quarters' => [
             'title' => 'menus.Quarters',
             'icon' => 'icon-home',
             'permission_route' => 'quarters',
@@ -23,7 +23,7 @@ return [
             ],
             'link' => 'quarters',
             'submenu' => [
-					'Request List (Normal)' => [
+                'Request List (Normal)' => [
                     'title' => 'menus.Request List (Normal)',
                     'icon' => 'fa fa-list',
                     'permission_route' => 'quarter.list.normal',
@@ -32,7 +32,7 @@ return [
                     ],
                     'link' => 'quarter.list.normal',
                 ],
-				/*	'Request List (Priority)' => [
+                /*	'Request List (Priority)' => [
                     'title' => 'menus.Request List (Priority)',
                     'icon' => 'fa fa-list',
                     'permission_route' => 'quarterlistpriority*',
@@ -50,7 +50,7 @@ return [
                     ],
                     'link' => 'request.rejected',
                 ],
-				/*	'New Request' => [
+                /*	'New Request' => [
                     'title' => 'menus.New Request',
                     'icon' => 'fa fa-paper-plane',
                     'permission_route' => 'quarter.list.new',
@@ -59,9 +59,9 @@ return [
                     ],
                     'link' => 'quarter.list.new',
                 ],*/
-			]
+            ]
         ],
-		 'Reports' => [
+        'Reports' => [
             'title' => 'menus.Reports',
             'icon' => 'icon-home',
             'permission_route' => 'reports',
@@ -75,7 +75,7 @@ return [
             ],
             'link' => '#',
             'submenu' => [
-				'Waiting List' => [
+                'Waiting List' => [
                     'title' => 'menus.Waiting List',
                     'icon' => 'fa fa-spinner',
                     'permission_route' => 'waiting.list',
@@ -84,7 +84,7 @@ return [
                     ],
                     'link' => 'waiting.list',
                 ],
-				'Quarter Allotment' => [
+                'Quarter Allotment' => [
                     'title' => 'menus.Quarter Allotment ',
                     'icon' => 'fa fa-thumbs-up',
                     'permission_route' => 'allotment.list',
@@ -93,7 +93,7 @@ return [
                     ],
                     'link' => 'allotment.list',
                 ],
-					'Vacant Quarter List' => [
+                'Vacant Quarter List' => [
                     'title' => 'menus.Vacant Quarter List',
                     'icon' => 'fa fa-users ',
                     'permission_route' => 'vacant.list',
@@ -121,9 +121,9 @@ return [
                     'link' => 'quarter.police.document',
                 ],
 
-			]
+            ]
         ],
-		 'User' => [
+        'User' => [
             'title' => 'menus.User',
             'icon' => 'icon-home',
             'permission_route' => 'User',
@@ -133,7 +133,7 @@ return [
             'link' => 'user',
             'submenu' => []
         ],
-         'Important link' => [
+        'Important link' => [
             'title' => 'menus.Important link',
             'icon' => 'nav-icon fas fa-link ',
             'permission_route' => 'masterquartertype*',
@@ -192,9 +192,9 @@ return [
 
             ]
         ],
-        'DDO'=>[
-            'title'=>'DDO List',
-            'icon'=>'fa fa-user',
+        'DDO' => [
+            'title' => 'DDO List',
+            'icon' => 'fa fa-user',
             'permission_route' => 'ddo.list',
             'route' => [
                 'ddo.list',
@@ -204,8 +204,8 @@ return [
 
             ],
             'link' => 'ddo.list',
-            
-          /*  'submenu' => ['Add' => [
+
+            /*  'submenu' => ['Add' => [
                     'title' => 'Add New DDO',
                     'icon' => 'fa fa-building',
                     'permission_route' => 'ddo.addNew',
@@ -215,20 +215,29 @@ return [
                     'link' => 'ddo.addNew',
                 ],]*/
         ],
-         'Quarter Draw'=>[
-            'title'=>'Quarter Draw',
-            'icon'=>'fa fa-user',
-            'permission_route' => 'quarter.draw',
+       /* 'Quarter Draw' => [
+            'title' => 'Quarter Draw',
+            'icon' => 'fa fa-user',
+            'permission_route' => 'draw.index',
             'route' => [
-                'draw.list',
-                'draw.showlist',
-                'draw.addNewDDO',
-                'draw.store'
-
+                'draw.index',
+                'draw.run',
+                'draw.upload',
+                'draw.verify'
             ],
-            'link' => 'quarter.draw',
-            
-         
+            'link' => 'draw.index',
+        ], */
+        'Quarter Draw' => [
+            'title' => 'Quarter Draw',
+            'icon' => 'fa fa-user',
+            'permission_route' => 'draw.history',
+            'route' => [
+                'draw.index',
+                'draw.run',
+                'draw.upload',
+                'draw.verify'
+            ],
+            'link' => 'draw.history',
         ],
         'Logout' => [
             'title' => 'menus.Logout',
@@ -241,10 +250,10 @@ return [
             'submenu' => []
         ],
 
-	],
-	'admin' => [
+    ],
+    'admin' => [
 
-	'Dashboard' => [
+        'Dashboard' => [
             'title' => 'menus.Dashboard',
             'icon' => 'nav-icon fas fa-tachometer-alt',
             'permission_route' => 'user.dashboard.userdashboard',
@@ -306,7 +315,7 @@ return [
                     ],
                     'link' => 'user.quarter.higher',
                 ],
-               /* 'Change Quarter Request' => [
+                /* 'Change Quarter Request' => [
                     'title' => 'menus.quarterchangerequest',
                     'icon' => 'far fa-circle',
                     'permission_route' => 'user.quarter.change',
@@ -327,8 +336,8 @@ return [
 
             ]
         ],
-       
-       /* 'Quarter Allotment' => [
+
+        /* 'Quarter Allotment' => [
             'title' => 'menus.Quarter Allotment ',
             'icon' => 'fa fa-thumbs-up ',
             'permission_route' => 'userallotmentlist*',
@@ -348,7 +357,7 @@ return [
             'submenu' => []
         ],
 
-	],
+    ],
     'ddouser' => [
         'Dashboard' => [
             'title' => 'menus.Dashboard',
@@ -360,7 +369,7 @@ return [
             'link' => 'ddo.dashboard',
             'submenu' => []
         ],
-       /* 'Employees List' => [
+        /* 'Employees List' => [
             'title' => 'Employees List',
             'icon' => 'nav-icon fas fa-tachometer-alt',
             'permission_route' => 'ddo.emplist',
@@ -370,7 +379,7 @@ return [
             'link' => 'ddo.emp-list',
             'submenu' => []
         ],*/
-       'Quarters' => [
+        'Quarters' => [
             'title' => 'menus.Quarters',
             'icon' => 'icon-home',
             'permission_route' => 'quarters',
@@ -382,7 +391,7 @@ return [
             ],
             'link' => 'quarters',
             'submenu' => [
-					'Request List (Normal)' => [
+                'Request List (Normal)' => [
                     'title' => 'menus.Request List (Normal)',
                     'icon' => 'fa fa-list',
                     'permission_route' => 'ddo.quarters.normal',
@@ -391,7 +400,7 @@ return [
                     ],
                     'link' => 'ddo.quarters.normal',
                 ],
-					/* 'Request List (Priority)' => [
+                /* 'Request List (Priority)' => [
                     'title' => 'menus.Request List (Priority)',
                     'icon' => 'fa fa-list',
                     'permission_route' => 'quarterlistpriority*',
@@ -410,10 +419,10 @@ return [
                     'link' => 'ddo.request.rejected',
                 ],
 
-			]
+            ]
         ],
-        
-		/* 'Reports' => [
+
+        /* 'Reports' => [
             'title' => 'menus.Reports',
             'icon' => 'icon-home',
             'permission_route' => 'reports',
@@ -450,5 +459,5 @@ return [
             'submenu' => []
         ],
 
-	],
+    ],
 ];

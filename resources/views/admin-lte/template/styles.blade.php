@@ -32,6 +32,9 @@
   <!-- <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> -->
   <link href="{!! URL::asset(Config::get('app.theme_path').'/dist/css/fontface.css') !!}" rel="stylesheet">
 
+   
+
+
   
 
 <!-- page level styles -->

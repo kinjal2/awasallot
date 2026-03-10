@@ -50,6 +50,7 @@
 <script src="{{ URL::asset('/js/main.js') }}"></script>
 <script src="{{ URL::asset(Config::get('app.theme_path').'/plugins/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script>
 <script src="{{ URL::asset(Config::get('app.theme_path').'/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ URL::asset('/js/sweetalert.min.js') }}"></script>
 
 
 <script>

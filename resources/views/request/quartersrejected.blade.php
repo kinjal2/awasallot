@@ -102,12 +102,12 @@
         serverSide: true,
        
         ajax: {
-          headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            url: "{{ route('request.rejectedquarter-list') }}",
+            'type': 'POST',
           },
-          url: "{{ route('request.rejectedquarter-list') }}",
-          'type': 'POST',
-  },
 
 
         columns: [
