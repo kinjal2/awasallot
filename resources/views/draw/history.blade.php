@@ -3,7 +3,7 @@
 @section('title', $page_title)
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.css') }}">
+<!-- <link rel="stylesheet" href="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.css') }}"> -->
 <div class="content">
 
   <!-- Content Header -->
@@ -115,7 +115,10 @@
 
                     </form>
                     @elseif($batch->draw_status=='verified' && ($batch->demo_run_count  == 3 ) )
-                    <form action="{{ route('draw.final') }}" method="POST" class="mb-2" id="finalDrawForm" >
+                    <form action="{{ route('draw.final') }}" method="POST"  class="confirm-action"
+                      data-title="Proceed Final Draw?"
+                      data-text="This process cannot be reverted. Proceed with Final Draw?"
+                      data-confirm="Yes, Proceed" id="finalDrawForm" >
                       @csrf
                       {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
                       <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
@@ -139,6 +142,7 @@
                     @endif
                 </td>
                 <td>
+                 
                   @if($batch->draw_status == 'final' || ($batch->draw_status =='verified' && $batch->demo_run_count >= 1 && $batch->demo_run_count < 3 ))
                   <a href="{{ route('draw.batch.pdf',$batch->id) }}"
                     class="btn btn-sm btn-danger">
@@ -161,7 +165,10 @@
                 </td> -->
                 <td>
                    @if($batch->draw_status != 'final'  )
-                 <form action="{{ route('draw.delete') }}" method="POST" class="deleteForm d-inline" name="delDrawForm" id="delDrawForm">
+                 <form action="{{ route('draw.delete') }}" method="POST" class="confirm-action"
+                    data-title="Proceed To Delete?"
+                    data-text="This process cannot be reverted. Proceed with Delete?"
+                    data-confirm="Yes, Delete" name="delDrawForm" id="delDrawForm">
                     @csrf
                      <input type="hidden" name="quartertype" id="verify_quartertype" value="{{ $batch->quarter_type }}">
                       <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
@@ -201,12 +208,20 @@
 @endsection
 
 @push('footer-script')
-<script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+ <!-- <script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>  -->
 <script>
 
 
   $(document).ready(function() {
-  $('#finalDrawForm').on('submit', function(e){
+
+  $('.confirm-action').on('submit', function(e){
+
+    e.preventDefault();
+
+    confirmSubmit(this);
+
+});
+ /* $('#finalDrawForm').on('submit', function(e){
 
     console.log("Form submit event triggered");
 
@@ -274,7 +289,7 @@ $('#delDrawForm').on('submit', function(e){
 
     });
 
-});
+});*/
     $('#batch_history_table').DataTable({
 
       pageLength: 10,

@@ -71,40 +71,35 @@
   @stack('scripts')
   <script>
  /* sweetalert starts here */
-    document.addEventListener("DOMContentLoaded", function () {
+    $(document).on('submit', '.confirm-action', function(e){
 
-    document.querySelectorAll('.confirm-action').forEach(function(form) {
+    e.preventDefault();
 
-        form.addEventListener('submit', function(e) {
+    let form = this;
 
-            e.preventDefault();
+    let title = $(this).data('title') || 'Are you sure?';
+    let text  = $(this).data('text')  || 'This action cannot be reverted.';
+    let confirmBtn = $(this).data('confirm') || 'Yes, proceed!';
+    let cancelBtn  = $(this).data('cancel') || 'Cancel';
 
-            let title = form.dataset.title || "Are you sure?";
-            let text  = form.dataset.text || "This action cannot be undone.";
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: confirmBtn,
+        cancelButtonText: cancelBtn
+    }).then(function(result){
 
-            Swal.fire({
-                title: title,
-                text: text,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, proceed',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-
-            });
-
-        });
+        if(result.value){
+            form.submit();
+        }
 
     });
 
 });
-
 /* sweetalert ends here */
 </script>
     <!-- Custom Script -->

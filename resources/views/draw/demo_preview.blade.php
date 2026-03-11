@@ -61,7 +61,10 @@
 
         <span class="mx-2 mb-2">OR</span>
 
-         <form action="{{ route('draw.final') }}" method="POST" class="mb-2" id="finalDrawForm1">
+         <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
+                data-title="Proceed Final Draw?"
+                data-text="This process cannot be reverted. Continue?"
+                data-confirm="Yes, run final draw" id="finalDrawForm1">
             @csrf
           {{--   <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
             <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
@@ -73,7 +76,10 @@
 
         @elseif($batch->draw_status != 'final')
         <p>Choose an action after this draw:</p>
-        <form action="{{ route('draw.final') }}" method="POST" class="mb-2" id="finalDrawForm2">
+        <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
+            data-title="Proceed Final Draw?"
+            data-text="This process cannot be reverted. Continue?"
+            data-confirm="Yes, run final draw" id="finalDrawForm2">
             @csrf
           {{--   <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
             <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
@@ -214,7 +220,10 @@
             </div>
             @else
             <!-- Final Draw Button -->
-            <form id="modalFinalForm" action="{{ route('draw.final') }}" method="POST" style="display:inline-block;" >
+            <form id="modalFinalForm" action="{{ route('draw.final') }}" method="POST" style="display:inline-block;" class="confirm-action"
+                data-title="Proceed Final Draw?"
+                data-text="This process cannot be reverted. Continue?"
+                data-confirm="Yes, run final draw" >
                 @csrf
                 <input type="hidden" name="quartertype" id="modalFinalQuarter" value="{{$batch->quarter_type }}">
                  <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
@@ -409,7 +418,16 @@
     });
 </script>
 <script>
-$('#finalDrawForm1').on('submit', function(e){
+     $(document).ready(function() {
+
+            $('.confirm-action').on('submit', function(e){
+
+                e.preventDefault();
+
+                confirmSubmit(this);
+
+            });
+/*$('#finalDrawForm1').on('submit', function(e){
 
     console.log("Form submit event triggered");
 
@@ -475,8 +493,8 @@ $('#finalDrawForm2').on('submit', function(e){
 
         }
 
-    });
+    }); */
 
-});
+}); 
 </script>
 @endpush
