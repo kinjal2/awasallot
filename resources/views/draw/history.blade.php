@@ -3,7 +3,7 @@
 @section('title', $page_title)
 
 @section('content')
-
+<link rel="stylesheet" href="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.css') }}">
 <div class="content">
 
   <!-- Content Header -->
@@ -66,6 +66,7 @@
             <thead>
               <tr>
                 <th>#</th>
+                <th>Batch Id</th>
                 <th>Batch Title</th>
                 <th>Quarter</th>
                 <th>Status</th>
@@ -79,12 +80,10 @@
             <tbody>
 
               @foreach($batches as $index => $batch)
-
-
-
-
               <tr>
                 <td>{{ $index + 1 }}</td>
+                
+                <td>{{ $batch->batch_no }}</td>
 
                 <td>{{ $batch->batch_title }}</td>
 
@@ -116,7 +115,7 @@
 
                     </form>
                     @elseif($batch->draw_status=='verified' && ($batch->demo_run_count  == 3 ) )
-                    <form action="{{ route('draw.final') }}" method="POST" class="mb-2">
+                    <form action="{{ route('draw.final') }}" method="POST" class="mb-2" id="finalDrawForm" >
                       @csrf
                       {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
                       <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
@@ -162,10 +161,15 @@
                 </td> -->
                 <td>
                    @if($batch->draw_status != 'final'  )
-                  <a href="#"
-                    class="btn btn-sm btn-danger">
-                    Delete
-                  </a>
+                 <form action="{{ route('draw.delete') }}" method="POST" class="deleteForm d-inline" name="delDrawForm" id="delDrawForm">
+                    @csrf
+                     <input type="hidden" name="quartertype" id="verify_quartertype" value="{{ $batch->quarter_type }}">
+                      <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
+                </form>
+
                   @else
                   -
                   @endif
@@ -197,10 +201,80 @@
 @endsection
 
 @push('footer-script')
-
+<script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script>
-  $(document).ready(function() {
 
+
+  $(document).ready(function() {
+  $('#finalDrawForm').on('submit', function(e){
+
+    console.log("Form submit event triggered");
+
+    e.preventDefault();
+
+    let form = this;
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This process cannot be reverted. Proceed with Final Draw?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Yes, proceed!'
+    }).then(function(result){
+
+        console.log("SweetAlert result:", result);
+
+        if(result.value){
+
+            console.log("User confirmed, submitting form");
+
+            form.submit();
+
+        }else{
+
+            console.log("User cancelled");
+
+        }
+
+    });
+
+});
+
+$('#delDrawForm').on('submit', function(e){
+
+    console.log("Form submit event triggered");
+
+    e.preventDefault();
+
+    let form = this;
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This process cannot be reverted. Proceed with Delete?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Yes, proceed!'
+    }).then(function(result){
+
+        console.log("SweetAlert result:", result);
+
+        if(result.value){
+
+            console.log("User confirmed, submitting form");
+
+            form.submit();
+
+        }else{
+
+            console.log("User cancelled");
+
+        }
+
+    });
+
+});
     $('#batch_history_table').DataTable({
 
       pageLength: 10,

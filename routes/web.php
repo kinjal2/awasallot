@@ -234,6 +234,8 @@ Route::post('/draw/verify-confirm', [DrawController::class, 'verifyConfirm'])
     ->name('draw.verify.confirm');
  Route::post('/draw/demo', [DrawController::class, 'demoDraw'])
     ->name('draw.demo');
+     Route::post('/draw/delete', [DrawController::class, 'drawDel'])
+    ->name('draw.delete');
 
 Route::post('/draw/final', [DrawController::class, 'finalDraw'])
     ->name('draw.final');

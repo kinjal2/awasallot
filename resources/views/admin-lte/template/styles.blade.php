@@ -32,7 +32,7 @@
   <!-- <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> -->
   <link href="{!! URL::asset(Config::get('app.theme_path').'/dist/css/fontface.css') !!}" rel="stylesheet">
 
-   
+   <link rel="stylesheet" href="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.css') }}">
 
 
   

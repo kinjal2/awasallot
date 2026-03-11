@@ -14,15 +14,17 @@
 <body>
 
 <div class="header">
-    <h3>Quarter Allotment Draw Result</h3>
+    <h4>Quarter Allotment Draw Result<br/>
+     @if($draw_status=='final') Final Draw @elseif($draw_status=='verified') Demo Draw {{ $demo_run_count }} / 3 @endif</h4>
 </div>
 
 <div class="date">
-    {{ $generated_at }}
+    Report Generated On: <br/><b>{{ $generated_at }}</b>
 </div>
 <div >
-    Title : {{ $batch_title }} <br/> Quater Type: {{$quarter_type}}
+    <h3>Batch Id : {{ $batch_no }} <br/> Title : {{ $batch_title }} <br/> Quater Type: {{$quarter_type}}</h3>
 </div>
+
 <table>
     <thead>
         <tr>

@@ -53,7 +53,7 @@
                 <div class="row">
 
                     {{-- Upload Section --}}
-                    <div class="col-md-6">
+                    <div class="col-md-8">
 
                         <div class="card shadow-sm border-0">
 

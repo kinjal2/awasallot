@@ -13,5 +13,7 @@ class DrawBatch extends Model
     'quarter_type',
     'draw_status',
     'demo_run_count',
+    'batch_no',
+    'draw_date'
     ];
 }

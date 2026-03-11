@@ -62,9 +62,51 @@
 
   <!-- Template Main JS File -->
   <script src="{{ URL::asset('/js/main.js') }}"></script>
+  <script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+
+
+   
+
 
   @stack('scripts')
+  <script>
+ /* sweetalert starts here */
+    document.addEventListener("DOMContentLoaded", function () {
 
+    document.querySelectorAll('.confirm-action').forEach(function(form) {
+
+        form.addEventListener('submit', function(e) {
+
+            e.preventDefault();
+
+            let title = form.dataset.title || "Are you sure?";
+            let text  = form.dataset.text || "This action cannot be undone.";
+
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        });
+
+    });
+
+});
+
+/* sweetalert ends here */
+</script>
     <!-- Custom Script -->
     <script type="text/javascript">
         jQuery.noConflict();

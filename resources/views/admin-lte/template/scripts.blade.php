@@ -35,6 +35,7 @@
 <!-- jQuery Validation -->
 <script src="{{ URL::asset('/bower_components/admin-lte/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
 <script src="{{ URL::asset('/bower_components/admin-lte/plugins/jquery-validation/additional-methods.min.js')}}"></script>
+
 <!-- Custom Scripts -->
 <script type="text/javascript">
     var oTable = null;

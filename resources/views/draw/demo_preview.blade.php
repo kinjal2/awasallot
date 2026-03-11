@@ -3,9 +3,9 @@
 @section('title', $page_title)
 
 @section('content')
-
+<link rel="stylesheet" href="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.css') }}">
 <div class="content">
-
+    
     <!-- Page Header -->
     <div class="content-header">
         <div class="container-fluid">
@@ -30,7 +30,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title mb-0">Demo Run Preview</h3>
+                <h3 class="card-title mb-0">{{$page_title}}</h3>
             </div>
 
 
@@ -43,10 +43,11 @@
     <!-- ACTION BUTTONS -->
     <div class="d-flex align-items-center  mb-2">
         
-         <p>Choose an action after this draw:</p>
+         
          <br>
         @php // dd($batch->draw_status) @endphp
         @if(($batch->demo_run_count + 1 ) <= 3 && $batch->draw_status=='verified')
+        <p>Choose an action after this draw:</p>
         <form action="{{ route('draw.demo') }}" method="POST" class="mr-2 mb-2">
             @csrf
            {{--  <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
@@ -60,23 +61,23 @@
 
         <span class="mx-2 mb-2">OR</span>
 
-         <form action="{{ route('draw.final') }}" method="POST" class="mb-2">
+         <form action="{{ route('draw.final') }}" method="POST" class="mb-2" id="finalDrawForm1">
             @csrf
           {{--   <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
-            <input type="text" name="quartertype" value="{{ $batch->quarter_type }}">
-    <input type="text" name="batch_id" value="{{ $batch->id }}">
+            <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+    <input type="hidden" name="batch_id" value="{{ $batch->id }}">
             <button type="submit" class="btn btn-danger">
                 <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
             </button>
         </form>
 
         @elseif($batch->draw_status != 'final')
-
-        <form action="{{ route('draw.final') }}" method="POST" class="mb-2">
+        <p>Choose an action after this draw:</p>
+        <form action="{{ route('draw.final') }}" method="POST" class="mb-2" id="finalDrawForm2">
             @csrf
           {{--   <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
-            <input type="text" name="quartertype" value="{{ $batch->quarter_type }}">
-    <input type="text" name="batch_id" value="{{ $batch->id }}">
+            <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+    <input type="hidden" name="batch_id" value="{{ $batch->id }}">
             <button type="submit" class="btn btn-danger">
                 <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
             </button>
@@ -84,16 +85,25 @@
 
         @endif
 
+@if($batch->draw_status == 'final')
 
-        @if($batch->status=='final')
 
-        <div class="alert alert-success mb-2 py-2 px-3">
-            Final entries are frozen.
-           Go Back to <a href="{{ route('draw.history') }}" class="ml-1">Draw History</a>
+<div class="card shadow-sm border-success w-100">
+    <div class="card-body text-center">
+
+        <div class="alert alert-success d-flex align-items-center justify-content-center mb-3" role="alert">
+            <i class="fas fa-check-circle mr-2"></i>
+            <strong>Final Draw Completed.</strong>&nbsp; Entries are now frozen.
         </div>
 
-        
-        @endif
+        <a href="{{ route('draw.history') }}" class="btn btn-primary">
+            <i class="fas fa-arrow-left mr-1"></i> Go Back to Draw History
+        </a>
+
+    </div>
+</div>
+
+@endif
 
     </div>
 
@@ -204,7 +214,7 @@
             </div>
             @else
             <!-- Final Draw Button -->
-            <form id="modalFinalForm" action="{{ route('draw.final') }}" method="POST" style="display:inline-block;">
+            <form id="modalFinalForm" action="{{ route('draw.final') }}" method="POST" style="display:inline-block;" >
                 @csrf
                 <input type="hidden" name="quartertype" id="modalFinalQuarter" value="{{$batch->quarter_type }}">
                  <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
@@ -245,7 +255,7 @@
 
 
 @push('footer-script')
-
+<script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script>
     $(document).ready(function() {
         function setModalQuarterType() {
@@ -397,5 +407,76 @@
 
         /* upload excel file type validation ends here */
     });
+</script>
+<script>
+$('#finalDrawForm1').on('submit', function(e){
+
+    console.log("Form submit event triggered");
+
+    e.preventDefault();
+
+    let form = this;
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This process cannot be reverted. Proceed with Final Draw?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Yes, proceed!'
+    }).then(function(result){
+
+        console.log("SweetAlert result:", result);
+
+        if(result.value){
+
+            console.log("User confirmed, submitting form");
+
+            form.submit();
+
+        }else{
+
+            console.log("User cancelled");
+
+        }
+
+    });
+
+});
+
+$('#finalDrawForm2').on('submit', function(e){
+
+    console.log("Form submit event triggered");
+
+    e.preventDefault();
+
+    let form = this;
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This process cannot be reverted. Proceed with Final Draw?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Yes, proceed!'
+    }).then(function(result){
+
+        console.log("SweetAlert result:", result);
+
+        if(result.value){
+
+            console.log("User confirmed, submitting form");
+
+            form.submit();
+
+        }else{
+
+            console.log("User cancelled");
+
+        }
+
+    });
+
+});
 </script>
 @endpush

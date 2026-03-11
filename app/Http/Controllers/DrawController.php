@@ -14,6 +14,9 @@ use App\DrawBatch;
 use App\Exports\DrawResultExport;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Str;
+use App\DrawLog;
+
 
 class DrawController extends Controller
 {
@@ -124,11 +127,19 @@ class DrawController extends Controller
         'demo_run_count'=>0
     ]
 );*/
+//dd($request->draw_date);
+            $quartertype = $request->quartertype;
+            $date = date('dmY', strtotime($request->draw_date));
+            $random = strtoupper(Str::random(5));
+
+            $batch_no = $quartertype.'/'.$date.'/'.$random;
             $batch = DrawBatch::create([
                 'quarter_type' => $quartertype,
                 'batch_title' => $request->batch_title,
                 'draw_status' => 'uploaded',
-                'demo_run_count' => 0
+                'demo_run_count' => 0,
+                'batch_no' =>  $batch_no,
+                'draw_date' => $request->draw_date
             ]);
             $batchId = $batch->id;
 
@@ -142,13 +153,25 @@ class DrawController extends Controller
 
             // return redirect()->route('draw.index')
             //     ->with('success', 'Excel Uploaded Successfully. Click on Verify Data');
-
+            DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batch->id,
+                'operation' => 'UPLOAD',
+                'remarks'   => 'Applicant and Premise list uploaded',
+                'ip'        => request()->ip(),
+            ]);
             return redirect()->route('draw.history')
                 ->with('success', 'Excel Uploaded Successfully. Click on Verify Data');
         } catch (\Throwable $e) {
 
             DB::rollBack();
-
+             DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batch->id,
+                'operation' => 'UPLOAD ISSUE',
+                'remarks'   => 'Applicant and Premise list uploaded has an issue'.$e->getMessage(),
+                'ip'        => request()->ip(),
+            ]);
             dd($e->getMessage(), $e->getLine());
         }
     }
@@ -228,7 +251,7 @@ class DrawController extends Controller
     {
         $quartertype = $request->quartertype;
         $batch_id = $request->batch_id;
-
+        try{
         $appCount = Application::where('quarter_type', $quartertype)->where('batch_id', $batch_id)->count();
         $premCount = Premise::where('quarter_type', $quartertype)->where('batch_id', $batch_id)->count();
 
@@ -241,12 +264,30 @@ class DrawController extends Controller
             ->where('id',  $batch_id)
             ->update(['draw_status' => 'verified']);
 
+             DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batch_id,
+                'operation' => 'VERIFIED',
+                'remarks'   => 'Applicant and Premise list verified',
+                'ip'        => request()->ip(),
+            ]);
         // Session::put('quartertype', $quartertype);
 
         /* return redirect()->route('draw.index')
             ->with('success', 'Data verified successfully');*/
         return redirect()->route('draw.history')
             ->with('success', 'Data verified successfully');
+        }
+        catch(\Exception $e)
+        {
+              DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batch_id,
+                'operation' => 'VERIFIED ISSUE',
+                'remarks'   => 'Applicant and Premise list verification issue'.$e->getMessage(),
+                'ip'        => request()->ip(),
+            ]);
+        }
     }
 
 
@@ -316,7 +357,7 @@ class DrawController extends Controller
     {
         $quartertype = $request->quartertype;
         $batchId =  $request->batch_id;
-
+        try {
         $batch = DrawBatch::where('id', $batchId)->first();
         // dd($batch);
         if (!$batch) {
@@ -367,12 +408,30 @@ class DrawController extends Controller
             ? DrawResult::where('batch_id', $batchId)->orderBy('id')->get()
             : collect();
             
+            DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'Demo Draw '.$batch->demo_run_count.' / 3',
+                'remarks'   => 'Demo Draw '.$batch->demo_run_count.' / 3 has been executed successfully',
+                'ip'        => request()->ip(),
+            ]);
         // return redirect()->route('draw.index')
         //     ->with('success', 'Demo draw completed');
-        $this->viewContent['page_title'] = "Demo Run Preview";
+        $this->viewContent['page_title'] = "Demo Run Preview ".$batch->demo_run_count." / 3 ";
         $this->viewContent['batch'] = $batch;
         $this->viewContent['results'] = $results;
         return view('draw.demo_preview', $this->viewContent);
+        }
+        catch(\Exception $e)
+        {
+              DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'Demo Draw '.$batch->demo_run_count.' / 3 has an issue',
+                'remarks'   => 'Demo Draw '.$batch->demo_run_count.' / 3 has an  issue '.$e->getMessage(),
+                'ip'        => request()->ip(),
+            ]);
+        }
     }
 
 
@@ -448,15 +507,17 @@ class DrawController extends Controller
     {
         $quartertype = $request->quartertype;
         $batchId = $request->batch_id;
-
+        try {
         $batch = DrawBatch::where('id', $batchId)->first();
-        //dd($batch);
+       // dd($batch);
         if (!$batch) {
             return back()->with('error', 'Draw batch not found.');
         }
 
         if ($batch->draw_status == 'final') {
-            return back()->with('error', 'Final draw already completed');
+            //return back()->with('error', 'Final draw already completed');
+            return redirect()->route('draw.history')
+            ->with('success', 'Final draw completed. Entries frozen.');
         }
 
         // Delete previous results for this batch
@@ -509,6 +570,14 @@ class DrawController extends Controller
             : collect();
         //dd($results);
        // dd($batch);
+        DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'Final Draw',
+                'remarks'   => 'Final Draw of '.$batchId.' has been completed',
+                'ip'        => request()->ip(),
+            ]);
+
          $this->viewContent['page_title'] = "Final Run Preview";
         $this->viewContent['batch'] = $batch;
         $this->viewContent['results'] = $results;
@@ -518,6 +587,17 @@ class DrawController extends Controller
         //     ->with('success', 'Final draw completed. Entries frozen.');
         //  return redirect()->route('draw.demo')
         //      ->with('success', 'Final draw completed. Entries frozen.');
+        }
+        catch(\Exception $e)
+        {
+            DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'Final Draw Issue',
+                'remarks'   => 'Final Draw of '.$batchId.'has an issue'.$e->getMessage(),
+                'ip'        => request()->ip(),
+            ]);
+        }
     }
 
 
@@ -572,7 +652,7 @@ class DrawController extends Controller
     public function downloadBatchPdf($batchId)
     {
         $batch = DrawBatch::find($batchId);
-
+        try {
         if (!$batch) {
             return back()->with('error', 'Batch not found.');
         }
@@ -584,18 +664,46 @@ class DrawController extends Controller
         if ($results->isEmpty()) {
             return back()->with('error', 'No draw results found.');
         }
-
+        
         $data = [
             'results'       => $results,
+            'batch_no'      => $batch->batch_no,
             'batch_title'   => $batch->batch_title,
             'quarter_type'  => $batch->quarter_type,
             'draw_status'   => $batch->draw_status,
+            'demo_run_count' => $batch->demo_run_count,
             'generated_at'  => now()->format('d-m-Y h:i:s A')
         ];
-
+        $remarks=null;
+        if($batch->draw_status=='final')
+        {
+                $remarks="Final Draw download";
+        }
+        else if($batch->draw_status=='verified')
+         {
+            $remarks="Demo draw of ".$batch->demo_run_count." / 3";
+         }
+        DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'PDF Download',
+                'remarks'   => 'Batch Id :'.$batchId.', pdf, '.$remarks,
+                'ip'        => request()->ip(),
+            ]);
         $pdf = Pdf::loadView('draw.full_draw_pdf', $data);
 
         return $pdf->download('Draw_Result_' . $batchId . '.pdf');
+        }
+        catch(\Exception $e)
+        {
+             DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'PDF Download Issue',
+                'remarks'   => 'Batch Id :'.$batchId.', pdf has been download issue'.$remarks.','.$e->getMessage(),
+                'ip'        => request()->ip(),
+            ]);
+        }
     }
     public function downloadBatchExcel($batchId)
     {
@@ -653,5 +761,40 @@ class DrawController extends Controller
 
         return redirect()->route('draw.index')
             ->with('success', 'Session reset successfully. You can now upload a new Excel file to create a fresh batch.');
+    }
+    public function drawDel(Request $request)
+    {
+        $quartertype = $request->quartertype;
+        $batchId =  $request->batch_id;
+        try {
+        $batch = DrawBatch::where('id', $batchId)->first();
+        // dd($batch);
+        if (!$batch) {
+            return back()->with('error', 'Draw batch not found.');
+        }
+		
+
+        DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'Deleted',
+                'remarks'   => 'Batch id : '.$batchId.'deleted successfully,details are :'.$batch,
+                'ip'        => request()->ip(),
+            ]);
+		 // Clear previous demo result for this batch
+        DrawResult::where('batch_id', $batchId)->delete();
+        DrawBatch::where('id',$batchId)->delete();
+        return back()->with('success', 'Draw batch deleted successfully.');
+        }
+        catch(\Exception $e)
+        {
+            DrawLog::create([
+                'uid'       => Session::get('officecode'),
+                'batch_id'  => $batchId,
+                'operation' => 'Delete ISSUE',
+                'remarks'   => 'Batch id : '.$batchId.'delete operation has issue:'.$batchId,
+                'ip'        => request()->ip(),
+            ]);
+        }
     }
 }
