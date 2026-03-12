@@ -6,14 +6,52 @@
 
 <style>
 
+@page {
+   /* margin: 100px 40px 60px 40px;*/
+}
+
 body {
     font-family: DejaVu Sans, sans-serif;
     font-size: 12px;
-    margin-top: 140px;
-    margin-bottom: 60px;
 }
 
-/* TABLE STYLE */
+/* HEADER */
+
+/*.header {
+    position: fixed;
+    top: -100px;
+    left: 0;
+    right: 0;
+   text-align: center;
+}*/
+
+.header {
+    position: fixed;
+    top: -100px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    /* padding-left: 70px; */
+}
+
+.header-table,
+.header-table td,
+.header-table th {
+    border: none !important;
+}
+
+/* FOOTER */
+
+/* .footer {
+    position: fixed;
+    bottom: -40px;
+    left: 0;
+    right: 0;
+    text-align: right;
+    font-size: 10px;
+} */
+
+/* TABLE */
 
 table {
     width: 100%;
@@ -33,84 +71,79 @@ thead {
     display: table-header-group;
 }
 
-/* HEADER */
-
-.header {
-    position: fixed;
-    top: -120px;
-    left: 0;
-    right: 0;
-    text-align: center;
-}
-
-/* FOOTER */
-
-.footer {
-    position: fixed;
-    bottom: -40px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 10px;
-}
-
-/* PAGE NUMBER */
-
-.pagenum:before {
-    content: counter(page);
-}
-
-.pagecount:before {
-    content: counter(pages);
-}
 
 .report-date {
     text-align: right;
-    margin-top: 5px;
 }
 
 .batch-details {
     margin-top: 5px;
+    text-align: left;
+    margin-bottom : 5px;
 }
-
+.logo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60px;
+    height: auto;
+}
 </style>
 
 </head>
 
 <body>
 
-<!-- HEADER (Appears on every page) -->
+<!-- HEADER -->
 <div class="header">
+  <table class="header-table" width="100%">
+<tr>
 
-    <h4>Roads & Buildings Department</h4>
+<td width="80" align="left">
+    <img src="{{ public_path('images/national_emblem.gif') }}" width="60">
+</td>
 
-    <h5>
-        Quarter Allotment Draw Result<br>
+<td align="center">
 
-        @if($draw_status=='final')
-            Final Draw
-        @elseif($draw_status=='verified')
-            Demo Draw {{ $demo_run_count }} / 3
-        @endif
-    </h5>
+<h4 style="margin:0;">Roads & Buildings Department</h4>
 
+<h5 style="margin:0;">
+Quarter Allotment Draw Result <br>
+
+@if($draw_status=='final')
+<b>Final Draw</b>
+@elseif($draw_status=='verified')
+<b>Demo Draw {{ $demo_run_count }} / 3</b>
+@endif
+
+</h5>
+
+</td>
+
+<td width="80"></td>
+
+</tr>
+</table>
+</div>
     <div class="report-date">
         Report Generated On: <b>{{ $generated_at }}</b>
     </div>
-
+   
+   
     <div class="batch-details">
         <b>Batch Id:</b> {{ $batch_no }} <br>
         <b>Title:</b> {{ $batch_title }} <br>
         <b>Quarter Type:</b> {{ $quarter_type }}
     </div>
+   
 
-</div>
 
-
-<!-- FOOTER (Appears on every page) -->
-<div class="footer">
+<!-- FOOTER -->
+<!-- FOOTER -->
+<!-- <div class="footer">
     Page <span class="pagenum"></span> / <span class="pagecount"></span>
-</div>
+</div> -->
+
 
 
 <table>
@@ -131,8 +164,8 @@ thead {
 
 <tr>
     <td>{{ $index + 1 }}</td>
-    <td>{{ $row->appln_name }}</td>
-    <td>{{ $row->appln_name }}</td>
+    <td>{{ $row->appln_name ?? '' }}</td>
+    <td>{{ $row->appln_name ?? '' }}</td>
     <td>General</td>
     <td>{{ $row->premise_no }}</td>
 </tr>

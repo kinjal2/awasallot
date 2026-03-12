@@ -588,7 +588,7 @@ $mpdf = new Mpdf([
     'margin_bottom' => 25   // important for footer
 ]);
 
-$mpdf->SetFooter('| |Page {PAGENO} / {nbpg}');
+$mpdf->SetFooter('Page {PAGENO} / {nbpg}');
 
 $mpdf->WriteHTML($html);
 
