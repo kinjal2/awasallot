@@ -185,7 +185,7 @@ class="btn btn-sm btn-danger">
 
 @for($i = 1; $i <= $batch->demo_run_count; $i++)
 <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'demo','run'=>$i]) }}"
-class="btn btn-sm btn-warning mb-1">
+class="btn btn-warning btn-sm mb-1">
 <i class="fa fa-file-pdf"></i> Demo {{ $i }}
 </a>
 @endfor
