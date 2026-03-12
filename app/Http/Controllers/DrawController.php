@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Str;
 use App\DrawLog;
+use Mpdf\Mpdf;
 
 
 class DrawController extends Controller
@@ -176,30 +177,6 @@ class DrawController extends Controller
         }
     }
 
-
-
-    public function verifyPreview___old(Request $request)
-    {
-        $quartertype = $request->quartertype;
-
-        $applications = Application::where('quarter_type', $quartertype)
-            ->where('batch_id', session('batch_id'))
-            ->orderBy('sono')
-            ->get();
-
-        $premises = Premise::where('quarter_type', $quartertype)
-            ->where('batch_id', session('batch_id'))
-            ->orderBy('srno')
-            ->get();
-
-        return view('draw.verify', [
-            'applications' => $applications,
-            'premises' => $premises,
-            'quartertype' => $quartertype,
-            'page_title' => 'Verify Data'
-        ]);
-    }
-
     public function verifyPreview(Request $request)
     {
         $quartertype = $request->quartertype;
@@ -226,30 +203,7 @@ class DrawController extends Controller
         ]);
     }
 
-    public function verifyConfirm__old(Request $request)
-    {
-        $quartertype = $request->quartertype;
-
-
-        $appCount = Application::where('quarter_type', $quartertype)->where('batch_id', session('batch_id'))->count();
-        $premCount = Premise::where('quarter_type', $quartertype)->where('batch_id', session('batch_id'))->count();
-
-        if ($appCount != $premCount) {
-            return redirect()->route('draw.index')
-                ->with('error', 'Application and Premise count mismatch');
-        }
-
-        DrawBatch::where('quarter_type', $quartertype)
-            ->where('id', session('batch_id'))
-            ->update(['draw_status' => 'verified']);
-
-        Session::put('quartertype', $quartertype);
-
-        /* return redirect()->route('draw.index')
-            ->with('success', 'Data verified successfully');*/
-        return redirect()->route('draw.history')
-            ->with('success', 'Data verified successfully');
-    }
+   
     public function verifyConfirm(Request $request)
     {
         $quartertype = $request->quartertype;
@@ -292,70 +246,6 @@ class DrawController extends Controller
             ]);
         }
     }
-
-
-    public function demoDraw__old(Request $request)
-    {
-        $quartertype = $request->quartertype;
-        $batchId = session('batch_id');
-
-        $batch = DrawBatch::where('id', $batchId)->first();
-
-        if (!$batch) {
-            return back()->with('error', 'Draw batch not found.');
-        }
-
-        if ($batch->demo_run_count >= 3) {
-            return back()->with('error', 'Demo draw limit reached (Max 3 allowed).');
-        }
-
-        // Clear previous demo result for this batch
-        DrawResult::where('batch_id', $batchId)->delete();
-
-        // Get premises
-        $premises = Premise::where('batch_id', $batchId)
-            ->pluck('premise_no')
-            ->toArray();
-
-        // Get applicants
-        $applicants = Application::where('batch_id', $batchId)
-            ->pluck('appln_name')
-            ->toArray();
-
-        if (count($premises) != count($applicants)) {
-            return back()->with('error', 'Premise and Application count mismatch');
-        }
-
-        // Randomize applicants
-        $applicants = collect($applicants)->shuffle()->values()->toArray();
-
-        foreach ($premises as $index => $premise) {
-
-            DrawResult::create([
-                'batch_id' => $batchId,
-                'quarter_type' => $quartertype,
-                'premise_no' => $premise,
-                'appln_name' => $applicants[$index] ?? null,
-                'draw_date' => now(),
-            ]);
-        }
-
-        // Increase demo count
-        $batch->increment('demo_run_count');
-
-        Session::put('quartertype', $quartertype);
-        // Load draw results only for this batch
-        $results = $batchId
-            ? DrawResult::where('batch_id', $batchId)->orderBy('id')->get()
-            : collect();
-        // return redirect()->route('draw.index')
-        //     ->with('success', 'Demo draw completed');
-        $this->viewContent['page_title'] = "Demo Preview";
-        $this->viewContent['batch'] = $batch;
-        $this->viewContent['results'] = $results;
-        return view('draw.demo_preview', $this->viewContent);
-    }
-
     public function demoDraw(Request $request)
     {
         $quartertype = $request->quartertype;
@@ -372,7 +262,7 @@ class DrawController extends Controller
         }
 
         // Clear previous demo result for this batch
-        DrawResult::where('batch_id', $batchId)->delete();
+      //  DrawResult::where('batch_id', $batchId)->delete();
 
         // Get premises
         $premises = Premise::where('batch_id', $batchId)
@@ -390,7 +280,7 @@ class DrawController extends Controller
 
         // Randomize applicants
         $applicants = collect($applicants)->shuffle()->values()->toArray();
-
+        $runNo = $batch->demo_run_count + 1;
         foreach ($premises as $index => $premise) {
 
             DrawResult::create([
@@ -399,6 +289,8 @@ class DrawController extends Controller
                 'premise_no' => $premise,
                 'appln_name' => $applicants[$index] ?? null,
                 'draw_date' => now(),
+                'draw_type' => 'demo',
+                'run_no' => $runNo,
             ]);
         }
 
@@ -407,9 +299,28 @@ class DrawController extends Controller
 
         Session::put('quartertype', $quartertype);
         // Load draw results only for this batch
-        $results = $batchId
+        /*$results = $batchId
             ? DrawResult::where('batch_id', $batchId)->orderBy('id')->get()
-            : collect();
+            : collect();*/
+        if($batch->draw_status == 'final'){
+
+            $results = DrawResult::where('batch_id',$batchId)
+            ->where('draw_type','final')
+            ->orderBy('id')
+            ->get();
+
+        }else{
+
+            $latestRun = DrawResult::where('batch_id',$batchId)
+            ->where('draw_type','demo')
+            ->max('run_no');
+
+            $results = DrawResult::where('batch_id',$batchId)
+            ->where('draw_type','demo')
+            ->where('run_no',$latestRun)
+            ->orderBy('id')
+            ->get();
+        }    
             
             DrawLog::create([
                 'uid'       => Session::get('officecode'),
@@ -440,75 +351,6 @@ class DrawController extends Controller
         }
     }
 
-
-
-
-    public function finalDraw__old(Request $request)
-    {
-        $quartertype = $request->quartertype;
-        $batchId = session('batch_id');
-
-        $batch = DrawBatch::where('id', $batchId)->first();
-
-        if (!$batch) {
-            return back()->with('error', 'Draw batch not found.');
-        }
-
-        if ($batch->draw_status == 'final') {
-            return back()->with('error', 'Final draw already completed');
-        }
-
-        // Delete previous results for this batch
-        DrawResult::where('batch_id', $batchId)->delete();
-
-        $premises = Premise::where('batch_id', $batchId)
-            ->pluck('premise_no')
-            ->toArray();
-
-        $applicants = Application::where('batch_id', $batchId)
-            ->pluck('appln_name')
-            ->toArray();
-
-        if (count($premises) != count($applicants)) {
-            return back()->with('error', 'Premise and Application count mismatch');
-        }
-
-        $applicants = collect($applicants)->shuffle()->values()->toArray();
-
-        foreach ($premises as $index => $premise) {
-
-            DrawResult::create([
-                'batch_id' => $batchId,
-                'quarter_type' => $quartertype,
-                'premise_no' => $premise,
-                'appln_name' => $applicants[$index] ?? null,
-                'draw_date' => now()
-            ]);
-        }
-
-        $batch->update(['draw_status' => 'final']);
-
-        //Session::put('quartertype','');
-        /* Reset session after final draw */
-        Session::forget('batch_id');
-        Session::forget('quartertype');
-
-
-        // return redirect()->route('draw.index')
-        //     ->with('success', 'Final draw completed. Entries frozen.');
-
-        //  $results = $batchId
-        //     ? DrawResult::where('batch_id', $batchId)->orderBy('id')->get()
-        //     : collect();
-        // $this->viewContent['page_title'] = "Final Run Preview";
-        // $this->viewContent['batch'] = $batch;
-        // $this->viewContent['results'] = $results;
-        // return view('draw.demo_preview', $this->viewContent);
-
-        // return redirect()->route('draw.history')
-        //     ->with('success', 'Final draw completed. Entries frozen.');
-    }
-
     public function finalDraw(Request $request)
     {
         $quartertype = $request->quartertype;
@@ -527,7 +369,7 @@ class DrawController extends Controller
         }
 
         // Delete previous results for this batch
-        DrawResult::where('batch_id', $batchId)->delete();
+       // DrawResult::where('batch_id', $batchId)->delete();
 
         $premises = Premise::where('batch_id', $batchId)
             ->pluck('premise_no')
@@ -550,7 +392,9 @@ class DrawController extends Controller
                 'quarter_type' => $quartertype,
                 'premise_no' => $premise,
                 'appln_name' => $applicants[$index] ?? null,
-                'draw_date' => now()
+                'draw_date' => now(),
+                'draw_type' => 'final',
+                'run_no' => null,
             ]);
         }
         try{
@@ -609,16 +453,27 @@ class DrawController extends Controller
     }
 
 
-    public function generateFullDrawPdf()
+    public function generateFullDrawPdf($batch, Request $request)
     {
         $quartertype = session('quartertype');
         $batchId = session('batch_id');
         $batch = DrawBatch::find($batchId);
 
-        $results = DrawResult::where('quarter_type', $quartertype)
+        /*$results = DrawResult::where('quarter_type', $quartertype)
             ->where('batch_id', session('batch_id'))
             ->orderBy('id', 'asc')
-            ->get();
+            ->get();*/
+        $type = $request->type ?? 'demo';
+
+        $query = DrawResult::where('batch_id',$batchId)
+        ->where('draw_type',$type);
+
+        if($type == 'demo'){
+        $latestRun = $query->max('run_no');
+        $query->where('run_no',$latestRun);
+        }
+
+        $results = $query->orderBy('id')->get();
 
         if ($results->isEmpty()) {
             return back()->with('error', 'No draw results found.');
@@ -657,62 +512,100 @@ class DrawController extends Controller
             'batches' => $batches
         ]);
     }
-    public function downloadBatchPdf($batchId)
-    {
-        $batch = DrawBatch::find($batchId);
-        try {
+   public function downloadBatchPdf($batch, Request $request)
+{
+    $batchId = $batch;   // route parameter
+
+    $type = $request->type;
+    $run  = $request->run;
+
+    $batch = DrawBatch::find($batchId);
+
+    try {
+
         if (!$batch) {
             return back()->with('error', 'Batch not found.');
         }
 
-        $results = DrawResult::where('batch_id', $batchId)
-            ->orderBy('id')
-            ->get();
+        // Decide which results to fetch
+        if ($type == 'final') {
+
+            $results = DrawResult::where('batch_id', $batchId)
+                ->where('draw_type', 'final')
+                ->orderBy('id')
+                ->get();
+
+        } else {
+
+            $results = DrawResult::where('batch_id', $batchId)
+                ->where('draw_type', 'demo')
+                ->where('run_no', $run)
+                ->orderBy('id')
+                ->get();
+        }
 
         if ($results->isEmpty()) {
             return back()->with('error', 'No draw results found.');
         }
-        
-        $data = [
-            'results'       => $results,
-            'batch_no'      => $batch->batch_no,
-            'batch_title'   => $batch->batch_title,
-            'quarter_type'  => $batch->quarter_type,
-            'draw_status'   => $batch->draw_status,
-            'demo_run_count' => $batch->demo_run_count,
-            'generated_at'  => now()->format('d-m-Y h:i:s A')
-        ];
-        $remarks=null;
-        if($batch->draw_status=='final')
-        {
-                $remarks="Final Draw download";
-        }
-        else if($batch->draw_status=='verified')
-         {
-            $remarks="Demo draw of ".$batch->demo_run_count." / 3";
-         }
-        DrawLog::create([
-                'uid'       => Session::get('officecode'),
-                'batch_id'  => $batchId,
-                'operation' => 'PDF Download',
-                'remarks'   => 'Batch Id :'.$batchId.', pdf, '.$remarks,
-                'ip'        => request()->ip(),
-            ]);
-        $pdf = Pdf::loadView('draw.full_draw_pdf', $data);
 
-        return $pdf->download('Draw_Result_' . $batchId . '.pdf');
+        $data = [
+            'results'        => $results,
+            'batch_no'       => $batch->batch_no,
+            'batch_title'    => $batch->batch_title,
+            'quarter_type'   => $batch->quarter_type,
+            'draw_status'    => $batch->draw_status,
+            'demo_run_count' => $batch->demo_run_count,
+            'generated_at'   => now()->format('d-m-Y h:i:s A')
+        ];
+
+        // remarks
+        if ($type == 'final') {
+            $remarks = "Final Draw download";
+        } else {
+            $remarks = "Demo draw run " . $run;
         }
-        catch(\Exception $e)
-        {
-             DrawLog::create([
-                'uid'       => Session::get('officecode'),
-                'batch_id'  => $batchId,
-                'operation' => 'PDF Download Issue',
-                'remarks'   => 'Batch Id :'.$batchId.', pdf has been download issue'.$remarks.','.$e->getMessage(),
-                'ip'        => request()->ip(),
-            ]);
-        }
+
+        DrawLog::create([
+            'uid'       => Session::get('officecode'),
+            'batch_id'  => $batchId,
+            'operation' => 'PDF Download',
+            'remarks'   => 'Batch Id :' . $batchId . ', pdf, ' . $remarks,
+            'ip'        => request()->ip(),
+        ]);
+
+       /* $pdf = Pdf::loadView('draw.full_draw_pdf', $data);
+
+        return $pdf->download('Draw_Result_' . $batchId . '.pdf');*/
+         /* Render blade to HTML */
+ 
+
+$html = view('draw.full_draw_pdf', $data)->render();
+
+$mpdf = new Mpdf([
+    'format' => 'A4',
+    'orientation' => 'P',
+    'margin_top' => 40,
+    'margin_bottom' => 25   // important for footer
+]);
+
+$mpdf->SetFooter('| |Page {PAGENO} / {nbpg}');
+
+$mpdf->WriteHTML($html);
+
+return response($mpdf->Output('Quarter_Draw_Result.pdf', 'D'))
+    ->header('Content-Type', 'application/pdf');
+
+    } catch (\Exception $e) {
+
+        DrawLog::create([
+            'uid'       => Session::get('officecode'),
+            'batch_id'  => $batchId,
+            'operation' => 'PDF Download Issue',
+            'remarks'   => 'Batch Id :' . $batchId . ', pdf issue: ' . $e->getMessage(),
+            'ip'        => request()->ip(),
+        ]);
     }
+}
     public function downloadBatchExcel($batchId)
     {
         $batch = DrawBatch::find($batchId);

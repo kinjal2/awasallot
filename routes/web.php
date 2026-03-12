@@ -240,7 +240,8 @@ Route::post('/draw/verify-confirm', [DrawController::class, 'verifyConfirm'])
 Route::post('/draw/final', [DrawController::class, 'finalDraw'])
     ->name('draw.final');
 Route::get('/draw/history',[DrawController::class,'history'])->name('draw.history');
-Route::get('/draw/pdf/{batch}',[DrawController::class,'downloadBatchPdf'])->name('draw.batch.pdf');
+Route::get('/draw/pdf/{batchId}',[DrawController::class,'downloadBatchPdf'])->name('draw.batch.pdf');
+
 Route::get('/draw/excel/{batch}',[DrawController::class,'downloadBatchExcel'])->name('draw.batch.excel');
 Route::get('/draw/reset',[DrawController::class,'reset'])->name('draw.reset');           
         

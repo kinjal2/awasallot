@@ -60,140 +60,178 @@
 
           <table class="table table-bordered table-hover custom_table dataTable" id="batch_history_table">
 
+<thead>
+<tr>
+<th>#</th>
+<th>Batch Id</th>
+<th>Batch Title</th>
+<th>Quarter</th>
+<th>Status</th>
+<th>Actions Required</th>
+<th>Final PDF</th>
+<th>Demo PDF</th>
+<th>Options</th>
+</tr>
+</thead>
+
+<tbody>
+
+@foreach($batches as $index => $batch)
+<tr>
+
+<td>{{ $index + 1 }}</td>
+
+<td>{{ $batch->batch_no }}</td>
+
+<td>{{ $batch->batch_title }}</td>
+
+<td>{{ $batch->quarter_type }}</td>
+
+<td>
+@if($batch->draw_status == 'final')
+<span class="badge badge-success">Final</span>
+
+@elseif($batch->draw_status == 'verified')
+<span class="badge badge-warning">Verified</span>
+
+@else
+<span class="badge badge-secondary">Uploaded</span>
+@endif
+</td>
+
+<td>
+
+{{-- DEMO RUN BUTTON --}}
+@if($batch->draw_status=='verified' && ($batch->demo_run_count) < 3)
+
+<form action="{{ route('draw.demo') }}" method="POST">
+@csrf
+
+<input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+<input type="hidden" name="batch_id" value="{{ $batch->id }}">
+<input type="hidden" name="page_title" value="Demo Preview">
+
+<button type="submit" class="btn btn-sm btn-info">
+<i class="fa fa-play"></i>
+Initiate Demo Run {{ $batch->demo_run_count + 1 }} / 3
+</button>
+
+</form>
+
+{{-- FINAL DRAW BUTTON --}}
+@elseif($batch->draw_status=='verified' && $batch->demo_run_count == 3)
+
+<form action="{{ route('draw.final') }}" method="POST"
+class="confirm-action"
+data-title="Proceed Final Draw?"
+data-text="This process cannot be reverted. Proceed with Final Draw?"
+data-confirm="Yes, Proceed">
+
+@csrf
+
+<input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+<input type="hidden" name="batch_id" value="{{ $batch->id }}">
+
+<button type="submit" class="btn btn-danger btn-sm">
+<i class="fa fa-lock"></i> Proceed for Final Draw
+</button>
+
+</form>
+
+@endif
 
 
+{{-- VERIFY DATA BUTTON --}}
+@if($batch->draw_status=='uploaded')
 
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Batch Id</th>
-                <th>Batch Title</th>
-                <th>Quarter</th>
-                <th>Status</th>
-                <th>Actions Required</th>
-                <th>PDF</th>
-                <!-- <th>Excel</th> -->
-                <th>Options</th>
-              </tr>
-            </thead>
+<form method="POST" action="{{ route('draw.verify.preview') }}">
+@csrf
 
-            <tbody>
+<input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+<input type="hidden" name="batch_id" value="{{ $batch->id }}">
 
-              @foreach($batches as $index => $batch)
-              <tr>
-                <td>{{ $index + 1 }}</td>
-                
-                <td>{{ $batch->batch_no }}</td>
+<button type="submit" class="btn btn-sm btn-warning">
+<i class="fa fa-check"></i> Verify Data
+</button>
 
-                <td>{{ $batch->batch_title }}</td>
+</form>
 
-                <td>{{ $batch->quarter_type }}</td>
+@endif
 
-                <td>
-                  @if($batch->draw_status == 'final')
-                  <span class="badge badge-success">Final</span>
-
-                  @elseif($batch->draw_status == 'verified')
-                  <span class="badge badge-warning">Verified</span>
-
-                  @else
-                  <span class="badge badge-secondary">Uploaded</span>
-                  @endif
-                </td>
-                <td>
-                  @if($batch->draw_status=='verified' && ($batch->demo_run_count ) < 3 )
-                    <form action="{{ route('draw.demo') }}" method="POST">
-                    @csrf
-
-                    <input type="hidden" name="quartertype" id="demo_quartertype" value="{{ $batch->quarter_type }}">
-                    <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
-                    <input type="hidden" name="page_title" id="page_title" value="Demo Preview">
-
-                    <button type="submit" class="btn btn-sm btn-info ">
-                      <i class="fa fa-play"></i>&nbsp;Initiate Demo Run {{ $batch->demo_run_count + 1 }} / 3
-                    </button>
-
-                    </form>
-                    @elseif($batch->draw_status=='verified' && ($batch->demo_run_count  == 3 ) )
-                    <form action="{{ route('draw.final') }}" method="POST"  class="confirm-action"
-                      data-title="Proceed Final Draw?"
-                      data-text="This process cannot be reverted. Proceed with Final Draw?"
-                      data-confirm="Yes, Proceed" id="finalDrawForm" >
-                      @csrf
-                      {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
-                      <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
-                      <input type="hidden" name="batch_id" value="{{ $batch->id }}">
-                      <button type="submit" class="btn btn-danger">
-                        <i class="fa fa-lock"></i>Proceed for Final Draw
-                      </button>
-                    </form>
-                    @endif
-                    @if($batch->draw_status=='uploaded')
-                    <form method="POST" action="{{ route('draw.verify.preview') }}" id="verifyForm">
-                      @csrf
-                      <input type="hidden" name="quartertype" id="verify_quartertype" value="{{ $batch->quarter_type }}">
-                      <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
-                      <button type="submit"
-                        id="verifyBtn"
-                        class="btn btn-sm btn-warning">
-                        <i class="fa fa-check"></i> Verify Data
-                      </button>
-                    </form>
-                    @endif
-                </td>
-                <td>
-                 
-                  @if($batch->draw_status == 'final' || ($batch->draw_status =='verified' && $batch->demo_run_count >= 1 && $batch->demo_run_count < 3 ))
-                  <a href="{{ route('draw.batch.pdf',$batch->id) }}"
-                    class="btn btn-sm btn-danger">
-                    <i class="fa fa-file-pdf"></i> PDF
-                  </a>
-                  @else
-                  -
-                  @endif
-                </td>
-
-                <!-- <td>
-                   @if($batch->draw_status == 'final' || ($batch->draw_status =='verified' && $batch->demo_run_count >= 1 && $batch->demo_run_count < 3 ))
-                  <a href="{{ route('draw.batch.excel',$batch->id) }}"
-                    class="btn btn-sm btn-success">
-                    <i class="fa fa-file-excel"></i> Excel
-                  </a>
-                  @else
-                  -
-                  @endif
-                </td> -->
-                <td>
-                   @if($batch->draw_status != 'final'  )
-                 <form action="{{ route('draw.delete') }}" method="POST" class="confirm-action"
-                    data-title="Proceed To Delete?"
-                    data-text="This process cannot be reverted. Proceed with Delete?"
-                    data-confirm="Yes, Delete" name="delDrawForm" id="delDrawForm">
-                    @csrf
-                     <input type="hidden" name="quartertype" id="verify_quartertype" value="{{ $batch->quarter_type }}">
-                      <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fa fa-trash"></i> Delete Draw
-                    </button>
-                </form>
-
-                  @else
-                  -
-                  @endif
-                </td>
-              </tr>
+</td>
 
 
+{{-- FINAL PDF COLUMN --}}
+<td>
+
+@if($batch->draw_status == 'final')
+
+<a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'final']) }}"
+class="btn btn-sm btn-danger">
+<i class="fa fa-file-pdf"></i> Final PDF
+</a>
+
+@else
+-
+@endif
+
+</td>
 
 
-              @endforeach
+{{-- DEMO PDF COLUMN --}}
+<td>
+
+@if($batch->demo_run_count > 0)
+
+@for($i = 1; $i <= $batch->demo_run_count; $i++)
+<a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'demo','run'=>$i]) }}"
+class="btn btn-sm btn-warning mb-1">
+<i class="fa fa-file-pdf"></i> Demo {{ $i }}
+</a>
+@endfor
+
+@else
+-
+@endif
+
+</td>
 
 
+{{-- DELETE OPTION --}}
+<td>
 
-            </tbody>
+@if($batch->draw_status != 'final')
 
-          </table>
+<form action="{{ route('draw.delete') }}" method="POST"
+class="confirm-action"
+data-title="Proceed To Delete?"
+data-text="This process cannot be reverted. Proceed with Delete?"
+data-confirm="Yes, Delete">
 
+@csrf
+
+<input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+<input type="hidden" name="batch_id" value="{{ $batch->id }}">
+
+<button type="submit" class="btn btn-sm btn-danger">
+<i class="fa fa-trash"></i> Delete Draw
+</button>
+
+</form>
+
+@else
+-
+@endif
+
+</td>
+
+</tr>
+
+@endforeach
+
+</tbody>
+
+</table>
         </div>
 
       </div>

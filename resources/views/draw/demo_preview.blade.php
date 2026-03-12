@@ -118,11 +118,22 @@
     <div class="d-flex align-items-center flex-wrap">
 
         
-        <a href="{{ route('draw.batch.pdf',$batch->id) }}"
-                    class="btn btn-outline-danger mr-2 mb-2">
-                    <i class="fa fa-file-pdf"></i>Download PDF
-                  </a>
+       @if($batch->draw_status == 'final')
 
+<a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'final']) }}"
+class="btn btn-outline-danger mr-2 mb-2">
+<i class="fa fa-file-pdf"></i> Final Draw PDF
+</a>
+
+@elseif($batch->demo_run_count > 0)
+
+<a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'demo','run'=>$batch->demo_run_count]) }}"
+class="btn btn-outline-warning mr-2 mb-2">
+<i class="fa fa-file-pdf"></i> Demo Run {{ $batch->demo_run_count }} PDF
+</a>
+
+@endif
+    
        
         {{--  <a href="{{ route('draw.batch.excel',$batch->id) }}"
                     class="btn btn-outline-success mb-2">
