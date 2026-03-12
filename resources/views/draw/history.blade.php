@@ -173,7 +173,7 @@
                      <input type="hidden" name="quartertype" id="verify_quartertype" value="{{ $batch->quarter_type }}">
                       <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
                     <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fa fa-trash"></i> Delete
+                        <i class="fa fa-trash"></i> Delete Draw
                     </button>
                 </form>
 
@@ -221,75 +221,7 @@
     confirmSubmit(this);
 
 });
- /* $('#finalDrawForm').on('submit', function(e){
 
-    console.log("Form submit event triggered");
-
-    e.preventDefault();
-
-    let form = this;
-
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "This process cannot be reverted. Proceed with Final Draw?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Yes, proceed!'
-    }).then(function(result){
-
-        console.log("SweetAlert result:", result);
-
-        if(result.value){
-
-            console.log("User confirmed, submitting form");
-
-            form.submit();
-
-        }else{
-
-            console.log("User cancelled");
-
-        }
-
-    });
-
-});
-
-$('#delDrawForm').on('submit', function(e){
-
-    console.log("Form submit event triggered");
-
-    e.preventDefault();
-
-    let form = this;
-
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "This process cannot be reverted. Proceed with Delete?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Yes, proceed!'
-    }).then(function(result){
-
-        console.log("SweetAlert result:", result);
-
-        if(result.value){
-
-            console.log("User confirmed, submitting form");
-
-            form.submit();
-
-        }else{
-
-            console.log("User cancelled");
-
-        }
-
-    });
-
-});*/
     $('#batch_history_table').DataTable({
 
       pageLength: 10,

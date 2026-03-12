@@ -34,7 +34,7 @@
 
       <div class="card-header">
         <h3 class="card-title">
-          Verify Data - Quarter {{ $quartertype }}
+        {{ $page_sub_title  }}
         </h3>
       </div>
 

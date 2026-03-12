@@ -85,7 +85,7 @@
                                         <label>Draw Date&nbsp;<span class="text-danger">*</span></label>
 
                                         <input type="date" name="draw_date" class="form-control" required oninvalid="this.setCustomValidity('Please select the draw date')"
-                                            oninput="this.setCustomValidity('')">
+                                            oninput="this.setCustomValidity('')"   onclick="this.showPicker()">
 
                                     </div>
                                     <div class="form-group mb-3">
@@ -130,222 +130,19 @@
 
 
                                 </form>
-
-
-
-                                {{-- VERIFY BUTTON --}}
-                                <!-- <form method="POST" action="{{ route('draw.verify.preview') }}" id="verifyForm">
-
-                                    @csrf
-
-                                    <input type="hidden" name="quartertype" id="verify_quartertype">
-
-                                    <button type="button"
-                                        id="verifyBtn"
-                                        class="btn btn-warning w-100"
-                                        @if($status=='verified' || $status=='' || $status=='final' ) disabled @endif>
-                                        {{-- @if($status == 'verified' || $status == 'final') disabled @endif> --}}
-
-                                        <i class="fa fa-check"></i> Verify Data
-
-                                    </button>
-
-                                </form> -->
-
-
-
                             </div>
                         </div>
                     </div>
 
-                    @if($status== 'verified' )
-
-                    {{-- DRAW ACTIONS --}}
-                    <div class="col-md-6">
-
-                        <div class="card shadow-sm border-0">
-
-                            <div class="card-header bg-light">
-                                <strong>Draw Actions</strong>
-                            </div>
-
-                            <div class="card-body">
-                                @if(isset($batch) && $batch)
-
-                                <div class="alert alert-info">
-                                    Demo Run Used: {{ $batch->demo_run_count }} / 3
-                                </div>
-
-                                @endif
-
-                                @if($status == 'verified' && $batch->demo_run_count < 3)
-
-                                    {{-- DEMO DRAW --}}
-                                    <form action="{{ route('draw.demo') }}" method="POST">
-                                    @csrf
-
-                                    <input type="hidden" name="quartertype" id="demo_quartertype">
-
-                                    <button type="submit" class="btn btn-info w-100 mb-2">
-                                        <i class="fa fa-play"></i> Demo Draw
-                                    </button>
-
-                                    </form>
-                                    @endif
-                                    {{$status}}
-                                    {{$batch->demo_run_count}}
-                                    @if($status == 'verified' && $batch->demo_run_count >= 1)
-                                    {{-- @if($status == 'verified' ) --}}
-                                    {{-- FINAL DRAW --}}
-                                    <form action="{{ route('draw.final') }}" method="POST">
-                                        @csrf
-
-                                        <input type="hidden" name="quartertype" id="final_quartertype">
-
-                                        <button type="submit" class="btn btn-danger w-100 mb-3">
-                                            <i class="fa fa-lock"></i> Final Draw
-                                        </button>
-
-                                    </form>
-
-                                    @endif
-
-
-
-                                    @if($status == 'final')
-
-                                    <div class="alert alert-success">
-                                        Final Draw Completed. Entries Frozen.
-                                    </div>
-
-                                    @endif
-
-                                    {{-- @if(Session::has('batch_id') && Session::has('quartertype'))  --}}
-                                    {{-- @if($status == 'verified') --}}
-                                    @if($status == 'verified' && $batch->demo_run_count > 1)
-
-                                    <a href="{{ route('draw.full.pdf',['batch_id'=>Session::has('batch_id')]) }}"
-                                        class="btn btn-outline-danger w-100 mb-2">
-
-                                        <i class="fa fa-file-pdf"></i> Download Full Draw PDF
-
-                                    </a>
-
-
-                                    <a href="{{ route('draw.export.excel',['batch_id'=>Session::has('batch_id')]) }}"
-                                        class="btn btn-outline-success w-100">
-
-                                        <i class="fa fa-file-excel"></i> Download Excel
-
-                                    </a>
-                                    @endif
-                                    @if($status == 'final' && $batch->demo_run_count > 3)
-                                    <a href="{{ route('draw.history') }}"
-                                        class="btn btn-dark mt-2">
-                                        <i class="fa fa-history"></i> Draw History
-                                    </a>
-                                    @endif
-
-                                    @endif
-                                    <!-- <div class="card-tools">
-
-                                        <a href="{{ route('draw.reset') }}" class="btn btn-sm btn-danger">
-                                            <i class="fa fa-refresh"></i> Reset
-                                        </a>
-
-
-                                    </div> -->
-                            </div>
-                        </div>
-
-                    </div>
-
+                   
                 </div>
 
             </div>
 
 
 
-            {{-- RESULT TABLE --}}
-            @if(isset($results) && $results->count() > 0 && $status=='verified')
-
-            <div class="table-responsive p-4">
-
-                <table id="applicant_list"
-                    class="table table-bordered table-hover custom_table">
-
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Premise No</th>
-                            <th>Applicant Name</th>
-                            <th>Demo Draw Date & Time</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        @foreach($results as $index => $row)
-
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $row->premise_no }}</td>
-                            <td>{{ $row->appln_name }}</td>
-                            <td>{{ \Carbon\Carbon::parse($row->draw_date)->format('d-m-Y H:i:s') }}</td>
-                        </tr>
-
-                        @endforeach
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            @endif
-
-            <!-- Draw Info Modal -->
-            @php /* <div class="modal fade" id="drawInfoModal" tabindex="-1" aria-labelledby="drawInfoModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="drawInfoModalLabel">Draw Actions</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-
-                        <div class="modal-body text-center">
-                            <p>Choose an action after this draw:</p>
-
-                            <!-- Demo Run Button -->
-                            @if(($batch->demo_run_count + 1)==2)
-                            <form id="modalDemoForm" action="{{ route('draw.demo') }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                <input type="hidden" name="quartertype" id="modalDemoQuarter">
-                                <button type="submit" class="btn btn-info mx-2">
-                                    <i class="fa fa-play"></i> Please Run Demo {{ $batch->demo_run_count + 1  }} / 3
-                                </button>
-                            </form>
-                            <br> Or <br>
-                            @endif
-                            <!-- Final Draw Button -->
-                            <form id="modalFinalForm" action="{{ route('draw.final') }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                <input type="hidden" name="quartertype" id="modalFinalQuarter">
-                                <button type="submit" class="btn btn-danger mx-2">
-                                    <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
-                                </button>
-                            </form>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-
-                    </div>
-                </div>
-            </div> */ @endphp
-            <!-- draw modal closes here -->
+          
+       
         </div>
     </div>
 </div>

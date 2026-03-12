@@ -204,6 +204,8 @@ class DrawController extends Controller
     {
         $quartertype = $request->quartertype;
         $batch_id = $request->batch_id;
+        $batch=DrawBatch::find($batch_id);
+        
         $applications = Application::where('quarter_type', $quartertype)
             ->where('batch_id', $batch_id)
             ->orderBy('sono')
@@ -219,7 +221,8 @@ class DrawController extends Controller
             'premises' => $premises,
             'quartertype' => $quartertype,
             'batch_id' => $batch_id,
-            'page_title' => 'Verify Data'
+            'page_title' => 'Verify Draw Data',
+            'page_sub_title' => 'Please Verify Data of Batch Id : '.$batch->batch_no
         ]);
     }
 
@@ -359,7 +362,7 @@ class DrawController extends Controller
         $batchId =  $request->batch_id;
         try {
         $batch = DrawBatch::where('id', $batchId)->first();
-        // dd($batch);
+        //  dd($batch);
         if (!$batch) {
             return back()->with('error', 'Draw batch not found.');
         }
@@ -417,9 +420,12 @@ class DrawController extends Controller
             ]);
         // return redirect()->route('draw.index')
         //     ->with('success', 'Demo draw completed');
-        $this->viewContent['page_title'] = "Demo Run Preview ".$batch->demo_run_count." / 3 ";
+
+        $this->viewContent['page_title']="Demo Draw of Batch Id : ".$batch->batch_no;
+        $this->viewContent['page_sub_title'] = "Demo Run Preview ".$batch->demo_run_count." / 3 ";
         $this->viewContent['batch'] = $batch;
         $this->viewContent['results'] = $results;
+       // dd($this->viewContent);
         return view('draw.demo_preview', $this->viewContent);
         }
         catch(\Exception $e)
@@ -579,6 +585,8 @@ class DrawController extends Controller
             ]);
 
          $this->viewContent['page_title'] = "Final Run Preview";
+         $this->viewContent['page_title']="Final Draw of Batch Id : ".$batch->batch_no;
+        $this->viewContent['page_sub_title'] = "Final Run Preview";
         $this->viewContent['batch'] = $batch;
         $this->viewContent['results'] = $results;
       //  dd($this->viewContent);

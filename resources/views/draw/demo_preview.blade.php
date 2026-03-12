@@ -12,13 +12,13 @@
             <div class="row mb-2">
 
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Demo Draw </h1>
+                    <h1 class="m-0 text-dark">{{ $page_title }}</h1>
                 </div>
 
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Demo Draw</li>
+                        <li class="breadcrumb-item active">Quarter Draw </li>
                     </ol>
                 </div>
 
@@ -30,7 +30,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title mb-0">{{$page_title}}</h3>
+                <h3 class="card-title mb-0">{{$page_sub_title}}</h3>
             </div>
 
 
