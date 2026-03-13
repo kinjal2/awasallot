@@ -95,43 +95,13 @@ thead {
 <body>
 
 <!-- HEADER -->
-<div class="header">
-  <table class="header-table" width="100%">
-<tr>
 
-<td width="80" align="left">
-    <img src="{{ public_path('images/national_emblem.gif') }}" width="60">
-</td>
 
-<td align="center">
-
-<h4 style="margin:0;">Roads & Buildings Department</h4>
-
-<h5 style="margin:0;">
-Quarter Allotment Draw Result <br>
-
-@if($draw_status=='final')
-<b>Final Draw</b>
-@elseif($draw_status=='verified')
-<b>Demo Draw {{ $demo_run_count }} / 3</b>
-@endif
-
-</h5>
-
-</td>
-
-<td width="80"></td>
-
-</tr>
-</table>
-</div>
-    <div class="report-date">
-        Report Generated On: <b>{{ $generated_at }}</b>
-    </div>
    
    
-    <div class="batch-details">
-        <b>Batch Id:</b> {{ $batch_no }} <br>
+    
+<div class="batch-details">
+        <b>Batch Id:</b> {{ $batch_no }} ({{ $draw_date}}) <br>
         <b>Title:</b> {{ $batch_title }} <br>
         <b>Quarter Type:</b> {{ $quarter_type }}
     </div>
@@ -151,9 +121,7 @@ Quarter Allotment Draw Result <br>
 <thead>
 <tr>
     <th>Sr. No.</th>
-    <th>Appl. No.</th>
-    <th>Name & Address</th>
-    <th>Category</th>
+    <th>Applicant Details</th>
     <th>Flat No.</th>
 </tr>
 </thead>
@@ -164,9 +132,7 @@ Quarter Allotment Draw Result <br>
 
 <tr>
     <td>{{ $index + 1 }}</td>
-    <td>{{ $row->appln_name ?? '' }}</td>
-    <td>{{ $row->appln_name ?? '' }}</td>
-    <td>General</td>
+    <td>{{ $row->appln_name ?? '' }}</td> 
     <td>{{ $row->premise_no }}</td>
 </tr>
 

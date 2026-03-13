@@ -85,7 +85,7 @@
                                         <label>Draw Date&nbsp;<span class="text-danger">*</span></label>
 
                                         <input type="date" name="draw_date" class="form-control" required oninvalid="this.setCustomValidity('Please select the draw date')"
-                                            oninput="this.setCustomValidity('')"   onclick="this.showPicker()">
+                                            oninput="this.setCustomValidity('')" onclick="this.showPicker()">
 
                                     </div>
                                     <div class="form-group mb-3">
@@ -110,23 +110,21 @@
 
                                     </div>
 
-                                    <span class="text-danger">Fields marked with * are mandatory to fill. </span><br>
-                                    <!-- <span class="text-danger">If any error after upload, please download sample excel format. </span> -->
-                                    <!-- <a href="{{ asset('sample/draw_sample.xlsx') }}"
-                                            class="btn btn-info w-100 mb-2">
-                                            <i class="fa fa-download"></i> Download Sample Excel Format
-                                        </a> -->
+
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" class="form-check-input" id="confirmCheck" name="confirmCheck" value="1">
+                                        <label class="form-check-label" for="confirmCheck">
+                                            The Department has verified the data for accuracy and integrity, performing de-duplication and validating entry and column counts. We have also confirmed that the data strictly adheres to the required Excel format.
+                                        </label>
+                                    </div>
+
 
                                     <button type="submit"
-                                        class="btn btn-success w-100 mb-2"
-
-                                        {{--  @if($status=='verified' || $status=='uploaded' ) disabled @endif --}}>
-                                        {{-- @if($status == 'verified' || $status == 'final') disabled @endif> --}}
-
-
+                                        class="btn btn-success w-100 mb-2" disabled name="uploadBtn" id="uploadBtn">
                                         <i class="fa fa-upload"></i> Upload Excel
 
                                     </button>
+                                    <span class="text-danger">Fields marked with * are mandatory to fill. </span><br>
 
 
                                 </form>
@@ -134,15 +132,15 @@
                         </div>
                     </div>
 
-                   
+
                 </div>
 
             </div>
 
 
 
-          
-       
+
+
         </div>
     </div>
 </div>
@@ -156,18 +154,16 @@
     /* batch title validation starts here */
     function validateBatchTitle(input) {
 
-    if (input.value.trim() === '') {
-        input.setCustomValidity('Please enter the batch title');
-    }
-    else if (input.value.trim().length < 5) {
-        input.setCustomValidity('Batch title must be at least 5 characters');
-    }
-    else {
-        input.setCustomValidity('');
-    }
+        if (input.value.trim() === '') {
+            input.setCustomValidity('Please enter the batch title');
+        } else if (input.value.trim().length < 5) {
+            input.setCustomValidity('Batch title must be at least 5 characters');
+        } else {
+            input.setCustomValidity('');
+        }
 
-}
-/* batch title validation starts here */
+    }
+    /* batch title validation starts here */
     $(document).ready(function() {
         function setModalQuarterType() {
             let qt = $('#quartertype').val();
@@ -323,11 +319,30 @@
             }
 
             // 5️⃣ File name validation
+            /* let nameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
+             let validName = /^[a-zA-Z0-9_-]+$/;
+
+             if (!validName.test(nameWithoutExt)) {
+                 alert('File name contains invalid characters');
+                 e.preventDefault();
+                 return false;
+             }*/
+            // 5️⃣ File name validation
             let nameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.'));
             let validName = /^[a-zA-Z0-9_-]+$/;
 
             if (!validName.test(nameWithoutExt)) {
                 alert('File name contains invalid characters');
+                let invalidChars = nameWithoutExt.match(/[^a-zA-Z0-9_-]/g);
+
+                // Remove duplicates
+                let uniqueInvalid = [...new Set(invalidChars)];
+
+                alert(
+                    "Invalid character(s) found in file name: " +
+                    uniqueInvalid.join(", ") +
+                    "\n\nAllowed characters:\nAlphabets (A-Z, a-z), Numbers (0-9), underscore (_) and hyphen (-)"
+                );
                 e.preventDefault();
                 return false;
             }
@@ -343,10 +358,18 @@
                 e.preventDefault();
                 return false;
             }
+          
 
         });
 
-        /* upload excel file type validation ends here */
+          /* upload excel file type validation starts here */
+            
+            $('#confirmCheck').on('change', function() {
+               
+                $('#uploadBtn').prop('disabled', !this.checked);
+            });
+            /* upload excel file type validation ends here */
+
     });
 </script>
 @endpush

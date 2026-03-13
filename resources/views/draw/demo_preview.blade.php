@@ -5,7 +5,7 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.css') }}">
 <div class="content">
-    
+
     <!-- Page Header -->
     <div class="content-header">
         <div class="container-fluid">
@@ -40,109 +40,110 @@
                 @include(Config::get('app.theme').'.template.validation_errors')
                 <div class="mb-3">
 
-    <!-- ACTION BUTTONS -->
-    <div class="d-flex align-items-center  mb-2">
-        
-         
-         <br>
-        @php // dd($batch->draw_status) @endphp
-        @if(($batch->demo_run_count + 1 ) <= 3 && $batch->draw_status=='verified')
-        <p>Choose an action after this draw:</p>
-        <form action="{{ route('draw.demo') }}" method="POST" class="mr-2 mb-2">
-            @csrf
-           {{--  <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
-              <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
-                <input type="hidden" name="batch_id" value="{{ $batch->id }}">
-
-            <button type="submit" class="btn btn-info">
-                <i class="fa fa-play"></i>Please Run Demo {{ $batch->demo_run_count + 1 }} / 3
-            </button>
-        </form>
-
-        <span class="mx-2 mb-2">OR</span>
-
-         <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
-                data-title="Proceed Final Draw?"
-                data-text="This process cannot be reverted. Continue?"
-                data-confirm="Yes, run final draw" id="finalDrawForm1">
-            @csrf
-          {{--   <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
-            <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
-    <input type="hidden" name="batch_id" value="{{ $batch->id }}">
-            <button type="submit" class="btn btn-danger">
-                <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
-            </button>
-        </form>
-
-        @elseif($batch->draw_status != 'final')
-        <p>Choose an action after this draw:</p>
-        <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
-            data-title="Proceed Final Draw?"
-            data-text="This process cannot be reverted. Continue?"
-            data-confirm="Yes, run final draw" id="finalDrawForm2">
-            @csrf
-          {{--   <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
-            <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
-    <input type="hidden" name="batch_id" value="{{ $batch->id }}">
-            <button type="submit" class="btn btn-danger">
-                <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
-            </button>
-        </form>
-
-        @endif
-
-@if($batch->draw_status == 'final')
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-flex align-items-center  mb-2">
 
 
-<div class="card shadow-sm border-success w-100">
-    <div class="card-body text-center">
+                        <br>
+                        @php // dd($batch->draw_status) @endphp
+                        @if(($batch->demo_run_count + 1 ) <= 3 && $batch->draw_status=='verified')
+                            <p>Choose an action after this draw:</p>
+                            <form action="{{ route('draw.demo') }}" method="POST" class="mr-2 mb-2">
+                                @csrf
+                                {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
+                                <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+                                <input type="hidden" name="batch_id" value="{{ $batch->id }}">
 
-        <div class="alert alert-success d-flex align-items-center justify-content-center mb-3" role="alert">
-            <i class="fas fa-check-circle mr-2"></i>
-            <strong>Final Draw Completed.</strong>&nbsp; Entries are now frozen.
-        </div>
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fa fa-play"></i>Please Run Demo {{ $batch->demo_run_count + 1 }} / 3
+                                </button>
+                            </form>
 
-        <a href="{{ route('draw.history') }}" class="btn btn-primary">
-            <i class="fas fa-arrow-left mr-1"></i> Go Back to Draw History
-        </a>
+                            <span class="mx-2 mb-2">OR</span>
 
-    </div>
-</div>
+                            <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
+                                data-title="Proceed Final Draw?"
+                                data-text="This process cannot be reverted. Continue?"
+                                data-confirm="Yes, run final draw" id="finalDrawForm1">
+                                @csrf
+                                {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
+                                <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+                                <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
+                                </button>
+                            </form>
 
-@endif
+                            @elseif($batch->draw_status != 'final')
+                            <p>Choose an action after this draw:</p>
+                            <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
+                                data-title="Proceed Final Draw?"
+                                data-text="This process cannot be reverted. Continue?"
+                                data-confirm="Yes, run final draw" id="finalDrawForm2">
+                                @csrf
+                                {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
+                                <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+                                <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
+                                </button>
+                            </form>
 
-    </div>
+                            @endif
+
+                            @if($batch->draw_status == 'final')
 
 
-    <!-- DOWNLOAD BUTTONS -->
-    <div class="d-flex align-items-center flex-wrap">
+                            <div class="card shadow-sm border-success w-100">
+                                <div class="card-body text-center">
 
-        
-       @if($batch->draw_status == 'final')
+                                    <div class="alert alert-success d-flex align-items-center justify-content-center mb-3" role="alert">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        <strong>Final Draw Completed.</strong>&nbsp; Entries are now frozen.
+                                    </div>
 
-<a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'final']) }}"
-class="btn btn-outline-danger mr-2 mb-2">
-<i class="fa fa-file-pdf"></i> Final Draw PDF
-</a>
+                                    <a href="{{ route('draw.history') }}" class="btn btn-primary">
+                                        <i class="fas fa-arrow-left mr-1"></i> Go Back to Draw History
+                                    </a>
 
-@elseif($batch->demo_run_count > 0)
+                                </div>
+                            </div>
 
-<a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'demo','run'=>$batch->demo_run_count]) }}"
-class="btn btn-outline-warning mr-2 mb-2">
-<i class="fa fa-file-pdf"></i> Demo Run {{ $batch->demo_run_count }} PDF
-</a>
+                            @endif
 
-@endif
-    
-       
-        {{--  <a href="{{ route('draw.batch.excel',$batch->id) }}"
-                    class="btn btn-outline-success mb-2">
-                    <i class="fa fa-file-excel"></i>Download Excel
-                  </a> --}}
+                    </div>
 
-    </div>
 
-</div>                <div class="row">
+                    <!-- DOWNLOAD BUTTONS -->
+                    <div class="d-flex align-items-center flex-wrap">
+
+
+                        @if($batch->draw_status == 'final')
+
+                        <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'final']) }}"
+                            class="btn btn-outline-danger mr-2 mb-2">
+                            <i class="fa fa-file-pdf"></i> Final Draw PDF
+                        </a>
+
+                        @elseif($batch->demo_run_count > 0)
+
+                        <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'demo','run'=>$batch->demo_run_count]) }}"
+                            class="btn btn-outline-warning mr-2 mb-2">
+                            <i class="fa fa-file-pdf"></i> Demo Run {{ $batch->demo_run_count }} PDF
+                        </a>
+
+                        @endif
+
+
+                        {{-- <a href="{{ route('draw.batch.excel',$batch->id) }}"
+                        class="btn btn-outline-success mb-2">
+                        <i class="fa fa-file-excel"></i>Download Excel
+                        </a> --}}
+
+                    </div>
+
+                </div>
+                <div class="row">
 
                     {{-- Upload Section --}}
                     <div class="col-md-12">
@@ -166,7 +167,7 @@ class="btn btn-outline-warning mr-2 mb-2">
             <div class="table-responsive p-4">
 
                 <table id="applicant_list"
-                    class="table table-bordered table-hover custom_table">
+                    class="table table-bordered table-hover custom_table dataTable" >
 
                     <thead>
                         <tr>
@@ -217,7 +218,7 @@ class="btn btn-outline-warning mr-2 mb-2">
                             <form id="modalDemoForm" action="{{ route('draw.demo') }}" method="POST" style="display:inline-block;">
             @csrf
             <input type="hidden" name="quartertype" id="modalDemoQuarter" value="{{$batch->quarter_type }}">
-             <input type="text" name="batch_id" id="batch_id" value="{{ $batch->id }}">
+            <input type="text" name="batch_id" id="batch_id" value="{{ $batch->id }}">
             <button type="submit" class="btn btn-info mx-2">
                 <i class="fa fa-play"></i> Please Run Demo {{ $batch->demo_run_count + 1  }} / 3
             </button>
@@ -234,10 +235,10 @@ class="btn btn-outline-warning mr-2 mb-2">
             <form id="modalFinalForm" action="{{ route('draw.final') }}" method="POST" style="display:inline-block;" class="confirm-action"
                 data-title="Proceed Final Draw?"
                 data-text="This process cannot be reverted. Continue?"
-                data-confirm="Yes, run final draw" >
+                data-confirm="Yes, run final draw">
                 @csrf
                 <input type="hidden" name="quartertype" id="modalFinalQuarter" value="{{$batch->quarter_type }}">
-                 <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
+                <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
                 <button type="submit" class="btn btn-danger mx-2">
                     <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
                 </button>
@@ -278,6 +279,14 @@ class="btn btn-outline-warning mr-2 mb-2">
 <script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script>
     $(document).ready(function() {
+        $('#applicant_list').DataTable({
+    pageLength: -1, // default show all rows
+     lengthMenu: [
+                [10, 25, 50, 100, 500, -1],
+                [10, 25, 50, 100, 500, "All"]
+            ],
+});
+
         function setModalQuarterType() {
             let qt = $('#quartertype').val();
             $('#modalDemoQuarter').val(qt);
@@ -429,83 +438,83 @@ class="btn btn-outline-warning mr-2 mb-2">
     });
 </script>
 <script>
-     $(document).ready(function() {
+    $(document).ready(function() {
 
-            $('.confirm-action').on('submit', function(e){
+        $('.confirm-action').on('submit', function(e) {
 
-                e.preventDefault();
+            e.preventDefault();
 
-                confirmSubmit(this);
+            confirmSubmit(this);
+
+        });
+        /*$('#finalDrawForm1').on('submit', function(e){
+
+            console.log("Form submit event triggered");
+
+            e.preventDefault();
+
+            let form = this;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This process cannot be reverted. Proceed with Final Draw?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed!'
+            }).then(function(result){
+
+                console.log("SweetAlert result:", result);
+
+                if(result.value){
+
+                    console.log("User confirmed, submitting form");
+
+                    form.submit();
+
+                }else{
+
+                    console.log("User cancelled");
+
+                }
 
             });
-/*$('#finalDrawForm1').on('submit', function(e){
 
-    console.log("Form submit event triggered");
+        });
 
-    e.preventDefault();
+        $('#finalDrawForm2').on('submit', function(e){
 
-    let form = this;
+            console.log("Form submit event triggered");
 
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "This process cannot be reverted. Proceed with Final Draw?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Yes, proceed!'
-    }).then(function(result){
+            e.preventDefault();
 
-        console.log("SweetAlert result:", result);
+            let form = this;
 
-        if(result.value){
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This process cannot be reverted. Proceed with Final Draw?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, proceed!'
+            }).then(function(result){
 
-            console.log("User confirmed, submitting form");
+                console.log("SweetAlert result:", result);
 
-            form.submit();
+                if(result.value){
 
-        }else{
+                    console.log("User confirmed, submitting form");
 
-            console.log("User cancelled");
+                    form.submit();
 
-        }
+                }else{
+
+                    console.log("User cancelled");
+
+                }
+
+            }); */
 
     });
-
-});
-
-$('#finalDrawForm2').on('submit', function(e){
-
-    console.log("Form submit event triggered");
-
-    e.preventDefault();
-
-    let form = this;
-
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "This process cannot be reverted. Proceed with Final Draw?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Yes, proceed!'
-    }).then(function(result){
-
-        console.log("SweetAlert result:", result);
-
-        if(result.value){
-
-            console.log("User confirmed, submitting form");
-
-            form.submit();
-
-        }else{
-
-            console.log("User cancelled");
-
-        }
-
-    }); */
-
-}); 
 </script>
 @endpush
