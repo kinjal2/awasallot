@@ -77,7 +77,7 @@
                 <th>Status</th>
                 <th>Actions Required</th>
                 <th>Final PDF</th>
-                <th>Demo PDF</th>
+                <th>Mock PDF</th>
                 <th>Options</th>
               </tr>
             </thead>
@@ -121,7 +121,7 @@
 
                     <button type="submit" class="btn btn-sm btn-info">
                       <i class="fa fa-play"></i>
-                      Initiate Demo Run {{ $batch->demo_run_count + 1 }} / 3
+                      Initiate Mock Run {{ $batch->demo_run_count + 1 }} / 3
                     </button>
 
                     </form>
@@ -172,12 +172,26 @@
                 {{-- FINAL PDF COLUMN --}}
                 <td>
 
-                  @if($batch->draw_status == 'final')
+                  @if($batch->draw_status == 'final' && $batch->satisfy_with_final==true)
 
                   <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'final']) }}"
                     class="btn btn-sm btn-danger">
                     <i class="fa fa-file-pdf"></i> Final PDF
                   </a>
+                  @elseif($batch->draw_status == 'final' && $batch->satisfy_with_final==false)
+
+                   <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
+                                data-title="Proceed Final Draw?"
+                                data-text="This process cannot be reverted. Continue?"
+                                data-confirm="Yes, run final draw" id="finalDrawForm2">
+                                @csrf
+                                {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
+                                <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
+                                <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa fa-lock"></i> Please proceed for Final Draw
+                                </button>
+                            </form>
 
                   @else
                   -
@@ -194,7 +208,7 @@
                   @for($i = 1; $i <= $batch->demo_run_count; $i++)
                     <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'demo','run'=>$i]) }}"
                       class="btn btn-warning btn-sm mb-1">
-                      <i class="fa fa-file-pdf"></i> Demo {{ $i }}
+                      <i class="fa fa-file-pdf"></i> Mock {{ $i }}
                     </a>
                     @endfor
 

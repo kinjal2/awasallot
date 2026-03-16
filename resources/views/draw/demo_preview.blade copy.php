@@ -3,25 +3,6 @@
 @section('title', $page_title)
 
 @section('content')
-<style>
-.big-check {
-  /*  transform: scale(1.4);*/
-    margin-right:10px;
-}
-
-/* sky blue border checkbox */
-.form-check-input.sky-check {
-    border: 2px solid #38bdf8;   /* sky blue */
-    width: 20px;
-    height: 20px;
-}
-
-/* when checked */
-.form-check-input.sky-check:checked {
-    background-color: #38bdf8;
-    border-color: #38bdf8;
-}
-</style>    
 <link rel="stylesheet" href="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.css') }}">
 <div class="content">
 
@@ -74,7 +55,7 @@
                                 <input type="hidden" name="batch_id" value="{{ $batch->id }}">
 
                                 <button type="submit" class="btn btn-info">
-                                    <i class="fa fa-play"></i>Please Run Mock {{ $batch->demo_run_count + 1 }} / 3
+                                    <i class="fa fa-play"></i>Please Run Demo {{ $batch->demo_run_count + 1 }} / 3
                                 </button>
                             </form>
 
@@ -89,7 +70,7 @@
                                 <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
                                 <input type="hidden" name="batch_id" value="{{ $batch->id }}">
                                 <button type="submit" class="btn btn-danger">
-                                    <i class="fa fa-lock"></i> I am satisfied with mock draw, please proceed for Final Draw
+                                    <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
                                 </button>
                             </form>
 
@@ -104,26 +85,15 @@
                                 <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
                                 <input type="hidden" name="batch_id" value="{{ $batch->id }}">
                                 <button type="submit" class="btn btn-danger">
-                                    <i class="fa fa-lock"></i> I am satisfied with mock draw, please proceed for Final Draw
+                                    <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
                                 </button>
                             </form>
 
                             @endif
 
-                            @if($batch->draw_status == 'final' && $batch->satisfy_with_final==false)
-                                 <form action="{{ route('draw.final') }}" method="POST" class="confirm-action"
-                                data-title="Proceed Final Draw?"
-                                data-text="This process cannot be reverted. Continue?"
-                                data-confirm="Yes, run final draw" id="finalDrawForm2">
-                                @csrf
-                                {{-- <input type="hidden" name="quartertype" value="{{ request('quartertype') }}"> --}}
-                                <input type="hidden" name="quartertype" value="{{ $batch->quarter_type }}">
-                                <input type="hidden" name="batch_id" value="{{ $batch->id }}">
-                                <button type="submit" class="btn btn-danger" id="processdemo">
-                                    <i class="fa fa-lock"></i> Please proceed for Final Draw
-                                </button>
-                            </form>
-                            @elseif($batch->draw_status == 'final' && $batch->satisfy_with_final==true)
+                            @if($batch->draw_status == 'final')
+
+
                             <div class="card shadow-sm border-success w-100">
                                 <div class="card-body text-center">
 
@@ -149,30 +119,17 @@
 
 
                         @if($batch->draw_status == 'final')
-                        <div class="form-check mb-3">
-                                        <input type="checkbox"  class="form-check-input big-check sky-check" id="confirmCheck" name="confirmCheck" value="1">
-                                        
-                                        <label class="form-check-label" for="confirmCheck">
-                                            The Department has seen and verify the result, please proceed to generate PDF.
-                                        </label>
-                                    </div>
 
-                        <!-- <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'final']) }}"
-                            class="btn btn-outline-danger mr-2 mb-2 disabled"  id="finalDrawBtn">
+                        <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'final']) }}"
+                            class="btn btn-outline-danger mr-2 mb-2">
                             <i class="fa fa-file-pdf"></i> Final Draw PDF
-                        </a> -->
-                       
-                        <a href="{{ route('draw.batch.finalpdf',['batchId'=>$batch->id,'type'=>'final']) }}"
-   class="btn btn-outline-danger mr-2 mb-2 disabled"
-   id="finalDrawBtn">
-   <i class="fa fa-file-pdf"></i> Generate Final Draw PDF
-</a>
+                        </a>
 
                         @elseif($batch->demo_run_count > 0)
 
                         <a href="{{ route('draw.batch.pdf',['batchId'=>$batch->id,'type'=>'demo','run'=>$batch->demo_run_count]) }}"
                             class="btn btn-outline-warning mr-2 mb-2">
-                            <i class="fa fa-file-pdf"></i> Mock Run {{ $batch->demo_run_count }} PDF
+                            <i class="fa fa-file-pdf"></i> Demo Run {{ $batch->demo_run_count }} PDF
                         </a>
 
                         @endif
@@ -243,7 +200,73 @@
             @endif
 
             <!-- Draw Info Modal -->
-           
+            {{-- <div class="modal fade" id="drawInfoModal" tabindex="-1" aria-labelledby="drawInfoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="drawInfoModalLabel">Draw Actions</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body text-center">
+                            <p>Choose an action after this draw:</p>
+
+                            <!-- Demo Run Button -->
+                             
+                            @if(($batch->demo_run_count ) <= 3)
+                            <form id="modalDemoForm" action="{{ route('draw.demo') }}" method="POST" style="display:inline-block;">
+            @csrf
+            <input type="hidden" name="quartertype" id="modalDemoQuarter" value="{{$batch->quarter_type }}">
+            <input type="text" name="batch_id" id="batch_id" value="{{ $batch->id }}">
+            <button type="submit" class="btn btn-info mx-2">
+                <i class="fa fa-play"></i> Please Run Demo {{ $batch->demo_run_count + 1  }} / 3
+            </button>
+            </form>
+            <br> Or <br>
+            @endif
+            @if($batch->status=='final')
+            <div class="alert alert-success mt-2">
+                Final entries are frozen. <br>
+                Go to <a href="{{ route('draw.history') }}">Draw History</a> to download results.
+            </div>
+            @else
+            <!-- Final Draw Button -->
+            <form id="modalFinalForm" action="{{ route('draw.final') }}" method="POST" style="display:inline-block;" class="confirm-action"
+                data-title="Proceed Final Draw?"
+                data-text="This process cannot be reverted. Continue?"
+                data-confirm="Yes, run final draw">
+                @csrf
+                <input type="hidden" name="quartertype" id="modalFinalQuarter" value="{{$batch->quarter_type }}">
+                <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}">
+                <button type="submit" class="btn btn-danger mx-2">
+                    <i class="fa fa-lock"></i> I am satisfied with demo draw, please proceed for Final Draw
+                </button>
+            </form>
+            @endif
+            <a href="{{ route('draw.full.pdf',['batch_id'=> $batch->id ]) }}"
+                class="btn btn-outline-danger w-100 mb-2">
+
+                <i class="fa fa-file-pdf"></i> Download Full Draw PDF
+
+            </a>
+
+
+            <a href="{{ route('draw.export.excel',['batch_id'=> $batch->id ]) }}"
+                class="btn btn-outline-success w-100">
+
+                <i class="fa fa-file-excel"></i> Download Excel
+
+            </a>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+
+    </div>
+</div>
+</div> --}}
 <!-- draw modal closes here -->
 </div>
 </div>
@@ -255,19 +278,6 @@
 @push('footer-script')
 <script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 <script>
-    $('#finalDrawBtn').click(function(e){
-
-    if($(this).hasClass('disabled')){
-        e.preventDefault();
-        return false;
-    }
-
-    // allow download to start
-    setTimeout(function(){
-        location.reload();
-    },2000);
-
-});
     $(document).ready(function() {
         $('#applicant_list').DataTable({
     pageLength: -1, // default show all rows
@@ -277,23 +287,11 @@
             ],
 });
 
-
-    $(document).ready(function(){
-
-    $('#confirmCheck').change(function(){
-
-        if($(this).is(':checked')){
-            $('#finalDrawBtn').removeClass('disabled');
-             $('#processdemo').addClass('disabled');
-            
-        }else{
-            $('#finalDrawBtn').addClass('disabled');
-             $('#processdemo').removeClass('disabled');
+        function setModalQuarterType() {
+            let qt = $('#quartertype').val();
+            $('#modalDemoQuarter').val(qt);
+            $('#modalFinalQuarter').val(qt);
         }
-
-    });
-
-});
 
         // Call on page load
         setModalQuarterType();

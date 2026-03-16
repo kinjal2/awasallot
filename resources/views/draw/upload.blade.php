@@ -3,6 +3,25 @@
 @section('title', $page_title)
 
 @section('content')
+<style>
+.big-check {
+  /*  transform: scale(1.4);*/
+    margin-right:10px;
+}
+
+/* sky blue border checkbox */
+.form-check-input.sky-check {
+    border: 2px solid #38bdf8;   /* sky blue */
+    width: 20px;
+    height: 20px;
+}
+
+/* when checked */
+.form-check-input.sky-check:checked {
+    background-color: #38bdf8;
+    border-color: #38bdf8;
+}
+</style>    
 
 <div class="content">
 
@@ -112,7 +131,8 @@
 
 
                                     <div class="form-check mb-3">
-                                        <input type="checkbox" class="form-check-input" id="confirmCheck" name="confirmCheck" value="1">
+                                        <input type="checkbox"  class="form-check-input big-check sky-check" id="confirmCheck" name="confirmCheck" value="1">
+                                        
                                         <label class="form-check-label" for="confirmCheck">
                                             The Department has verified the data for accuracy and integrity, performing de-duplication and validating entry and column counts. We have also confirmed that the data strictly adheres to the required Excel format.
                                         </label>

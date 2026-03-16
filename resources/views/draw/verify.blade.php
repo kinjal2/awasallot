@@ -146,11 +146,21 @@
 $(document).ready(function(){
 
 $('#applications_table').DataTable({
-pageLength:10
+// pageLength:10
+pageLength: -1, // default show all rows
+     lengthMenu: [
+                [10, 25, 50, 100, 500, -1],
+                [10, 25, 50, 100, 500, "All"]
+            ],
 });
 
 $('#premises_table').DataTable({
-pageLength:10
+// pageLength:10
+pageLength: -1, // default show all rows
+     lengthMenu: [
+                [10, 25, 50, 100, 500, -1],
+                [10, 25, 50, 100, 500, "All"]
+            ],
 });
 
 });

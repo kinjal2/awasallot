@@ -17,20 +17,25 @@ class PremiseImport implements ToModel, WithStartRow
         $this->batchId = $batchId;
         $this->quartertype = $quartertype;
     }
-     public function startRow(): int
+    public function startRow(): int
     {
         return 2;
     }
     public function model(array $row)
     {
+
+        // check if row is empty
+        if (count($row) <= 1) {
+            throw new \Exception('Beneficiary sheet is blank.');
+        }
         if ((trim($row[0] ?? '') == '') && (trim($row[1] ?? '') == '')) {
-        return null;
-    }
+            return null;
+        }
         return new Premise([
             'batch_id' => $this->batchId,
             // 'srno' => $row['srno'],
             // 'premise_no' => $row['premisehousesflat_no'],
-             'srno' => $row[0],
+            'srno' => $row[0],
             'premise_no' => $row[1],
             'quarter_type' => $this->quartertype
         ]);

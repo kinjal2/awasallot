@@ -111,6 +111,36 @@ class DrawController extends Controller
         if (!in_array('beneficiary', $sheetNames) || !in_array('premise', $sheetNames)) {
             return back()->with('error', 'Sheet names must be beneficiary and premise');
         }
+        /* ===============================
+        CHECK IF SHEETS HAVE DATA
+        ================================ */
+
+        $beneficiarySheet = $spreadsheet->getSheetByName('beneficiary');
+        $premiseSheet     = $spreadsheet->getSheetByName('premise');
+
+        $beneficiaryData = $beneficiarySheet->toArray();
+        $premiseData     = $premiseSheet->toArray();
+
+        /* remove header row */
+        array_shift($beneficiaryData);
+        array_shift($premiseData);
+
+        /* check empty rows */
+        $beneficiaryData = array_filter($beneficiaryData, function ($row) {
+            return array_filter($row); // remove completely empty rows
+        });
+
+        $premiseData = array_filter($premiseData, function ($row) {
+            return array_filter($row);
+        });
+
+        if (count($beneficiaryData) == 0) {
+            return back()->with('error', 'Beneficiary sheet does not contain any data.');
+        }
+
+        if (count($premiseData) == 0) {
+            return back()->with('error', 'Premise sheet does not contain any data.');
+        }
 
 
         try {
@@ -259,7 +289,7 @@ class DrawController extends Controller
             }
 
             if ($batch->demo_run_count >= 3) {
-                return back()->with('error', 'Mock draw limit reached (Max 3 allowed).');
+                return back()->with('error', 'Demo draw limit reached (Max 3 allowed).');
             }
 
             // Clear previous demo result for this batch
@@ -332,8 +362,8 @@ class DrawController extends Controller
             // return redirect()->route('draw.index')
             //     ->with('success', 'Demo draw completed');
 
-            $this->viewContent['page_title'] = "Mock Draw of Batch Id : " . $batch->batch_no;
-            $this->viewContent['page_sub_title'] = "Mock Run Preview " . $batch->demo_run_count . " / 3 ";
+            $this->viewContent['page_title'] = "Demo Draw of Batch Id : " . $batch->batch_no;
+            $this->viewContent['page_sub_title'] = "Demo Run Preview " . $batch->demo_run_count . " / 3 ";
             $this->viewContent['batch'] = $batch;
             $this->viewContent['results'] = $results;
             // dd($this->viewContent);
@@ -360,16 +390,14 @@ class DrawController extends Controller
                 return back()->with('error', 'Draw batch not found.');
             }
 
-            if ($batch->draw_status == 'final' && $batch->satisfy_with_final == true) {
+            if ($batch->draw_status == 'final') {
                 //return back()->with('error', 'Final draw already completed');
                 return redirect()->route('draw.history')
                     ->with('success', 'Final draw completed. Entries frozen.');
             }
 
             // Delete previous results for this batch
-            DrawResult::where('batch_id', $batchId)
-                ->where('draw_type', 'final')
-                ->delete();
+            // DrawResult::where('batch_id', $batchId)->delete();
 
             $premises = Premise::where('batch_id', $batchId)
                 ->pluck('premise_no')
@@ -516,14 +544,11 @@ class DrawController extends Controller
     {
         $batchId = $batch;   // route parameter
 
-           // dd($batch,$request->all());
         $type = $request->type;
         $run  = $request->run;
 
-        $draw_status=null;
-
         $batch = DrawBatch::find($batchId);
-        
+
         try {
 
             if (!$batch) {
@@ -533,23 +558,17 @@ class DrawController extends Controller
             // Decide which results to fetch
             if ($type == 'final') {
 
-                // $batch->update(['satisfy_with_final' =>  DB::raw('true')]);
-
-                // dd($batch);
                 $results = DrawResult::where('batch_id', $batchId)
                     ->where('draw_type', 'final')
                     ->orderBy('id')
                     ->get();
-                $draw_status="final";
             } else {
-                
+
                 $results = DrawResult::where('batch_id', $batchId)
                     ->where('draw_type', 'demo')
                     ->where('run_no', $run)
                     ->orderBy('id')
                     ->get();
-                    $draw_status="demo";
-                   
             }
 
             if ($results->isEmpty()) {
@@ -561,8 +580,7 @@ class DrawController extends Controller
                 'batch_no'       => $batch->batch_no,
                 'batch_title'    => $batch->batch_title,
                 'quarter_type'   => $batch->quarter_type,
-              //  'draw_status'    => $batch->draw_status,
-                'draw_status' => $draw_status,
+                'draw_status'    => $batch->draw_status,
                 'demo_run_count' => $batch->demo_run_count,
                 'draw_date'      => \Carbon\Carbon::parse($batch->draw_date)->format('d-m-Y'),
                 'generated_at'   => now()->format('d-m-Y h:i:s A')
@@ -600,16 +618,10 @@ class DrawController extends Controller
 
             $statusText = '';
 
-            // if ($batch->draw_status == 'final') {
-            //     $statusText = 'Final Draw';
-            // } elseif ($batch->draw_status == 'verified') {
-            //     $statusText = 'Mock Draw ' . $batch->demo_run_count . ' / 3';
-            // }
-
-             if ($draw_status == 'final') {
+            if ($batch->draw_status == 'final') {
                 $statusText = 'Final Draw';
-            } elseif ($draw_status == 'demo') {
-                $statusText = 'Mock Draw ' . $batch->demo_run_count . ' / 3';
+            } elseif ($batch->draw_status == 'verified') {
+                $statusText = 'Demo Draw ' . $batch->demo_run_count . ' / 3';
             }
 
             $header = '
@@ -667,10 +679,8 @@ Report Generated On: <b>' . now()->format('d-m-Y h:i A') . '</b>
             $mpdf->WriteHTML($html);
 
             $mpdf->Output('Draw_Result_' . $batch->id . '.pdf', 'D');
-
-           
         } catch (\Exception $e) {
-            dd($e->getMessage());
+
             DrawLog::create([
                 'uid'       => Session::get('officecode'),
                 'batch_id'  => $batchId,
@@ -768,32 +778,6 @@ Report Generated On: <b>' . now()->format('d-m-Y h:i A') . '</b>
                 'remarks'   => 'Batch id : ' . $batchId . 'delete operation has issue:' . $batchId,
                 'ip'        => request()->ip(),
             ]);
-        }
-    }
-    public function finalDrawUpdate(Request $request)
-    {
-        $batchId = $request->batchId;   // route parameter
-
-        $type = $request->type;
-        $run  = $request->run;
-
-        $batch = DrawBatch::find($batchId);
-
-        try {
-
-            if (!$batch) {
-                return back()->with('error', 'Batch not found.');
-            }
-
-            // Decide which results to fetch
-            if ($type == 'final') {
-
-                $batch->update(['satisfy_with_final' =>  DB::raw('true')]);
-                // call PDF download function
-                return $this->downloadBatchPdf($batchId,$request);
-            }
-        } catch (Exception $e) {
-            dd($e->getMessage());
         }
     }
 }

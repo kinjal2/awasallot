@@ -27,13 +27,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'office_email_id', 'is_police_staff', 'is_fix_pay_staff', 
         'police_staff_verify', 'remarks','ddo_no','cardex_no','ddo_code','tcode','dcode','session_status','session_id','from_old_awasallot_app','updated_to_new_awasallot_app'
     ];
-
+   
     protected $hidden = [
         'password', 'remember_token',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        
     ];
 
    

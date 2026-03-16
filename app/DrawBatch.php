@@ -14,6 +14,11 @@ class DrawBatch extends Model
     'draw_status',
     'demo_run_count',
     'batch_no',
-    'draw_date'
+    'draw_date',
+    'satisfy_with_final'
     ];
+
+    protected $casts = [
+    'satisfy_with_final' => 'boolean',
+];
 }

@@ -42,7 +42,7 @@ class RegistrationController extends Controller
 
              if($usercheck == 1)
              {
-                 $user = User::where('usercode',$uid)->where('is_admin',true)->first();
+                 $user = User::where('usercode',$uid)->whereRaw('is_admin IS TRUE')->first();
                 // dd($user->is_admin);
                //  $is_admin = true;
                 // dd(Auth::user()->is_admin);

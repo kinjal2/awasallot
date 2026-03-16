@@ -242,6 +242,10 @@ Route::post('/draw/final', [DrawController::class, 'finalDraw'])
 Route::get('/draw/history',[DrawController::class,'history'])->name('draw.history');
 Route::get('/draw/pdf/{batchId}',[DrawController::class,'downloadBatchPdf'])->name('draw.batch.pdf');
 
+
+Route::get('/draw/finalpdf',[DrawController::class,'finalDrawUpdate'])->name('draw.batch.finalpdf');
+
+
 Route::get('/draw/excel/{batch}',[DrawController::class,'downloadBatchExcel'])->name('draw.batch.excel');
 Route::get('/draw/reset',[DrawController::class,'reset'])->name('draw.reset');           
         

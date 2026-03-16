@@ -1,3 +1,5 @@
+
+
 <?php
 return [
     'superadmin' => [
@@ -229,7 +231,7 @@ return [
         ], */
         'Quarter Draw' => [
             'title' => 'Quarter Draw',
-            'icon' => 'fa fa-user',
+            'icon' => ' fa fa-building',
             'permission_route' => 'draw.history',
             'route' => [
                 'draw.index',

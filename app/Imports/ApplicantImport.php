@@ -24,6 +24,10 @@ class ApplicantImport implements ToModel, WithStartRow
     public function model(array $row)
     {
      //   dd($row);
+      // check if row is empty
+        if (count($row) <= 1) {
+            throw new \Exception('Beneficiary sheet is blank.');
+        }
      if ((trim($row[0] ?? '') == '') && (trim($row[1] ?? '') == '')) {
         return null;
     }
