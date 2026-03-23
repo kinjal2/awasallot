@@ -1,16 +1,14 @@
 <?php
+
 namespace App\Imports;
 
 use App\Application;
-use Exception;
 use Maatwebsite\Excel\Concerns\ToModel;
+//use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithStartRow;
-use Maatwebsite\Excel\Concerns\RemembersRowNumber;
 
 class ApplicantImport implements ToModel, WithStartRow
 {
-    use RemembersRowNumber;
-
     private $batchId;
     private $quartertype;
 
@@ -19,32 +17,26 @@ class ApplicantImport implements ToModel, WithStartRow
         $this->batchId = $batchId;
         $this->quartertype = $quartertype;
     }
-
     public function startRow(): int
     {
         return 2;
     }
-
     public function model(array $row)
     {
-        $rowNumber = $this->getRowNumber();
-
+     //   dd($row);
+      // check if row is empty
         if (count($row) <= 1) {
-            throw new Exception("Excel sheet is blank at row {$rowNumber}");
+            throw new \Exception('Beneficiary sheet is blank.');
         }
-
-        $sono = trim($row[0] ?? '');
-        $name = trim($row[1] ?? '');
-
-        // validation
-        if ($sono == '' || $name == '') {
-            throw new Exception("Required field missing in Excel at row {$rowNumber}");
-        }
-
+     if ((trim($row[0] ?? '') == '') && (trim($row[1] ?? '') == '')) {
+        return null;
+    }
         return new Application([
             'batch_id' => $this->batchId,
-            'sono' => $sono,
-            'appln_name' => $name,
+            // 'sono' => $row['srno'],
+            // 'appln_name' => $row['appln_name'],
+            'sono' => $row[0],
+            'appln_name' => $row[1],
             'quarter_type' => $this->quartertype
         ]);
     }

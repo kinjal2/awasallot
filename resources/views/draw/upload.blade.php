@@ -185,6 +185,7 @@
     }
     /* batch title validation starts here */
     $(document).ready(function() {
+        
         function setModalQuarterType() {
             let qt = $('#quartertype').val();
             $('#modalDemoQuarter').val(qt);

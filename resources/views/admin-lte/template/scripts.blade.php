@@ -37,6 +37,10 @@
 <script src="{{ URL::asset('/bower_components/admin-lte/plugins/jquery-validation/additional-methods.min.js')}}"></script>
 <script src="{{ asset('bower_components/admin-lte/plugins/sweetalert2/sweetalert2.min.js') }}"></script> 
 <!-- Custom Scripts -->
+
+
+    
+
 <script type="text/javascript">
     var oTable = null;
 
@@ -57,6 +61,16 @@
     // Initialize Select2 globally
     $('.select2').select2({
         selectOnClose: true
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            let alert = document.getElementById('successAlert');
+            if (alert) {
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 2000);
     });
 </script>
 

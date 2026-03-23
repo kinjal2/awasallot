@@ -67,6 +67,7 @@
         </div>
         <!-- END FOOTER -->
         @include(Config::get('app.theme').'.template.scripts')
+       
     </body>
 
 </html>
