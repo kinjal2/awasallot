@@ -146,8 +146,18 @@ class DrawController extends Controller
                 'draw_date' => $request->draw_date
             ]);
             $batchId = $batch->id;
+            try {
 
-            Excel::import(new \App\Imports\DrawMultiSheetImport($batchId, $request->quartertype), $request->file('file'));
+                Excel::import(new \App\Imports\DrawMultiSheetImport($batchId, $request->quartertype), $request->file('file'));
+
+                //return redirect()->back()->with('success', 'Excel imported successfully');
+
+            } catch (\Exception $e) {
+
+                return redirect()->back()->with('error', $e->getMessage());
+
+            }
+          
             /* Session::put('batch_id', $batchId);
             Session::put('quartertype', $request->quartertype);*/
 
@@ -666,7 +676,7 @@ Report Generated On: <b>' . now()->format('d-m-Y h:i A') . '</b>
 
             $mpdf->WriteHTML($html);
 
-            $mpdf->Output('Draw_Result_' . $batch->id . '.pdf', 'D');
+            $mpdf->Output('Draw_Result_' . $batch->batch_no . '.pdf', 'D');
 
            
         } catch (\Exception $e) {

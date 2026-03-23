@@ -70,6 +70,9 @@
 
   @stack('scripts')
   <script>
+    
+
+
  /* sweetalert starts here */
     $(document).on('submit', '.confirm-action', function(e){
 
