@@ -76,9 +76,9 @@ return [
             'prefix_indexes' => true,
             'schema' => 'userschema',
             'sslmode' => 'prefer',
-            'options' => [
-              PDO::ATTR_EMULATE_PREPARES => true,
-            ],
+            // 'options' => [
+            //   PDO::ATTR_EMULATE_PREPARES => true,
+            // ],
         ],
 
         'sqlsrv' => [
