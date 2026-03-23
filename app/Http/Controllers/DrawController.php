@@ -609,7 +609,7 @@ class DrawController extends Controller
              if ($draw_status == 'final') {
                 $statusText = 'Final Draw';
             } elseif ($draw_status == 'demo') {
-                $statusText = 'Mock Draw ' . $batch->demo_run_count . ' / 3';
+                $statusText = 'Mock Draw ' . $run . ' / 3';
             }
 
             $header = '
