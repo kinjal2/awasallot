@@ -160,26 +160,55 @@ function getMenu($apply_permissions = true)
         default:
             break;
     }
+     /* ------------------------------------------
+       SPECIAL CONDITION
+       designation = 630 OR user id = 28965
+       show ONLY Quarter Draw menu
+    -------------------------------------------*/
 
 
-    if (getActiveRole() == 'admin') {
+  if (getActiveRole() == 'admin') {
 
+    $user = \Auth::user();
+  //dd($user);
+    $permitted_menu = [];
+
+    // Special condition → only Quarter Draw menu
+    if ($user->usercode == 28965 && $user->designationcode ==1704) {
+       //dd($user);
         foreach ($activeMenu as $menukey => $menuitem) {
-            $currentMenu = $menuitem;
-            if (empty($currentMenu['submenu']) === false) {
-                foreach ($currentMenu['submenu'] as $subkey => $submenu) {
-                }
-                if (empty($currentMenu['submenu']) === true) {
-                    unset($currentMenu);
-                }
-            }
 
-            if (isset($currentMenu)) {
-                $permitted_menu[$menukey] = $currentMenu;
-            }
+            // if (isset($menuitem['link']) && $menuitem['link'] == 'draw.history' || isset($menuitem['link']) && $menuitem['link'] == 'admin.dashboard.admindashboard'   ) {
+            //     $permitted_menu[$menukey] = $menuitem;
+            // }
         }
+
         return $permitted_menu;
     }
+
+    // Normal menu flow
+    foreach ($activeMenu as $menukey => $menuitem) {
+
+        $currentMenu = $menuitem;
+
+        if (!empty($currentMenu['submenu'])) {
+
+            foreach ($currentMenu['submenu'] as $subkey => $submenu) {
+                // keep submenu
+            }
+
+            if (empty($currentMenu['submenu'])) {
+                unset($currentMenu);
+            }
+        }
+
+        if (isset($currentMenu)) {
+            $permitted_menu[$menukey] = $currentMenu;
+        }
+    }
+
+    return $permitted_menu;
+}
     if (getActiveRole() == 'user') {
 
         foreach ($activeMenu as $menukey => $menuitem) {
