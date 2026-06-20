@@ -153,128 +153,249 @@
 
 @push('footer-script')
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('#district').on('change', function() {
-            let selected = $(this).find('option:selected');
-            $('#districtname').val(selected.data('name') || '');
-        });
-        $('#district').trigger('change');
 
-        $("#ddoForm").validate({
-            rules: {
-                ddocode: {
-                    required: true,
-                    digits: true,
-                    maxlength: 4
-                },
-                ddoofficename: {
-                    required: true,
-                    lettersonly: true
-                },
-                districtname: {
-                    required: true,
-                    lettersonly: true
-                },
-                cardex_no: {
-                    required: true,
-                    digits: true
-                },
-                ddo_registration_no: {
-                    required: true,
-                    ddoPattern: true,
-                    minlength: 10,
-                    maxlength: 10
-                },
-                ddo_office_email_id: {
-                    required: true,
-                    validEmail: true,
-                }
+$(document).ready(function() {
+
+    // =========================================
+    // DISTRICT NAME SET
+    // =========================================
+
+    $('#district').on('change', function() {
+
+        let selected = $(this).find('option:selected');
+
+        $('#districtname').val(
+            selected.data('name') || ''
+        );
+
+    });
+
+    $('#district').trigger('change');
+
+    // =========================================
+    // VALID EMAIL DOMAINS
+    // =========================================
+
+    const allowedDomains = [
+
+        'gujarat.gov.in',
+        'gujgov.edu.in',
+        'gsbstb.org',
+        'gsrtc.org',
+        'gipc.co.in'
+
+    ];
+
+    // =========================================
+    // CUSTOM VALIDATORS
+    // =========================================
+
+    $.validator.addMethod("ddoPattern", function(value, element) {
+
+        return /^(SGV|OTH)\d{6}[A-Z]$/.test(value);
+
+    }, "Invalid DDO Registration No format.");
+
+
+
+    $.validator.addMethod("lettersonly", function(value, element) {
+
+        return /^[a-zA-Z\s]+$/.test(value);
+
+    }, "Only letters and spaces allowed.");
+
+
+
+    $.validator.addMethod("validEmail", function(value, element) {
+
+        if (this.optional(element)) {
+
+            return true;
+        }
+
+        let emailParts = value.split('@');
+
+        if (emailParts.length !== 2) {
+
+            return false;
+        }
+
+        let domain = emailParts[1].toLowerCase();
+
+        return allowedDomains.includes(domain);
+
+    }, "Invalid email domain.");
+
+    // =========================================
+    // FORM VALIDATION
+    // =========================================
+
+    $("#ddoForm").validate({
+
+        rules: {
+
+            ddocode: {
+                required: true,
+                digits: true,
+                maxlength: 4
             },
-            messages: {
-                ddoofficename: {
-                    required: "DDO Office name is required",
-                    lettersonly: "Only letters and spaces allowed"
-                },
-                districtname: {
-                    required: "District name is required",
-                    lettersonly: "Only letters and spaces allowed"
-                },
-                cardex_no: {
-                    required: "Cardex No is required",
-                    digits: "Only digits allowed"
-                },
-                ddo_registration_no: {
-                    required: "DDO Reg No required",
-                    ddoPattern: "Format must be SGV/OTH + 6 digits + 1 letter",
-                    minlength: "Must be 10 characters",
-                    maxlength: "Must be 10 characters"
-                },
-                ddo_office_email_id: {
-                    required: "Email is required",
-                    validEmail: "Only @gujarat.gov.in emails allowed"
-                }
+
+            ddoofficename: {
+                required: true,
+                lettersonly: true
             },
-            submitHandler: function(form) {
-                var isEdit = {
-                    {
-                        $isEdit ? 'true' : 'false'
-                    }
-                };
-                var url = $(form).attr('action');
-                var method = 'POST';
 
-                $.ajax({
-                    url: url,
-                    type: method,
-                    data: $(form).serialize(),
-                    success: function(data) {
-                        if (data.success) {
-                            $('#successMessage').show();
-                            $('#successText').html(data.message);
-                            $('#errorMessage').hide();
+            districtname: {
+                required: true,
+                lettersonly: true
+            },
 
-                            if (!isEdit) {
-                                $('#ddoForm')[0].reset();
-                                $('#district').val('').trigger('change');
-                            }
+            cardex_no: {
+                required: true,
+                digits: true
+            },
 
-                            // ✅ Redirect after short delay
-                            setTimeout(function() {
-                                window.location.href = "{{ route('ddo.list') }}";
-                            }, 1500); // 1.5 seconds delay for user to see message
+            ddo_registration_no: {
+                required: true,
+                ddoPattern: true,
+                minlength: 10,
+                maxlength: 10
+            },
 
-                        } else {
-                            $('#errorMessage').show();
-                            $('#errorText').html(data.message);
-                            $('#successMessage').hide();
+            ddo_office_email_id: {
+                required: true,
+                email: true,
+                validEmail: true
+            }
+        },
+
+        messages: {
+
+            ddoofficename: {
+                required: "DDO Office name is required",
+                lettersonly: "Only letters and spaces allowed"
+            },
+
+            districtname: {
+                required: "District name is required",
+                lettersonly: "Only letters and spaces allowed"
+            },
+
+            cardex_no: {
+                required: "Cardex No is required",
+                digits: "Only digits allowed"
+            },
+
+            ddo_registration_no: {
+                required: "DDO Reg No required",
+                ddoPattern: "Format must be SGV/OTH + 6 digits + 1 letter",
+                minlength: "Must be 10 characters",
+                maxlength: "Must be 10 characters"
+            },
+
+            ddo_office_email_id: {
+                required: "Email is required",
+                email: "Enter valid email",
+                validEmail:
+                    "Allowed domains: " +
+                    allowedDomains.join(', ')
+            }
+        },
+
+        // =========================================
+        // AJAX SUBMIT
+        // =========================================
+
+        submitHandler: function(form) {
+
+            var isEdit = {{ $isEdit ? 'true' : 'false' }};
+
+            $.ajax({
+
+                url: $(form).attr('action'),
+
+                type: 'POST',
+
+                data: $(form).serialize(),
+
+                headers: {
+
+                    'X-CSRF-TOKEN':
+                        $('meta[name="csrf-token"]').attr('content'),
+
+                    'Accept': 'application/json'
+                },
+
+                success: function(response) {
+
+                    if (response.success) {
+
+                        $('#successMessage').show();
+
+                        $('#successText').html(
+                            response.message
+                        );
+
+                        $('#errorMessage').hide();
+
+                        if (!isEdit) {
+
+                            $('#ddoForm')[0].reset();
+
+                            $('#district')
+                                .val('')
+                                .trigger('change');
                         }
-                    },
-                    error: function(xhr) {
-                        let errMsg = "Something went wrong.";
-                        if (xhr.responseJSON?.errors) {
-                            errMsg = Object.values(xhr.responseJSON.errors).map(arr => arr.join('<br>')).join('<br>');
-                        }
+
+                        // REDIRECT AFTER 3 SEC
+
+                        setTimeout(function() {
+
+                            window.location.href =
+                                "{{ route('ddo.list') }}";
+
+                        }, 3000);
+
+                    } else {
+
                         $('#errorMessage').show();
-                        $('#errorText').html(errMsg);
+
+                        $('#errorText').html(
+                            response.message
+                        );
+
                         $('#successMessage').hide();
                     }
-                });
-            }
-        });
+                },
 
-        $.validator.addMethod("ddoPattern", function(value, element) {
-            return /^[A-Z]{3}\d{6}[A-Z]$/.test(value);
-        }, "Invalid DDO Registration No format.");
+                error: function(xhr) {
 
-        $.validator.addMethod("lettersonly", function(value, element) {
-            return /^[a-zA-Z\s]+$/.test(value);
-        }, "Only letters and spaces allowed.");
+                    let errMsg =
+                        "Something went wrong.";
 
-        $.validator.addMethod("validEmail", function(value, element) {
-            //return /^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/.test(value);
-            return /^[a-zA-Z0-9._%+-]+@(gujarat\.gov\.in|gsrtc\.org)$/.test(value);
-        }, "Only @gujarat.gov.in emails allowed.");
+                    if (xhr.responseJSON?.errors) {
+
+                        errMsg = Object.values(
+                            xhr.responseJSON.errors
+                        ).map(arr => arr.join('<br>'))
+                         .join('<br>');
+                    }
+
+                    $('#errorMessage').show();
+
+                    $('#errorText').html(errMsg);
+
+                    $('#successMessage').hide();
+                }
+
+            });
+
+            return false;
+        }
     });
+
+});
+
 </script>
 <script>
     $('#ddoResetPwd').on('submit', function () {

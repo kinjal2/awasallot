@@ -13,6 +13,26 @@
     }
 }
 
+.burst-new {
+    position: relative;
+    color: #fff;
+    background: #ff3b3b;
+    padding: 6px;
+    border-radius: 50%;
+}
+
+.burst-new::after {
+    content: "NEW";
+    position: absolute;
+    top: -6px;
+    right: -12px;
+    background: orange;
+    color: white;
+    font-size: 8px;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
 .badge-danger {
     animation: blink 1s infinite;
 }
@@ -30,7 +50,7 @@
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
 
-        <img src="{{ asset('images/national_emblem.png') }}"
+        <img src="{{ URL::asset('images/national_emblem.png') }}"
              alt="National Logo"
              style="height:130%">
 
@@ -53,7 +73,30 @@
 
                 @php
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CHECK CHILD MENU
+                    |--------------------------------------------------------------------------
+                    */
+
                     $hasChildren = $menu->children->count() > 0;
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | AUTO OPEN ACTIVE PARENT
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $isMenuOpen = false;
+
+                    foreach ($menu->children as $child) {
+
+                        if (request()->routeIs($child->route_name)) {
+
+                            $isMenuOpen = true;
+                            break;
+                        }
+                    }
 
                     /*
                     |--------------------------------------------------------------------------
@@ -61,9 +104,13 @@
                     |--------------------------------------------------------------------------
                     */
 
-                    $menuUrl = '#';
+                    $menuUrl = 'javascript:;';
 
-                    if (!empty($menu->route_name) && Route::has($menu->route_name)) {
+                    if (
+                        !$hasChildren &&
+                        !empty($menu->route_name) &&
+                        Route::has($menu->route_name)
+                    ) {
 
                         $menuUrl = route($menu->route_name);
 
@@ -71,9 +118,9 @@
 
                 @endphp
 
-                <li class="nav-item {{ $hasChildren ? 'has-treeview menu-open' : '' }}">
+                <li class="nav-item {{ $hasChildren ? 'has-treeview' : '' }} {{ $isMenuOpen ? 'menu-open' : '' }}">
 
-                    <a href="{{ $hasChildren ? 'javascript:;' : $menuUrl }}"
+                    <a href="{{ $menuUrl }}"
                        class="nav-link {{ request()->routeIs($menu->route_name) ? 'active' : '' }} {{ $menu->menu_title == 'Quarter Draw' ? 'blink-menu' : '' }}">
 
                         <i class="{{ $menu->icon }}"></i>
@@ -108,9 +155,12 @@
 
                         @php
 
-                            $submenuUrl = '#';
+                            $submenuUrl = 'javascript:;';
 
-                            if (!empty($submenu->route_name) && Route::has($submenu->route_name)) {
+                            if (
+                                !empty($submenu->route_name) &&
+                                Route::has($submenu->route_name)
+                            ) {
 
                                 $submenuUrl = route($submenu->route_name);
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class DDOController extends Controller
 {
@@ -77,105 +78,246 @@ class DDOController extends Controller
 }
 
     // Store or update DDO data
-    public function addNewDDOStore(Request $request)
-    {
-        //dd($request->all());
+public function addNewDDOStore(Request $request)
+{
+    try {
+
         $id = $request->input('id');
-        try {
-            // Prepare the unique rule for email
-                $uniqueEmailRule = 'unique:App\DDOCode,ddo_office_email_id';
-                if ($id) {
-                    $uniqueEmailRule .= ',' . $id . ',id';
-                }
 
-                // Validation rules
-                $rules = [
-                    'ddocode' => 'required|digits_between:1,4',
-                    'ddoofficename' => ['required', 'regex:/^[\p{L}\s]+$/u'],
-                    'districtname' => ['required', 'regex:/^[\p{L}\s]+$/u'],
-                    'cardex_no' => 'required|digits_between:1,50',
-                    'ddo_registration_no' => ['required', 'regex:/^(SGV|OTH)\d{6}[A-Z]$/'],
-                    'ddo_office_email_id' => [
-                        'required',
-                        'email',
-                        //'regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
-                       'regex:/^[A-Za-z0-9._%+-]+@(gujarat\.gov\.in|gujgov\.edu\.in|gsbstb\.org|gsrtc\.org)$/i',
-                        $uniqueEmailRule, // ✅ Final working string-based unique rule
-                    ],
-                ];
+        // =====================================
+        // UNIQUE EMAIL RULE (OLD WORKING LOGIC)
+        // =====================================
 
-                // Validation messages
-                $messages = [
-                    'ddocode.required' => 'DDO Code is required',
-                    'ddocode.digits_between' => 'DDO Code must be digits and not more than 4 digits long',
-                    'ddoofficename.required' => 'DDO Office name is required',
-                    'ddoofficename.regex' => 'DDO Office name must contain only letters and spaces',
-                    'districtname.required' => 'District name is required',
-                    'districtname.regex' => 'District name must contain only letters and spaces',
-                    'cardex_no.required' => 'Cardex No is required',
-                    'cardex_no.digits_between' => 'Cardex No must contain only digits',
-                    'ddo_registration_no.required' => 'DDO Registration No is required',
-                    'ddo_registration_no.regex' => 'DDO Registration No must start with SGV or OTH, followed by 6 digits and end with an uppercase letter.',
-                    'ddo_office_email_id.required' => 'Email is required',
-                    'ddo_office_email_id.email' => 'Please enter a valid email address',
-                    'ddo_office_email_id.regex' => 'Invalid email. Email must end with either @gujarat.gov.in .',
-                    'ddo_office_email_id.unique' => 'This email has already been taken',
-                ];
+        $uniqueEmailRule = 'unique:App\DDOCode,ddo_office_email_id';
 
-                // Apply validation
-                $request->validate($rules, $messages);
+        if ($id) {
 
+            $uniqueEmailRule .= ',' . $id . ',id';
+        }
 
-            $officecode = Session::get('officecode');
+        // =====================================
+        // VALIDATION RULES
+        // =====================================
 
-            if ($id) {
-                // Update
-              // Update
-           
+        $rules = [
+
+            'ddocode' => 'required|digits_between:1,4',
+
+            'ddoofficename' => [
+                'required',
+                'regex:/^[\p{L}\s]+$/u'
+            ],
+
+            'district' => 'required',
+
+            'cardex_no' => 'required|digits_between:1,50',
+
+            'ddo_registration_no' => [
+                'required',
+                'regex:/^(SGV|OTH)\d{6}[A-Z]$/'
+            ],
+
+            'ddo_office_email_id' => [
+
+                'required',
+
+                'email',
+
+                function ($attribute, $value, $fail) {
+
+                    $allowedDomains = [
+
+                        'gujarat.gov.in',
+                        'gujgov.edu.in',
+                        'gsbstb.org',
+                        'gsrtc.org',
+                        'gipc.co.in'
+
+                    ];
+
+                    $domain = strtolower(
+                        substr(strrchr($value, "@"), 1)
+                    );
+
+                    if (!in_array($domain, $allowedDomains)) {
+
+                        $fail(
+                            'Invalid email. Allowed domains: ' .
+                            implode(', ', $allowedDomains)
+                        );
+                    }
+                },
+
+                $uniqueEmailRule,
+
+            ],
+
+        ];
+
+        // =====================================
+        // VALIDATION MESSAGES
+        // =====================================
+
+        $messages = [
+
+            'ddocode.required' =>
+                'DDO Code is required',
+
+            'ddocode.digits_between' =>
+                'DDO Code must be digits and not more than 4 digits long',
+
+            'ddoofficename.required' =>
+                'DDO Office name is required',
+
+            'ddoofficename.regex' =>
+                'DDO Office name must contain only letters and spaces',
+
+            'district.required' =>
+                'District is required',
+
+            'cardex_no.required' =>
+                'Cardex No is required',
+
+            'cardex_no.digits_between' =>
+                'Cardex No must contain only digits',
+
+            'ddo_registration_no.required' =>
+                'DDO Registration No is required',
+
+            'ddo_registration_no.regex' =>
+                'DDO Registration No must start with SGV or OTH, followed by 6 digits and end with an uppercase letter.',
+
+            'ddo_office_email_id.required' =>
+                'Email is required',
+
+            'ddo_office_email_id.email' =>
+                'Please enter a valid email address',
+
+            'ddo_office_email_id.unique' =>
+                'This email has already been taken',
+
+        ];
+
+        // =====================================
+        // VALIDATE REQUEST
+        // =====================================
+
+        $validator = Validator::make(
+            $request->all(),
+            $rules,
+            $messages
+        );
+
+        if ($validator->fails()) {
+
+            return response()->json([
+
+                'success' => false,
+
+                'errors' => $validator->errors()
+
+            ], 422);
+        }
+
+        // =====================================
+        // GET DISTRICT NAME
+        // =====================================
+
+        $districtName = DB::table('master.districts')
+        ->where('dcode', $request->district)
+        ->value('name_e');
+
+        // =====================================
+        // SESSION DATA
+        // =====================================
+
+        $officecode = Session::get('officecode');
+
+        // =====================================
+        // UPDATE
+        // =====================================
+
+        if ($id) {
 
             DDOCode::where('id', $id)->update([
+
                 'dcode' => $request->district,
-                'district' => $request->districtname,
+
+                'district' => $districtName,
+
                 'ddo_code' => $request->ddocode,
+
                 'cardex_no' => $request->cardex_no,
+
                 'ddo_reg_no' => $request->ddo_registration_no,
+
                 'ddo_office' => $request->ddoofficename,
-                'ddo_office_email_id' => $request->ddo_office_email_id,
+
+                'ddo_office_email_id' =>
+                    $request->ddo_office_email_id,
+
                 'officecode' => $officecode,
+
             ]);
 
-            
-            
+            $message = 'DDO updated successfully';
 
-            
-            } else {
-                // Create new
-                DDOCode::create([
-                    'dcode' => $request->district,
-                    'district' => $request->districtname,
-                    'ddo_code' => $request->ddocode,
-                    'cardex_no' => $request->cardex_no,
-                    'ddo_reg_no' => $request->ddo_registration_no,
-                    'ddo_office' => $request->ddoofficename,
-                    'ddo_office_email_id' => $request->ddo_office_email_id,
-                    'password' => Hash::make('Admin@1357'), // Default password
-                    'officecode' => $officecode,
-                ]);
-            }
-              //  dd('Reached redirect'); 
-        return response()->json([
-    'success' => true,
-    'message' => $id ? 'DDO updated successfully' : 'DDO added successfully',
-]);
+        } else {
 
+            // =====================================
+            // CREATE
+            // =====================================
 
-        } catch (\Exception $e) { //dd($e->getMessage());
-             return redirect()
-                ->back()
-                ->withInput() // keep previous input
-                ->with('error', 'ERROR: ' . $e->getMessage());
+            DDOCode::create([
+
+                'dcode' => $request->district,
+
+                'district' => $districtName,
+
+                'ddo_code' => $request->ddocode,
+
+                'cardex_no' => $request->cardex_no,
+
+                'ddo_reg_no' => $request->ddo_registration_no,
+
+                'ddo_office' => $request->ddoofficename,
+
+                'ddo_office_email_id' =>
+                    $request->ddo_office_email_id,
+
+                'password' =>
+                    Hash::make('Admin@1357'),
+
+                'officecode' => $officecode,
+
+            ]);
+
+            $message = 'DDO added successfully';
         }
+
+        // =====================================
+        // SUCCESS RESPONSE
+        // =====================================
+
+        return response()->json([
+
+            'success' => true,
+
+            'message' => $message
+
+        ], 200); 
+
+    } catch (\Exception $e) {
+
+        return response()->json([
+
+            'success' => false,
+
+            'message' => $e->getMessage()
+
+        ], 500);
     }
+}
     public function ddoResetPwd(Request $request)
     {
         try{

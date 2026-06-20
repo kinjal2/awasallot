@@ -21,6 +21,11 @@ use App\Http\controllers\UserQuartersallotmentController;
 use App\Http\Controllers\ExcelExportController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\DrawController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\UserPermissionController;
+use App\Http\Controllers\RoleController;
 use App\QuarterType;
 
 
@@ -328,6 +333,7 @@ Route::prefix('user')->group(function () {
     Route::post('resetname', 'UserController@resetname')->name('resetname');
     Route::post('/resetdesignation', 'UserController@resetdesignation')->name('resetdesignation');
     Route::get('quartershigher', ['as' => 'user.quarter.higher', 'uses' => 'QuartersController@requesthighercategory']);
+    Route::get('/export', [UserController::class, 'export'])->name('users.export');
 
     Route::post('/salarySlabDetails', [ProfileController::class, 'getSalarySlabDetails'])->name('salarySlabDetails');
 
@@ -455,3 +461,86 @@ Route::get('/captcha-demo', function () {
 
 Route::get('/reload-captcha', [CaptchaController::class, 'reloadCaptcha'])
     ->name('reload-captcha');
+Route::prefix('admin')
+    ->middleware(['auth', 'superadmin'])
+    ->group(function () {
+
+        Route::get(
+            '/menus',
+            [MenuController::class, 'index']
+        )->name('menus.index');
+
+        Route::get(
+            '/menus/create',
+            [MenuController::class, 'create']
+        )->name('menus.create');
+
+        Route::post(
+            '/menus/store',
+            [MenuController::class, 'store']
+        )->name('menus.store');
+
+        Route::get(
+            '/menus/edit/{id}',
+            [MenuController::class, 'edit']
+        )->name('menus.edit');
+
+        Route::post(
+            '/menus/update/{id}',
+            [MenuController::class, 'update']
+        )->name('menus.update');
+
+        Route::get(
+        '/role-permission',
+        [RolePermissionController::class, 'index']
+        )->name('role.menu');
+   
+
+Route::post(
+    '/role-permission/store',
+    [RolePermissionController::class, 'store']
+)->name('role.menu.store');
+
+
+
+    Route::get(
+    '/user-permission',
+    [UserPermissionController::class, 'index']
+)->name('user.menu');
+
+Route::post(
+    '/user-permission/store',
+    [UserPermissionController::class, 'store']
+)->name('user.menu.store');
+
+/*
+|--------------------------------------------------------------------------
+| ROLE MANAGEMENT
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/roles',
+    [RoleController::class, 'index']
+)->name('roles.index');
+
+Route::get(
+    '/roles/create',
+    [RoleController::class, 'create']
+)->name('roles.create');
+
+Route::post(
+    '/roles/store',
+    [RoleController::class, 'store']
+)->name('roles.store');
+
+Route::get(
+    '/roles/edit/{id}',
+    [RoleController::class, 'edit']
+)->name('roles.edit');
+
+Route::post(
+    '/roles/update/{id}',
+    [RoleController::class, 'update']
+)->name('roles.update');
+    });

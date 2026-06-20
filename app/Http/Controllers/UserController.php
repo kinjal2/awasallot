@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -327,5 +329,9 @@ class UserController extends Controller
             'user_id' => $otpData->user_id ?? null,
             'otp'     => $otpData->otp ?? null,
         ]);
+    }
+    public function export()
+    {    
+            return Excel::download(new UsersExport, 'users.xlsx');
     }
 }

@@ -81,68 +81,116 @@
 @include(Config::get('app.theme').'.template.footer_front_page')
 
 <script>
+    
+    const allowedDomains = [
+        'gujarat.gov.in',
+        'gujgov.edu.in',
+        'gsbstb.org',
+        'gsrtc.org',
+        'gipc.co.in'
+    ];
+
     $.validator.addMethod("validEmail", function(value, element) {
-    return this.optional(element) || /^[a-zA-Z0-9._%+-]+@(gujarat\.gov\.in|gujgov\.edu\.in|gsbstb\.org)$/.test(value);
-}, "Invalid email. Email must end with @gujarat.gov.in, @gujgov.edu.in or @gsbstb.org.");
+
+        if (this.optional(element)) {
+            return true;
+        }
+
+        let emailParts = value.split('@');
+
+        if (emailParts.length !== 2) {
+            return false;
+        }
+
+        let domain = emailParts[1].toLowerCase();
+
+        return allowedDomains.includes(domain);
+
+    }, "Invalid email domain.");
+
     $(document).ready(function() {
+
         $('#LoginForm').validate({
+
             errorClass: "error-message",
             errorElement: "span",
+
             errorPlacement: function(error, element) {
                 error.appendTo(element.parent());
             },
+
             highlight: function(element, errorClass, validClass) {
                 $(element).addClass(errorClass).removeClass(validClass);
                 $(element).closest('.form-control').addClass('error-field');
             },
+
             unhighlight: function(element, errorClass, validClass) {
                 $(element).removeClass(errorClass).addClass(validClass);
                 $(element).closest('.form-control').removeClass('error-field');
             },
+
             rules: {
                 ddo_office_email: {
                     required: true,
+                    email: true,
                     validEmail: true,
                 },
+
                 password: {
                     required: true
                 },
+
                 password_confirmation: {
                     required: true,
-                    equalTo: "#password"  // Check if password_confirmation matches password
+                    equalTo: "#password"
                 },
+
                 captcha: {
                     required: true
                 }
             },
+
             messages: {
+
                 ddo_office_email: {
                     required: "Please enter your email address",
-                    email: "Please enter a valid email address (e.g., example@gujarat.gov.in)"
+                    email: "Please enter a valid email address",
+                    validEmail: "Allowed domains: " + allowedDomains.join(', ')
                 },
+
                 password: {
                     required: "Please enter your password"
                 },
+
                 password_confirmation: {
                     required: "Please confirm your password",
-                    equalTo: "Passwords do not match"  // Custom message for password mismatch
-                 },
+                    equalTo: "Passwords do not match"
+                },
+
                 captcha: {
                     required: "Please enter the captcha"
                 }
             }
         });
+
         $('#reload').on('click', function() {
+
             $.ajax({
                 type: 'GET',
-                url: "{{ route('ddo.reload-captcha') }}", // Use the correct route name
+                url: "{{ route('ddo.reload-captcha') }}",
+
                 success: function(data) {
-                    $('.captcha span').html(data.captcha); // Update the captcha image
+                    $('.captcha span').html(data.captcha);
                 },
+
                 error: function(xhr, status, error) {
                     console.error('Error reloading captcha: ' + error);
                 }
             });
+
         });
+
     });
+
+
 </script>

@@ -23,9 +23,12 @@
 
 <section class="content">
     <div class="container-fluid">
+                        <div class="card"> <a href="{{ route('users.export') }}" class="btn btn-success">
+    Download Excel
+</a>
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+
                     <div class="table-responsive p-4">
                         <table class="table table-bordered table-hover custom_table dataTable" id="userlist">
                             <thead>
