@@ -126,7 +126,8 @@ class Tquarterrequestb extends Model
                 'sign',
                 'current_address',
                 'office_phone',
-                'office_address'
+                'office_address',
+                'f_name','m_name','s_name'
             ]);
         }])
             ->select([
@@ -238,7 +239,10 @@ class Tquarterrequestb extends Model
                 'choice2' => $request->choice2,
                 'choice3' => $request->choice3,
                 'ddo_remarks' => $request->ddo_remarks,
-                'remarks' => $request->remarks
+                'remarks' => $request->remarks,
+                'f_name' => $request->usermaster->f_name,
+                'm_name' => $request->usermaster->m_name,
+                's_name' => $request->usermaster->s_name,
             ];
         }
 

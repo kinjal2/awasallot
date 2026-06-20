@@ -2,6 +2,9 @@
 
 return array(
     'name' => 'Name',
+    'f_name' => 'Father\'s Name',
+    'm_name' => 'Mother\'s Name',
+    's_name' => 'Spouse Name',
     'birth_date' => 'Birth Date', 
     'designation' => 'Designation', 
     'office' => 'Office', 

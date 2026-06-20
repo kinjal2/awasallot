@@ -70,6 +70,7 @@ class UserHistory extends Model
         'tcode',
         'from_old_awasallot_app',
         'updated_to_new_awasallot_app',
+        'f_name','m_name','s_name'
     ];
 }
 

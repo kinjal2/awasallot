@@ -67,6 +67,24 @@
             <td>{{$name}}</td>
         </tr>
         <tr>
+        <td></td>
+        <td>પિતાનું નામ</td>
+        <td>:</td>
+        <td>{{ $f_name }}</td>
+      </tr>
+       <tr>
+        <td></td>
+        <td>માતાનું નામ</td>
+        <td>:</td>
+        <td>{{ $m_name }}</td>
+      </tr>
+       <tr>
+        <td></td>
+        <td>સ્પાઉઝનું નામ</td>
+        <td>:</td>
+        <td>{{ $s_name }}</td>
+      </tr>
+        <tr>
             <td></td>
             <td>ક્વાર્ટર કેટેગરી</td>
             <td>:</td>

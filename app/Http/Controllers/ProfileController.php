@@ -75,7 +75,10 @@ class ProfileController extends Controller
     {
         // dd($request->all());
         $rules = [
-            'name' => 'required|string',
+            'name' => 'required|regex:/^[A-Za-z\s]+$/|max:255',
+            'f_name' => 'required|regex:/^[A-Za-z\s]+$/|max:255',
+            'm_name' => 'required|regex:/^[A-Za-z\s]+$/|max:255',
+            's_name' => 'nullable|regex:/^[A-Za-z\s]+$/|max:255',
             'office' => 'required|string',
             'office_email_id' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@gujarat\.gov\.in$/',
             'email_id' => 'required|email',
@@ -99,7 +102,17 @@ class ProfileController extends Controller
         ];
         $messages = [
             'name.required' => 'The name field is required.',
-            'name.string' => 'The name must be a valid string.',
+           // 'name.string' => 'The name must be a valid string.',
+            'name.regex' => 'The name must be a valid string.',
+            'name.max' => 'The name should not contain more than 255 characters',
+            'f_name.required' => 'The father name field is required.',
+            'f_name.regex' => 'The father name must be a valid string.',
+            'f_name.max' => 'The father name should not contain more than 255 characters',
+            'm_name.required' => 'The mother name field is required.',
+            'm_name.regex' => 'The mother name must be a valid string.',
+            'm_name.max' => 'The mother name should not contain more than 255 characters',
+            's_name.regex' => 'The spouse name must be a valid string.',
+            's_name.max' => 'The spouse name should not contain more than 255 characters',
             'office.required' => 'The office field is required.',
             'office.string' => 'The office must be a valid string.',
             'office_email_id.required' => 'The office email is required',
@@ -170,7 +183,10 @@ class ProfileController extends Controller
                 // Enable query logging
                 // DB::enableQueryLog();
                 $updateData = [
-
+                    
+                    'f_name' => empty($request->get('f_name')) ? NULL : $request->get('f_name'),
+                    'm_name' => empty($request->get('m_name')) ? NULL : $request->get('m_name'),
+                    's_name' => empty($request->get('s_name')) ? NULL : $request->get('s_name'),
                     'office' => empty($request->get('office')) ? NULL : $request->get('office'),
                     'office_email_id' => empty($request->get('office_email_id')) ? NULL : $request->get('office_email_id'),
                     'contact_no' => empty($request->get('contact_no')) ? NULL :  $request->get('contact_no'),
@@ -212,7 +228,7 @@ class ProfileController extends Controller
                 if ($existingUser) {
                     // 2️ Convert stdClass to array
                     $userData = (array) $existingUser;
-
+                   // dd($userData);
                     $userData = array_merge($userData, [
                         'updated_from' => $request->ip(),   // client IP
                         'updated_by'   => $uid,      // logged-in user id

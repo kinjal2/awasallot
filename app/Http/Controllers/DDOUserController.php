@@ -297,7 +297,7 @@ class DDOUserController extends Controller
         ->where('uid','=',$quarterrequest['uid'])
         ->get(); //12-12-2024
 
-
+       
         $this->_viewContent['quarterrequest1'] = Tquarterrequesta::select(['request_date','requestid','quartertype','inward_no','inward_date','rivision_id','remarks',
         'is_accepted','is_allotted','is_varified','uid','ddo_remarks'])
 
@@ -313,7 +313,7 @@ class DDOUserController extends Controller
             ->WHERE('request_id', $requestid)->WHERE('performa', $type)
             ->pluck('document_id'))
         ->pluck('document_name', 'document_type');
-
+        //dd($document_list);
        // $query = DB::getQueryLog();
         //dd($query);
            // $this->_viewContent['document_list']=$document_list;

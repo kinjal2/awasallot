@@ -2,6 +2,12 @@
 
                         @include(Config::get('app.theme').'.template.severside_message')
                         @include(Config::get('app.theme').'.template.validation_errors')
+                        <style>
+                            #downgrade_radio input:disabled + label {
+                                opacity: 0.6;
+                                cursor: not-allowed;
+                            }
+                        </style>
                         <form method="POST" name="front_annexurea" id="front_annexurea" action="{{ url('savenewrequest') }}" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" id="cardex_no" name="cardex_no" value="{{session('cardex_no')}}" />
@@ -38,7 +44,7 @@
                                             <label class="question_bg mb-3">{{ __('request.deputation_date', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ] ) }}</label>
                                             <div class="input-group date dateformat" id="deputation_date"
                                                 data-target-input="nearest">
-                                                <input type="text" value="{{$quarterequesta['deputation_date'] ?? null }}" name="deputation_date"
+                                                <input type="text" value="{{ !empty($quarterequesta['deputation_date'])  ? \Carbon\Carbon::parse($quarterequesta['deputation_date'])->format('d-m-Y')  : '' }}" name="deputation_date"
                                                     class="form-control datetimepicker-input" data-target="#deputation_date" />
                                                 <div class="input-group-append" data-target="#deputation_date"
                                                     data-toggle="datetimepicker">
@@ -351,7 +357,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-6 mb-3">
+                                <!-- <div class="col-md-6 mb-3">
                                     <div class="lg-block">
                                         <div class="mb-1">
                                             <label class="question_bg mb-3">{{ __('request.transeringandinagar', ['location' => ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) ])}}</label>
@@ -360,13 +366,85 @@
                                         :options="getYesNo()"
                                         :selected="$quarterequesta['downgrade_allotment'] ?? null"
                                         class="form-control"
-                                        id="downgrade_allotment"
-                                    />
+                                        id="downgrade_allotment"/>
                                    
                                                                         
 
                                         </div>
                                     </div>
+                                </div> -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="lg-block">
+                                        
+                                        <!-- Main Question -->
+                                        <div class="mb-2">
+                                            <label class="question_bg mb-3">
+                                               {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) }} ખાતે હાજર થયાની વિગતો
+                                            </label>
+
+                                            <!-- Option 1 -->
+                                            <div>
+                                                <input type="radio" name="transfer_type" value="transfer" id="opt_transfer">
+                                                <label for="opt_transfer">બદલી/બઢતીથી</label>
+                                            </div>
+                                             <!-- Sub-options (only for transfer) -->
+                                        <div id="transfer_options" style="margin-left:15px; display:none; margin-left:15px;">
+                                            <div>
+                                                <input type="radio" name="transfer_reason" value="g2g" class="transfer-sub">
+                                                <label> {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) }} to {{ ucfirst(strtolower(getDistrictByCode(Session::get('dcode')))) }}</label>
+                                            </div>
+
+                                            <div>
+                                                <input type="radio" name="transfer_reason" value="swa" class="transfer-sub">
+                                                <label>સ્વવિનંતી</label>
+                                            </div>
+
+                                           
+
+                                            <div>
+                                                <input type="radio" name="transfer_reason" value="jaherhit" class="transfer-sub">
+                                                <label>જાહેરહિતાર્થે (અન્ય જિલ્લાથી બદલી)</label>
+                                                 <!-- YES/NO radio (hidden by default) -->
+                                            <div id="downgrade_radio" style="display:none;">
+                                                <div>
+                                                    <input type="radio" name="downgrade_allotment" value="yes" id="downgrade_yes">
+                                                    <label for="downgrade_yes">હા</label>
+                                                </div>
+
+                                                <div>
+                                                    <input type="radio" name="downgrade_allotment" value="no" id="downgrade_no">
+                                                    <label for="downgrade_no">ના</label>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+
+                                            <!-- Option 2 -->
+                                            <div>
+                                                <input type="radio" name="transfer_type" value="direct" id="opt_direct">
+                                                <label for="opt_direct">સીધી ભરતીથી (જેમ કે GPSC/GSSSB/GPSSB મારફતે)</label>
+                                            </div>
+                                             <div>
+                                                <input type="radio" name="transfer_type" value="loan" id="loan" >
+                                                <label>લોન સેવા/ એટેચ / પ્રતિનિયુક્તિ</label>
+                                            </div>
+                                        </div>
+
+                                       
+
+                                        <!-- Hidden field to store final value -->
+                                        <!-- <label for="downgrade_allotement">  જો જાહેરહિતાર્થે બદલી થઇને ગાાંધીનગર આવેલ હોય તો પોતે જે કક્ષાનું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચેની કક્ષાનુ વસવાટ ફાળવી આપવા વિનંતી છે? </label>
+                                            <input type="text" name="downgrade_allotment" id="downgrade_allotment"> -->
+                                        <!-- Question -->
+                                            <label>
+                                                જો જાહેરહિતાર્થે બદલી થઇને ગાંધીનગર આવેલ હોય તો પોતે જે કક્ષાનું વસવાટ મેળવવાને પાત્ર હોય તે મળે ત્યાં સુધી તરત નીચેની કક્ષાનુ વસવાટ ફાળવી આપવા વિનંતી છે?
+                                            </label>
+
+                                           
+
+                                            <!-- Hidden fallback (used when NOT jaherhit) -->
+                                            <input type="text" name="downgrade_value" id="downgrade_hidden">
+                                        </div>
                                 </div>
                                 <div class="col-md-12 mb-4">
 
@@ -978,6 +1056,88 @@ function updateChoiceOptions() {
     });
 
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const transferTypeRadios = document.querySelectorAll('input[name="transfer_type"]');
+    const transferOptions = document.getElementById("transfer_options");
+
+    const transferSubs = document.querySelectorAll(".transfer-sub");
+    const radios = document.querySelectorAll("#downgrade_radio input");
+    const hiddenField = document.getElementById("downgrade_hidden");
+    
+    const downgradeDiv=document.getElementById('downgrade_radio');
+    
+
+    // 🔹 Show/Hide sub-options based on transfer_type
+    transferTypeRadios.forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            
+            if (this.value === "transfer") {
+                transferOptions.style.display = "block";
+            } else {
+                
+                transferOptions.style.display = "none";
+
+                // Reset sub-options
+                transferSubs.forEach(el => el.checked = false);
+
+                // Reset downgrade section
+                radios.forEach(r => {
+                    r.disabled = true;
+                    r.checked = false;
+                });
+
+                hiddenField.value = "no";
+            }
+        });
+    });
+
+    // 🔹 Existing logic for sub-options
+    transferSubs.forEach(function (radio) {
+        radio.addEventListener("change", function () {
+
+            if (this.value === "jaherhit") {
+                 // ✅ Show
+                // alert("hi");
+           
+                downgradeDiv.style.display = "block";
+                
+                 // 👉 FIRST select "no"
+                const noRadio = document.getElementById("downgrade_no");
+                noRadio.checked = true;
+                
+                radios.forEach(r => r.disabled = false);
+                hiddenField.value = "no";
+            } else {
+               downgradeDiv.style.display = "none";
+                 // 👉 FIRST select "no"
+                const noRadio = document.getElementById("downgrade_no");
+                noRadio.checked = true;
+
+                radios.forEach(r => {
+                    r.disabled = true;
+                    r.checked = false;
+                });
+
+                hiddenField.value = "no";
+            }
+        });
+    });
+
+    // 🔹 Sync value
+    radios.forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            hiddenField.value = this.value;
+        });
+    });
+
+});
+</script>
+
+
+
+
 @endpush
                   
 

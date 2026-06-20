@@ -252,7 +252,8 @@ Route::get('/draw/finalpdf',[DrawController::class,'finalDrawUpdate'])->name('dr
 
 
 Route::get('/draw/excel/{batch}',[DrawController::class,'downloadBatchExcel'])->name('draw.batch.excel');
-Route::get('/draw/reset',[DrawController::class,'reset'])->name('draw.reset');           
+Route::get('/draw/reset',[DrawController::class,'reset'])->name('draw.reset');         
+
         
 });
 
@@ -351,6 +352,9 @@ Route::prefix('user')->group(function () {
     })->name('otp');
 
     Route::post('otp', 'UserController@getOtp')->name('user.getOtp');
+    
+
+    Route::post('/get-area-by-quarter', [QuartersController::class, 'getArea'])->name('changerequest.getArea');
 });
 
 // Quarter Type Routes

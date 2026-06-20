@@ -218,7 +218,7 @@ class QuartersController extends Controller
                             })
                             // Exclude document type 7 if user is NOT fix pay staff
                             ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
-                                return $query->whereNotIn('document_type', [7]);
+                                return $query->whereNotIn('document_type', [7,11]);
                             })
                             // Exclude document type 9 if user is either:
                             // - Physically disabled with <= 60% disability
@@ -407,7 +407,7 @@ class QuartersController extends Controller
                                         })
                                         // Exclude document type 7 if user is NOT fix pay staff
                                         ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
-                                            return $query->whereNotIn('document_type', [7]);
+                                            return $query->whereNotIn('document_type', [7,11]);
                                         })
                                         // Exclude document type 9 if user is either:
                                         // - Physically disabled with <= 60% disability
@@ -706,7 +706,7 @@ class QuartersController extends Controller
                             })
                             // Exclude document type 7 if user is NOT fix pay staff
                             ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
-                                return $query->whereNotIn('document_type', [7]);
+                                return $query->whereNotIn('document_type', [7,11]);
                             })
                             // Exclude document type 9 if user is either:
                             // - Physically disabled with <= 60% disability
@@ -941,7 +941,7 @@ class QuartersController extends Controller
                                         })
                                         // Exclude document type 7 if user is NOT fix pay staff
                                         ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
-                                            return $query->whereNotIn('document_type', [7]);
+                                            return $query->whereNotIn('document_type', [7,11]);
                                         })
                                         // Exclude document type 9 if user is either:
                                         // - Physically disabled with <= 60% disability
@@ -1470,7 +1470,7 @@ class QuartersController extends Controller
     }
     public function saveNewRequest(Request $request)
     {
-
+      //  dd($request->all());
         $rules = [
             'quartertype' => 'required|string',
             'deputation_date' => 'required',
@@ -1589,18 +1589,30 @@ class QuartersController extends Controller
                 $ddo_code    = Session::get('ddo_code');
 
                 // Format possession date if available
-
+                $oldAllocation = $request->get('old_allocation_yn');
+               // dd($oldAllocation);
                 $data =  [
                     'quartertype' => $request->get('quartertype') ?: null,
                     'old_designation' => $request->get('old_desg') ?: null,
                     'old_office' => $request->get('old_office') ?: null,
                     'deputation_date' => $request->get('deputation_date') ? Carbon::parse($request->get('deputation_date'))->format('Y-m-d') : null,
-                    'prv_area_name' => $request->get('prv_area_name') ?: null,
+                        
+                    'old_allocation' => $oldAllocation ?: null,
+
+                    'prv_area_name'    => $oldAllocation === 'N' ? null : ($request->get('prv_area_name') ?: null),
+                    'prv_building_no'  => $oldAllocation === 'N' ? null : ($request->get('prv_building_no') ?: null),
+                    'prv_quarter_type' => $oldAllocation === 'N' ? null : ($request->get('prv_quarter_type') ?: null),
+                    'prv_rent'         => $oldAllocation === 'N' ? null : ($request->get('prv_rent') ?: null),
+                    'prv_handover'     => $oldAllocation === 'N' ? null : ($request->get('prv_handover') ?: null),
+                  /*  'prv_area_name' => $request->get('prv_area_name') ?: null,
                     'prv_building_no' => $request->get('prv_building_no') ?: null,
                     'prv_quarter_type' => $request->get('prv_quarter_type') ?: null,
                     'prv_rent' => $request->get('prv_rent') ?: null,
-                    'prv_handover' => $request->get('prv_handover') ?: null,
+                    'prv_handover' => $request->get('prv_handover') ?: null, */
                     'have_old_quarter' => $request->get('have_old_quarter_yn') ?: null,
+                   
+                  
+
                     'old_quarter_details' => $request->get('old_quarter_details') ?: null,
                     'is_scst' => $request->get('is_stsc_yn') ?: null,
                     'scst_info' => $request->get('scst_details') ?: null,
@@ -1627,7 +1639,7 @@ class QuartersController extends Controller
 
 
                 ];
-              //  dd($data);
+                //dd($data);
                 $match = ['requestid' => $request_id, 'rivision_id' => $new_rivision_id, 'uid' => $uid];
                 $check = Tquarterrequesta::where($match)->get();
 
@@ -2491,7 +2503,7 @@ class QuartersController extends Controller
                         $rv,
                         'a',
                         'S'  // <-- return as string
-                    );
+                     );
                     if (empty($pdfContent)) {
                         dd("PDF generation failed or returned empty content");
                     }
@@ -2973,7 +2985,7 @@ class QuartersController extends Controller
     public function getNormalquarterList(Request $request)
     {
         $officecode = Session::get('officecode');
-
+       // dd($officecode);
         $first = Tquarterrequesta::from('master.t_quarter_request_a AS a')->select([
             'request_date',
             DB::raw("'a'::text as type"),
@@ -3378,6 +3390,8 @@ class QuartersController extends Controller
         $this->_viewContent['wo_qaid'] = $wo_qaid;
         $this->_viewContent['wo_blockno'] = $wo_blockno;
         $this->_viewContent['wo_unitno'] = $wo_unitno;
+
+        $this->_viewContent['quartertype'] = $quartertypeopt;
 
         $this->_viewContent['page_title'] = "Change Request";
         //dd($this->_viewContent['areaopt']);
@@ -3862,7 +3876,7 @@ class QuartersController extends Controller
                 // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                 ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
                     // Only apply this whereNotIn condition if the user is not a police staff
-                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                    return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                 })
                 ->when(
                     // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -3925,7 +3939,7 @@ class QuartersController extends Controller
                 // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                 ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
                     // Only apply this whereNotIn condition if the user is not a police staff
-                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                    return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                 })
                 ->when(
                     // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -3985,7 +3999,7 @@ class QuartersController extends Controller
                 // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                 ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') != 'Y', function ($query) {
                     // Only apply this whereNotIn condition if the user is not a police staff
-                    return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                    return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                 })
                 ->when(
                     // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4140,7 +4154,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4168,7 +4182,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_id', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4200,7 +4214,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4236,7 +4250,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_id', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4266,7 +4280,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4300,7 +4314,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_id', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4481,7 +4495,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4508,7 +4522,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_id', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4539,7 +4553,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4573,7 +4587,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_id', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4603,7 +4617,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_type', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_type', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4637,7 +4651,7 @@ class QuartersController extends Controller
                     // Conditionally add the exclusion for document type 8 based on the user's role fix pay staff
                     ->when(User::where('id', Session::get('Uid'))->value('is_fix_pay_staff') == 'N', function ($query) {
                         // Only apply this whereNotIn condition if the user is not a police staff
-                        return $query->whereNotIn('document_id', [7]);  // Exclude document type 8
+                        return $query->whereNotIn('document_id', [7,11]);  // Exclude document type 8
                     })
                     ->when(
                         // Add the condition to check if 'is_phy_dis' is 'Y' and 'dis_per' is less than 60, or if 'is_phy_dis' is 'N'
@@ -4910,4 +4924,12 @@ class QuartersController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Something went wrong.']);
         }
     }
+    public function getArea(Request $request)
+        {
+            $quartertype = $request->quartertype;
+
+            $areas = qCategoryAreaMapping($quartertype);
+            // dd($areas);
+           return response()->json($areas); // ✅ IMPORTANT
+        }
 }

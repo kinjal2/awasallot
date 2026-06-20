@@ -75,6 +75,7 @@ class Tquarterrequesta extends Model
     'ddo_code',
     'app_ddo',
     'app_admin',
+    'old_allocation'
 ];
 
     public $incrementing = false;
@@ -98,7 +99,7 @@ class Tquarterrequesta extends Model
                 'office_address', 'is_activated', 'is_profilechange', 
                 'last_login', 'last_ip', 'created_at', 'updated_at', 'is_admin',
                 'otp', 'otp_created_at', 'status', 'is_verified', 'office_email_id',
-                'is_police_staff', 'is_fix_pay_staff', 'police_staff_verify'
+                'is_police_staff', 'is_fix_pay_staff', 'police_staff_verify','f_name','m_name','s_name'
             ]);
         }])
         ->select([
@@ -109,7 +110,7 @@ class Tquarterrequesta extends Model
             'is_relative', 'relative_details',
             'is_relative_householder', 'relative_house_details',
             'have_house_nearby', 'nearby_house_details',
-            'downgrade_allotment', 'request_date', 'inward_no', 'inward_date', 'is_varified','requestid','rivision_id','dgrid','is_ddo_varified','uid','choice1','choice2','choice3','ddo_remarks','remarks'
+            'downgrade_allotment', 'request_date', 'inward_no', 'inward_date', 'is_varified','requestid','rivision_id','dgrid','is_ddo_varified','uid','choice1','choice2','choice3','ddo_remarks','remarks', 'old_allocation'
         ])
         ->where('requestid', $requestid)
         ->where('rivision_id', $rivision_id)
@@ -168,7 +169,11 @@ class Tquarterrequesta extends Model
             'ddo_remarks'=>$request->ddo_remarks,
             'is_scst' =>$request->is_scst,
             'scst_info' => $request->scst_info,
-             'remarks' => $request->remarks
+             'remarks' => $request->remarks,
+             'old_allocation' => $request->old_allocation,
+             'f_name' => $request->usermaster->f_name,
+             'm_name' => $request->usermaster->m_name,
+             's_name' => $request->usermaster->s_name,
         ];
     }
 }

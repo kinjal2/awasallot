@@ -317,7 +317,7 @@ return [
                     ],
                     'link' => 'user.quarter.higher',
                 ],
-                /* 'Change Quarter Request' => [
+                     'Change Quarter Request' => [
                     'title' => 'menus.quarterchangerequest',
                     'icon' => 'far fa-circle',
                     'permission_route' => 'user.quarter.change',
@@ -325,7 +325,7 @@ return [
                         'quarterschange'
                     ],
                     'link' => 'user.quarter.change',
-                ],*/
+                ],
                 'Request History' => [
                     'title' => 'menus.Request History',
                     'icon' => 'nav-icon fa fa-history',

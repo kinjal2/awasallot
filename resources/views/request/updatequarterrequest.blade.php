@@ -77,8 +77,28 @@
                                                             </div>
                                                             <div class="col-sm-4">
                                                                 <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['name'] : 'N/A' }} </p>
-                                                            </div>
+                                                            </div> 
                                                         </div>
+                                                         <div class="row user_details_view1">
+                                                            <div class="col-sm-8">
+                                                                <h6 class="mb-0 ms-4">પિતાનું નામ <span>:</span></h6>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['f_name'] : 'N/A' }} </p>
+                                                            </div>
+                                                            <div class="col-sm-8">
+                                                                <h6 class="mb-0 ms-4">માતાનું નામ <span>:</span></h6>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['m_name'] : 'N/A' }} </p>
+                                                            </div>
+                                                            <div class="col-sm-8">
+                                                                <h6 class="mb-0 ms-4">સ્પાઉઝનું નામ <span>:</span></h6>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <p class="m-0"> {{ isset($quarterrequest) ? $quarterrequest['s_name'] : 'N/A' }} </p>
+                                                            </div>
+                                                         </div>
                                                         <div class="row user_details_view1">
                                                             <div class="col-sm-8">
                                                                 <h6 class="mb-0 ms-4"> ( અ ) હોદ્દો <span>:</span></h6>

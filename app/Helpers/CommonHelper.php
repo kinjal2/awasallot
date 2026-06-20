@@ -12,6 +12,7 @@ use App\Taluka;
 use App\DDOCode;
 use App\Remarks;
 use App\Visitor;
+use App\QuarterType;
 
 function printLastQuery()
 {

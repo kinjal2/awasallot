@@ -38,6 +38,42 @@
           </div>
           <div class="col-md-3">
              <div class="form-group">
+                <label for="Name">{{ __('profile.f_name') }} <span class="error">*</span></label>
+                <input type="text" value="{{isset($users->name)?$users->f_name:''}}" class="form-control @error('f_name') is-invalid @enderror" id="f_name" name="f_name" placeholder="Enter Father name" >
+                @error('f_name')
+                <span class="invalid-feedback" role="alert">
+                   <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+             </div>
+          </div>
+           <div class="col-md-3">
+             <div class="form-group">
+                <label for="Name">{{ __('profile.m_name') }} <span class="error">*</span></label>
+                <input type="text" value="{{isset($users->name)?$users->m_name:''}}" class="form-control @error('m_name') is-invalid @enderror" id="m_name" name="m_name" placeholder="Enter Mother name" >
+                @error('m_name')
+                <span class="invalid-feedback" role="alert">
+                   <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+             </div>
+          </div>
+       </div>
+       <div class="row">
+           <div class="col-md-3">
+             <div class="form-group">
+                <label for="Name">{{ __('profile.s_name') }} </label>
+                <input type="text" value="{{isset($users->name)?$users->s_name:''}}" class="form-control @error('s_name') is-invalid @enderror" id="s_name" name="s_name" placeholder="Enter Spouse name" >
+                @error('s_name')
+                <span class="invalid-feedback" role="alert">
+                   <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+             </div>
+          </div>
+          
+          <div class="col-md-3">
+             <div class="form-group">
                 <label for="Birth Date"> {{ __('profile.birth_date') }}</label>
                 <div class="input-group date dateformat" id="date_of_birth" data-target-input="nearest">
                    <input type="text" value="{{isset($users->date_of_birth)?date('d-m-Y',strtotime($users->date_of_birth)):''}}" name="date_of_birth" class="form-control datetimepicker-input " data-target="#date_of_birth" readonly />
@@ -427,6 +463,8 @@
       
          ignore: [],  // add this line to not ignore hidden fields
        rules: {
+       "f_name" : "required",
+       "m_name" : "required",
         "maratial_status": "required",
         "office": "required",
             "is_dept_head": "required",

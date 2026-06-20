@@ -2,6 +2,9 @@
 
 return array(
     'name' => 'નામ',
+    'f_name' => 'પિતાનું નામ',
+    'm_name' => 'માતાનું નામ',
+    's_name' => 'સ્પાઉઝનું નામ',
     'birth_date' => 'જન્મતારીખ', 
     'designation' => 'હોદ્દો', 
     'office' => 'કચેરી', 

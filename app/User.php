@@ -25,7 +25,8 @@ class User extends Authenticatable implements MustVerifyEmail
          'last_login', 'last_ip', 'created_at', 'updated_at', 
         'is_admin', 'otp', 'otp_created_at', 'status', 'is_verified', 
         'office_email_id', 'is_police_staff', 'is_fix_pay_staff', 
-        'police_staff_verify', 'remarks','ddo_no','cardex_no','ddo_code','tcode','dcode','session_status','session_id','from_old_awasallot_app','updated_to_new_awasallot_app'
+        'police_staff_verify', 'remarks','ddo_no','cardex_no','ddo_code','tcode','dcode','session_status','session_id','from_old_awasallot_app','updated_to_new_awasallot_app',
+        'f_name','m_name','s_name'
     ];
    
     protected $hidden = [
